@@ -4,6 +4,7 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: './src/frontend/utils/imagenes/HarvesterAppIcon.ico',
   },
   rebuildConfig: {},
   makers: [

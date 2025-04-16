@@ -20,6 +20,9 @@ const createWindow = () => {
   // Cargar el archivo HTML de inicio de sesión.
   mainWindow.loadFile(path.join(__dirname, './frontend/vistas/inicioSesion.html'));
 
+  // Poner la ventana en modo de pantalla completa.
+  mainWindow.maximize();
+
   // Abrir las herramientas de desarrollo.
   // mainWindow.webContents.openDevTools();
 };
