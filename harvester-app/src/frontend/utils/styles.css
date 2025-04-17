@@ -7,10 +7,10 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
+  width: 100vw;
   height: 100vh;
   position: relative;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
+  overflow: auto;
 }
 .barra-lateral {
   background: #ffffff;
@@ -22,26 +22,33 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+  width: auto;
+  flex-shrink: 0;
 }
 .rectangulo-separacion {
   background: #a61930;
   align-self: stretch;
   flex-shrink: 0;
+  flex-grow: 1;
   width: 28px;
-  position: relative;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 28px;
 }
 .frame-iniciar-sesion {
   background: #262b40;
   padding: 0px 104px 0px 104px;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 30px;
   align-items: center;
   justify-content: center;
-  align-self: stretch;
-  flex-shrink: 0;
-  width: 601px;
-  position: relative;
+  flex: 1; /* Ocupa el espacio disponible */
+  min-width: 300px;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 .harvester {
   background: #ffffff;
@@ -188,7 +195,11 @@
   width: 140px;
   height: 55px;
   position: relative;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
 }
+
+
 .acceder {
   color: #ffffff;
   text-align: center;
@@ -232,4 +243,8 @@
   font-size: 23.314285278320312px;
   line-height: 100%;
   font-weight: 400;
+}
+.boton-acceder:hover {
+  background: #1d3a7c;
+  transform: scale(1.05);
 }
