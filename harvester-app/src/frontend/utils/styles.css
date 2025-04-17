@@ -244,6 +244,75 @@
   line-height: 100%;
   font-weight: 400;
 }
+
+
+.modal-informacion,
+.modal-informacion * {
+  box-sizing: border-box;
+}
+.modal-informacion {
+  background: #262b40;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  width: 550px;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#modalContacto::backdrop {
+    background-color: rgba(0, 0, 0, 0.55);
+}
+#modalContacto{
+  padding: 0px;
+}
+
+.titulo-informacion,
+.informacion-contacto {
+  color: #ffffff;
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+}
+
+.boton-acceder,
+.boton-acceder * {
+  box-sizing: border-box;
+}
+.boton-acceder {
+  background: #1f4281;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.2);
+  border-width: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 140px;
+  height: 55px;
+  position: relative;
+}
+.cerrar {
+  color: #ffffff;
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .boton-acceder:hover {
   background: #1d3a7c;
   transform: scale(1.05);
