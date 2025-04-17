@@ -2,34 +2,212 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>App Layout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harvester App</title>
+  <link href="../utils/sideBar.css" rel="stylesheet" />
+  <link href="../utils/topBar.css" rel="stylesheet" />
   <link href="../utils/FrameLayout.css" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "SegoeUi-Regular", sans-serif;
+    }
+
+    .formulas-brillante {
+      background: #dbdce0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .frame-10 {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+    }
+
+    .sidebar-container {
+      background: #ffffff;
+      flex-shrink: 0;
+      height: 100%;
+    }
+
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .topbar-container {
+      flex-shrink: 0;
+    }
+
+    .content-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+  </style>
 </head>
 <body>
   <div class="formulas-brillante">
     <div class="frame-10">
-      <div id="topbar-container"></div>
 
       <!-- Sidebar -->
-      <div id="sidebar-container"></div>
+      <div class="sidebar-container">
+        <div id="sidebar-wrapper">
+          <!-- Pegado desde tu sideBar.html -->
+          <div class="state-default" id="sidebar-expanded">
+            <div>
+              <button class="boton-sidebar sidebar-logo" id="collapse-button">
+                <img src="../utils/imagenes/HarvesterAppIcon.ico" />
+                <span>HARVESTER</span>
+                <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" alt="Colapsar" />
+              </button>
 
-        <!-- Contenido dinámico -->
-        <div id="content-container"></div>
+              <div class="sidebar-navegacion">
+                <button class="boton-sidebar" data-seccion="inicio">
+                  <img src="../utils/iconos/Casa.svg" />
+                  <span>Inicio</span>
+                </button>
+                <button class="boton-sidebar" data-seccion="analisis">
+                  <img src="../utils/iconos/GraficaBarras.svg" />
+                  <span>Análisis</span>
+                </button>
+                <button class="boton-sidebar" data-seccion="plantillas">
+                  <img src="../utils/iconos/Portapapeles.svg" />
+                  <span>Plantillas</span>
+                </button>
+                <button class="boton-sidebar" data-seccion="formulas">
+                  <img src="../utils/iconos/Funcion.svg" />
+                  <span>Fórmulas</span>
+                </button>
+                <button class="boton-sidebar" data-seccion="envios">
+                  <img src="../utils/iconos/Correo.svg" />
+                  <span>Envíos</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="sidebar-inferior">
+              <button class="boton-sidebar" data-seccion="usuario">
+                <img src="../utils/iconos/Usuario.svg" />
+                <span>Nombre Usuario</span>
+              </button>
+              <button class="boton-sidebar" data-seccion="tema">
+                <img src="../utils/iconos/Tema.svg" />
+                <span>Modo Oscuro</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Colapsada -->
+          <div class="state-collapsed" id="sidebar-collapsed" style="display: none;">
+            <div>
+              <button class="boton-sidebar sidebar-logo" id="expand-button">
+                <img src="../utils/iconos/Menu.svg" />
+                <span>HARVESTER</span>
+              </button>
+              <div class="sidebar-navegacion">
+                <button class="boton-sidebar" data-seccion="inicio"><img src="../utils/iconos/Casa.svg" /></button>
+                <button class="boton-sidebar" data-seccion="analisis"><img src="../utils/iconos/GraficaBarras.svg" /></button>
+                <button class="boton-sidebar" data-seccion="plantillas"><img src="../utils/iconos/Portapapeles.svg" /></button>
+                <button class="boton-sidebar" data-seccion="formulas"><img src="../utils/iconos/Funcion.svg" /></button>
+                <button class="boton-sidebar" data-seccion="envios"><img src="../utils/iconos/Correo.svg" /></button>
+              </div>
+            </div>
+            <div class="sidebar-inferior">
+              <button class="boton-sidebar" data-seccion="usuario"><img src="../utils/iconos/Usuario.svg" /></button>
+              <button class="boton-sidebar" data-seccion="tema"><img src="../utils/iconos/Tema.svg" /></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div class="main-container">
+        <div class="topbar-container">
+          <div class="top-bar">
+            <button class="frame-regresar">
+              <img class="icono-regresar" src="../utils/iconos/FlechaAtras.svg" alt="Flecha atrás" />
+              <span class="texto-boton">Regresar</span>
+            </button>
+            <div class="frame-titulo">
+              <div class="texto-analisis">Análisis</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-container">
+          <div class="frame-92">
+            <div class="formulas">Fórmulas</div>
+          </div>
+          <div class="frame-48">
+            <!-- contenido dinámico -->
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 
+  <!-- JS toggle sidebar -->
   <script>
-    // Cargar sidebar (puede ser colapsada o desplegada)
-    fetch('sideBar.html')
-      .then(res => res.text())
-      .then(data => document.getElementById('sidebar-container').innerHTML = data);
+    const btnCollapse = document.getElementById('collapse-button');
+    const btnExpand = document.getElementById('expand-button');
+    const sidebarExpanded = document.getElementById('sidebar-expanded');
+    const sidebarCollapsed = document.getElementById('sidebar-collapsed');
 
-    // Cargar topbar con título
-    fetch('topbar.html')
-      .then(res => res.text())
-      .then(data => document.getElementById('topbar-container').innerHTML = data)
+    if (btnCollapse && btnExpand && sidebarExpanded && sidebarCollapsed) {
+      btnCollapse.addEventListener('click', () => {
+        sidebarExpanded.style.display = 'none';
+        sidebarCollapsed.style.display = 'flex';
+        aplicarActivoDesdeStorage();
+      });
+
+      btnExpand.addEventListener('click', () => {
+        sidebarCollapsed.style.display = 'none';
+        sidebarExpanded.style.display = 'flex';
+        aplicarActivoDesdeStorage();
+      });
+    }
+
+    function activarBotonesSidebar() {
+      const botones = document.querySelectorAll('.boton-sidebar');
+      botones.forEach(boton => {
+        boton.addEventListener('click', () => {
+          const seccion = boton.getAttribute('data-seccion');
+          const yaActivo = boton.classList.contains('activo');
+          botones.forEach(b => b.classList.remove('activo'));
+
+          if (!yaActivo && seccion) {
+            const coincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
+            coincidentes.forEach(b => b.classList.add('activo'));
+            localStorage.setItem('seccion-activa', seccion);
+          } else {
+            localStorage.removeItem('seccion-activa');
+          }
+        });
+      });
+    }
+
+    function aplicarActivoDesdeStorage() {
+      const seccion = localStorage.getItem('seccion-activa');
+      if (!seccion) return;
+
+      const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
+      botonesCoincidentes.forEach(b => b.classList.add('activo'));
+    }
+
+    activarBotonesSidebar();
+    aplicarActivoDesdeStorage();
   </script>
 </body>
 </html>
