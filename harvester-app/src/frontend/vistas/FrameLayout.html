@@ -7,53 +7,6 @@
   <link href="../utils/sideBar.css" rel="stylesheet" />
   <link href="../utils/topBar.css" rel="stylesheet" />
   <link href="../utils/FrameLayout.css" rel="stylesheet" />
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: "SegoeUi-Regular", sans-serif;
-    }
-
-    .formulas-brillante {
-      background: #dbdce0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .frame-10 {
-      display: flex;
-      flex-direction: row;
-      height: 100%;
-    }
-
-    .sidebar-container {
-      background: #ffffff;
-      flex-shrink: 0;
-      height: 100%;
-    }
-
-    .main-container {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .topbar-container {
-      flex-shrink: 0;
-    }
-
-    .content-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 25px;
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
   </style>
 </head>
 <body>
@@ -147,7 +100,6 @@
 
         <div class="content-container">
           <div class="frame-92">
-            <div class="formulas">Fórmulas</div>
           </div>
           <div class="frame-48">
             <!-- contenido dinámico -->
@@ -164,50 +116,61 @@
     const btnExpand = document.getElementById('expand-button');
     const sidebarExpanded = document.getElementById('sidebar-expanded');
     const sidebarCollapsed = document.getElementById('sidebar-collapsed');
-
+  
     if (btnCollapse && btnExpand && sidebarExpanded && sidebarCollapsed) {
       btnCollapse.addEventListener('click', () => {
         sidebarExpanded.style.display = 'none';
         sidebarCollapsed.style.display = 'flex';
         aplicarActivoDesdeStorage();
       });
-
+  
       btnExpand.addEventListener('click', () => {
         sidebarCollapsed.style.display = 'none';
         sidebarExpanded.style.display = 'flex';
         aplicarActivoDesdeStorage();
       });
     }
-
+  
     function activarBotonesSidebar() {
       const botones = document.querySelectorAll('.boton-sidebar');
+  
       botones.forEach(boton => {
         boton.addEventListener('click', () => {
           const seccion = boton.getAttribute('data-seccion');
-          const yaActivo = boton.classList.contains('activo');
-          botones.forEach(b => b.classList.remove('activo'));
-
-          if (!yaActivo && seccion) {
-            const coincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
-            coincidentes.forEach(b => b.classList.add('activo'));
-            localStorage.setItem('seccion-activa', seccion);
-          } else {
-            localStorage.removeItem('seccion-activa');
-          }
+          if (!seccion) return;
+  
+          // Eliminar clase activa de todos los botones
+          const todosBotones = document.querySelectorAll('.boton-sidebar');
+          todosBotones.forEach(b => b.classList.remove('activo'));
+  
+          // Activar los botones que coinciden con la sección (en ambas versiones del sidebar)
+          const coincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
+          coincidentes.forEach(b => b.classList.add('activo'));
+  
+          // Guardar en localStorage
+          localStorage.setItem('seccion-activa', seccion);
         });
       });
     }
-
+  
     function aplicarActivoDesdeStorage() {
       const seccion = localStorage.getItem('seccion-activa');
+  
+      // Limpiar todos primero
+      const todosBotones = document.querySelectorAll('.boton-sidebar');
+      todosBotones.forEach(b => b.classList.remove('activo'));
+  
       if (!seccion) return;
-
+  
+      // Activar en ambos sidebars
       const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
       botonesCoincidentes.forEach(b => b.classList.add('activo'));
     }
-
+  
+    // Inicialización
     activarBotonesSidebar();
     aplicarActivoDesdeStorage();
   </script>
+  
 </body>
 </html>

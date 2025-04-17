@@ -1,53 +1,47 @@
-.frame-9,
-.frame-9 * {
-  box-sizing: border-box;
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "SegoeUi-Regular", sans-serif;
 }
-.frame-9 {
+
+.formulas-brillante {
+  background: #dbdce0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.frame-10 {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.sidebar-container {
+  background: #ffffff;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.main-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.topbar-container {
+  flex-shrink: 0;
+}
+
+.content-container {
+  flex: 1;
+  overflow-y: auto;
   padding: 25px;
   display: flex;
   flex-direction: column;
   gap: 25px;
-  align-items: center;
-  justify-content: flex-start;
-  align-self: stretch;
-  flex: 1;
-  position: relative;
-}
-.frame-92 {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 125px;
-  align-items: center;
-  justify-content: center;
-  align-self: stretch;
-  flex-shrink: 0;
-  height: 72px;
-  position: relative;
-}
-.formulas {
-  color: #000000;
-  text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 32px;
-  line-height: 100%;
-  font-weight: 400;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.frame-48 {
-  background: #ffffff;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: row;
-  gap: 125px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  align-self: stretch;
-  flex: 1;
-  position: relative;
 }
