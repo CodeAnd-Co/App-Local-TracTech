@@ -3,141 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sidebar Toggle</title>
+  <title>Harvester App</title>
   <link href="../utils/sideBar.css" rel="stylesheet" />
+  <link href="../utils/topBar.css" rel="stylesheet" />
+  <link href="../utils/FrameLayout.css" rel="stylesheet" />
 </head>
 <body>
+  <div class="formulas-brillante">
+    <div class="frame-10">
 
-  <div id="sidebar-wrapper">
-    <!-- SIDEBAR DESPLEGADA -->
-    <div class="state-default" id="sidebar-expanded">
-      <div>
-        <button class="boton-sidebar sidebar-logo" id="collapse-button">
-          <img src="../utils/imagenes/HarvesterAppIcon.ico" />
-          <span>HARVESTER</span>
-          <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" alt="Colapsar" />
-        </button>
-        
-  
-        <div class="sidebar-navegacion"  >
-          <button class="boton-sidebar" data-seccion="inicio">
-            <img src="../utils/iconos/Casa.svg" />
-            <span>Inicio</span>
-          </button>
-          <button class="boton-sidebar"  data-seccion="analisis">
-            <img src="../utils/iconos/GraficaBarras.svg" />
-            <span>Análisis</span>
-          </button>
-          <button class="boton-sidebar"  data-seccion="plantillas">
-            <img src="../utils/iconos/Portapapeles.svg" />
-            <span>Plantillas</span>
-          </button>
-          <button class="boton-sidebar"  data-seccion="formulas">
-            <img src="../utils/iconos/Funcion.svg" />
-            <span>Fórmulas</span>
-          </button>
-          <button class="boton-sidebar"  data-seccion="envios">
-            <img src="../utils/iconos/Correo.svg" />
-            <span>Envíos</span>
-          </button>
+      <div class="sidebar-container">
+        <iframe src="sideBar.html" frameborder="0" id="sidebar-iframe"></iframe>
+      </div>
+
+      <div class="main-container">
+        <div class="topbar-container">
+          <div class="top-bar">
+            <button class="frame-regresar">
+              <img class="icono-regresar" src="../utils/iconos/FlechaAtras.svg" alt="Flecha atrás" />
+              <span class="texto-boton">Regresar</span>
+            </button>
+            <div class="frame-titulo">
+              <div class="texto-analisis">Análisis</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-container">
+          <div class="frame-92">
+          </div>
+          <div class="frame-48">
+            <!-- contenido dinámico -->
+          </div>
         </div>
       </div>
-  
-      <div class="sidebar-inferior">
-        <button class="boton-sidebar"  data-seccion="usuario">
-          <img src="../utils/iconos/Usuario.svg" />
-          <span>Nombre Usuario</span>
-        </button>
-        <button class="boton-sidebar"  data-seccion="tema">
-          <img src="../utils/iconos/Tema.svg" />
-          <span>Modo Oscuro</span>
-        </button>
-      </div>
-    </div>
-  
-    <!-- SIDEBAR COLAPSADA -->
-    <div class="state-collapsed" id="sidebar-collapsed" style="display: none;">
-      <div>
-        <button class="boton-sidebar sidebar-logo" id="expand-button">
-          <img src="../utils/iconos/Menu.svg" />
-          <span>HARVESTER</span>
-        </button>
-  
-        <div class="sidebar-navegacion">
-          <button class="boton-sidebar"  data-seccion="inicio">
-            <img src="../utils/iconos/Casa.svg" />
-          </button>
-          <button class="boton-sidebar"  data-seccion="analisis">
-            <img src="../utils/iconos/GraficaBarras.svg" />
-          </button>
-          <button class="boton-sidebar"  data-seccion="plantillas">
-            <img src="../utils/iconos/Portapapeles.svg" />
-          </button>
-          <button class="boton-sidebar"  data-seccion="formulas">
-            <img src="../utils/iconos/Funcion.svg" />
-          </button>
-          <button class="boton-sidebar"  data-seccion="envios">
-            <img src="../utils/iconos/Correo.svg" />
-          </button>
-        </div>
-      </div>
-  
-      <div class="sidebar-inferior">
-        <button class="boton-sidebar"  data-seccion="usuario">
-          <img src="../utils/iconos/Usuario.svg" />
-        </button>
-        <button class="boton-sidebar"  data-seccion="tema">
-          <img src="../utils/iconos/Tema.svg" />
-        </button>
-      </div>
+
     </div>
   </div>
-  
+
   <script>
-  const btnCollapse = document.getElementById('collapse-button');
-  const btnExpand = document.getElementById('expand-button');
-  const sidebarExpanded = document.getElementById('sidebar-expanded');
-  const sidebarCollapsed = document.getElementById('sidebar-collapsed');
+    // Asegúrate de que el iframe esté cargado antes de intentar acceder a su contenido
+    document.getElementById('sidebar-iframe').onload = function() {
+      const iframeContent = this.contentDocument || this.contentWindow.document;
+      
+      // Ahora puedes acceder a los elementos dentro del iframe
+      const btnCollapse = iframeContent.getElementById('collapse-button');
+      const btnExpand = iframeContent.getElementById('expand-button');
+      const sidebarExpanded = iframeContent.getElementById('sidebar-expanded');
+      const sidebarCollapsed = iframeContent.getElementById('sidebar-collapsed');
 
-  // Alternar entre colapsado y expandido
-  btnCollapse.addEventListener('click', () => {
-    sidebarExpanded.style.display = 'none';
-    sidebarCollapsed.style.display = 'flex';
-    aplicarActivoDesdeStorage();
-  });
+      if (btnCollapse && btnExpand && sidebarExpanded && sidebarCollapsed) {
+        btnCollapse.addEventListener('click', () => {
+          sidebarExpanded.style.display = 'none';
+          sidebarCollapsed.style.display = 'flex';
+          aplicarActivoDesdeStorage(iframeContent);
+        });
 
-  btnExpand.addEventListener('click', () => {
-    sidebarCollapsed.style.display = 'none';
-    sidebarExpanded.style.display = 'flex';
-    aplicarActivoDesdeStorage();
-  });
+        btnExpand.addEventListener('click', () => {
+          sidebarCollapsed.style.display = 'none';
+          sidebarExpanded.style.display = 'flex';
+          aplicarActivoDesdeStorage(iframeContent);
+        });
+      }
 
-  // Función para marcar el botón activo
-  function activarBotonesSidebar() {
-    const botones = document.querySelectorAll('.boton-sidebar');
+      activarBotonesSidebar(iframeContent);
+      aplicarActivoDesdeStorage(iframeContent);
+    };
 
-    botones.forEach(boton => {
-      boton.addEventListener('click', () => {
-        const seccion = boton.getAttribute('data-seccion');
-        const yaActivo = boton.classList.contains('activo');
+    function activarBotonesSidebar(doc) {
+      const botones = doc.querySelectorAll('.boton-sidebar');
 
-        // Limpiar todos los botones
-        botones.forEach(b => b.classList.remove('activo'));
+      botones.forEach(boton => {
+        boton.addEventListener('click', () => {
+          const seccion = boton.getAttribute('data-seccion');
+          if (!seccion) return;
 
-        // Si no estaba activo, activarlo en todas las versiones
-        if (!yaActivo && seccion) {
-          const coincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
+          const todosBotones = doc.querySelectorAll('.boton-sidebar');
+          todosBotones.forEach(b => b.classList.remove('activo'));
+
+          const coincidentes = doc.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
           coincidentes.forEach(b => b.classList.add('activo'));
 
-          // Guardar sección activa en localStorage
           localStorage.setItem('seccion-activa', seccion);
-        } else {
-          // Si ya estaba activo, quitar selección
-          localStorage.removeItem('seccion-activa');
-        }
+        });
       });
-    });
-  }
+    }
 
   // Función para aplicar clase activa desde localStorage
   function aplicarActivoDesdeStorage() {
