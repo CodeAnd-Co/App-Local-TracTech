@@ -15,8 +15,11 @@
   overflow: hidden;
 }
 
-.modal-informacion::backdrop {
-    background-color: rgba(0,0,0,.33);
+#modalContacto::backdrop {
+    background-color: rgba(0, 0, 0, 0.55);
+}
+#modalContacto{
+  padding: 0px;
 }
 
 .titulo-informacion,
