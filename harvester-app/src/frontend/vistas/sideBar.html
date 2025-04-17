@@ -1,38 +1,136 @@
-<div class="state-collapsed">
-    <div class="side-bar-collapsed">
-      <div class="iconos-alto">
-        <button class="menu">
-          <img class="menu" src="../utils/iconos/Menu.svg" />
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sidebar Toggle</title>
+  <link href="../utils/sideBar.css" rel="stylesheet" />
+</head>
+<body>
+
+  <div id="sidebar-wrapper">
+    <!-- SIDEBAR DESPLEGADA -->
+    <div class="state-default" id="sidebar-expanded">
+      <div>
+        <button class="boton-sidebar sidebar-logo" id="collapse-button">
+          <img src="../utils/imagenes/HarvesterAppIcon.ico" />
+          <span>HARVESTER</span>
+          <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" alt="Colapsar" />
         </button>
-        <div class="navegadores">
-          <div class="inicio">
-            <img class="home-icono" src="../utils/iconos/Home.svg" />
-          </div>
-          <button class="analisis">
-            <img class="barChart-icono" src="../utils/iconos/BarChart.svg" />
+        
+  
+        <div class="sidebar-navegacion">
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/Casa.svg" />
+            <span>Inicio</span>
           </button>
-          <button class="plantillas">
-            <img class="clipboard-icono" src="../utils/iconos/Clipboard.svg" />
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/GraficaBarras.svg" />
+            <span>Análisis</span>
           </button>
-          <button class="funcion">
-            <img class="funcion1" src="../utils/iconos/function_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/Portapapeles.svg" />
+            <span>Plantillas</span>
           </button>
-          <button class="envios">
-            <img class="mail" src="../utils/iconos/Mail.svg" />
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/Funcion.svg" />
+            <span>Fórmulas</span>
+          </button>
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/Correo.svg" />
+            <span>Envíos</span>
           </button>
         </div>
       </div>
   
-      <div class="iconos-bajo">
-        <button class="al-icono-usuario">
-          <img class="al-usuario" src="../utils/iconos/Usuario.svg" />
+      <div class="sidebar-inferior">
+        <button class="boton-sidebar">
+          <img src="../utils/iconos/Usuario.svg" />
+          <span>Nombre Usuario</span>
         </button>
-        <div class="frame-41">
-          <div class="tema"></div>
-          <div class="ellipse-2"></div>
-          <img class="moon" src="../utils/iconos/Tema.svg" />
+        <button class="boton-sidebar">
+          <img src="../utils/iconos/Tema.svg" />
+          <span>Modo Oscuro</span>
+        </button>
+      </div>
+    </div>
+  
+    <!-- SIDEBAR COLAPSADA -->
+    <div class="state-collapsed" id="sidebar-collapsed" style="display: none;">
+      <div>
+        <button class="boton-sidebar sidebar-logo" id="expand-button">
+          <img src="../utils/iconos/Menu.svg" />
+          <span>HARVESTER</span>
+        </button>
+  
+        <div class="sidebar-navegacion">
+          <button class="boton-sidebar activo">
+            <img src="../utils/iconos/Casa.svg" />
+          </button>
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/GraficaBarras.svg" />
+          </button>
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/Portapapeles.svg" />
+          </button>
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/Funcion.svg" />
+          </button>
+          <button class="boton-sidebar">
+            <img src="../utils/iconos/Correo.svg" />
+          </button>
         </div>
+      </div>
+  
+      <div class="sidebar-inferior">
+        <button class="boton-sidebar">
+          <img src="../utils/iconos/Usuario.svg" />
+        </button>
+        <button class="boton-sidebar">
+          <img src="../utils/iconos/Tema.svg" />
+        </button>
       </div>
     </div>
   </div>
   
+  <script>
+    const btnCollapse = document.getElementById('collapse-button');
+    const btnExpand = document.getElementById('expand-button');
+    const sidebarExpanded = document.getElementById('sidebar-expanded');
+    const sidebarCollapsed = document.getElementById('sidebar-collapsed');
+  
+    // Alternar entre colapsado y expandido
+    btnCollapse.addEventListener('click', () => {
+      sidebarExpanded.style.display = 'none';
+      sidebarCollapsed.style.display = 'flex';
+    });
+  
+    btnExpand.addEventListener('click', () => {
+      sidebarCollapsed.style.display = 'none';
+      sidebarExpanded.style.display = 'flex';
+    });
+  
+    // Funcionalidad para marcar el botón activo
+    function activarBotonesSidebar() {
+  const botones = document.querySelectorAll('.boton-sidebar');
+
+  botones.forEach(boton => {
+    boton.addEventListener('click', () => {
+      const yaActivo = boton.classList.contains('activo');
+
+      // Eliminar la clase 'activo' de todos los botones
+      botones.forEach(b => b.classList.remove('activo'));
+
+      // Si el botón no estaba activo, se activa
+      if (!yaActivo) {
+        boton.classList.add('activo');
+      }
+    });
+  });
+} 
+    // Ejecutar al cargar
+    activarBotonesSidebar();
+  </script>  
+
+</body>
+</html>
