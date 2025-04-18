@@ -1,11 +1,11 @@
 function cargarModulo(seccion) {
   const rutaModulo = {
-    inicio:      "../vistas/ModuloInicio.html",
-    analisis:    "../vistas/ModuloAnalisis.html",
-    plantillas:  "../vistas/ModuloPlantillas.html",
-    formulas:    "../vistas/ModuloFormulas.html",
-    envios:      "../vistas/ModuloEnvios.html",
-    usuario:     "../vistas/ModuloUsuario.html"
+    inicio:      "../vistas/moduloInicio.html",
+    analisis:    "../vistas/moduloAnalisis.html",
+    plantillas:  "../vistas/moduloPlantillas.html",
+    formulas:    "../vistas/moduloFormulas.html",
+    envios:      "../vistas/moduloEnvios.html",
+    usuario:     "../vistas/moduloUsuario.html"
     // tema no va aquí
   };
 
