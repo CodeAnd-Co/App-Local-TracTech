@@ -1,0 +1,98 @@
+body {
+    font-family: "SegoeUi-Regular", sans-serif;
+  }
+  
+  /* ===== SIDEBAR CONTAINER ===== */
+  #sidebar-wrapper {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* ===== ESTADOS ===== */
+  .state-default,
+  .state-collapsed {
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    height: 100vh;
+    transition: all 0.3s ease;
+  }
+  
+  /* ===== BOTÓN GENERAL ===== */
+  .boton-sidebar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #6d6c6c;
+    width: 100%;
+    transition: background 0.2s;
+  }
+  
+  .boton-sidebar:hover {
+    background: rgba(226, 226, 226, 0.33);
+  }
+  
+  .boton-sidebar.activo {
+    background: rgba(226, 226, 226, 0.33);
+    color: #000000;
+    box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* ===== ICONOS EN BOTONES ===== */
+  .boton-sidebar img {
+    width: 35px;
+    height: 35px;
+    flex-shrink: 0;
+  }
+  
+  /* ===== SECCIONES ===== */
+  .sidebar-navegacion,
+  .sidebar-inferior {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  
+  /* ===== LOGO ===== */
+  .sidebar-logo {
+    font-size: 24px;
+    color: #000;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  /* ===== COLAPSADA ===== */
+  .state-collapsed .boton-sidebar span,
+  .state-collapsed .sidebar-logo span {
+    display: none;
+  }
+  
+  .state-collapsed .boton-sidebar {
+    justify-content: center;
+    padding: 10px;
+    width: 55px;
+    height: 55px;
+  }
+  
+  .sidebar-logo .flecha-atras {
+    width: 24px;
+    height: 24px;
+    margin-left: auto;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  
+  .sidebar-logo:hover .flecha-atras {
+    opacity: 1;
+  }  
