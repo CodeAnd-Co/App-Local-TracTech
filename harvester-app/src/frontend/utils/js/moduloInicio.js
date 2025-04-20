@@ -26,7 +26,6 @@ function cambiarNombreArchivo() {
         // Solo usamos addEventListener, no también onchange
         entradaArchivo.addEventListener('change', manejarCambioArchivo);
         
-        console.log("Listeners para cambio de archivo configurados");
     }, 100);
 }
 
@@ -55,8 +54,6 @@ function configurarBotonAnalisis() {
 }
 
 function actualizarSidebarActivo(seccion) {
-    // Guardar sección activa en localStorage
-    localStorage.setItem('seccion-activa', seccion);
     
     // Quitar "activo" de todos los botones
     const todosBotones = document.querySelectorAll('.boton-sidebar');
@@ -89,16 +86,35 @@ function leerArchivoExcel(archivo) {
             const datos = new Uint8Array(e.target.result);
             const libro = XLSX.read(datos, { type: 'array' });
             
-            // Procesamos los datos del Excel
-            const primeraHoja = libro.SheetNames[0];
-            const hoja = libro.Sheets[primeraHoja];
-            const datosJSON = XLSX.utils.sheet_to_json(hoja, { header: 1 });
-
-            // Guardar los datos en localStorage para que persistan entre cambios de módulo
-            localStorage.setItem('datosExcel', JSON.stringify(datosJSON));
+            // Procesamos todas las hojas del Excel
+            const todasLasHojas = {};
+            
+            // Recorremos cada nombre de hoja en el libro
+            libro.SheetNames.forEach(nombreHoja => {
+                // Obtenemos la hoja por su nombre
+                const hoja = libro.Sheets[nombreHoja];
+                // Convertimos la hoja a JSON
+                const datosHojaJSON = XLSX.utils.sheet_to_json(hoja, { header: 1 });
+                // Almacenamos los datos usando el nombre de la hoja como clave
+                todasLasHojas[nombreHoja] = datosHojaJSON;
+            });
+            
+            console.log("Hojas encontradas:", libro.SheetNames);
+            console.log("Datos de todas las hojas:", todasLasHojas);
+            
+            // Incluimos metadatos útiles
+            const datosCompletos = {
+                nombreArchivo: archivo.name,
+                nombresHojas: libro.SheetNames,
+                hojas: todasLasHojas,
+                hojaActiva: libro.SheetNames[0] // Por defecto, la primera hoja
+            };
+            
+            // Guardar los datos en localStorage con la nueva estructura
+            localStorage.setItem('datosExcel', JSON.stringify(datosCompletos));
             
             // Navegamos al módulo de análisis con los datos
-            cargarModulo('analisis', datosJSON);
+            cargarModulo('analisis', datosCompletos);
             
         } catch (error) {
             console.error("Error al leer el archivo Excel:", error);
