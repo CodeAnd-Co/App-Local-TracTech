@@ -48,7 +48,7 @@ function incluirHTML(id, url, callback) {
     .then(res => res.text())
     .then(html => {
       document.getElementById(id).innerHTML = html;
-      if (callback) callback(); // 👈 Ejecuta la función si la mandas
+      if (callback) callback(); // Ejecuta la función si la mandas
     })
     .catch(err => {
       console.warn("Error al cargar " + url + ": ", err);
