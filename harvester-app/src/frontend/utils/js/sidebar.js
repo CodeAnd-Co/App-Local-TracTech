@@ -16,13 +16,29 @@ function cargarModulo(seccion) {
       .then(res => res.text())
       .then(html => {
         contenedor.innerHTML = html;
+        
+        // Inicializar el módulo según la sección
+        if (seccion === 'inicio') {
+          if (window.cambiarNombreArchivo) {
+            window.cambiarNombreArchivo();
+          }
+          if (window.configurarBotonAnalisis) {
+            window.configurarBotonAnalisis();
+          }
+        } else if (seccion === 'analisis') {
+          if (window.inicializarModuloAnalisis) {
+            // Recuperar datos del localStorage si existen
+            const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
+            window.inicializarModuloAnalisis(datosExcel);
+          }
+        }
+        // Añadir más inicializaciones para otros módulos según sea necesario
       })
       .catch(err => {
         console.error("Error al cargar el módulo:", err);
       });
   }
 }
-
 const topbarInfo = {
   inicio:    { titulo: "Inicio",     icono: "../utils/iconos/Casa.svg" },
   analisis:  { titulo: "Análisis",   icono: "../utils/iconos/GraficaBarras.svg" },
@@ -122,3 +138,5 @@ function actualizarTopbar(seccion) {
     tituloElem.style.marginLeft = "10px";
   }
 }
+
+window.actualizarTopbar = actualizarTopbar;

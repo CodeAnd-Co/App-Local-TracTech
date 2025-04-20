@@ -1,8 +1,11 @@
+let datosExcelGlobal = null; // Variable para almacenar los datos de Excel
+
 const modulos = {
   inicio: {
     url: "../vistas/moduloInicio.html",
     init: () => {
       cambiarNombreArchivo();
+      configurarBotonAnalisis();
     }
   },
   analisis: {
@@ -55,7 +58,11 @@ function incluirHTML(id, url, callback) {
     });
 }
 
-function cargarModulo(nombre) {
+function cargarModulo(nombre, datos = null) {
+  if (datos !== null) {
+    datosExcelGlobal = datos; // Guardamos los datos para pasarlos al módulo
+  }
+  
   const modulo = modulos[nombre];
   if (!modulo) return console.error(`Módulo '${nombre}' no encontrado`);
   
