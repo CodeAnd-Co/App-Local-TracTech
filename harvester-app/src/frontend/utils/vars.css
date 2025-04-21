@@ -1,0 +1,28 @@
+:root{
+    --primario: #A61930;
+    --secundario: #1F4281;
+    --acento: #262B40;
+    --blanco: #FFFFFF;
+    --negro: #000000;
+    --texto-porLlenar: #9C9C9C;
+    --box-porLlenar: #E8E8E8;
+    --iconos-claro: #6D6C6C;
+    --borde-blanco: rgba(255,255,255,0.20);
+    --borde-negro: rgba(0,0,0,0.20);
+
+
+
+    --texto: #000000;
+    --box: #FFFFFF;
+    --fondo: #DBDCE0;
+    --sidebar-fondo: #FFFFFF;
+    --sidebar-clickeado: #F6F6F6;
+}
+
+.modoOscuro{
+    --texto: #FFFFFF;
+    --box: #2A2B2C;
+    --fondo: #3B3B3B;
+    --sidebar-fondo: #0E101A;
+    --sidebar-clickeado: #A61930;
+}

@@ -11,7 +11,7 @@ body {
   /* ===== ESTADOS ===== */
   .state-default,
   .state-collapsed {
-    background: #ffffff;
+    background: var(--sidebar-fondo);
     display: flex;
     flex-direction: column;
     justify-content: space-between;

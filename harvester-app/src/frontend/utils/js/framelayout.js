@@ -14,6 +14,7 @@
   window.addEventListener("DOMContentLoaded", () => {
     incluirHTML("sidebar-wrapper-container", "../vistas/sidebar.html", () => {
       inicializarSidebar(); // Ejecuta el script una vez insertado el sidebar
+      inicializarTema();
     });
 
     incluirHTML("topbar-container", "../vistas/topBar.html");
