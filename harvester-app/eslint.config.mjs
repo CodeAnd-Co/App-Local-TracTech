@@ -60,7 +60,7 @@ export default [
 
   // Entorno Node.js (main process, preload, etc.)
   {
-    files: ["./src/main.js", "./src/preload.js", "src/main/**"],
+    files: ["./src/main.js", "./src/preload.js", "src/main/**", "./src/**"],
     languageOptions: {
       globals: globals.node,
     },
@@ -68,7 +68,7 @@ export default [
 
   // Entorno navegador (renderer process)
   {
-    files: ["./src/renderer.js", "src/renderer/**"],
+    files: ["./src/renderer.js", "src/renderer/**", "./src/**"],
     languageOptions: {
       globals: globals.browser,
     },
