@@ -14,11 +14,13 @@ const createWindow = () => {
     height: 1080,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false, // Desactivar el aislamiento de contexto para permitir el uso de Node.js en el frontend
     },
   });
 
   // Cargar el archivo HTML de inicio de sesión.
-  mainWindow.loadFile(path.join(__dirname, './frontend/vistas/FrameLayout.html'));
+  mainWindow.loadFile(path.join(__dirname, './framework/vistas/inicioSesion.html'));
 
   // Poner la ventana en modo de pantalla completa.
   mainWindow.maximize();
