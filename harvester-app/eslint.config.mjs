@@ -68,7 +68,7 @@ export default [
 
   // Entorno navegador (renderer process)
   {
-    files: ["./src/renderer.js", "src/renderer/**"],
+    files: ["./src/renderer.js", "src/renderer/**", "./src/**"],
     languageOptions: {
       globals: globals.browser,
     },
