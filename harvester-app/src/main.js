@@ -14,6 +14,8 @@ const createWindow = () => {
     height: 1080,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false, // Desactivar el aislamiento de contexto para permitir el uso de Node.js en el frontend
     },
   });
 
