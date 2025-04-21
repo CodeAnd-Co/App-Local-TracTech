@@ -12,6 +12,9 @@ function cambiarNombreArchivo() {
             return console.error("No se encontraron los elementos necesarios");
         }
         
+        // Eliminar cualquier dato de sección activa al cargar el módulo inicio
+        localStorage.removeItem('seccion-activa');
+        
         // Usamos un solo método para manejar el cambio
         function manejarCambioArchivo() {
             if (entradaArchivo.files && entradaArchivo.files.length > 0) {
@@ -45,32 +48,43 @@ function configurarBotonAnalisis() {
                     // Leer el archivo Excel
                     leerArchivoExcel(archivo);
                     
-                    // Actualizar la sidebar y el estado activo
-                    actualizarSidebarActivo('analisis');
+                    // Esperar un momento para que se procesen los datos antes de cambiar de módulo
+                    setTimeout(() => {
+                        // Buscar todos los botones del sidebar con data-seccion="analisis" 
+                        // y marcarlos como activos
+                        const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
+                        const todosBotones = document.querySelectorAll('.boton-sidebar');
+                        
+                        // Quitar activo de todos los botones
+                        todosBotones.forEach(boton => boton.classList.remove('activo'));
+                        
+                        // Marcar como activos los botones de análisis
+                        botonesAnalisis.forEach(boton => boton.classList.add('activo'));
+                        
+                        // Actualizar topbar directamente
+                        if (window.actualizarTopbar) {
+                            window.actualizarTopbar('analisis');
+                        }
+                        
+                        // Cargar el módulo de análisis
+                        const ventanaPrincipal = document.getElementById('ventana-principal');
+                        if (ventanaPrincipal) {
+                            fetch('../vistas/moduloAnalisis.html')
+                                .then(res => res.text())
+                                .then(html => {
+                                    ventanaPrincipal.innerHTML = html;
+                                    // Si el script de análisis ya está cargado, inicializarlo
+                                    if (window.inicializarModuloAnalisis) {
+                                        window.inicializarModuloAnalisis();
+                                    }
+                                })
+                                .catch(err => console.error("Error cargando módulo de análisis:", err));
+                        }
+                    }, 500); // Esperar 500ms para asegurar que los datos se guarden correctamente
                 }
             });
         }
     }, 100);
-}
-
-function actualizarSidebarActivo(seccion) {
-    
-    // Quitar "activo" de todos los botones
-    const todosBotones = document.querySelectorAll('.boton-sidebar');
-    if (todosBotones) {
-        todosBotones.forEach(b => b.classList.remove('activo'));
-    }
-    
-    // Marcar como activo los botones que coincidan con la sección
-    const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
-    if (botonesCoincidentes) {
-        botonesCoincidentes.forEach(b => b.classList.add('activo'));
-    }
-    
-    // También actualizar el topbar
-    if (window.actualizarTopbar) {
-        window.actualizarTopbar(seccion);
-    }
 }
 
 function leerArchivoExcel(archivo) {
@@ -81,9 +95,9 @@ function leerArchivoExcel(archivo) {
     }
     
     const lector = new FileReader();
-    lector.onload = function(e) {
+    lector.onload = function(evento) {
         try {
-            const datos = new Uint8Array(e.target.result);
+            const datos = new Uint8Array(evento.target.result);
             const libro = XLSX.read(datos, { type: 'array' });
             
             // Procesamos todas las hojas del Excel
@@ -99,37 +113,62 @@ function leerArchivoExcel(archivo) {
                 todasLasHojas[nombreHoja] = datosHojaJSON;
             });
             
-            console.log("Hojas encontradas:", libro.SheetNames);
-            console.log("Datos de todas las hojas:", todasLasHojas);
-            
             // Incluimos metadatos útiles
             const datosCompletos = {
                 nombreArchivo: archivo.name,
-                nombresHojas: libro.SheetNames,
                 hojas: todasLasHojas,
-                hojaActiva: libro.SheetNames[0] // Por defecto, la primera hoja
             };
             
             // Guardar los datos en localStorage con la nueva estructura
             localStorage.setItem('datosExcel', JSON.stringify(datosCompletos));
             
-            // Navegamos al módulo de análisis con los datos
-            cargarModulo('analisis', datosCompletos);
+            // También guardar un indicador de que hay datos disponibles
+            localStorage.setItem('datosExcelDisponibles', 'true');
             
+            if (elementoNombreArchivo) {
+                elementoNombreArchivo.textContent = archivo.name;
+            }
+
         } catch (error) {
             console.error("Error al leer el archivo Excel:", error);
             alert("Error al procesar el archivo Excel. Verifica que sea un archivo válido.");
+            
+            if (elementoNombreArchivo) {
+                elementoNombreArchivo.textContent = 'Error al leer el archivo';
+            }
         }
     };
     
     lector.onerror = function() {
         console.error("Error al leer el archivo");
         alert("Error al leer el archivo. Inténtalo de nuevo.");
+        
+        if (elementoNombreArchivo) {
+            elementoNombreArchivo.textContent = 'Error al leer el archivo';
+        }
     };
     
     // Iniciamos la lectura del archivo
     lector.readAsArrayBuffer(archivo);
 }
+
+// Verificar si el DOM ya está cargado, si no, esperar a que cargue
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        cambiarNombreArchivo();
+        configurarBotonAnalisis();
+    });
+} else {
+    // El DOM ya está cargado
+    cambiarNombreArchivo();
+    configurarBotonAnalisis();
+}
+
+// Inicializar la aplicación siempre en el módulo inicio
+window.addEventListener('load', function() {
+    // Establecer 'inicio' como la sección activa al cargar la página
+    localStorage.setItem('seccion-activa', 'inicio');
+});
 
 window.cambiarNombreArchivo = cambiarNombreArchivo;
 window.configurarBotonAnalisis = configurarBotonAnalisis;
