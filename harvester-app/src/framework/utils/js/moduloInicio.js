@@ -154,10 +154,11 @@ function leerArchivoExcel(archivo) {
 
 // Verificar si el DOM ya está cargado, si no, esperar a que cargue
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
+    function onDOMContentLoaded() {
         cambiarNombreArchivo();
         configurarBotonAnalisis();
-    });
+    }
+    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
 } else {
     // El DOM ya está cargado
     cambiarNombreArchivo();
@@ -165,10 +166,12 @@ if (document.readyState === 'loading') {
 }
 
 // Inicializar la aplicación siempre en el módulo inicio
-window.addEventListener('load', function() {
+function establecerSeccionActiva() {
     // Establecer 'inicio' como la sección activa al cargar la página
     localStorage.setItem('seccion-activa', 'inicio');
-});
+}
+
+window.addEventListener('load', establecerSeccionActiva);
 
 window.cambiarNombreArchivo = cambiarNombreArchivo;
 window.configurarBotonAnalisis = configurarBotonAnalisis;

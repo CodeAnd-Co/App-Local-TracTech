@@ -87,11 +87,11 @@ function activarBotonesSidebar() {
 
       // Quitar "activo" de todos
       const todosBotones = document.querySelectorAll('.boton-sidebar');
-      todosBotones.forEach(b => b.classList.remove('activo'));
+      todosBotones.forEach(boton => boton.classList.remove('activo'));
 
       // Marcar como activo el actual (en ambas versiones del sidebar)
       const coincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
-      coincidentes.forEach(b => b.classList.add('activo'));
+      coincidentes.forEach(boton => boton.classList.add('activo'));
 
       // Guardar sección activa
       localStorage.setItem('seccion-activa', seccion);
@@ -106,12 +106,12 @@ function activarBotonesSidebar() {
 function aplicarActivoDesdeStorage() {
   const seccion = localStorage.getItem('seccion-activa');
   const todosBotones = document.querySelectorAll('.boton-sidebar');
-  todosBotones.forEach(b => b.classList.remove('activo'));
+  todosBotones.forEach(boton => boton.classList.remove('activo'));
 
   if (!seccion || seccion === "tema") return;
 
   const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
-  botonesCoincidentes.forEach(b => b.classList.add('activo'));
+  botonesCoincidentes.forEach(boton => boton.classList.add('activo'));
 
   actualizarTopbar(seccion);
   cargarModulo(seccion);
