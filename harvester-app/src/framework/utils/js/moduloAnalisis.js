@@ -1,7 +1,4 @@
-/**
- * Función para inicializar el módulo de análisis
- * Esta función se ejecutará cuando se cargue el módulo
- */
+// Función para inicializar el módulo de análisis
 function inicializarModuloAnalisis() {
     
     // Actualizar el sidebar visualmente sin modificar localStorage
@@ -26,10 +23,7 @@ function inicializarModuloAnalisis() {
     }
 }
 
-/**
- * Carga los datos del Excel desde localStorage
- * @returns {Object|null} Datos del Excel o null si no hay datos
- */
+// Carga los datos del Excel desde localStorage
 function cargarDatosExcel() {
     try {
         // Verificar si hay datos disponibles

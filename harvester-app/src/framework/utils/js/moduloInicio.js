@@ -1,6 +1,6 @@
-/**
- * Configura el cambio de nombre del archivo cuando se selecciona uno
- */
+const XLSX = require('xlsx'); // Asegúrate de que la librería XLSX esté disponible
+
+// Configura el cambio de nombre del archivo cuando se selecciona uno
 function cambiarNombreArchivo() {
     // Esperamos a que el DOM esté completamente cargado
     setTimeout(() => {
