@@ -16,14 +16,14 @@ btnAcceder.addEventListener("click", async () => {
   }
 
   try {
-    const response = await iniciarSesion(correo, contrasena);
+    const respuesta = await iniciarSesion(correo, contrasena);
 
-    if (response.ok) {
+    if (respuesta.ok) {
       // Redirigir al usuario a la página principal
       window.location.href = "./frameLayout.html";
     } else {
       // Mostrar error
-      alert(response.message || "Error al iniciar sesión.");
+      alert(respuesta.message || "Error al iniciar sesión.");
     }
   } catch (error) {
     console.error("Error al conectar con el backend:", error);

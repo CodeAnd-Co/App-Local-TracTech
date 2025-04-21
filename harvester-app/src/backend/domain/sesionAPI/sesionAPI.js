@@ -1,6 +1,5 @@
 async function iniciarSesion(correo, contrasena) {
-  console.log("Intentando iniciar sesión con:", correo, contrasena);
-  const response = await fetch("http://localhost:3000/sesion/iniciar-sesion", {
+  const respuesta = await fetch("http://localhost:3000/sesion/iniciar-sesion", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -8,9 +7,9 @@ async function iniciarSesion(correo, contrasena) {
     body: JSON.stringify({ correo, contrasena }),
   });
 
-  const data = await response.json();
+  const datos = await respuesta.json();
 
-  return { ok: response.ok, ...data };
+  return { ok: respuesta.ok, ...datos };
 }
 
 module.exports = {
