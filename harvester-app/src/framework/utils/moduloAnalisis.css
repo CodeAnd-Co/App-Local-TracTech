@@ -1,7 +1,11 @@
+/* ========== GLOBAL ========== */
+*,
 .frame-analisis,
 .frame-analisis * {
   box-sizing: border-box;
 }
+
+/* ========== LAYOUT GENERAL ========== */
 .frame-analisis {
   display: flex;
   flex-direction: row;
@@ -12,6 +16,7 @@
   flex-shrink: 0;
   position: relative;
 }
+
 .seccion-elemento-reporte {
   background: #ededed;
   border-radius: 8px;
@@ -19,39 +24,47 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
 }
-.titulo {
-  padding: 0px 0px 13px 0px;
+
+/* ========== BOTONES DE AGREGAR ELEMENTOS ========== */
+.contenedor-botones-agregar {
   display: flex;
   flex-direction: row;
-  gap: 25px;
-  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
   justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
+  width: 100%;
 }
-.plus-circle {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  position: relative;
-  overflow: visible;
+
+.boton-agregar {
+  background-color: #a61930;
+  color: #ffffff;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
-.texto {
-  color: #000000;
-  text-align: left;
-  font-family: "Inter-Regular", sans-serif;
-  font-size: 24px;
-  line-height: 100%;
-  font-weight: 400;
-  position: relative;
-  width: 280px;
+
+.boton-agregar:hover {
+  background-color: #8c1429;
 }
+
+.icono-agregar {
+  width: 24px;
+  height: 24px;
+}
+
+/* ========== SECCIÓN DE CONTENIDO IZQUIERDO ========== */
 .seccion-contenido {
   padding: 10px;
   display: flex;
@@ -63,75 +76,11 @@
   position: relative;
   overflow: hidden;
 }
-.tarjeta-grafica {
-  background: #262b40;
-  border-radius: 8px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 362px;
-  position: relative;
-}
-.titulo-grafica {
-  background: #fafafa;
-  border-radius: 10px;
-  padding: 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
-}
-.nombre-de-la-gr-fica {
-  color: #000000;
-  text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 18px;
-  line-height: 100%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-}
-.bar-icono {
-  flex-shrink: 0;
-  width: 33px;
-  height: 33px;
-  position: relative;
-  overflow: visible;
-}
-.boton-formulas {
-  background: #a61930;
-  border-radius: 8px;
-  padding: 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
-}
-.formulas {
-  color: #ffffff;
-  text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 18px;
-  line-height: 100%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-}
+
+/* ========== VISTA PREVIA DERECHA ========== */
 .seccion-preview-grafica {
   border-radius: 8px;
-  border-style: solid;
-  border-color: #000000;
-  border-width: 2px;
+  border: 2px solid #000000;
   padding: 25px;
   display: flex;
   flex-direction: column;
@@ -142,6 +91,7 @@
   flex-shrink: 0;
   position: relative;
 }
+
 .preview-gr-fica {
   color: #000000;
   text-align: left;
@@ -152,6 +102,7 @@
   font-weight: 400;
   position: relative;
 }
+
 .preview-grafica {
   background: #9e9e9e;
   border-radius: 8px;
@@ -165,10 +116,153 @@
   height: 396px;
   position: relative;
 }
+
 .bar-chart {
   flex-shrink: 0;
   width: 55px;
   height: 55px;
   position: relative;
   overflow: visible;
+}
+
+/* ========== TARJETAS GENERALES (TEXTOS Y GRÁFICAS) ========== */
+.tarjeta-grafica,
+.tarjeta-texto {
+  background: var(--acento, #262b40);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+  width: 362px;
+}
+
+/* TITULOS */
+.titulo-grafica,
+.titulo-texto {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.nombre-de-la-gr-fica,
+.nombre-del-texto {
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+}
+
+.bar-icono,
+.type {
+  flex-shrink: 0;
+  width: 33px;
+  height: 33px;
+  position: relative;
+  overflow: visible;
+}
+
+/* BOTÓN FÓRMULAS */
+.boton-formulas {
+  background: #a61930;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.formulas {
+  color: #ffffff;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+}
+
+/* BOTONES EDITAR / ELIMINAR */
+.botones-editar-eliminar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.editar,
+.eliminar {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.editar-icono,
+.edit-icono,
+.eliminar-icono,
+.trash-icono {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: visible;
+}
+
+.texto-editar,
+.texto-eliminar {
+  color: var(--blanco, #ffffff);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.divisor {
+  background: var(--blanco, #ffffff);
+  width: 5px;
+  height: 40px;
+  flex-shrink: 0;
+  position: relative;
+}
+.area-escritura {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  font-size: 16px;
+  font-family: "SegoeUi-Regular", sans-serif;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
 }
