@@ -10,24 +10,23 @@
     <div class="frame-analisis">
         <div class="seccion-elemento-reporte">
             <div class="contenedor-botones-agregar">
-        <button id="agregarTexto" class="boton-agregar">
-          <img class="icono-agregar" src="../utils/iconos/Texto.svg" />
-          <span>Agregar texto</span>
-        </button>
-        <button id="agregarGrafica" class="boton-agregar">
-          <img class="icono-agregar" src="../utils/iconos/GraficaBarras.svg" />
-          <span>Agregar gráfica</span>
-        </button>
-      </div>
-      <div class="seccion-contenido">
-      </div>
+                <button id="agregarTexto" class="boton-agregar">
+                    <img class="icono-agregar" src="../utils/iconos/Texto.svg" />
+                    <span>Agregar texto</span>
+                </button>
+                <button id="agregarGrafica" class="boton-agregar"><!--filter: var(--colInv);-->
+                    <img class="icono-agregar" src="../utils/iconos/GraficaBarras.svg" />
+                    <span>Agregar gráfica</span>
+                </button>
+            </div>
+            <div class="seccion-contenido" id="contenedorElementos">
+            </div>
+        </div>
+        <div class="seccion-preview-grafica">
+            <div class="preview-gr-fica">Vista previa del reporte</div>
+            <div id="contenedor-elementos-preview" class="contenedor-elementos-preview"></div>
+        </div>
     </div>
-    <div class="seccion-preview-grafica">
-      <div class="preview-gr-fica">Vista previa del reporte</div>
-      <div id="contenedor-elementos-preview" class="contenedor-elementos-preview">
-      </div>
-    </div>
-  </div>
   <script type="module" src="../utils/js/moduloAnalisis.js"></script>
 </body>
 </html>
