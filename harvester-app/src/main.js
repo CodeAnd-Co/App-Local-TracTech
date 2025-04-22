@@ -15,7 +15,7 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: false, // Desactivar el aislamiento de contexto para permitir el uso de Node.js en el frontend
     },
   });
 
