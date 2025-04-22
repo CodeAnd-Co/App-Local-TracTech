@@ -1,11 +1,9 @@
-let datosExcelGlobal = null; // Variable para almacenar los datos de Excel
-
-function incluirHTML(id, url, callback) {
+function incluirHTML(id, url, llamada) {
   fetch(url)
     .then(res => res.text())
     .then(html => {
       document.getElementById(id).innerHTML = html;
-      if (callback) callback(); // Ejecuta la función si la mandas
+      if (llamada) llamada(); // Ejecuta la función si la mandas
     })
     .catch(err => {
       console.warn("Error al cargar " + url + ": ", err);
