@@ -1,17 +1,33 @@
 <!DOCTYPE html>
-<link href="../utils/resetStyles.css" rel="stylesheet" />
-<link href="../utils/moduloAnalisis.css" rel="stylesheet" />
 <html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Módulo de Análisis</title>
+  <link rel="stylesheet" href="../utils/resetStyles.css" />
+  <link rel="stylesheet" href="../utils/moduloAnalisis.css" />
+</head>
+<body>
     <div class="frame-analisis">
         <div class="seccion-elemento-reporte">
-            <button class="titulo" id="btnAgregar">
-                <img class="plus-circle" src="../utils/iconos/CirculoMas.svg" />
-                <div class="texto">Agregar elemento</div>
-            </button>
-        </div>
-        <div class="seccion-preview-grafica">
-            <div class="preview-grafica">
-            </div>
-        </div>
+            <div class="contenedor-botones-agregar">
+        <button id="agregarTexto" class="boton-agregar">
+          <img class="icono-agregar" src="../utils/iconos/Texto.svg" />
+          <span>Agregar texto</span>
+        </button>
+        <button id="agregarGrafica" class="boton-agregar">
+          <img class="icono-agregar" src="../utils/iconos/GraficaBarras.svg" />
+          <span>Agregar gráfica</span>
+        </button>
+      </div>
+      <div class="seccion-contenido">
+      </div>
     </div>
-    
+    <div class="seccion-preview-grafica">
+      <div class="preview-gr-fica">Vista previa del reporte</div>
+      <div id="contenedor-elementos-preview" class="contenedor-elementos-preview">
+      </div>
+    </div>
+  </div>
+  <script type="module" src="../utils/js/moduloAnalisis.js"></script>
+</body>
+</html>
