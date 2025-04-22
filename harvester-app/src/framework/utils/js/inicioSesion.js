@@ -1,5 +1,4 @@
 const btnAbrirInfo = document.querySelector("#btn-abrir-info");
-const btnCerrarrInfo = document.querySelector("#btn-cerrar-info");
 const modalInfo = document.querySelector("#modalContacto");
 const btnAcceder = document.querySelector(".boton-acceder");
 const inputCorreo = document.querySelector(".correo[type='email']");

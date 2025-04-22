@@ -1,4 +1,3 @@
-const bcrypt = require("bcrypt");
 const { iniciarSesion: iniciarSesionAPI } = require("../../domain/sesionAPI/sesionAPI");
 
 async function iniciarSesion(correo, contrasena) {
