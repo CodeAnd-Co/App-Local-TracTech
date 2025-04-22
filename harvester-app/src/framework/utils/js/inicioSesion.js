@@ -4,7 +4,7 @@ const modalInfo = document.querySelector("#modalContacto");
 const btnAcceder = document.querySelector(".boton-acceder");
 const inputCorreo = document.querySelector(".correo[type='email']");
 const inputContrasena = document.querySelector(".contrasena");
-const { iniciarSesion } = require("../../backend/domain/sesionAPI/sesionAPI");
+const { iniciarSesion } = require("../../backend/casosUso/sesion/iniciarSesion");
 
 btnAcceder.addEventListener("click", async () => {
   const correo = inputCorreo.value;
@@ -31,7 +31,7 @@ btnAcceder.addEventListener("click", async () => {
   }
 });
 
-btnAbrirInfo.addEventListener("click", ()=>{
+btnAbrirInfo.addEventListener("click", () => {
   modalInfo.showModal();
 })
 
