@@ -1,4 +1,4 @@
-export function agregarGrafica(contenedorId) {
+function agregarGrafica(contenedorId) {
     const contenedor = document.getElementById(contenedorId);
   
     const tarjetaGrafica = document.createElement('div');
@@ -31,4 +31,6 @@ export function agregarGrafica(contenedorId) {
     });
   
     contenedor.appendChild(tarjetaGrafica);
-  }
+}
+  
+window.agregarGrafica = agregarGrafica

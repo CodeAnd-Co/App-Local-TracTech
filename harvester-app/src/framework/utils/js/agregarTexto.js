@@ -1,4 +1,4 @@
-export function agregarTexto(contenedorId) {
+function agregarTexto(contenedorId) {
   const contenedor = document.getElementById(contenedorId);
 
   const tarjetaTexto = document.createElement('div');
@@ -25,3 +25,5 @@ export function agregarTexto(contenedorId) {
 
   contenedor.appendChild(tarjetaTexto);
 }
+
+window.agregarTexto = agregarTexto

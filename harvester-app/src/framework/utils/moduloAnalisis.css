@@ -62,6 +62,7 @@
 .icono-agregar {
   width: 24px;
   height: 24px;
+  filter: var(--colInv);
 }
 
 /* ========== SECCIÓN DE CONTENIDO IZQUIERDO ========== */
