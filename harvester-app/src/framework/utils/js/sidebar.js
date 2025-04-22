@@ -16,13 +16,29 @@ function cargarModulo(seccion) {
       .then(res => res.text())
       .then(html => {
         contenedor.innerHTML = html;
+        
+        // Inicializar el módulo según la sección
+        if (seccion === 'inicio') {
+          if (window.cambiarNombreArchivo) {
+            window.cambiarNombreArchivo();
+          }
+          if (window.configurarBotonAnalisis) {
+            window.configurarBotonAnalisis();
+          }
+        } else if (seccion === 'analisis') {
+          if (window.inicializarModuloAnalisis) {
+            // Recuperar datos del localStorage si existen
+            const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
+            window.inicializarModuloAnalisis(datosExcel);
+          }
+        }
+        // Añadir más inicializaciones para otros módulos según sea necesario
       })
       .catch(err => {
         console.error("Error al cargar el módulo:", err);
       });
   }
 }
-
 const topbarInfo = {
   inicio:    { titulo: "Inicio",     icono: "../utils/iconos/Casa.svg" },
   analisis:  { titulo: "Análisis",   icono: "../utils/iconos/GraficaBarras.svg" },
@@ -71,11 +87,11 @@ function activarBotonesSidebar() {
 
       // Quitar "activo" de todos
       const todosBotones = document.querySelectorAll('.boton-sidebar');
-      todosBotones.forEach(b => b.classList.remove('activo'));
+      todosBotones.forEach(boton => boton.classList.remove('activo'));
 
       // Marcar como activo el actual (en ambas versiones del sidebar)
       const coincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
-      coincidentes.forEach(b => b.classList.add('activo'));
+      coincidentes.forEach(boton => boton.classList.add('activo'));
 
       // Guardar sección activa
       localStorage.setItem('seccion-activa', seccion);
@@ -90,12 +106,12 @@ function activarBotonesSidebar() {
 function aplicarActivoDesdeStorage() {
   const seccion = localStorage.getItem('seccion-activa');
   const todosBotones = document.querySelectorAll('.boton-sidebar');
-  todosBotones.forEach(b => b.classList.remove('activo'));
+  todosBotones.forEach(boton => boton.classList.remove('activo'));
 
   if (!seccion || seccion === "tema") return;
 
   const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
-  botonesCoincidentes.forEach(b => b.classList.add('activo'));
+  botonesCoincidentes.forEach(boton => boton.classList.add('activo'));
 
   actualizarTopbar(seccion);
   cargarModulo(seccion);
@@ -122,3 +138,5 @@ function actualizarTopbar(seccion) {
     tituloElem.style.marginLeft = "10px";
   }
 }
+
+window.actualizarTopbar = actualizarTopbar;
