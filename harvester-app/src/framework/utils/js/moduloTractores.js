@@ -6,11 +6,11 @@ function inicializarModuloTractores() {
 
     // Cargar los datos del Excel desde localStorage
     const datosExcel = cargarDatosExcel();
-    console.log("Datos de Excel:", datosExcel);
+    console.log('Datos de Excel:', datosExcel);
     
-    // Si tienes datos, puedes inicializar tu visualización aquí
+    // Si hay datos, inicializar la visualización aquí
     if (!datosExcel) {
-        console.warn("No hay datos disponibles para análisis");
+        console.warn('No hay datos disponibles para análisis');
     }
 }
 
