@@ -32,6 +32,31 @@
   position: relative;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
+.frame-eliminar {
+  padding: 20px 0px 0px 30px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.boton-basura {
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  cursor: pointer;
+}
+.basura {
+  flex-shrink: 0;
+  width: 55px;
+  height: 55px;
+  position: relative;
+  overflow: visible;
+}
 .usar-excel {
   display: flex;
   flex-direction: column;
