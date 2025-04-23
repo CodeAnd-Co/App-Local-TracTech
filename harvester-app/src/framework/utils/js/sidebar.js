@@ -5,7 +5,8 @@ function cargarModulo(seccion) {
     plantillas:  "../vistas/moduloPlantillas.html",
     formulas:    "../vistas/moduloFormulas.html",
     envios:      "../vistas/moduloEnvios.html",
-    usuario:     "../vistas/moduloUsuario.html"
+    usuario:     "../vistas/moduloUsuario.html",
+    gestionUsuarios:     "../vistas/moduloGestionUsuarios.html"
     // tema no va aquí
   };
 
@@ -30,6 +31,16 @@ function cargarModulo(seccion) {
             // Recuperar datos del localStorage si existen
             const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
             window.inicializarModuloAnalisis(datosExcel);
+          }
+        } else if (seccion == 'usuario') {
+          if (window.inicializarModuloUsuario) {
+            console.log("Inicializando módulo de usuario...");
+            window.inicializarModuloUsuario();
+          }
+        } else if (seccion == 'GestionUsuario') {
+          if (window.inicializarModuloUsuario) {
+            console.log("Inicializando módulo de usuario...");
+            window.inicializarModuloUsuario();
           }
         }
         // Añadir más inicializaciones para otros módulos según sea necesario
