@@ -6,7 +6,7 @@ function incluirHTML(id, url, llamada) {
       if (llamada) llamada(); // Ejecuta la función si la mandas
     })
     .catch(err => {
-      console.warn("Error al cargar " + url + ": ", err);
+      console.warn(`Error al cargar ${url}: `, err);
     });
 }
 
