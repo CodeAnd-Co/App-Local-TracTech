@@ -31,7 +31,7 @@ btnAcceder.addEventListener("click", async () => {
   }
 });
 
-btnAbrirInfo.addEventListener("click", ()=>{
+btnAbrirInfo.addEventListener("click", () => {
   modalInfo.showModal();
 })
 

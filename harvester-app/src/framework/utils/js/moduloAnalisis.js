@@ -19,16 +19,15 @@ function inicializarModuloAnalisis() {
 
   // Configurar botones para añadir elementos a reporte
   const contenedor = 'contenedorElementos';
+  const previsualizacion = 'Previsualizacion';
 
   document.getElementById('agregarTexto').addEventListener('click', () => {
-    console.log("Texto")
     window.agregarTexto(contenedor);
   });
 
   document.getElementById('agregarGrafica').addEventListener('click', () => {
-    console.log("Gráfica")
-    window.agregarGrafica(contenedor)
-  })
+    window.agregarGrafica(contenedor, previsualizacion);
+  });
 
   // Cargar los datos del Excel desde localStorage
   const datosExcel = cargarDatosExcel();

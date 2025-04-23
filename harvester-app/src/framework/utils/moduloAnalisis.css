@@ -62,7 +62,7 @@
 .icono-agregar {
   width: 24px;
   height: 24px;
-  filter: var(--colInv);
+  filter: invert(100%);
 }
 
 /* ========== SECCIÓN DE CONTENIDO IZQUIERDO ========== */
@@ -79,7 +79,7 @@
 }
 
 /* ========== VISTA PREVIA DERECHA ========== */
-.seccion-preview-grafica {
+.seccion-previsualizacion-grafica {
   border-radius: 8px;
   border: 2px solid #000000;
   padding: 25px;
@@ -93,7 +93,7 @@
   position: relative;
 }
 
-.preview-gr-fica {
+.previsualizacion-gr-fica {
   color: #000000;
   text-align: left;
   font-family: "SegoeUi-Regular", sans-serif;
@@ -104,7 +104,7 @@
   position: relative;
 }
 
-.preview-grafica {
+.previsualizacion-grafica {
   background: #9e9e9e;
   border-radius: 8px;
   display: flex;
@@ -145,7 +145,12 @@
 /* TITULOS */
 .titulo-grafica,
 .titulo-texto {
-  background: #fafafa;
+  background-color: #fafafa;
+  background-image: url(../utils/iconos/GraficaBarras.svg);
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: 95% 0.2rem;
+  background-size: 33px 33px;
   border-radius: 10px;
   padding: 10px;
   display: flex;
@@ -155,9 +160,30 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  
 }
 
-.nombre-de-la-gr-fica,
+.titulo-grafica::placeholder {
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+}
+
+.icono-input{
+  position: absolute;
+}
+
 .nombre-del-texto {
   color: var(--negro, #000000);
   text-align: left;
@@ -233,6 +259,7 @@
   flex-shrink: 0;
   position: relative;
   overflow: visible;
+  filter: invert(100%);
 }
 
 .texto-editar,
