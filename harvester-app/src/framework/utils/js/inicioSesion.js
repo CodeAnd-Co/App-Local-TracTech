@@ -1,13 +1,13 @@
 const btnAbrirInfo = document.querySelector("#btn-abrir-info");
 const modalInfo = document.querySelector("#modalContacto");
 const btnAcceder = document.querySelector(".boton-acceder");
-const inputCorreo = document.querySelector(".correo[type='email']");
-const inputContrasena = document.querySelector(".contrasena");
+const entradaCorreo = document.querySelector(".correo[type='email']");
+const entradaContrasena = document.querySelector(".contrasena");
 const { iniciarSesion } = require("../../backend/casosUso/sesion/iniciarSesion");
 
 btnAcceder.addEventListener("click", async () => {
-  const correo = inputCorreo.value;
-  const contrasena = inputContrasena.value;
+  const correo = entradaCorreo.value;
+  const contrasena = entradaContrasena.value;
 
   if (!correo || !contrasena) {
     alert("Por favor, completa todos los campos.");
