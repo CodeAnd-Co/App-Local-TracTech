@@ -37,9 +37,9 @@ function cargarModulo(seccion) {
             console.log("Inicializando módulo de usuario...");
             window.inicializarModuloUsuario();
           }
-        } else if (seccion == 'GestionUsuario') {
+        } else if (seccion == 'gestionUsuario') {
           if (window.inicializarModuloUsuario) {
-            console.log("Inicializando módulo de usuario...");
+            console.log("Inicializando módulo de gestion de usuarios...");
             window.inicializarModuloUsuario();
           }
         }
@@ -56,7 +56,8 @@ const topbarInfo = {
   plantillas:{ titulo: "Plantillas", icono: "../utils/iconos/Portapapeles.svg" },
   formulas:  { titulo: "Fórmulas",   icono: "../utils/iconos/Funcion.svg" },
   envios:    { titulo: "Envíos",     icono: "../utils/iconos/Correo.svg" },
-  usuario:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" }
+  usuario:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" },
+  gestionUsuarios:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" }
 };
 
 function inicializarSidebar() {
@@ -88,7 +89,7 @@ function activarBotonesSidebar() {
 
   botones.forEach(boton => {
     boton.addEventListener('click', () => {
-      const seccion = boton.getAttribute('data-seccion');
+      let seccion = boton.getAttribute('data-seccion');
       if (!seccion) return;
 
       if (seccion === "tema") {
@@ -96,23 +97,27 @@ function activarBotonesSidebar() {
         return;
       }
 
-      // Quitar "activo" de todos
-      const todosBotones = document.querySelectorAll('.boton-sidebar');
-      todosBotones.forEach(boton => boton.classList.remove('activo'));
-
-      // Marcar como activo el actual (en ambas versiones del sidebar)
-      const coincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
-      coincidentes.forEach(boton => boton.classList.add('activo'));
-
-      // Guardar sección activa
+      // Guardamos la sección real
       localStorage.setItem('seccion-activa', seccion);
+      console.log("Sección activa guardada:", seccion);
 
-      // Actualizar topbar y cargar contenido
+      // Determinar cuál botón mostrar como activo visualmente
+      let seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
+
+      // Quitar "activo" de todos los botones
+      document.querySelectorAll('.boton-sidebar').forEach(b => b.classList.remove('activo'));
+
+      // Activar el botón visualmente representativo
+      document.querySelectorAll(`.boton-sidebar[data-seccion="${seccionVisual}"]`)
+        .forEach(b => b.classList.add('activo'));
+
+      // Actualizar topbar y cargar el contenido real
       actualizarTopbar(seccion);
       cargarModulo(seccion);
     });
   });
 }
+
 
 function aplicarActivoDesdeStorage() {
   const seccion = localStorage.getItem('seccion-activa');
@@ -121,7 +126,9 @@ function aplicarActivoDesdeStorage() {
 
   if (!seccion || seccion === "tema") return;
 
-  const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccion}"]`);
+  const seccionVisual = seccion === "gestionUsuarios" ? "usuario" : seccion;
+
+  const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccionVisual}"]`);
   botonesCoincidentes.forEach(boton => boton.classList.add('activo'));
 
   actualizarTopbar(seccion);
