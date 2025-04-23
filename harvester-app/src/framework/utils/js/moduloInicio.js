@@ -50,32 +50,21 @@ function configurarBotonAnalisis() {
                     
                     // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                     setTimeout(() => {
-                        // Buscar todos los botones del sidebar con data-seccion="analisis" 
-                        // y marcarlos como activos
-                        const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
-                        const todosBotones = document.querySelectorAll('.boton-sidebar');
-                        
-                        // Quitar activo de todos los botones
-                        todosBotones.forEach(boton => boton.classList.remove('activo'));
-                        
-                        // Marcar como activos los botones de análisis
-                        botonesAnalisis.forEach(boton => boton.classList.add('activo'));
-                        
                         // Actualizar topbar directamente
                         if (window.actualizarTopbar) {
-                            window.actualizarTopbar('analisis');
+                            window.actualizarTopbar('Tractores');
                         }
                         
                         // Cargar el módulo de análisis
                         const ventanaPrincipal = document.getElementById('ventana-principal');
                         if (ventanaPrincipal) {
-                            fetch('../vistas/moduloAnalisis.html')
+                            fetch('../vistas/moduloTractores.html')
                                 .then(res => res.text())
                                 .then(html => {
                                     ventanaPrincipal.innerHTML = html;
                                     // Si el script de análisis ya está cargado, inicializarlo
-                                    if (window.inicializarModuloAnalisis) {
-                                        window.inicializarModuloAnalisis();
+                                    if (window.inicializarModuloTractores) {
+                                        window.inicializarModuloTractores();
                                     }
                                 })
                                 .catch(err => console.error("Error cargando módulo de análisis:", err));

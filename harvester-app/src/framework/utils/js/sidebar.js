@@ -6,7 +6,8 @@ function cargarModulo(seccion) {
     formulas:    "../vistas/moduloFormulas.html",
     envios:      "../vistas/moduloEnvios.html",
     usuario:     "../vistas/moduloUsuario.html",
-    gestionUsuarios:     "../vistas/moduloGestionUsuarios.html"
+    gestionUsuarios:     "../vistas/moduloGestionUsuarios.html",
+    tractores:  "../vistas/moduloTractores.html"
     // tema no va aquí
   };
 
