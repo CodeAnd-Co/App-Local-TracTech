@@ -13,3 +13,14 @@ function inicializarModuloTractores() {
         console.warn("No hay datos disponibles para análisis");
     }
 }
+
+// Ejecutar inicialización si el DOM ya está cargado
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializarModuloTractores);
+} else {
+    // DOM ya está cargado
+    setTimeout(inicializarModuloTractores, 100);
+}
+
+// Exportar funciones para uso global
+window.inicializarModuloTractores = inicializarModuloTractores;

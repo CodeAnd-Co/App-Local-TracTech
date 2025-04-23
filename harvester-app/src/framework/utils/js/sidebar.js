@@ -58,7 +58,8 @@ const topbarInfo = {
   formulas:  { titulo: "Fórmulas",   icono: "../utils/iconos/Funcion.svg" },
   envios:    { titulo: "Envíos",     icono: "../utils/iconos/Correo.svg" },
   usuario:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" },
-  gestionUsuarios:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" }
+  gestionUsuarios:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" },
+  Tractores:   { titulo: "Tractores",    icono: "../utils/iconos/GraficaBarras.svg" }
 };
 
 function inicializarSidebar() {
