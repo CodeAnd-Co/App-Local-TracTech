@@ -37,10 +37,10 @@ function cargarModulo(seccion) {
             console.log("Inicializando módulo de usuario...");
             window.inicializarModuloUsuario();
           }
-        } else if (seccion == 'gestionUsuario') {
-          if (window.inicializarModuloUsuario) {
+        } else if (seccion == 'gestionUsuarios') {
+          if (window.inicializarModuloGestionUsuarios) {
             console.log("Inicializando módulo de gestion de usuarios...");
-            window.inicializarModuloUsuario();
+            window.inicializarModuloGestionUsuarios();
           }
         }
         // Añadir más inicializaciones para otros módulos según sea necesario
