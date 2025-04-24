@@ -4,6 +4,11 @@ function inicializarModuloTractores() {
         window.actualizarTopbar('Tractores');
     }
 
+    console.log('Cargando el módulo de Tractores...');
+
+    // Actualizamos el localStorage SOLO cuando se hace clic
+    localStorage.setItem('seccion-activa', 'Tractores');
+
     // Cargar los datos del Excel desde localStorage
     const datosExcel = cargarDatosExcel();
     console.log('Datos de Excel:', datosExcel);
