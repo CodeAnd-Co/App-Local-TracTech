@@ -3,12 +3,11 @@ async function plantillas() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ correo, contrasena }),
+      }
     });
   
     const datos = await respuesta.json();
-    console.log(datos)
+    //alert(datos[0].Nombre)
   
     return { ok: respuesta.ok, ...datos };
   }

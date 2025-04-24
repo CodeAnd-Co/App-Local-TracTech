@@ -2,12 +2,19 @@
 <link href="../utils/resetStyles.css" rel="stylesheet" />
 <link href="../utils/moduloPlantillas.css" rel="stylesheet" />
 <html lang="es">
-    <div class="frame-plantillas">
+    <div class="frame-plantillas" id="contenedorId">
 
         <div class="plantilla">
-            <button class="boton-opciones">
-                <img class="icono-opciones" src="../utils/iconos/TresPuntos.svg" />
-            </button>
+          <div class="dropdown">
+              <button class="boton-opciones">
+                  <img class="icono-opciones" src="../utils/iconos/TresPuntos.svg" />
+                </button>
+              <div class="dropdown-content">
+                <a href="#">Link 1</a>
+                <a href="#">Link 2</a>
+                <a href="#">Link 3</a>
+              </div>
+            </div>
             <scroll-container>
              <div class="ejemplo-preview">
                 <div class="titlulo-ejemplo">Texto</div>
