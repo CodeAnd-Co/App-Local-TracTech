@@ -20,8 +20,7 @@ function agregarGrafica(contenedorId, previsualizaciónId) {
   }
 
   tarjetaGrafica.id = nuevaId
-  tarjetaGrafica.innerHTML = `
-    <input class="titulo-grafica" placeholder="Nombre de la gráfica">
+  tarjetaGrafica.innerHTML = `<input class="titulo-grafica" placeholder="Nombre de la gráfica">
     <div class="boton-formulas">
       <div class="formulas">Fórmulas</div>
     </div>
@@ -44,9 +43,9 @@ function agregarGrafica(contenedorId, previsualizaciónId) {
   graficaDiv.id = nuevaId;
 
   //Crea la gráfica que se va a agregar
-  const grafico = document.createElement('canvas');
-  var contexto = grafico.getContext('2d')
-  new Chart(contexto, {
+  const contenedorGrafico = document.createElement('canvas');
+  var contexto = contenedorGrafico.getContext('2d')
+  const grafico = new Chart(contexto, {
     type: 'line',
 
     data: {
@@ -58,9 +57,30 @@ function agregarGrafica(contenedorId, previsualizaciónId) {
         data: [0, 10, 5, 2, 20, 30, 45]
       }]
     },
+
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: '',
+        }
+      }
+    }
   });
-  
-  graficaDiv.appendChild(grafico)
+
+  graficaDiv.appendChild(contenedorGrafico)
+
+  // Añadir eventos para cambiar gráfico dinámicamente desde la tarjeta
+  const hijosTarjeta = tarjetaGrafica.children
+
+  // Cambiar título
+  const titulo = hijosTarjeta[0]
+  titulo.addEventListener('input', () => {
+    console.log(titulo.value, titulo.textContent)
+    grafico.options.plugins.title.text = titulo.value;
+    grafico.update()
+  });
+
 
   // Añadir acción de eliminar
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () => {
