@@ -1,3 +1,399 @@
+.crear-formula,
+.crear-formula * {
+  box-sizing: border-box;
+}
+.crear-formula {
+  background: var(--blanco, #ffffff);
+  border-radius: 10px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+.titulo {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.crear-formula2 {
+  color: #000000;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 100%;
+  font-weight: 400;
+  position: relative;
+  width: 199px;
+}
+.modificacion {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.nombre-formula {
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.nombre-de-la-formula {
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  height: 21px;
+}
+.ingresar-nombre {
+  background: var(--texto-porllenar, #9c9c9c);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-width: 2px;
+  padding: 17px 10px 17px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.nombre-de-la-formula2 {
+  color: rgba(0, 0, 0, 0.33);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  font-weight: 400;
+  position: relative;
+  width: 176px;
+}
+.bloque-config-formula {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.excel {
+  background: var(--blanco, #ffffff);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-width: 4px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 555px;
+  position: relative;
+}
+.icono-x {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.x {
+  flex-shrink: 0;
+  width: 25px;
+  height: 25px;
+  position: relative;
+  overflow: visible;
+}
+.operaciones {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  height: 92px;
+  position: relative;
+}
+.operacion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex: 1;
+  height: 92px;
+  position: relative;
+}
+.operacion2 {
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  height: 21px;
+}
+.columnas {
+  background: var(--texto-porllenar, #9c9c9c);
+  border-radius: 8px;
+  padding: 17px 10px 17px 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.seleccionar-formula {
+  color: var(--texto-porllenar, #9c9c9c);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+}
+.play-arrow {
+  flex-shrink: 0;
+  width: 17.14px;
+  height: 25px;
+  position: relative;
+  overflow: visible;
+}
+.columnas2 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex: 1;
+  height: 92px;
+  position: relative;
+}
+.columnas3 {
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+}
+.play-arrow2 {
+  flex-shrink: 0;
+  width: 17.14px;
+  height: 25px;
+  position: relative;
+  overflow: visible;
+}
+.comparacion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex: 1;
+  height: 92px;
+  position: relative;
+}
+.comparacion2 {
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  height: 21px;
+}
+.play-arrow3 {
+  flex-shrink: 0;
+  width: 17.14px;
+  height: 25px;
+  position: relative;
+  overflow: visible;
+}
+.nombre-formula2 {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  height: 92px;
+  position: relative;
+}
+.texto {
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  align-self: stretch;
+  height: 21px;
+}
+.texto2 {
+  background: var(--texto-porllenar, #9c9c9c);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-width: 2px;
+  padding: 17px 10px 17px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.boton {
+  background: var(--blanco, #ffffff);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: var(--acento, #262b40);
+  border-width: 1px;
+  padding: 10px 20px 10px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.anadir {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.anadir-comparacion {
+  color: var(--acento, #262b40);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.botones {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.primario {
+  background: var(--primario, #a61930);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: var(--blanco, #ffffff);
+  border-width: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 199px;
+  height: 44px;
+  position: relative;
+  transform-origin: 0 0;
+  transform: rotate(0deg) scale(1, 1);
+}
+.guardar {
+  color: var(--blanco, #ffffff);
+  text-align: center;
+  font-family: "Actor-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.boton2 {
+  background: var(--blanco, #ffffff);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: var(--acento, #262b40);
+  border-width: 1px;
+  padding: 10px 4px 10px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 199px;
+  position: relative;
+}
+.cancelar {
+  color: var(--acento, #262b40);
+  text-align: center;
+  font-family: "Actor-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 .lista,
 .lista * {
   box-sizing: border-box;
