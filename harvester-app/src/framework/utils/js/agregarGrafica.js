@@ -25,18 +25,13 @@ function agregarGrafica(contenedorId, previsualizaciónId) {
       <div class="formulas">Fórmulas</div>
     </div>
     <div class="botones-editar-eliminar">
-      <div class="editar">
-        <img class="editar-icono" src="../utils/iconos/Editar2.svg" />
-        <div class="texto-editar">Editar</div>
-      </div>
-      <div class="divisor"></div>
       <div class="eliminar">
         <img class="eliminar-icono" src="../utils/iconos/Basura.svg" />
         <div class="texto-eliminar">Eliminar</div>
       </div>
     </div>
     `;
-
+  
   //Crea el cuadro que contiene la grafica en la previsualización
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';

@@ -146,12 +146,6 @@
 .titulo-grafica,
 .titulo-texto {
   background-color: #fafafa;
-  background-image: url(../utils/iconos/GraficaBarras.svg);
-  background-repeat: no-repeat;
-  background-attachment: scroll;
-  background-position: 95% 0.2rem;
-  background-size: 33px 33px;
-  border-radius: 10px;
   padding: 10px;
   display: flex;
   flex-direction: row;
@@ -167,7 +161,15 @@
   line-height: 100%;
   letter-spacing: -0.02em;
   font-weight: 400;
-  
+}
+
+.titulo-grafica{
+  background-image: url(../utils/iconos/GraficaBarras.svg);
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: 95% 50%;
+  background-size: 33px 33px;
+  border-radius: 10px;
 }
 
 .titulo-grafica::placeholder {
@@ -216,16 +218,17 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
-}
-
-.formulas {
   color: #ffffff;
   font-family: "SegoeUi-Regular", sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
   font-weight: 400;
-  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.boton-formulas:hover{
+  background-color: #8c1429;
 }
 
 /* BOTONES EDITAR / ELIMINAR */
@@ -248,6 +251,11 @@
   justify-content: flex-start;
   flex-shrink: 0;
   position: relative;
+  padding: 5px 15px;
+}
+
+.eliminar:hover{
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .editar-icono,
@@ -293,4 +301,240 @@
   border-radius: 8px;
   border: 1px solid #ccc;
   resize: vertical;
+}
+
+.contenedor-formulas {
+  background: #ededed;
+  border-radius: 8px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-start;
+  height: 883px;
+  position: relative;
+}
+
+.titulo-formulas {
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.titulo-formulas > p {
+  color: #000000;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 100%;
+  font-weight: 400;
+  position: relative;
+  width: 280px;
+}
+
+.flecha-atras {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  position: relative;
+  overflow: visible;
+}
+
+.seccion-formulas {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 45px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.opciones-seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.opciones-seccion > p{
+  color: #000000;
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 32px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+}
+
+.opciones-carta {
+  background: #262b40;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 362px;
+  position: relative;
+}
+
+.opcion {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.opcion-letra {
+  color: #000000;
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  height: 38px;
+  position: relative; 
+}
+
+.opcion-texto {
+  color: #000000;
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  height: 38px;
+  position: relative;
+}
+
+.titulo-aplicar-formulas {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 243px;
+  position: relative;
+}
+
+.titulo-aplicar-formulas > p{
+  color: #000000;
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 32px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+}
+
+.circulo-ayuda {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  overflow: visible;
+}
+
+.search-section {
+  background-color: #fafafa;
+  background-image: url(../utils/iconos/search.svg);
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: 95% 50%;
+  background-size: 24px 24px;
+  border-radius: 10px;
+  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 322px;
+  height: 52px;
+  position: relative;
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+.contenedor-busqueda {
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 302px;
+  position: relative;
+}
+.formula {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 302px;
+  position: relative;
+  color: #000000;
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
 }

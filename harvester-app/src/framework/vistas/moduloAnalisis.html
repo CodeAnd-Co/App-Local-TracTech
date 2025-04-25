@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Módulo de Análisis</title>
-  <link rel="stylesheet" href="../utils/resetStyles.css" />
-  <link rel="stylesheet" href="../utils/moduloAnalisis.css" />
+    <meta charset="UTF-8" />
+    <title>Módulo de Análisis</title>
+    <link rel="stylesheet" href="../utils/resetStyles.css" />
+    <link rel="stylesheet" href="../utils/moduloAnalisis.css" />
 </head>
+
 <body>
     <div class="frame-analisis">
         <div class="seccion-elemento-reporte">
@@ -22,11 +24,77 @@
             <div class="seccion-contenido" id="contenedorElementos">
             </div>
         </div>
+        <div class="contenedor-formulas">
+            <div class="titulo-formulas">
+                <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" />
+                <p class="texto">Fórmulas</p>
+            </div>
+            <div class="seccion-formulas">
+                <div class="opciones-seccion">
+                    <p>Parámetros</p>
+                    <div class="opciones-carta">
+                        <div class="opcion">
+                            <div class="opcion-letra">
+                                A
+                            </div>
+                            <select class="opcion-texto">
+                                <option selected>Gasolina</option>
+                                <option>Velocidad</option>
+                                <option>Aceleración</option>
+                            </select>
+                        </div>
+                        <div class="opcion">
+                            <div class="opcion-letra">
+                                B
+                            </div>
+                            <select class="opcion-texto">
+                                <option>Gasolina</option>
+                                <option selected>Velocidad</option>
+                                <option>Aceleración</option>
+                            </select>
+                        </div>
+                        <div class="opcion">
+                            <div class="opcion-letra">
+                                C
+                            </div>
+                            <select class="opcion-texto">
+                                <option>Gasolina</option>
+                                <option>Velocidad</option>
+                                <option selected>Aceleración</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="opciones-seccion">
+                    <div class="titulo-aplicar-formulas">
+                        <p>Aplicar Fórmula</p>
+                        <img class="circulo-ayuda" src="../utils/iconos/circulo-ayuda.svg" />
+                    </div>
+                    <div class="opciones-carta">
+                        <input class="search-section" placeholder="Encuentra una fórmula">
+                        <div class="contenedor-busqueda">
+                            <div class="formula">
+                                f(y): y + k
+                            </div>
+                            <div class="formula">
+                                f(y): 2x
+                            </div>
+                            <div class="formula">
+                                f(y): y + k
+                            </div>
+                        </div>
+                        <div class="boton-agregar">
+                            <div >Aplicar Fórmula</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="seccion-previsualizacion-grafica" id="Previsualizacion">
             <div class="previsualizacion-gr-fica">Vista previa del reporte</div>
             <div id="contenedor-elementos-previsualizacion" class="contenedor-elementos-previsualizacion"></div>
         </div>
     </div>
-  <script type="module" src="../utils/js/moduloAnalisis.js"></script>
 </body>
+
 </html>
