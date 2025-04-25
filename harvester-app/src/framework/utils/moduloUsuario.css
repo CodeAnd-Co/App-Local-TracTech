@@ -1,7 +1,22 @@
-.frame-perfil,
-.frame-perfil * {
+.frame-usuario,
+.frame-usuario * {
   box-sizing: border-box;
 }
+.frame-usuario {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 25px;
+  display: flex;
+  flex-direction: row;
+  gap: 111px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 100%;
+  margin: 0 auto;
+}
+
+
 .frame-perfil {
   display: flex;
   flex-direction: row;
@@ -70,7 +85,16 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+  transition: all 0.3s ease; 
 }
+
+.boton-gestion-usuario:hover {
+  background-color: #A9A9A9;  /* Gris oscuro cuando pasa el mouse */
+  border-color: #808080; /* Gris medio para el borde */
+  color: white;  /* Cambio a texto blanco */
+  cursor: pointer; /* Cambio de cursor */
+}
+
 .gesti-n-de-usuarios {
   color: #000000;
   text-align: center;
