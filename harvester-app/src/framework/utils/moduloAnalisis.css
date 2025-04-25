@@ -252,6 +252,7 @@
   flex-shrink: 0;
   position: relative;
   padding: 5px 15px;
+  transition: background-color 0.3s ease;
 }
 
 .eliminar:hover{
@@ -260,8 +261,7 @@
 
 .editar-icono,
 .edit-icono,
-.eliminar-icono,
-.trash-icono {
+.eliminar-icono{
   width: 35px;
   height: 35px;
   flex-shrink: 0;
@@ -344,6 +344,11 @@
   height: 40px;
   position: relative;
   overflow: visible;
+  transition: background-color 0.3s ease;
+}
+
+.flecha-atras:hover {
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .seccion-formulas {
