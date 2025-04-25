@@ -294,3 +294,146 @@
   border: 1px solid #ccc;
   resize: vertical;
 }
+.titulo-texto {
+  position: relative;      
+  background-color: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-image: none;
+}
+.titulo-texto select.tipo-texto {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: transparent;
+  border: none;
+  padding: 8px 32px 8px 12px;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  color: #000;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.titulo-texto::after {
+  content: "";
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #000;
+  pointer-events: none;
+}
+.titulo-texto select.tipo-texto:hover {
+  background-color: #f0f0f0;
+}
+.titulo-texto select.tipo-texto:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(166,25,48,0.5);
+}
+.tarjeta-texto .eliminar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.tarjeta-texto .eliminar:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+
+.titulo-texto::after {
+  content: none;
+}
+.titulo-texto select.tipo-texto {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: #fafafa;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #000 50%),
+    linear-gradient(135deg, #000 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) calc(50% - 3px),
+    calc(100% - 14px) calc(50% - 3px);
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+
+  padding: 8px 40px 8px 12px;
+
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.titulo-texto select.tipo-texto:hover {
+  background-color: #f0f0f0;
+}
+.titulo-texto select.tipo-texto:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(166,25,48,0.5);
+}
+.titulo-texto select.tipo-texto:active {
+  background-color: #ececec;
+}
+
+.titulo-texto select.tipo-texto option:hover {
+  background-color: #f5f5f5;
+}
+.titulo-texto select.tipo-texto option:checked {
+  background-color: #a61930;
+  color: #fff;
+}
+
+.tarjeta-texto .eliminar:hover {
+  transform: translateX(2px);
+}
+
+/* —————— cuadro de preview de texto —————— */
+.previsualizacion-texto {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  width: calc(100% - 24px);
+  box-sizing: border-box;
+}
+
+/* estilos según tipo */
+.preview-titulo {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.preview-subtitulo {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.preview-contenido {
+  font-size: 16px;
+  font-weight: 400;
+}
+.previsualizacion-texto {
+  font-family: "SegoeUi-Regular", sans-serif;
+}
+.seccion-previsualizacion-grafica {
+  /* Ajusta esta altura al tamaño que necesites */
+  max-height: 600px;
+  overflow-y: auto;
+}

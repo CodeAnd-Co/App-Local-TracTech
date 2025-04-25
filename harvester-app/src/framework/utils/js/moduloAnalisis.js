@@ -1,7 +1,6 @@
 // Importar funciones de elementos de reporte
 //import { agregarTexto } from './agregarTexto.js';
 
-
 // Función para inicializar el módulo de análisis
 function inicializarModuloAnalisis() {
 
@@ -22,7 +21,8 @@ function inicializarModuloAnalisis() {
   const previsualizacion = 'Previsualizacion';
 
   document.getElementById('agregarTexto').addEventListener('click', () => {
-    window.agregarTexto(contenedor);
+    // Le pasamos ambos contenedores: edición y preview
+    window.agregarTexto(contenedor, previsualizacion);
   });
 
   document.getElementById('agregarGrafica').addEventListener('click', () => {
@@ -70,8 +70,6 @@ function cargarDatosExcel() {
     return null;
   }
 }
-
-
 
 // Ejecutar inicialización si el DOM ya está cargado
 if (document.readyState === 'loading') {
