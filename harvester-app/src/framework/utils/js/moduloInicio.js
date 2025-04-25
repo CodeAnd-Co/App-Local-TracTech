@@ -2,9 +2,11 @@ const XLSX = require('xlsx');
 const { borrarExcel }  = require('../../backend/casosUso/excel/borrarExcel.js');
 
 function botonBorrar() {
+    const botonAnalisis = document.querySelector('.avanzar-analisis');
     setTimeout(() => {
         document.querySelector('.boton-basura').addEventListener('click', () => {
             borrarExcel();
+        botonAnalisis.setAttribute('disabled', 'true');
         });
     }, 100);
 }
@@ -34,7 +36,7 @@ function cambiarNombreArchivo() {
             if (entradaArchivo.files && entradaArchivo.files.length > 0) {
                 elementoNombreArchivo.textContent = entradaArchivo.files[0].name;
                 botonAnalisis.removeAttribute('disabled');
-                localStorage.setItem('nombreArchivoExcel', entradaArchivo.files[0].name);
+                leerArchivoExcel(entradaArchivo.files[0]);
             } else {
                 elementoNombreArchivo.textContent = 'Sin Archivo Seleccionado';
             }
@@ -50,17 +52,25 @@ function configurarBotonAnalisis() {
     setTimeout(() => {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const entradaArchivo = document.querySelector('.cargar-input');
+
+        // Verificar si hay datos Excel guardados y habilitar el botón de análisis
+        const datosExcelGuardados = localStorage.getItem('datosExcel');
+        if (datosExcelGuardados) {
+            try {
+                const datosParseados = JSON.parse(datosExcelGuardados);
+                if (datosParseados) {
+                    if (botonAnalisis) {
+                        botonAnalisis.removeAttribute('disabled');
+                    }
+                }
+            } catch (error) {
+                console.error("Error al procesar los datos guardados del Excel:", error);
+            }
+        }
         
         if (botonAnalisis && entradaArchivo) {
             botonAnalisis.addEventListener('click', () => {
                 if (entradaArchivo.files && entradaArchivo.files.length > 0) {
-                    const archivo = entradaArchivo.files[0];
-                    
-                    // Guardar el nombre del archivo para usarlo en el módulo de análisis
-                    localStorage.setItem('nombreArchivoExcel', archivo.name);
-                    
-                    // Leer el archivo Excel
-                    leerArchivoExcel(archivo);
                     
                     // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                     setTimeout(() => {
@@ -107,7 +117,10 @@ function leerArchivoExcel(archivo) {
     if (elementoNombreArchivo) {
         elementoNombreArchivo.textContent = 'Leyendo archivo...';
     }
-    
+
+    // Guardar el nombre del archivo para usarlo en el módulo de análisis
+    localStorage.setItem('nombreArchivoExcel', archivo.name);
+
     const lector = new FileReader();
     lector.onload = function(evento) {
         try {
