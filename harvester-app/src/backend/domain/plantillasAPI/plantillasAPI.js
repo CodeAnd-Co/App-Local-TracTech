@@ -7,7 +7,6 @@ async function plantillas() {
     });
   
     const datos = await respuesta.json();
-    //alert(datos[0].Nombre)
   
     return { ok: respuesta.ok, ...datos };
   }

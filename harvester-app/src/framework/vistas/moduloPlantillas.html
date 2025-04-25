@@ -4,38 +4,28 @@
 <html lang="es">
     <div class="frame-plantillas" id="contenedorId">
 
-        <div class="plantilla">
-          <div class="dropdown">
-              <button class="boton-opciones">
-                  <img class="icono-opciones" src="../utils/iconos/TresPuntos.svg" />
-                </button>
-              <div class="dropdown-content">
-                <a href="#">Link 1</a>
-                <a href="#">Link 2</a>
-                <a href="#">Link 3</a>
-              </div>
-            </div>
-            <scroll-container>
-             <div class="ejemplo-preview">
-                <div class="titlulo-ejemplo">Texto</div>
-                <div class="primer-texto">
-                  texto texto texto texto texto texto texto texto texto texto texto texto
-                  texto texto texto texto texto texto texto texto texto texto texto texto
-                  texto texto texto texto
-                </div>
-                <div class="preview-grafica">
-                  <img class="bar-chart" src="../utils/iconos/GraficaBarras.svg" />
-                </div>
-                <div class="sengundo-texto">
-                  texto texto texto texto texto texto texto texto texto texto texto texto
-                  texto texto texto texto texto texto texto texto texto texto texto texto
-                  texto texto texto texto
-                </div>
-              </div>
-            </scroll-container>
-            <div class="nombre-plantilla">
-                <div class="nombre-de-plantilla">Nombre de plantilla</div>
-            </div>
-        </div>
     </div>
+
+    <dialog id="modalBorrar" class="modal-borrar" >
+      <form method="dialog">
+          <div class="borrar-plantilla">
+              <div class="titulo">
+                  <div class="eliminar-la-plantila">Eliminar la plantila</div>
+              </div>
+              <div class="texto">
+                  <div class="eliminartexto">
+                      ¿Estás seguro de que quieres borrar esta plantilla? Este proceso no se
+                      puede deshacer
+                  </div>
+              </div>
+              <div class="botones">
+                  <div class="eliminar">
+                      <div class="texto2">Eliminar</div>
+                  </div>
+              <div class="cancelar">
+                  <div class="cancelar2">Cancelar</div>
+              </div>
+          </div>
+      </form>
+  </dialog>
     

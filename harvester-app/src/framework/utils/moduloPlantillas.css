@@ -174,6 +174,61 @@ scroll-container {
   align-self: stretch;
 }
 
+.frame-btn-Editar,
+.frame-btn-Editar * {
+  box-sizing: border-box;
+}
+.frame-btn-Editar {
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 25.75px;
+  position: relative;
+  border: none;
+  background: transparent;
+}
+
+.frame-btn-Editar:hover {
+  background: rgb(175, 174, 174);
+}
+
+.boton-modificar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 112.5px;
+  position: relative;
+}
+.edit-2 {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  overflow: visible;
+}
+.modificar {
+  color: var(--texto-light, #000000);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 20px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  width: 81px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
   position: relative;
@@ -185,13 +240,12 @@ scroll-container {
   display: none;
   position: absolute;
   background-color: #f1f1f1;
-  min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
 }
 
 /* Links inside the dropdown */
-.dropdown-content a {
+.dropdown-content.frame-modificar {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
@@ -199,10 +253,151 @@ scroll-container {
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
+.dropdown-content .frame-modificar:hover {background-color: #ddd;}
 
 /* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {display: block;}
+.dropdown.active .dropdown-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {background-color: #3e8e41;}
+.dropdown.active .dropbtn {background-color: #3e8e41;}
+
+#modalBorrar::backdrop{
+  background-color: rgba(0, 0, 0, 0.55);
+}
+#modalBorrar{
+  padding: 0px;
+}
+
+dialog.modal-borrar {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  
+  background-color: white;
+  z-index: 999;
+}
+
+
+.borrar-plantilla {
+  background: var(--box-light, #ffffff);
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 19px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 410px;
+  position: relative;
+}
+.titulo {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.eliminar-la-plantila {
+  color: var(--texto-light, #000000);
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 32px;
+  line-height: 100%;
+  font-weight: 400;
+  position: relative;
+}
+.texto {
+  display: flex;
+  flex-direction: row;
+  row-gap: 11px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-content: center;
+  flex-shrink: 0;
+  width: 383px;
+  max-width: 409px;
+  position: relative;
+}
+.eliminartexto {
+  color: var(--texto-light, #000000);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 20px;
+  line-height: 100%;
+  font-weight: 400;
+  position: relative;
+  width: 383px;
+}
+.botones {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.eliminar {
+  background: var(--primario, #a61930);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.2);
+  border-width: 2px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.texto2 {
+  color: var(--texto-dark, #ffffff);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 112%;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cancelar {
+  background: var(--box-light, #ffffff);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: #262b40;
+  border-width: 2px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.cancelar2 {
+  color: var(--texto-light, #000000);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
