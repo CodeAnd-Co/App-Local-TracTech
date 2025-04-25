@@ -43,6 +43,13 @@ function cargarModulo(seccion) {
             console.log("Inicializando módulo de gestion de usuarios...");
             window.inicializarModuloGestionUsuarios();
           }
+        } else if (seccion == 'tractores') {
+          if (window.inicializarModuloTractores) {
+            console.log("Inicializando módulo de tractores...");
+            // Recuperar datos del localStorage si existen
+            const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
+            window.inicializarModuloTractores(datosExcel);
+          }
         }
         // Añadir más inicializaciones para otros módulos según sea necesario
       })
@@ -59,7 +66,7 @@ const topbarInfo = {
   envios:    { titulo: "Envíos",     icono: "../utils/iconos/Correo.svg" },
   usuario:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" },
   gestionUsuarios:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" },
-  Tractores:   { titulo: "Tractores",    icono: "../utils/iconos/GraficaBarras.svg" }
+  tractores:   { titulo: "Tractores",    icono: "../utils/iconos/GraficaBarras.svg" }
 };
 
 function inicializarSidebar() {
@@ -141,6 +148,8 @@ function actualizarTopbar(seccion) {
   const tituloElem = document.getElementById('topbar-titulo');
   const iconoElem = document.getElementById('topbar-icono');
   const botonRegresar = document.getElementById('btn-regresar');
+  console.log("Actualizando topbar para:", seccion);
+
 
   if (!tituloElem || !iconoElem || !topbarInfo[seccion]) return;
 
@@ -156,6 +165,13 @@ function actualizarTopbar(seccion) {
   } else {
     botonRegresar.style.display = "flex";
     tituloElem.style.marginLeft = "10px";
+    if(seccion == 'tractores') {
+      botonRegresar.addEventListener('click', () => {
+        // Guardamos la sección real
+        localStorage.getItem('seccion-activa');
+        console.log("Sección activa obtenida:", seccion);
+      })
+    }
   }
 }
 

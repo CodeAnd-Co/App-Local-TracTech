@@ -1,13 +1,10 @@
 function inicializarModuloTractores() {
     // Actualizar el topbar si está disponible
     if (window.actualizarTopbar) {
-        window.actualizarTopbar('Tractores');
+        window.actualizarTopbar('tractores');
     }
 
     console.log('Cargando el módulo de Tractores...');
-
-    // Actualizamos el localStorage SOLO cuando se hace clic
-    localStorage.setItem('seccion-activa', 'Tractores');
 
     // Cargar los datos del Excel desde localStorage
     const datosExcel = cargarDatosExcel();

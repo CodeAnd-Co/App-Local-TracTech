@@ -50,11 +50,6 @@ function configurarBotonAnalisis() {
                     
                     // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                     setTimeout(() => {
-                        // Actualizar topbar directamente
-                        if (window.actualizarTopbar) {
-                            window.actualizarTopbar('Tractores');
-                        }
-                        
                         // Cargar el módulo de análisis
                         const ventanaPrincipal = document.getElementById('ventana-principal');
                         if (ventanaPrincipal) {
