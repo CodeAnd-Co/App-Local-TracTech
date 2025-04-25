@@ -3,30 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <title>Módulo de Análisis</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="../utils/resetStyles.css" />
   <link rel="stylesheet" href="../utils/moduloAnalisis.css" />
 </head>
 <body>
-    <div class="frame-analisis">
-        <div class="seccion-elemento-reporte">
-            <div class="contenedor-botones-agregar">
-                <button id="agregarTexto" class="boton-agregar">
-                    <img class="icono-agregar" src="../utils/iconos/Texto.svg" />
-                    <span>Agregar texto</span>
-                </button>
-                <button id="agregarGrafica" class="boton-agregar">
-                    <img class="icono-agregar" src="../utils/iconos/GraficaBarras.svg" />
-                    <span>Agregar gráfica</span>
-                </button>
-            </div>
-            <div class="seccion-contenido" id="contenedorElementos">
-            </div>
-        </div>
-        <div class="seccion-previsualizacion-grafica" id="Previsualizacion">
-            <div class="previsualizacion-gr-fica">Vista previa del reporte</div>
-            <div id="contenedor-elementos-previsualizacion" class="contenedor-elementos-previsualizacion"></div>
-        </div>
+  <div class="frame-analisis">
+
+    <div class="seccion-elemento-reporte">
+      <div class="contenedor-botones-agregar">
+        <button id="agregarTexto" class="boton-agregar">
+          <img class="icono-agregar" src="../utils/iconos/Texto.svg" />
+          <span>Agregar texto</span>
+        </button>
+        <button id="agregarGrafica" class="boton-agregar">
+          <img class="icono-agregar" src="../utils/iconos/GraficaBarras.svg" />
+          <span>Agregar gráfica</span>
+        </button>
+      </div>
+      <div class="seccion-contenido" id="contenedorElementos"></div>
     </div>
+
+    <div class="seccion-previsualizacion-grafica" id="Previsualizacion">
+      <!-- 2) Cabecera rediseñada -->
+      <div class="preview-header">Vista previa del reporte</div>
+
+      <!-- 3) Contenedor en rejilla para las tarjetas -->
+      <div id="contenedor-elementos-previsualizacion"
+           class="contenedor-elementos-previsualizacion">
+      </div>
+    </div>
+
+  </div>
+
   <script type="module" src="../utils/js/moduloAnalisis.js"></script>
 </body>
 </html>
