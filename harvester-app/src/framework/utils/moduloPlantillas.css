@@ -192,8 +192,11 @@ scroll-container {
   background: transparent;
 }
 
-.frame-btn-Editar:hover {
+.frame-btn-Editar:hover, .cancelar:hover{
   background: rgb(175, 174, 174);
+}
+.eliminar:hover{
+  background: #700303;
 }
 
 .boton-modificar {
