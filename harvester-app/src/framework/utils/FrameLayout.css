@@ -48,6 +48,8 @@ body, html {
   display: flex;
   flex-direction: column;
   gap: 25px;
+  align-items: center;         /* Centra horizontalmente */
+  justify-content: center;     /* Centra verticalmente */
 }
 
 /* ===== GENERAL ===== */
