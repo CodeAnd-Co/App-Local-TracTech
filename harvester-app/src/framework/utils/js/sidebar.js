@@ -166,10 +166,12 @@ function actualizarTopbar(seccion) {
     botonRegresar.style.display = "flex";
     tituloElem.style.marginLeft = "10px";
     if(seccion == 'tractores') {
+      // Obtenemos la sección real
+      localStorage.getItem('seccion-activa');
+      console.log("Sección activa obtenida:", seccion);
       botonRegresar.addEventListener('click', () => {
-        // Guardamos la sección real
-        localStorage.getItem('seccion-activa');
-        console.log("Sección activa obtenida:", seccion);
+        
+        console.log('Regresar a inicio desde tractores:', seccion);
       })
     }
   }

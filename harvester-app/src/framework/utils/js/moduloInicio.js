@@ -9,7 +9,7 @@ function cambiarNombreArchivo() {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         
         if (!entradaArchivo || !elementoNombreArchivo) {
-            return console.error("No se encontraron los elementos necesarios");
+            return console.error('No se encontraron los elementos necesarios');
         }
         
         // Eliminar cualquier dato de sección activa al cargar el módulo inicio
@@ -62,7 +62,7 @@ function configurarBotonAnalisis() {
                                         window.inicializarModuloTractores();
                                     }
                                 })
-                                .catch(err => console.error("Error cargando módulo de análisis:", err));
+                                .catch(err => console.error('Error cargando módulo de tractores:', err));
                         }
                     }, 500); // Esperar 500ms para asegurar que los datos se guarden correctamente
                 }
