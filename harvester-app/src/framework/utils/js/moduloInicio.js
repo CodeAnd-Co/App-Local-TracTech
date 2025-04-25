@@ -1,4 +1,13 @@
-const XLSX = require('xlsx'); // Asegúrate de que la librería XLSX esté disponible
+const XLSX = require('xlsx');
+const { borrarExcel }  = require('../../backend/casosUso/excel/borrarExcel.js');
+
+function botonBorrar() {
+    setTimeout(() => {
+        document.querySelector('.boton-basura').addEventListener('click', () => {
+            borrarExcel();
+        });
+    }, 100);
+}
 
 // Configura el cambio de nombre del archivo cuando se selecciona uno
 function cambiarNombreArchivo() {
@@ -12,6 +21,11 @@ function cambiarNombreArchivo() {
             return console.error("No se encontraron los elementos necesarios");
         }
         
+        if (localStorage.getItem('nombreArchivoExcel')) {
+            // Si ya hay un archivo seleccionado, lo mostramos
+            elementoNombreArchivo.textContent = localStorage.getItem('nombreArchivoExcel');
+        }
+
         // Eliminar cualquier dato de sección activa al cargar el módulo inicio
         localStorage.removeItem('seccion-activa');
         
@@ -152,26 +166,13 @@ function leerArchivoExcel(archivo) {
     lector.readAsArrayBuffer(archivo);
 }
 
-// Verificar si el DOM ya está cargado, si no, esperar a que cargue
-if (document.readyState === 'loading') {
-    function onDOMContentLoaded() {
-        cambiarNombreArchivo();
-        configurarBotonAnalisis();
-    }
-    document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
-} else {
-    // El DOM ya está cargado
-    cambiarNombreArchivo();
-    configurarBotonAnalisis();
-}
 
-// Inicializar la aplicación siempre en el módulo inicio
-function establecerSeccionActiva() {
-    // Establecer 'inicio' como la sección activa al cargar la página
-    localStorage.setItem('seccion-activa', 'inicio');
-}
+// El DOM ya está cargado
+cambiarNombreArchivo();
+configurarBotonAnalisis();
+botonBorrar();
 
-window.addEventListener('load', establecerSeccionActiva);
 
+window.botonBorrar = botonBorrar;
 window.cambiarNombreArchivo = cambiarNombreArchivo;
 window.configurarBotonAnalisis = configurarBotonAnalisis;

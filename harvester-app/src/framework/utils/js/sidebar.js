@@ -26,6 +26,9 @@ function cargarModulo(seccion) {
           if (window.configurarBotonAnalisis) {
             window.configurarBotonAnalisis();
           }
+          if (window.botonBorrar) {
+            window.botonBorrar();
+          }
         } else if (seccion === 'analisis') {
           if (window.inicializarModuloAnalisis) {
             // Recuperar datos del localStorage si existen
