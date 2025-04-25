@@ -2,15 +2,11 @@ function agregarTexto(contenedorId, previewId) {
   const contenedor = document.getElementById(contenedorId);
   const previewContainer = document.getElementById(previewId);
 
-  // Generar un ID incremental para sincronizar tarjeta ↔ preview
+  // Generar ID incremental
   const tarjetas = contenedor.querySelectorAll('.tarjeta-texto');
-  let nuevaId = 1;
-  if (tarjetas.length) {
-    const last = parseInt(tarjetas[tarjetas.length - 1].id) || 0;
-    nuevaId = last + 1;
-  }
+  const nuevaId = tarjetas.length ? (parseInt(tarjetas[tarjetas.length - 1].id) || 0) + 1 : 1;
 
-  // 1) Crear tarjeta de edición
+  // 1) Crear tarjeta
   const tarjeta = document.createElement('div');
   tarjeta.classList.add('tarjeta-texto');
   tarjeta.id = nuevaId;
@@ -25,6 +21,15 @@ function agregarTexto(contenedorId, previewId) {
     </div>
     <textarea class="area-escritura" placeholder="Escribe aquí tu contenido..."></textarea>
     <div class="botones-editar-eliminar">
+      <!-- Botón Alinear -->
+      <div class="alinear">
+        <div class="icono-align align-left">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="texto-editar">Alinear</div>
+      </div>
+      <div class="divisor"></div>
+      <!-- Botón Eliminar -->
       <div class="eliminar">
         <img class="trash-icono" src="../utils/iconos/Basura.svg" />
         <div class="texto-eliminar">Eliminar</div>
@@ -32,38 +37,46 @@ function agregarTexto(contenedorId, previewId) {
     </div>
   `;
 
-  // 2) Crear cuadro de preview
+  // 2) Crear preview asociado
   const preview = document.createElement('div');
   preview.classList.add('previsualizacion-texto', 'preview-titulo');
   preview.id = `preview-texto-${nuevaId}`;
-  preview.textContent = ''; 
+  preview.alignIndex = 0;  // 0=left,1=center,2=justify,3=right
   previewContainer.appendChild(preview);
 
-  // Obtener elementos clave
-  const selectTipo = tarjeta.querySelector('.tipo-texto');
-  const textarea  = tarjeta.querySelector('.area-escritura');
+  // Referencias
+  const selectTipo  = tarjeta.querySelector('.tipo-texto');
+  const textarea    = tarjeta.querySelector('.area-escritura');
   const btnEliminar = tarjeta.querySelector('.eliminar');
+  const btnAlinear  = tarjeta.querySelector('.alinear');
+  const iconoAlign  = btnAlinear.querySelector('.icono-align');
 
-  // Función que actualiza estilo + contenido del preview
+  // Actualizar contenido y estilo
   function actualizarPreview() {
-    // texto
     preview.textContent = textarea.value;
-    // clases de estilo
     preview.classList.remove('preview-titulo','preview-subtitulo','preview-contenido');
-    if      (selectTipo.value === 'titulo')    preview.classList.add('preview-titulo');
-    else if (selectTipo.value === 'subtitulo') preview.classList.add('preview-subtitulo');
-    else                                       preview.classList.add('preview-contenido');
+    preview.classList.add(`preview-${selectTipo.value}`);
   }
 
-  // Listeners
-  selectTipo.addEventListener('change',  actualizarPreview);
-  textarea .addEventListener('input',   actualizarPreview);
+  // Ciclo de alineaciones
+  btnAlinear.addEventListener('click', () => {
+    const alignments = ['left','center','justify','right'];
+    preview.alignIndex = (preview.alignIndex + 1) % alignments.length;
+    const modo = alignments[preview.alignIndex];
+    preview.style.textAlign = modo;
+    // actualizar icono
+    iconoAlign.className = `icono-align align-${modo}`;
+  });
+
+  // Listeners edición/eliminación
+  selectTipo.addEventListener('change', actualizarPreview);
+  textarea.addEventListener('input', actualizarPreview);
   btnEliminar.addEventListener('click', () => {
     tarjeta.remove();
     preview.remove();
   });
 
-  // Añadir la tarjeta al contenedor izquierdo
+  // Insertar tarjeta
   contenedor.appendChild(tarjeta);
 }
 
