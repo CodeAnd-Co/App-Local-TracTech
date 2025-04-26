@@ -7,19 +7,16 @@
     <link href="../utils/css/moduloInicio.css" rel="stylesheet" />
 </head>
 <body>
-
   <div class="frame-principal-inicio">
       <div class="frame-excel">
-        <div class="frame-eliminar">
-          <button class="boton-basura">
-            <img class="basura" src="../utils/iconos/Basura.svg" />
-          </button>
-        </div>
           <div class="usar-excel">
             <div class="texto-usar-excel">Usar Excel</div>
             <img class="FolderPlusRojo" src="../utils/iconos/FolderMasRojo.svg" />
             <div class="nombre-archivo">
               <div class="texto-archivo">Sin Archivo Seleccionado</div>
+                <button id="boton-borrar" class="boton-borrar">
+                  <img class="borrar" src="../utils/iconos/X.svg" />
+                </button>
             </div>
             <label class="cargar">
               <input type="file" accept=".xlsx" class="cargar-input" />

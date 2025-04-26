@@ -1,12 +1,18 @@
+// RF44 Usuario carga Excel a la plataforma - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF44
+// RF45 Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
+// RF46 Usuario sustituye el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF46
+
 const XLSX = require('xlsx');
 const { borrarExcel }  = require('../../backend/casosUso/excel/borrarExcel.js');
 
 function botonBorrar() {
     const botonAnalisis = document.querySelector('.avanzar-analisis');
+    const botonBorrar = document.getElementById('boton-borrar');
     setTimeout(() => {
-        document.querySelector('.boton-basura').addEventListener('click', () => {
+        document.querySelector('.boton-borrar').addEventListener('click', () => {
             borrarExcel();
         botonAnalisis.setAttribute('disabled', 'true');
+        botonBorrar.style.display = 'none';
         });
     }, 100);
 }
@@ -18,6 +24,7 @@ function cambiarNombreArchivo() {
         const entradaArchivo = document.querySelector('.cargar-input');
         const elementoNombreArchivo = document.querySelector('.texto-archivo');
         const botonAnalisis = document.querySelector('.avanzar-analisis');
+        const botonBorrar = document.getElementById('boton-borrar');
         
         if (!entradaArchivo || !elementoNombreArchivo) {
             return console.error("No se encontraron los elementos necesarios");
@@ -26,17 +33,20 @@ function cambiarNombreArchivo() {
         if (localStorage.getItem('nombreArchivoExcel')) {
             // Si ya hay un archivo seleccionado, lo mostramos
             elementoNombreArchivo.textContent = localStorage.getItem('nombreArchivoExcel');
+            // Habilitar el botón de borrar
+            botonBorrar.style.display = 'block';
         }
 
         // Eliminar cualquier dato de sección activa al cargar el módulo inicio
         localStorage.removeItem('seccion-activa');
         
-        // Usamos un solo método para manejar el cambio
         function manejarCambioArchivo() {
             if (entradaArchivo.files && entradaArchivo.files.length > 0) {
                 elementoNombreArchivo.textContent = entradaArchivo.files[0].name;
                 botonAnalisis.removeAttribute('disabled');
                 leerArchivoExcel(entradaArchivo.files[0]);
+                // Habilitar el botón de borrar
+                botonBorrar.style.display = 'block';
             } else {
                 elementoNombreArchivo.textContent = 'Sin Archivo Seleccionado';
             }

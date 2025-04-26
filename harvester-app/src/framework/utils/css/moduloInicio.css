@@ -25,37 +25,12 @@
   flex-direction: column;
   gap: 10px;
   align-items: center;
-  justify-content: auto;
+  justify-content: center;
   flex-shrink: 0;
   width: 555px;
   height: 559px;
   position: relative;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-}
-.frame-eliminar {
-  padding: 20px 0px 0px 30px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
-}
-.boton-basura {
-  background: transparent;
-  border: none;
-  outline: none;
-  padding: 0;
-  cursor: pointer;
-}
-.basura {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
 }
 .usar-excel {
   display: flex;
@@ -116,6 +91,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.boton-borrar {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0;
+  display: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+.borrar {
+  color: var(--texto-porllenar, #9c9c9c);
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  overflow: visible;
+  aspect-ratio: 1;
+  justify-content: flex-start;
+  position: relative;
 }
 .cargar {
   background: var(--primario, #a61930);
