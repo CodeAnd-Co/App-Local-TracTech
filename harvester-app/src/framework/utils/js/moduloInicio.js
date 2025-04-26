@@ -6,10 +6,10 @@ const XLSX = require('xlsx');
 const { borrarExcel }  = require('../../backend/casosUso/excel/borrarExcel.js');
 
 function botonBorrar() {
-    const botonAnalisis = document.querySelector('.avanzar-analisis');
-    const botonBorrar = document.getElementById('boton-borrar');
     setTimeout(() => {
-        document.querySelector('.boton-borrar').addEventListener('click', () => {
+        const botonAnalisis = document.querySelector('.avanzar-analisis');
+        const botonBorrar = document.getElementById('boton-borrar');
+        botonBorrar.addEventListener('click', () => {
             borrarExcel();
         botonAnalisis.setAttribute('disabled', 'true');
         botonBorrar.style.display = 'none';
@@ -188,13 +188,6 @@ function leerArchivoExcel(archivo) {
     // Iniciamos la lectura del archivo
     lector.readAsArrayBuffer(archivo);
 }
-
-
-// El DOM ya está cargado
-cambiarNombreArchivo();
-configurarBotonAnalisis();
-botonBorrar();
-
 
 window.botonBorrar = botonBorrar;
 window.cambiarNombreArchivo = cambiarNombreArchivo;
