@@ -2,11 +2,9 @@ function agregarTexto(contenedorId, previewId) {
   const contenedor = document.getElementById(contenedorId);
   const previewContainer = document.getElementById(previewId);
 
-  // Generar ID incremental
   const tarjetas = contenedor.querySelectorAll('.tarjeta-texto');
   const nuevaId = tarjetas.length ? (parseInt(tarjetas[tarjetas.length - 1].id) || 0) + 1 : 1;
 
-  // 1) Crear tarjeta
   const tarjeta = document.createElement('div');
   tarjeta.classList.add('tarjeta-texto');
   tarjeta.id = nuevaId;
@@ -37,28 +35,24 @@ function agregarTexto(contenedorId, previewId) {
     </div>
   `;
 
-  // 2) Crear preview asociado
   const preview = document.createElement('div');
   preview.classList.add('previsualizacion-texto', 'preview-titulo');
   preview.id = `preview-texto-${nuevaId}`;
-  preview.alignIndex = 0;  // 0=left,1=center,2=justify,3=right
+  preview.alignIndex = 0;  
   previewContainer.appendChild(preview);
 
-  // Referencias
   const selectTipo  = tarjeta.querySelector('.tipo-texto');
   const textarea    = tarjeta.querySelector('.area-escritura');
   const btnEliminar = tarjeta.querySelector('.eliminar');
   const btnAlinear  = tarjeta.querySelector('.alinear');
   const iconoAlign  = btnAlinear.querySelector('.icono-align');
 
-  // Actualizar contenido y estilo
   function actualizarPreview() {
     preview.textContent = textarea.value;
     preview.classList.remove('preview-titulo','preview-subtitulo','preview-contenido');
     preview.classList.add(`preview-${selectTipo.value}`);
   }
 
-  // Ciclo de alineaciones
   btnAlinear.addEventListener('click', () => {
     const alignments = ['left','center','justify','right'];
     preview.alignIndex = (preview.alignIndex + 1) % alignments.length;
@@ -68,7 +62,6 @@ function agregarTexto(contenedorId, previewId) {
     iconoAlign.className = `icono-align align-${modo}`;
   });
 
-  // Listeners edición/eliminación
   selectTipo.addEventListener('change', actualizarPreview);
   textarea.addEventListener('input', actualizarPreview);
   btnEliminar.addEventListener('click', () => {
@@ -76,7 +69,6 @@ function agregarTexto(contenedorId, previewId) {
     preview.remove();
   });
 
-  // Insertar tarjeta
   contenedor.appendChild(tarjeta);
 }
 

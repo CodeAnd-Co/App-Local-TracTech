@@ -13,24 +13,41 @@
   <div class="frame-analisis">
 
     <div class="seccion-elemento-reporte">
+
+      <!-- Botones de agregar -->
       <div class="contenedor-botones-agregar">
         <button id="agregarTexto" class="boton-agregar">
-          <img class="icono-agregar" src="../utils/iconos/Texto.svg" />
+          <img class="icono-agregar" src="../utils/iconos/Texto.svg" alt="Agregar texto" />
           <span>Agregar texto</span>
         </button>
         <button id="agregarGrafica" class="boton-agregar">
-          <img class="icono-agregar" src="../utils/iconos/GraficaBarras.svg" />
+          <img class="icono-agregar" src="../utils/iconos/GraficaBarras.svg" alt="Agregar gráfica" />
           <span>Agregar gráfica</span>
         </button>
       </div>
+
+      <!-- Aquí se inyectan las tarjetas de texto/gráfica -->
       <div class="seccion-contenido" id="contenedorElementos"></div>
+
+      <!-- Botones de acción movidos debajo de las tarjetas -->
+      <div class="contenedor-botones-acciones">
+        <button id="descargarPDF" class="boton-agregar">
+          <img class="icono-agregar" src="../utils/iconos/PDF.svg" alt="Descargar PDF" />
+          <span>Descargar PDF</span>
+        </button>
+        <button id="guardarPlantilla" class="boton-agregar">
+          <img class="icono-agregar" src="../utils/iconos/Plantilla.svg" alt="Guardar plantilla" />
+          <span>Guardar Plantilla</span>
+        </button>
+      </div>
+
     </div>
 
     <div class="seccion-previsualizacion-grafica" id="Previsualizacion">
-      <!-- 2) Cabecera rediseñada -->
+      <!-- Cabecera rediseñada -->
       <div class="preview-header">Vista previa del reporte</div>
 
-      <!-- 3) Contenedor en rejilla para las tarjetas -->
+      <!-- Contenedor en rejilla para las tarjetas -->
       <div id="contenedor-elementos-previsualizacion"
            class="contenedor-elementos-previsualizacion">
       </div>
