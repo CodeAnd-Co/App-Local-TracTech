@@ -1,13 +1,28 @@
-const { obtenerUsuarios: obtenerUsuariosAPI } = require("../../domain/usuariosAPI/usuariosAPI");
+const { obtenerUsuarios: obtenerUsuariosAPI } = require('../../domain/usuariosAPI/usuariosAPI');
+const { Usuario, ListaUsuarios } = require('../../data/usuariosModelos/usuarios');
 
 async function obtenerUsuarios() {
     try {
         const respuesta = await obtenerUsuariosAPI();
 
-        return respuesta;
+        if (!respuesta.ok) {
+            throw new Error('Error al obtener la lista de usuarios del servidor');
+        }
+
+        const listaUsuarios = new ListaUsuarios();
+
+        const datosUsuarios = respuesta.usuarios || [];
+
+        datosUsuarios.forEach(usuarionInformacion => {
+            const usuario = new Usuario(usuarionInformacion.id, usuarionInformacion.nombre, usuarionInformacion.correo);
+            // Deserializamos el usuario y lo agregamos a la lista  
+            listaUsuarios.agregarUsuario(usuario);
+        });
+
+        return listaUsuarios;
     } catch (error) {
-        console.error("Error al obtener usuarios:", error);
-        throw new Error("No se pudo obtener la lista de usuarios");
+        console.error('Error al obtener usuarios:', error);
+        throw new Error('No se pudo obtener la lista de usuarios');
     }
 }
 
