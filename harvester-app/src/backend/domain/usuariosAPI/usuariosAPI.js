@@ -1,8 +1,8 @@
 async function obtenerUsuarios() {
-    const respuesta = await fetch("http://localhost:3000/usuarios", {
-        method: "GET",
+    const respuesta = await fetch('http://localhost:3000/usuarios', {
+        method: 'GET',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
     });
     
