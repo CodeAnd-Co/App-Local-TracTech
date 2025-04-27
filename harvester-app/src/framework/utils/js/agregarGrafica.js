@@ -1,15 +1,15 @@
 const { Chart } = require('chart.js/auto');
 
-function agregarGrafica(contenedorId, previsualizaciónId) {
-  const contenedor = document.getElementById(contenedorId);
-  const previsualización = document.getElementById(previsualizaciónId);
+function agregarGrafica(contenedorId, previsualizacionId) {
+  window.contenedor = document.getElementById(contenedorId);
+  window.previsualizacion = document.getElementById(previsualizacionId);
 
   //Crea tarjeta para nuevo gráfico
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
   //Obtiene la lista de todas las trajetas de gráfico que ya existen
-  const tarjetasGraficas = contenedor.querySelectorAll('.tarjeta-grafica');
+  const tarjetasGraficas = window.contenedor.querySelectorAll('.tarjeta-grafica');
 
   //Si ya hay tarjetas de gráficos asigna la id siguiente, si no la nueva id se manteiene en 1
   let nuevaId = 1;
@@ -32,10 +32,20 @@ function agregarGrafica(contenedorId, previsualizaciónId) {
     </div>
     `;
 
-  const botonFormulas = tarjetaGrafica.querySelector('.boton-formulas');
-  botonFormulas.addEventListener('click', () => crearCuadroGraficas(previsualización));
+  //Obtener los datos para la gráfica
+  window.datosGrafica = window.datosExcelGlobal.hojas[Object.keys(window.datosExcelGlobal.hojas)[0]]
+  console.log(window.datosGrafica[0])
 
-  //Crea el cuadro que contiene la grafica en la previsualización
+  const columnas = window.datosGrafica[0].slice(3)
+
+
+  // Configura el botón de fórmulas
+  const botonFormulas = tarjetaGrafica.querySelector('.boton-formulas');
+  botonFormulas.addEventListener('click', () => crearCuadroGraficas(columnas, nuevaId, window.datosGrafica));
+
+  //Inicia la creación de la gráfica
+
+  //Crea el cuadro que contiene la grafica en la previsualizacion
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
   graficaDiv.id = nuevaId;
@@ -52,17 +62,49 @@ function agregarGrafica(contenedorId, previsualizaciónId) {
         label: 'My First dataset',
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
+        fontColor: 'rgb(255, 255, 255)',
         data: [0, 10, 5, 2, 20, 30, 45]
       }]
     },
-
     options: {
       plugins: {
         title: {
           display: true,
           text: '',
+        },
+        legend: {
+          labels: {
+            generateLabels: (grafica) => {
+              return grafica.data.datasets.map(
+                (datos) => ({
+                  text: datos.label,
+                  fillStyle: datos.backgroundColor,
+                  strokeStyle: datos.backgroundColor,
+                  fontColor: 'rgb(255, 255, 255)'
+                })
+              )
+            }
+          }
         }
-      }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: 'rgb(255, 255, 255)',
+          },
+          grid: {
+            color: 'rgb(255, 255, 255)'
+          }
+        },
+        y: {
+          ticks: {
+            color: 'rgb(255, 255, 255)',
+          },
+          grid: {
+            color: 'rgb(255, 255, 255)'
+          },
+        },
+      },
     }
   });
 
@@ -83,8 +125,9 @@ function agregarGrafica(contenedorId, previsualizaciónId) {
   // Añadir acción de eliminar
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () => {
     tarjetaGrafica.remove();
-    const graficasExistentes = Array.from(previsualización.querySelectorAll(".previsualizacion-grafica"));
-    const graficaElim = graficasExistentes.filter(grafica => grafica.id == tarjetaGrafica.id)[0];
+    // const graficasExistentes = Array.from(previsualizacion.querySelectorAll(".previsualizacion-grafica"));
+    // const graficaElim = graficasExistentes.filter(grafica => grafica.id == tarjetaGrafica.id)[0];
+    const graficaElim = encontrarGráfica(window.previsualizacion, tarjetaGrafica.id)
     graficaElim.remove();
     if (cuadroFormulasExiste()) {
       document.querySelector('.contenedor-formulas').remove();
@@ -93,11 +136,11 @@ function agregarGrafica(contenedorId, previsualizaciónId) {
 
 
   //Añadir tarjeta y gráfico a página
-  contenedor.appendChild(tarjetaGrafica);
-  previsualización.appendChild(graficaDiv);
+  window.contenedor.appendChild(tarjetaGrafica);
+  window.previsualizacion.appendChild(graficaDiv);
 }
 
-function crearCuadroGraficas(previsualizacion) {
+function crearCuadroGraficas(columnas, idGrafica) {
   //Si el cuadro de fórmulas no existe lo crea
   if (!cuadroFormulasExiste()) {
 
@@ -105,7 +148,7 @@ function crearCuadroGraficas(previsualizacion) {
     const cuadroFormulas = document.createElement('div');
     cuadroFormulas.className = 'contenedor-formulas';
 
-    //ToDo: Tomar las cariables de los datos disponibles y añadir lógica para cuando no hay datos
+    //ToDo: Tomar las variables de los datos disponibles y añadir lógica para cuando no hay datos
     cuadroFormulas.innerHTML = `<div class="titulo-formulas">
                 <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" />
                 <p class="texto">Fórmulas</p>
@@ -114,36 +157,6 @@ function crearCuadroGraficas(previsualizacion) {
                 <div class="opciones-seccion">
                     <p>Parámetros</p>
                     <div class="opciones-carta">
-                        <div class="opcion">
-                            <div class="opcion-letra">
-                                A
-                            </div>
-                            <select class="opcion-texto">
-                                <option selected>Gasolina</option>
-                                <option>Velocidad</option>
-                                <option>Aceleración</option>
-                            </select>
-                        </div>
-                        <div class="opcion">
-                            <div class="opcion-letra">
-                                B
-                            </div>
-                            <select class="opcion-texto">
-                                <option>Gasolina</option>
-                                <option selected>Velocidad</option>
-                                <option>Aceleración</option>
-                            </select>
-                        </div>
-                        <div class="opcion">
-                            <div class="opcion-letra">
-                                C
-                            </div>
-                            <select class="opcion-texto">
-                                <option>Gasolina</option>
-                                <option>Velocidad</option>
-                                <option selected>Aceleración</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
                 <div class="opciones-seccion">
@@ -171,13 +184,44 @@ function crearCuadroGraficas(previsualizacion) {
                 </div>
             </div>`;
   
+    const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
+    //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
+    crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas, idGrafica);
+    contenedoesSeleccion[1] //Fórmulas
+    
     const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
     botonRegresar.addEventListener('click', () => {
       cuadroFormulas.remove();
     });
   
-    previsualizacion.parentNode.insertBefore(cuadroFormulas, previsualizacion);
+    window.previsualizacion.parentNode.insertBefore(cuadroFormulas, window.previsualizacion);
   }
+}
+
+//Crea el 
+function crearMenuDesplegable(contenedor, letra, columnas) {
+  const nuevo = document.createElement('div');
+  nuevo.className = 'opcion';
+  const divLetra = document.createElement('div');
+  divLetra.className = 'opcion-letra';
+  divLetra.innerHTML = letra;
+  const seleccValores = document.createElement('select');
+  seleccValores.className = 'opcion-texto';
+  seleccValores.innerHTML = '<option>-- Selecciona Columna --</option>'
+  columnas.forEach((texto) => {
+    seleccValores.innerHTML = `${seleccValores.innerHTML}
+    <option> ${texto} </option>`
+  });
+
+  nuevo.appendChild(divLetra);
+  nuevo.appendChild(seleccValores);
+  contenedor.appendChild(nuevo);
+}
+
+// Regresa la id que corresponda con el id proporcionado
+function encontrarGráfica(id) {
+  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll(".previsualizacion-grafica"));
+  return graficasExistentes.filter(grafica => grafica.id == id)[0];
 }
 
 // Busca entre los elementos del contenedor de análisis y regresa si ya existe el cuadro para aplicar fórmulas
