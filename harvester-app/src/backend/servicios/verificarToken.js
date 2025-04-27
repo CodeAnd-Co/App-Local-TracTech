@@ -22,7 +22,6 @@ async function verificarToken(token) {
 
       // Parsear la respuesta del servidor
       const datos = await respuesta.json();
-      console.log("Respuesta del servidor:", datos); // Agregado para depuración
 
       // Retornar true si la respuesta fue exitosa y el servidor confirmó la validez
       return respuesta.ok && datos.valido;

@@ -23,7 +23,6 @@ btnAcceder.addEventListener("click", async () => {
   try {
     // Intentar iniciar sesión llamando a la función iniciarSesion
     const respuesta = await iniciarSesion(correo, contrasena);
-    console.log("Respuesta del backend:", respuesta);
 
     if (respuesta.ok) {
       // Guardar el token en localStorage
@@ -32,7 +31,6 @@ btnAcceder.addEventListener("click", async () => {
       // Redirigir al usuario a la página principal
       window.location.href = "./frameLayout.html";
 
-      console.log("Inicio de sesión exitoso:", respuesta);
     } else {
       // Mostrar mensaje de error si las credenciales no son válidas
       alert(respuesta.message || "Error al iniciar sesión.");
