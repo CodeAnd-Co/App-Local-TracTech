@@ -1,3 +1,10 @@
+// RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
+
+/**
+ * Inicializa el módulo de tractores configurando los eventos del DOM
+ * 
+ * @function inicializarModuloTractores
+ */
 function inicializarModuloTractores() {
     // Actualizar el topbar si está disponible
     if (window.actualizarTopbar) {

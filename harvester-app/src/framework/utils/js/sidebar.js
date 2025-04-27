@@ -170,15 +170,6 @@ function actualizarTopbar(seccion) {
   } else {
     botonRegresar.style.display = "flex";
     tituloElem.style.marginLeft = "10px";
-    if(seccion == 'tractores') {
-      // Obtenemos la sección real
-      localStorage.getItem('seccion-activa');
-      console.log("Sección activa obtenida:", seccion);
-      botonRegresar.addEventListener('click', () => {
-        
-        console.log('Regresar a inicio desde tractores:', seccion);
-      })
-    }
   }
 }
 
