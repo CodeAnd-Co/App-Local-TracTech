@@ -29,6 +29,9 @@ function inicializarModuloAnalisis() {
     window.agregarGrafica(contenedor, previsualizacion);
   });
 
+  document.getElementById('descargarPDF')
+          .addEventListener('click', descargarPDF);
+
   // Cargar los datos del Excel desde localStorage
   const datosExcel = cargarDatosExcel();
   console.log("Datos de Excel:", datosExcel);
@@ -72,41 +75,29 @@ function cargarDatosExcel() {
 }
 
 function descargarPDF() {
-  console.log('[PDF] Comienza descarga');
+  console.log('[PDF] Generando reporte…');
 
-  /* 1. jsPDF */
   const { jsPDF } = window.jspdf || {};
-  if (!jsPDF) {
-    console.error('[PDF] jsPDF NO cargado');
-    return;
-  }
-  console.log('[PDF] jsPDF OK');
+  if (!jsPDF) { console.error('[PDF] jsPDF no cargado'); return; }
 
-  const doc        = new jsPDF({ orientation:'portrait', unit:'pt', format:'a4' });
-  const margin     = 40;
-  const pageW      = doc.internal.pageSize.getWidth()  - margin * 2;
-  const pageH      = doc.internal.pageSize.getHeight() - margin * 2;
-  let   cursorY    = margin;
-  let   pagina     = 1;
+  const doc     = new jsPDF({ orientation:'portrait', unit:'pt', format:'a4' });
+  const margin  = 40;
+  const pageW   = doc.internal.pageSize.getWidth()  - margin * 2;
+  const pageH   = doc.internal.pageSize.getHeight() - margin * 2;
+  let   y       = margin;
+  let   pagina  = 1;
 
-  /* 2. Previsualización */
   const preview = document.getElementById('contenedor-elementos-previsualizacion');
-  if (!preview) {
-    console.warn('[PDF] No se encontró #contenedor-elementos-previsualizacion');
-    return;
-  }
-  console.log(`[PDF] Elementos en preview: ${preview.children.length}`);
+  if (!preview) { console.warn('[PDF] Contenedor de preview no encontrado'); return; }
 
-  /* 3. Recorremos cada hijo */
-  Array.from(preview.children).forEach((elem, idx) => {
+  Array.from(preview.children).forEach((elem, i) => {
 
-    console.log(`[PDF] ➜ Procesando hijo #${idx+1} (${elem.className})`);
-
-    /* —— Texto —— */
+    /* —— Bloques de texto —— */
     if (elem.classList.contains('previsualizacion-texto')) {
       const texto = elem.textContent.trim();
-      if (!texto) { console.log('[PDF]   – texto vacío, se omite'); return; }
+      if (!texto) return;
 
+      // Tamaños según tipo
       let size = 12;
       let weight = 'normal';
       if (elem.classList.contains('preview-titulo'))    { size = 24; weight = 'bold'; }
@@ -116,42 +107,33 @@ function descargarPDF() {
       doc.setFont(undefined, weight);
 
       const lines = doc.splitTextToSize(texto, pageW);
-      if (cursorY + lines.length * size > pageH + margin) {
-        doc.addPage(); pagina++; cursorY = margin;
-        console.log(`[PDF]   – salto a página ${pagina}`);
+      if (y + lines.length * size > pageH + margin) {
+        doc.addPage(); y = margin; pagina++;
       }
-
-      doc.text(lines, margin, cursorY);
-      cursorY += lines.length * size + 12;
+      doc.text(lines, margin, y);
+      y += lines.length * size + 12;
       return;
     }
 
-    /* —— Gráfica —— */
+    /* —— Gráficas (canvas) —— */
     if (elem.classList.contains('previsualizacion-grafica')) {
       const canvas = elem.querySelector('canvas');
-      if (!canvas) { console.warn('[PDF]   – sin <canvas>, se omite'); return; }
+      if (!canvas) return;
 
       const img    = canvas.toDataURL('image/png');
       const aspect = canvas.height / canvas.width;
       const imgH   = pageW * aspect;
 
-      if (cursorY + imgH > pageH + margin) {
-        doc.addPage(); pagina++; cursorY = margin;
-        console.log(`[PDF]   – salto a página ${pagina}`);
+      if (y + imgH > pageH + margin) {
+        doc.addPage(); y = margin; pagina++;
       }
-
-      doc.addImage(img, 'PNG', margin, cursorY, pageW, imgH);
-      cursorY += imgH + 12;
-      return;
+      doc.addImage(img, 'PNG', margin, y, pageW, imgH);
+      y += imgH + 12;
     }
-
-    console.log('[PDF]   – tipo de elemento no reconocido, se omite');
   });
 
-  /* 4. Guardamos */
-  console.log('[PDF] Guardando archivo…');
   doc.save('reporte.pdf');
-  console.log('[PDF] Descarga terminada');
+  console.log('[PDF] Descarga completa ✔');
 }
 
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
