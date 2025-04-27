@@ -38,6 +38,6 @@ document.addEventListener("DOMContentLoaded", async () => {
  */
 function obtenerToken() {
     // Obtener el token del almacenamiento local
-    token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     return token;
 }
