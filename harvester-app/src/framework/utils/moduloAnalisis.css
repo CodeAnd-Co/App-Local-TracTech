@@ -15,20 +15,27 @@ body,
   font-family: var(--font-base, "Inter", sans-serif) !important;
 }
 .frame-analisis {
+  height: 90vh;
+  align-items: stretch;
   display: flex;
   flex-direction: row;
   gap: var(--spacing-lg);         
   align-items: flex-start;
   justify-content: flex-start;
   padding: var(--spacing-lg);
+  overflow: hidden;
+  overflow-y: auto;
 }
 .seccion-elemento-reporte {
+  display: grid;
+  grid-template-rows: auto, 1fr auto;
   background: #ededed;
   border-radius: var(--radius);
   padding: var(--spacing-lg);
   flex: 0 0 360px;             
   display: flex;
   flex-direction: column;
+  height: auto;
   align-items: center;
 }
 .contenedor-botones-agregar {
@@ -68,9 +75,12 @@ body,
   gap: 10px;
   align-items: flex-start;
   justify-content: flex-start;
-  flex: 1;
+  flex: 1 1 auto;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  min-height: 0; 
+  gap: 10px;
+  flex-direction: column;
 }
 .seccion-previsualizacion-grafica {
   background: var(--color-bg);
@@ -262,6 +272,10 @@ body,
 .area-escritura {
   width: 100%;
   min-height: 120px;
+  max-height: 120px;
+  overflow-y: auto;
+  overflow-x: auto;
+  resize: none;
   padding: 12px;
   font-size: 16px;
   font-family: "SegoeUi-Regular", sans-serif;
@@ -380,6 +394,14 @@ body,
   margin-bottom: var(--spacing-md);
   width:100% ; 
   box-sizing: border-box;
+  height: auto;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all;
 }
 .preview-titulo {
   font-size: 24px;
@@ -396,16 +418,17 @@ body,
 .previsualizacion-texto {
   font-family: "SegoeUi-Regular", sans-serif;
 }
-.seccion-previsualizacion-grafica {
-  overflow-x: hidden;   
-  overflow-y: auto;     
-}
 .previsualizacion-texto {
   white-space: pre-wrap;       
   word-wrap: break-word;      
   overflow-wrap: break-word;   
 }
 .seccion-previsualizacion-grafica {
+  flex: 1;            /* crece para llenar */
+  height: 100%;       /* completa el alto de .frame-analisis */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -441,6 +464,7 @@ body,
   width: 100%;
   box-sizing: border-box;
   transition: background 0.3s ease, transform 0.2s ease;
+  overflow-y: none;
 }
 .previsualizacion-texto:hover {
   background: rgba(255, 255, 255, 0.6);     
@@ -516,3 +540,15 @@ body,
 .contenedor-botones-acciones .boton-agregar {
   min-width: 140px;        /* ajústalo al ancho de “Agregar gráfica” */
 }
+.tarjeta-grafica .editar,
+.tarjeta-grafica .eliminar {
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.tarjeta-grafica .editar:hover,
+.tarjeta-grafica .eliminar:hover {
+  background-color: rgba(255,255,255,0.1);
+  transform: translateX(2px);
+}     
