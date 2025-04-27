@@ -20,8 +20,8 @@ function cargarModulo(seccion) {
         
         // Inicializar el módulo según la sección
         if (seccion === 'inicio') {
-          if (window.cambiarNombreArchivo) {
-            window.cambiarNombreArchivo();
+          if (window.botonCargar) {
+            window.botonCargar();
           }
           if (window.configurarBotonAnalisis) {
             window.configurarBotonAnalisis();

@@ -2,8 +2,8 @@
 // RF45 Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
 // RF46 Usuario sustituye el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF46
 
-const XLSX = require('xlsx');
 const { borrarExcel }  = require('../../backend/casosUso/excel/borrarExcel.js');
+const { leerExcel } = require('../../backend/casosUso/excel/cargarExcel.js');
 
 function botonBorrar() {
     setTimeout(() => {
@@ -17,15 +17,13 @@ function botonBorrar() {
     }, 100);
 }
 
-// Configura el cambio de nombre del archivo cuando se selecciona uno
-function cambiarNombreArchivo() {
-    // Esperamos a que el DOM esté completamente cargado
+function botonCargar() {
     setTimeout(() => {
-        const entradaArchivo = document.querySelector('.cargar-input');
+        const entradaArchivo = document.querySelector('.cargar-excel');
         const elementoNombreArchivo = document.querySelector('.texto-archivo');
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const botonBorrar = document.getElementById('boton-borrar');
-        
+
         if (!entradaArchivo || !elementoNombreArchivo) {
             return console.error("No se encontraron los elementos necesarios");
         }
@@ -39,22 +37,16 @@ function cambiarNombreArchivo() {
 
         // Eliminar cualquier dato de sección activa al cargar el módulo inicio
         localStorage.removeItem('seccion-activa');
-        
-        function manejarCambioArchivo() {
-            if (entradaArchivo.files && entradaArchivo.files.length > 0) {
-                elementoNombreArchivo.textContent = entradaArchivo.files[0].name;
-                botonAnalisis.removeAttribute('disabled');
-                leerArchivoExcel(entradaArchivo.files[0]);
-                // Habilitar el botón de borrar
-                botonBorrar.style.display = 'block';
-            } else {
-                elementoNombreArchivo.textContent = 'Sin Archivo Seleccionado';
-            }
+
+        if (entradaArchivo.files && entradaArchivo.files.length > 0) {
+            elementoNombreArchivo.textContent = entradaArchivo.files[0].name;
+            botonAnalisis.removeAttribute('disabled');
         }
-        
-        // Solo usamos addEventListener, no también onchange
-        entradaArchivo.addEventListener('change', manejarCambioArchivo);
-        
+
+        entradaArchivo.addEventListener('change', () => {
+            leerExcel(entradaArchivo.files[0]);
+            botonBorrar.style.display = 'block';
+        });
     }, 100);
 }
 
@@ -121,74 +113,6 @@ function configurarBotonAnalisis() {
     }, 100);
 }
 
-function leerArchivoExcel(archivo) {
-    // Mostramos indicador de carga si quieres
-    const elementoNombreArchivo = document.querySelector('.texto-archivo');
-    if (elementoNombreArchivo) {
-        elementoNombreArchivo.textContent = 'Leyendo archivo...';
-    }
-
-    // Guardar el nombre del archivo para usarlo en el módulo de análisis
-    localStorage.setItem('nombreArchivoExcel', archivo.name);
-
-    const lector = new FileReader();
-    lector.onload = function(evento) {
-        try {
-            const datos = new Uint8Array(evento.target.result);
-            const libro = XLSX.read(datos, { type: 'array' });
-            
-            // Procesamos todas las hojas del Excel
-            const todasLasHojas = {};
-            
-            // Recorremos cada nombre de hoja en el libro
-            libro.SheetNames.forEach(nombreHoja => {
-                // Obtenemos la hoja por su nombre
-                const hoja = libro.Sheets[nombreHoja];
-                // Convertimos la hoja a JSON
-                const datosHojaJSON = XLSX.utils.sheet_to_json(hoja, { header: 1 });
-                // Almacenamos los datos usando el nombre de la hoja como clave
-                todasLasHojas[nombreHoja] = datosHojaJSON;
-            });
-            
-            // Incluimos metadatos útiles
-            const datosCompletos = {
-                nombreArchivo: archivo.name,
-                hojas: todasLasHojas,
-            };
-            
-            // Guardar los datos en localStorage con la nueva estructura
-            localStorage.setItem('datosExcel', JSON.stringify(datosCompletos));
-            
-            // También guardar un indicador de que hay datos disponibles
-            localStorage.setItem('datosExcelDisponibles', 'true');
-            
-            if (elementoNombreArchivo) {
-                elementoNombreArchivo.textContent = archivo.name;
-            }
-
-        } catch (error) {
-            console.error("Error al leer el archivo Excel:", error);
-            alert("Error al procesar el archivo Excel. Verifica que sea un archivo válido.");
-            
-            if (elementoNombreArchivo) {
-                elementoNombreArchivo.textContent = 'Error al leer el archivo';
-            }
-        }
-    };
-    
-    lector.onerror = function() {
-        console.error("Error al leer el archivo");
-        alert("Error al leer el archivo. Inténtalo de nuevo.");
-        
-        if (elementoNombreArchivo) {
-            elementoNombreArchivo.textContent = 'Error al leer el archivo';
-        }
-    };
-    
-    // Iniciamos la lectura del archivo
-    lector.readAsArrayBuffer(archivo);
-}
-
 window.botonBorrar = botonBorrar;
-window.cambiarNombreArchivo = cambiarNombreArchivo;
+window.botonCargar = botonCargar;
 window.configurarBotonAnalisis = configurarBotonAnalisis;
