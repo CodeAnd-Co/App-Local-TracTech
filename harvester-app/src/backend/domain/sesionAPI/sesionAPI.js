@@ -1,3 +1,6 @@
+// RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
+// RF3 Ususario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
+
 /**
  * Realiza la solicitud para iniciar sesión en el servidor.
  * Envía el correo y la contraseña como datos en el cuerpo de la petición.

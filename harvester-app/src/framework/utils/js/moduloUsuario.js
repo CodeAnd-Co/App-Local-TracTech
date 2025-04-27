@@ -1,3 +1,5 @@
+// RF3 Ususario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
+
 const { cerrarSesion } = require("../../backend/casosUso/sesion/cerrarSesion");
 
 /**
