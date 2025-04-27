@@ -1,3 +1,5 @@
+// RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
+
 // Seleccionar elementos del DOM necesarios
 const btnAbrirInfo = document.querySelector("#btn-abrir-info");
 const modalInfo = document.querySelector("#modalContacto");

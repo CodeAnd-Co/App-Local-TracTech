@@ -57,7 +57,7 @@ async function inicializarModuloPlantillas () {
         /** @type {Object} */
         const respuesta = await plantillas();
 
-        for (let res in respuesta.plantillas) {
+        for (const res in respuesta.plantillas) {
             const tarjetaTexto = document.createElement('div');
             tarjetaTexto.classList.add('plantilla');
 
