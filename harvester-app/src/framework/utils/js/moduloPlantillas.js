@@ -1,8 +1,12 @@
+// RF 23: Usuario consulta plantillas de reporte. - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF23
+// RF 21: Usuario elimina plantilla de reporte. - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF21
+
 /**
  * Importa la función `plantillas` desde la capa de dominio para obtener las plantillas disponibles.
  * @module plantillasAPI
  */
 const { plantillas } = require("../../backend/domain/plantillasAPI/plantillasAPI.js");
+const { eliminarPlantillas } = require("../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js");
 
 /**
  * Inicializa el módulo de plantillas cargando la información desde el backend
@@ -31,20 +35,27 @@ async function inicializarModuloPlantillas () {
         if(modalBorrar?.getAttribute("dato-id")) {
             // RF: Eliminar Plantilla
             try {
-                /*
-                const respuesta = await eliminarPlantillas(modalBorrar.getAttribute('dato-id'));
+                const idPlantilla = modalBorrar.getAttribute('dato-id')
+                
+                const respuesta = await eliminarPlantillas(idPlantilla);
+
                 if (respuesta.ok){
-                    alert("Plantilla eliminada con éxito");
-                    window.location.reload();
+
+                    // Eliminar del DOM la tarjeta que contiene esa plantilla
+                    const plantillaHTML = document.querySelector(`.dropdown[dato-id="${idPlantilla}"]`)?.closest(".plantilla");
+                    if (plantillaHTML) {
+                        plantillaHTML.remove();
+                        modalBorrar?.close();
+                    }
                 } else {
-                    alert("No se pudo eliminar la Plantilla");
+                    alert("No se pudo eliminar la Plantilla Respuesta err");
                 }
-                */
+                
+                
             } catch (error) {
-                alert("No se pudo eliminar la Plantilla");
+                alert("No se pudo eliminar la Plantilla Catch");
             }
 
-            alert(modalBorrar.getAttribute("dato-id"));
         } else {
             alert("La Plantilla no se pudo eliminar: No contiene ID");
         }
@@ -63,7 +74,7 @@ async function inicializarModuloPlantillas () {
 
             tarjetaTexto.innerHTML = `
                 <div class="dropdown" dato-id="${respuesta.plantillas[res].idPlantillaReporte}">
-                    <button class="boton-opciones" dato-id="${respuesta.plantillas[res].idPlantillaReporte}">
+                    <button class="boton-opciones">
                         <img class="icono-opciones" src="../utils/iconos/TresPuntos.svg" />
                     </button>
                     <div class="dropdown-content">
@@ -117,7 +128,6 @@ async function inicializarModuloPlantillas () {
         botonesModificarCoinciden.forEach(boton => {
             boton.addEventListener("click", () => {
                 const dropdown = boton.closest('.dropdown');
-                alert(dropdown?.getAttribute('dato-id'));
             });
         });
 
