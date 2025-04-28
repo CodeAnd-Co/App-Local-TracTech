@@ -14,6 +14,15 @@ function inicializarModuloUsuario() {
                     .then(res => res.text())
                     .then(html => {
                         ventanaPrincipal.innerHTML = html;
+                        // Cargar y ejecutar el script manualmente
+                        const script = document.createElement('script');
+                        script.src = '../utils/js/moduloGestionUsuario.js';
+                        script.onload = () => {
+                            if (window.inicializarModuloGestionUsuarios) {
+                                window.inicializarModuloGestionUsuarios();
+                            }
+                        };
+                        document.body.appendChild(script);
                     })
                     .catch(err => console.error("Error cargando módulo de gestión de usuarios:", err));
             }
