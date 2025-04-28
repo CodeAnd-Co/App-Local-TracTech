@@ -135,8 +135,8 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   // Eliminar gráfica
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () => {
     tarjetaGrafica.remove();
-    const graficaElim = encontrarGráfica(window.previsualizacion, tarjetaGrafica.id)
-    graficaElim.remove();
+    const graficaElim = encontrarGráfica(tarjetaGrafica.id);
+    if (graficaElim) graficaElim.remove();
     eliminarCuadroFormulas();
   });
 

@@ -29,7 +29,7 @@ function agregarTexto(contenedorId, previewId) {
       <div class="divisor"></div>
       <!-- Botón Eliminar -->
       <div class="eliminar">
-        <img class="trash-icono" src="../utils/iconos/Basura.svg" />
+        <img class="eliminar-icono" src="../utils/iconos/Basura.svg" />
         <div class="texto-eliminar">Eliminar</div>
       </div>
     </div>
