@@ -1,5 +1,10 @@
 const { Chart } = require('chart.js/auto');
 
+/**
+ * Agrega una nueva tarjeta de gráfica y su previsualización.
+ * @param {string} contenedorId - ID del contenedor donde se agregará la tarjeta de gráfica.
+ * @param {string} previsualizacionId - ID del contenedor de previsualización de la gráfica.
+ */
 function agregarGrafica(contenedorId, previsualizacionId) {
   window.contenedor = document.getElementById(contenedorId);
   window.previsualizacion = document.getElementById(previsualizacionId);
@@ -11,7 +16,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   //Obtiene la lista de todas las trajetas de gráfico que ya existen
   const tarjetasGraficas = window.contenedor.querySelectorAll('.tarjeta-grafica');
 
-  //Si ya hay tarjetas de gráficos asigna la id siguiente, si no la nueva id se manteiene en 1
+  //Asigna Id, si ya hay tarjetas de gráficos asigna la id siguiente, si no la nueva id se manteiene en 1
   let nuevaId = 1;
 
   if (tarjetasGraficas && tarjetasGraficas.length > 0) {
@@ -110,10 +115,9 @@ function agregarGrafica(contenedorId, previsualizacionId) {
 
   graficaDiv.appendChild(contenedorGrafico);
 
-  // Añadir eventos para cambiar gráfico dinámicamente desde la tarjeta
+  // Cambiar título dinámicamente
   const hijosTarjeta = tarjetaGrafica.children;
-
-  // Cambiar título
+  
   const titulo = hijosTarjeta[0]
   titulo.addEventListener('input', () => {
     console.log(titulo.value, titulo.textContent)
@@ -122,14 +126,12 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   });
 
 
-  // Añadir acción de eliminar
+  // Eliminar gráfica
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () => {
     tarjetaGrafica.remove();
-    // const graficasExistentes = Array.from(previsualizacion.querySelectorAll(".previsualizacion-grafica"));
-    // const graficaElim = graficasExistentes.filter(grafica => grafica.id == tarjetaGrafica.id)[0];
     const graficaElim = encontrarGráfica(window.previsualizacion, tarjetaGrafica.id)
     graficaElim.remove();
-    encontrarCuadroFormulas();
+    eliminarCuadroFormulas();
   });
 
 
@@ -138,18 +140,20 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   window.previsualizacion.appendChild(graficaDiv);
 }
 
+/**
+ * Crea un cuadro de fórmulas asociado a una gráfica.
+ * @param {string[]} columnas - Lista de columnas disponibles en los datos.
+ * @param {number} idGrafica - ID de la gráfica asociada.
+ */
 function crearCuadroFormulas(columnas, idGrafica) {
-  //Si el cuadro de fórmulas no existe lo crea
-  if (encontrarCuadroFormulas()) {
+  if (eliminarCuadroFormulas()) {
     console.log('Cuadro de fórmulas existía');
   }
   console.log(idGrafica)
 
-  //ToDo: añadir lógica para cambiar la interfaz dependiendo de la gráfica en la que se presionó el botón
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
 
-  //ToDo: Tomar las variables de los datos disponibles y añadir lógica para cuando no hay datos
   cuadroFormulas.innerHTML = `<div class="titulo-formulas">
               <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" />
               <p class="texto">Fórmulas</p>
@@ -186,6 +190,7 @@ function crearCuadroFormulas(columnas, idGrafica) {
           </div>`;
 
   const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
+
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
   crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
   contenedoesSeleccion[1] //Fórmulas
@@ -198,7 +203,12 @@ function crearCuadroFormulas(columnas, idGrafica) {
   window.previsualizacion.parentNode.insertBefore(cuadroFormulas, window.previsualizacion);
 }
 
-//Crea el cuadro desplegable en el cuadro de fórmulas
+/**
+ * Crea un menú desplegable para seleccionar columnas.
+ * @param {HTMLElement} contenedor - Contenedor donde se agregará el menú desplegable.
+ * @param {string} letra - Letra identificadora del menú.
+ * @param {string[]} columnas - Lista de columnas disponibles.
+ */
 function crearMenuDesplegable(contenedor, letra, columnas) {
   const nuevo = document.createElement('div');
   nuevo.className = 'opcion';
@@ -218,14 +228,21 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
   contenedor.appendChild(nuevo);
 }
 
-// Regresa la id que corresponda con el id proporcionado
+/**
+ * Encuentra una gráfica en la previsualización por ID.
+ * @param {string|number} id - ID de la gráfica a buscar.
+ * @returns {HTMLElement} Gráfica encontrada.
+ */
 function encontrarGráfica(id) {
   const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll(".previsualizacion-grafica"));
   return graficasExistentes.filter(grafica => grafica.id == id)[0];
 }
 
-// Busca entre los elementos del contenedor de análisis y regresa si ya existe el cuadro para aplicar fórmulas
-function encontrarCuadroFormulas() {
+/**
+ * Verifica si existe un cuadro de fórmulas y lo elimina si existe.
+ * @returns {boolean} True si existía un cuadro de fórmulas, false en caso contrario.
+ */
+function eliminarCuadroFormulas() {
   const cuadrosExistentes = Array.from(document.querySelector('.frame-analisis').children);
   const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className == 'contenedor-formulas');
   if (cuadros.length == 1) {
@@ -236,4 +253,5 @@ function encontrarCuadroFormulas() {
   }
 }
 
+// Hace la función agregarGrafica disponible en todo el proyecto
 window.agregarGrafica = agregarGrafica;
