@@ -1,5 +1,10 @@
-// RF45 Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
+// RF45 - Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
 
+/**
+ * Elimina el archivo Excel actualmente cargado de la aplicación.
+ * Limpia los datos relacionados del localStorage y actualiza la interfaz de usuario.
+ * @returns {void}
+ */
 function borrarExcel() {
     const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
     if (nombreArchivo) {
@@ -16,7 +21,7 @@ function borrarExcel() {
         }
     } else {
         console.log('No hay archivo para eliminar.');
-    };
+    }
 }
 
 module.exports = {

@@ -2,9 +2,15 @@
 // RF45 Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
 // RF46 Usuario sustituye el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF46
 
-const { borrarExcel }  = require('../../backend/casosUso/excel/borrarExcel.js');
+const { borrarExcel } = require('../../backend/casosUso/excel/borrarExcel.js');
 const { leerExcel } = require('../../backend/casosUso/excel/cargarExcel.js');
 
+/**
+ * Inicializa la funcionalidad del botón de borrar Excel.
+ * Configura el evento click para eliminar el archivo Excel cargado
+ * y actualizar el estado de los botones relacionados.
+ * @returns {void}
+ */
 function botonBorrar() {
     setTimeout(() => {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
@@ -17,6 +23,12 @@ function botonBorrar() {
     }, 100);
 }
 
+/**
+ * Inicializa la funcionalidad del botón de carga de archivos Excel.
+ * Configura el evento change del input file para procesar el archivo
+ * seleccionado y actualizar la interfaz de usuario.
+ * @returns {void}
+ */
 function botonCargar() {
     setTimeout(() => {
         const entradaArchivo = document.querySelector('.cargar-excel');
@@ -46,6 +58,12 @@ function botonCargar() {
     }, 100);
 }
 
+/**
+ * Inicializa la funcionalidad del botón de análisis.
+ * Configura el evento click para navegar al módulo de análisis cuando
+ * se ha cargado un archivo Excel correctamente.
+ * @returns {void}
+ */
 function botonAnalisis() {
     setTimeout(() => {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
@@ -95,6 +113,7 @@ function botonAnalisis() {
     }, 100);
 }
 
+// Exponer las funciones al objeto window para que puedan ser utilizadas por otros módulos
 window.botonBorrar = botonBorrar;
 window.botonCargar = botonCargar;
 window.botonAnalisis = botonAnalisis;
