@@ -1,4 +1,4 @@
-// RF45 - Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
+// RF45 Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
 
 /**
  * Elimina el archivo Excel actualmente cargado de la aplicación.
