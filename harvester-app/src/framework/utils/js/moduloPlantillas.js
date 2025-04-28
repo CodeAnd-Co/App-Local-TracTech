@@ -1,3 +1,6 @@
+// RF 23: Usuario consulta plantillas de reporte. - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF23
+// RF 21: Usuario elimina plantilla de reporte. - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF21
+
 /**
  * Importa la función `plantillas` desde la capa de dominio para obtener las plantillas disponibles.
  * @module plantillasAPI
@@ -38,7 +41,7 @@ async function inicializarModuloPlantillas () {
 
                 if (respuesta.ok){
 
-                    // ✅ Eliminar del DOM la tarjeta que contiene esa plantilla
+                    // Eliminar del DOM la tarjeta que contiene esa plantilla
                     const plantillaHTML = document.querySelector(`.dropdown[dato-id="${idPlantilla}"]`)?.closest(".plantilla");
                     if (plantillaHTML) {
                         plantillaHTML.remove();
