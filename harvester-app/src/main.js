@@ -19,6 +19,8 @@ const createWindow = () => {
     },
   });
 
+  mainWindow.setMenuBarVisibility(false);
+
   // Cargar el archivo HTML de inicio de sesión.
   mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
 
