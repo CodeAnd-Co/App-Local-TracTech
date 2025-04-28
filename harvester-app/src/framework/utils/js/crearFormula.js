@@ -10,6 +10,28 @@ function eliminarElemento(boton) {
             elementoABorrar.remove();
         }
 
+function inicializarCrearFormula() {
+    const botonCrearFormula = document.getElementById('crearFormula');
+    if (botonCrearFormula) {
+        botonCrearFormula.addEventListener('click', async () => {
+            console.log("Cargando el módulo de creación de fórmulas...");
+            localStorage.setItem('seccion-activa', 'crearFormula');
+            const ventanaPrincipal = document.getElementById('ventana-principal');
+            if (ventanaPrincipal) {
+                fetch('../vistas/crearFormula.html')
+                    .then(res => res.text())
+                    .then(html => {
+                        ventanaPrincipal.innerHTML = html;
+                    })
+                    .catch(err => console.error("Error cargando módulo de creación de fórmulas:", err));
+            }
+    });
+
+    } else {
+        console.error("El botón de creación de fórmulas no se encontró en el DOM.");
+    }
+}
+
 async function guardarFormulaFront() {
     const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     const nombreFormula = document.getElementById('nombreFormula').value;
@@ -315,3 +337,5 @@ function popularDropdown(elementoSeleccionado) {
 document.addEventListener('DOMContentLoaded', () => {
     const mainFunctionSelect = document.getElementById('main-function');
 });
+
+window.inicializarCrearFormula = inicializarCrearFormula;

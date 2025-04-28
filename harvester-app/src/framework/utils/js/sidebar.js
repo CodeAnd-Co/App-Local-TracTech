@@ -6,8 +6,7 @@ function cargarModulo(seccion) {
     formulas:    "../vistas/moduloFormulas.html",
     envios:      "../vistas/moduloEnvios.html",
     usuario:     "../vistas/moduloUsuario.html",
-    gestionUsuarios:     "../vistas/moduloGestionUsuarios.html"
-    // tema no va aquí
+    gestionUsuarios:     "../vistas/moduloGestionUsuarios.html",    
   };
 
   const contenedor = document.querySelector(".ventana-principal");
@@ -41,6 +40,10 @@ function cargarModulo(seccion) {
           if (window.inicializarModuloGestionUsuarios) {
             console.log("Inicializando módulo de gestion de usuarios...");
             window.inicializarModuloGestionUsuarios();
+          }
+        } else if (seccion == 'formulas') {
+          if (window.inicializarCrearFormula) {
+            window.inicializarCrearFormula();
           }
         }
         // Añadir más inicializaciones para otros módulos según sea necesario
