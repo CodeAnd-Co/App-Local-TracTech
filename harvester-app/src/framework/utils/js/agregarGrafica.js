@@ -41,7 +41,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
 
   // Configura el botón de fórmulas
   const botonFormulas = tarjetaGrafica.querySelector('.boton-formulas');
-  botonFormulas.addEventListener('click', () => crearCuadroGraficas(columnas, nuevaId, window.datosGrafica));
+  botonFormulas.addEventListener('click', () => crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
 
   //Inicia la creación de la gráfica
 
@@ -129,9 +129,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
     // const graficaElim = graficasExistentes.filter(grafica => grafica.id == tarjetaGrafica.id)[0];
     const graficaElim = encontrarGráfica(window.previsualizacion, tarjetaGrafica.id)
     graficaElim.remove();
-    if (cuadroFormulasExiste()) {
-      document.querySelector('.contenedor-formulas').remove();
-    }
+    encontrarCuadroFormulas();
   });
 
 
@@ -140,65 +138,67 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   window.previsualizacion.appendChild(graficaDiv);
 }
 
-function crearCuadroGraficas(columnas, idGrafica) {
+function crearCuadroFormulas(columnas, idGrafica) {
   //Si el cuadro de fórmulas no existe lo crea
-  if (!cuadroFormulasExiste()) {
-
-    //ToDo: añadir lógica para cambiar la interfaz dependiendo de la gráfica en la que se presionó el botón
-    const cuadroFormulas = document.createElement('div');
-    cuadroFormulas.className = 'contenedor-formulas';
-
-    //ToDo: Tomar las variables de los datos disponibles y añadir lógica para cuando no hay datos
-    cuadroFormulas.innerHTML = `<div class="titulo-formulas">
-                <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" />
-                <p class="texto">Fórmulas</p>
-            </div>
-            <div class="seccion-formulas">
-                <div class="opciones-seccion">
-                    <p>Parámetros</p>
-                    <div class="opciones-carta">
-                    </div>
-                </div>
-                <div class="opciones-seccion">
-                    <div class="titulo-aplicar-formulas">
-                        <p>Aplicar Fórmula</p>
-                        <img class="circulo-ayuda" src="../utils/iconos/circulo-ayuda.svg" />
-                    </div>
-                    <div class="opciones-carta">
-                        <input class="search-section" placeholder="Encuentra una fórmula">
-                        <div class="contenedor-busqueda">
-                            <div class="formula">
-                                f(y): y + k
-                            </div>
-                            <div class="formula">
-                                f(y): 2x
-                            </div>
-                            <div class="formula">
-                                f(y): y + k
-                            </div>
-                        </div>
-                        <div class="boton-agregar">
-                            <div >Aplicar Fórmula</div>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-  
-    const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
-    //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
-    crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas, idGrafica);
-    contenedoesSeleccion[1] //Fórmulas
-    
-    const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
-    botonRegresar.addEventListener('click', () => {
-      cuadroFormulas.remove();
-    });
-  
-    window.previsualizacion.parentNode.insertBefore(cuadroFormulas, window.previsualizacion);
+  if (encontrarCuadroFormulas()) {
+    console.log('Cuadro de fórmulas existía');
   }
+  console.log(idGrafica)
+
+  //ToDo: añadir lógica para cambiar la interfaz dependiendo de la gráfica en la que se presionó el botón
+  const cuadroFormulas = document.createElement('div');
+  cuadroFormulas.className = 'contenedor-formulas';
+
+  //ToDo: Tomar las variables de los datos disponibles y añadir lógica para cuando no hay datos
+  cuadroFormulas.innerHTML = `<div class="titulo-formulas">
+              <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" />
+              <p class="texto">Fórmulas</p>
+          </div>
+          <div class="seccion-formulas">
+              <div class="opciones-seccion">
+                  <p>Parámetros</p>
+                  <div class="opciones-carta">
+                  </div>
+              </div>
+              <div class="opciones-seccion">
+                  <div class="titulo-aplicar-formulas">
+                      <p>Aplicar Fórmula</p>
+                      <img class="circulo-ayuda" src="../utils/iconos/circulo-ayuda.svg" />
+                  </div>
+                  <div class="opciones-carta">
+                      <input class="search-section" placeholder="Encuentra una fórmula">
+                      <div class="contenedor-busqueda">
+                          <div class="formula">
+                              f(y): y + k
+                          </div>
+                          <div class="formula">
+                              f(y): 2x
+                          </div>
+                          <div class="formula">
+                              f(y): y + k
+                          </div>
+                      </div>
+                      <div class="boton-agregar">
+                          <div >Aplicar Fórmula</div>
+                      </div>
+                  </div>
+              </div>
+          </div>`;
+
+  const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
+  //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
+  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
+  contenedoesSeleccion[1] //Fórmulas
+  
+  const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
+  botonRegresar.addEventListener('click', () => {
+    cuadroFormulas.remove();
+  });
+
+  window.previsualizacion.parentNode.insertBefore(cuadroFormulas, window.previsualizacion);
 }
 
-//Crea el 
+//Crea el cuadro desplegable en el cuadro de fórmulas
 function crearMenuDesplegable(contenedor, letra, columnas) {
   const nuevo = document.createElement('div');
   nuevo.className = 'opcion';
@@ -225,10 +225,15 @@ function encontrarGráfica(id) {
 }
 
 // Busca entre los elementos del contenedor de análisis y regresa si ya existe el cuadro para aplicar fórmulas
-function cuadroFormulasExiste() {
+function encontrarCuadroFormulas() {
   const cuadrosExistentes = Array.from(document.querySelector('.frame-analisis').children);
   const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className == 'contenedor-formulas');
-  return cuadros.length == 1;
+  if (cuadros.length == 1) {
+    cuadros[0].remove()
+    return true
+  } else {
+    return false
+  }
 }
 
 window.agregarGrafica = agregarGrafica;
