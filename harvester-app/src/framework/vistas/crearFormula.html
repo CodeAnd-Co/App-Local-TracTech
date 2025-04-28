@@ -1,73 +1,42 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Harvester App</title>
-  <link href="../utils/moduloFormulas.css" rel="stylesheet" />
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generador de Fórmulas Complejas Anidadas</title>
+    <link href="../utils/resetStyles.css" rel="stylesheet" />
+    <link href="../utils/moduloFormulas.css" rel="stylesheet" />
+    <script src="../utils/js/crearFormula.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+    </style>
 </head>
 <body>
-  <div class="crear-formula">
-    <div class="titulo">
-      <div class="crear-formula2">Crear fórmula</div>
-    </div>
-    <div class="modificacion">
-      <div class="nombre-formula">
-        <div class="nombre-de-la-formula">Nombre de la fórmula</div>
-        <input class="ingresar-nombre" placeholder="Nombre de la fórmula" />
-      </div>
-      <div class="bloque-config-formula">
-        <div class="excel">
-          <button class="icono-x">
-            <img class="x" src="../utils/iconos/X.svg" />
-          </button>
-          <div class="operaciones">
-            <div class="operacion">
-              <div class="operacion2">Operación</div>
-              <menu class="columnas">
-                <div class="seleccionar-formula">Comparación</div>
-                <img class="play-arrow" src="../utils/iconos/FlechaAbajo.svg" />
-              </menu>
+    <h2>Generador de Fórmulas Complejas Anidadas</h2>
+    <p><br>Nombre de la fórmula</p>
+    <input type="text" id="nombreFormula" placeholder="Nombre de la fórmula" />
+
+    <div id="formula-container">
+        <div class="bloqueFormula" data-level="0">
+            <label>Función Principal:
+                <select id="main-function" onchange="buildFunctionStructure(this, document.getElementById('function-arguments'))">
+                    <option value="">Seleccionar función</option>
+                    <option value="IF">SI</option>
+                    <!--<option value="COUNTIF">CONTAR.SI</option>
+                    <option value="COUNTIFS">CONTAR.SI.CONJUNTO</option>
+                -->
+                    <option value="IFERROR">SI.ERROR</option>
+                    <option value="VLOOKUP">BUSCARV</option>
+                    <option value="ARITHMETIC">Operación Aritmética</option>
+                </select>
+            </label>
+            <div id="function-arguments" class="argumentosContenedor">
             </div>
-            <div class="columnas2">
-              <div class="columnas3">Columnas</div>
-              <menu class="columnas">
-                <div class="seleccionar-formula">Clumnas</div>
-                <img class="play-arrow2" src="../utils/iconos/FlechaAbajo.svg" />
-              </menu>
-            </div>
-            <div class="comparacion">
-              <div class="comparacion2">Comparación</div>
-              <menu class="columnas">
-                <div class="seleccionar-formula">Comparación</div>
-                <img class="play-arrow3" src="../utils/iconos/FlechaAbajo.svg" />
-              </menu>
-            </div>
-          </div>
-          <div class="nombre-formula2">
-            <div class="texto">Texto si se cumple</div>
-            <input class="nombre-de-la-formula2" placeholder="Ej: Trabajando"/>
-          </div>
-          <div class="nombre-formula2">
-            <div class="texto">Texto si no se cumple</div>
-            <input class="nombre-de-la-formula2" placeholder="Ej: Descansando" />
-          </div>
         </div>
-      </div>
-      <div class="boton">
-        <button class="anadir">
-          <div class="anadir-comparacion">Añadir comparación</div>
-        </button>
-      </div>
-      <div class="botones">
-        <button class="primario">
-          <div class="guardar">Guardar</div>
-        </button>
-        <button class="boton2">
-          <div class="cancelar">Cancelar</div>
-        </button>
-      </div>
     </div>
-  </div>
+
+    <button onclick="generarFormulaCompleja()">Generar fórmula</button>
+    <button id="btnGuardar" onclick="guardarFormulaFront()">Guardar fórmula</button>
+    <div class="resultado" id="resultado"></div>
 </body>
+</html>
