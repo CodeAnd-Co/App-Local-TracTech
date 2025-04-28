@@ -22,32 +22,46 @@ function inicializarModuloTractores() {
         console.warn('No hay datos disponibles para análisis');
     }
 
-    const tractoresContainer = document.querySelector('.tractores');
-    tractoresContainer.innerHTML = ''; // Limpiar contenido anterior
+    const distribuidoresContenedor = document.querySelector('.distribuidores-contenido');
+    distribuidoresContenedor.innerHTML = ''; // Limpiar contenido anterior
+
+    const tractoresContenedor = document.querySelector('.tractores');
+    tractoresContenedor.innerHTML = '';
+
+    const filtrosContenedor = document.querySelector('.filtros');
+    filtrosContenedor.innerHTML = '';
 
     // Iterar sobre los distribuidores (asumiendo que cada hoja es un distribuidor)
     for (const distribuidorNombre in datosExcel.hojas) {
-        const distribuidor = datosExcel.hojas[distribuidorNombre];
-
-        // Crear un contenedor para cada distribuidor
+        // Crear un div para el distribuidor
         const distribuidorDiv = document.createElement('div');
-        distribuidorDiv.className = 'distribuidor-item'; // Clase para el item del distribuidor
+        distribuidorDiv.className = 'distribuidor-item'; // Asignar clase para estilo
 
-        // Nombre del distribuidor
+        // Crear el nombre del distribuidor
         const nombreDistribuidorDiv = document.createElement('div');
         nombreDistribuidorDiv.className = 'nombre-distribuidor';
-        nombreDistribuidorDiv.textContent = distribuidorNombre; // Asignar nombre del distribuidor
+        nombreDistribuidorDiv.textContent = distribuidorNombre; // Nombre del distribuidor
 
-        distribuidorDiv.appendChild(nombreDistribuidorDiv);
-
-        // Añadir la casilla de verificación (checkbox) para el distribuidor
+        // Crear el cuadro de selección (checkbox) para el distribuidor
         const checkBox = document.createElement('img');
-        checkBox.src = 'check-box-outline-blank0.svg'; // Ajustar el icono del checkbox
-        checkBox.className = 'check-box'; // Estilo del checkbox
+        checkBox.className = 'check-box';
+        checkBox.src = 'check-box-outline-blank0.svg'; // Imagen del checkbox vacío (puedes cambiar el icono según el estado)
+
+        // Añadir el nombre y el checkbox al div del distribuidor
+        distribuidorDiv.appendChild(nombreDistribuidorDiv);
         distribuidorDiv.appendChild(checkBox);
 
-        // Agregar el div del distribuidor al contenedor de tractores
-        tractoresContainer.appendChild(distribuidorDiv);
+        // Añadir el div del distribuidor al contenedor
+        distribuidoresContenedor.appendChild(distribuidorDiv);
+
+        // Agregar interactividad al checkbox (si es necesario)
+        checkBox.addEventListener('click', () => {
+            if (checkBox.src.includes('check-box-outline-blank0.svg')) {
+                checkBox.src = 'check-box2.svg'; // Imagen del checkbox marcado
+            } else {
+                checkBox.src = 'check-box-outline-blank0.svg'; // Imagen del checkbox vacío
+            }
+        });
     }
 }
 

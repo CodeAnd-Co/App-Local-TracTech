@@ -35,7 +35,6 @@
   align-items: flex-start;
   justify-content: flex-start;
   flex-shrink: 0;
-  width: 439px;
   position: relative;
 }
 .search-bar {
@@ -136,6 +135,16 @@
   height: 24px;
   position: relative;
   overflow: visible;
+}
+.distribuidores-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
 }
 .rancho-tijuana {
   background: #ffffff;
@@ -271,7 +280,6 @@
   align-items: flex-start;
   justify-content: flex-start;
   flex-shrink: 0;
-  width: 439px;
   position: relative;
 }
 .rancho-tijuana3 {
@@ -332,7 +340,6 @@
   align-items: flex-start;
   justify-content: flex-start;
   flex-shrink: 0;
-  width: 439px;
   position: relative;
 }
 .check-box3 {
