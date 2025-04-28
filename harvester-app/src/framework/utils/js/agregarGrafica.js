@@ -1,4 +1,4 @@
-// RF36 Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
+// RF36 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
 
 const { Chart } = require('chart.js/auto');
 
@@ -40,10 +40,14 @@ function agregarGrafica(contenedorId, previsualizacionId) {
     `;
 
   //Obtener los datos para la gráfica
-  window.datosGrafica = window.datosExcelGlobal.hojas[Object.keys(window.datosExcelGlobal.hojas)[0]]
-  console.log(window.datosGrafica[0])
+  let columnas = [];
 
-  const columnas = window.datosGrafica[0].slice(3)
+  if (window.datosExcelGlobal) {
+    window.datosGrafica = window.datosExcelGlobal.hojas[Object.keys(window.datosExcelGlobal.hojas)[0]]
+    console.log(window.datosGrafica[0])
+
+    columnas = window.datosGrafica[0].slice(3)
+  }
 
 
   // Configura el botón de fórmulas
