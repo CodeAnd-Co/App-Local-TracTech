@@ -1,3 +1,5 @@
+// RF36 Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
+
 const { Chart } = require('chart.js/auto');
 
 /**
