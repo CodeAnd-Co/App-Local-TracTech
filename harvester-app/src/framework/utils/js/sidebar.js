@@ -39,12 +39,10 @@ function cargarModulo(seccion) {
           }
         } else if (seccion == 'usuario') {
           if (window.inicializarModuloUsuario) {
-            console.log("Inicializando módulo de usuario...");
             window.inicializarModuloUsuario();
           }
         } else if (seccion == 'gestionUsuarios') {
           if (window.inicializarModuloGestionUsuarios) {
-            console.log("Inicializando módulo de gestion de usuarios...");
             window.inicializarModuloGestionUsuarios();
           }
         }
@@ -94,7 +92,7 @@ function activarBotonesSidebar() {
 
   botones.forEach(boton => {
     boton.addEventListener('click', () => {
-      let seccion = boton.getAttribute('data-seccion');
+      const seccion = boton.getAttribute('data-seccion');
       if (!seccion) return;
 
       if (seccion === "tema") {
@@ -107,7 +105,7 @@ function activarBotonesSidebar() {
       console.log("Sección activa guardada:", seccion);
 
       // Determinar cuál botón mostrar como activo visualmente
-      let seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
+      const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
 
       // Quitar "activo" de todos los botones
       document.querySelectorAll('.boton-sidebar').forEach(b => b.classList.remove('activo'));
