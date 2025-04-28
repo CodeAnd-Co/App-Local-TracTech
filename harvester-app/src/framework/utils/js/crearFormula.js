@@ -5,7 +5,7 @@ const { guardarFormula }  = require('../../backend/casosUso/formulas/crearFormul
  * 
  * 
  */
-function removeElement(button) {
+function eliminarElemento(button) {
             const elementToRemove = button.parentNode.parentNode;
             elementToRemove.remove();
         }
@@ -29,42 +29,42 @@ async function guardarFormulaFront() {
     }
 }
 
-function buildFunctionStructure(selectElement, container) {
+function definirEstructura(selectElement, container) {
     const selectedFunction = selectElement.value;
     container.innerHTML = '';
 
     switch (selectedFunction) {
         case 'IF':
-            addCriteriaArgument('Condición', 'if-condition', container);
-            addArgument('Si Verdadero', 'if-true', container, true);
-            addArgument('Si Falso', 'if-false', container, true);
+            agregarCriterio('Condición', 'if-condition', container);
+            agregarArgumento('Si Verdadero', 'if-true', container, true);
+            agregarArgumento('Si Falso', 'if-false', container, true);
             break;
         case 'COUNTIF':
-            addArgument('Rango', 'countif-range', container);
-            addCriteriaArgument('Criterio', 'countif-criteria', container);
+            agregarArgumento('Rango', 'countif-range', container);
+            agregarCriterio('Criterio', 'countif-criteria', container);
             break;
         case 'COUNTIFS':
-            addCountifsArgument(container);
+            agregarArgumentoCountIf(container);
             break;
         case 'IFERROR':
-            addArgument('Valor', 'iferror-value', container, true);
-            addArgument('Valor si error', 'iferror-iferror', container, true);
+            agregarArgumento('Valor', 'iferror-value', container, true);
+            agregarArgumento('Valor si error', 'iferror-iferror', container, true);
             break;
         case 'VLOOKUP':
-            addArgument('Valor buscado', 'vlookup-lookupvalue', container, true);
-            addArgument('Matriz tabla', 'vlookup-tablearray', container);
-            addArgument('Indicador de columnas', 'vlookup-colindexnum', container);
-            addArgument('Coincidencia (0=exacta, 1=aproximada)', 'vlookup-rangelookup', container);
+            agregarArgumento('Valor buscado', 'vlookup-lookupvalue', container, true);
+            agregarArgumento('Matriz tabla', 'vlookup-tablearray', container);
+            agregarArgumento('Indicador de columnas', 'vlookup-colindexnum', container);
+            agregarArgumento('Coincidencia (0=exacta, 1=aproximada)', 'vlookup-rangelookup', container);
             break;
         case 'ARITHMETIC':
-            addArgument('Expresión', 'arithmetic-expression', container);
+            agregarArgumento('Expresión', 'arithmetic-expression', container);
             break;
         case '':
             break;
     }
 }
 
-function addArgument(label, className, container, allowNesting = false) {
+function agregarArgumento(label, className, container, allowNesting = false) {
     const argumentDiv = document.createElement('div');
     argumentDiv.classList.add('argumento');
     argumentDiv.innerHTML = `
@@ -73,14 +73,14 @@ function addArgument(label, className, container, allowNesting = false) {
         </div>
         <div class="argumentoContenido">
             <input type="text" class="${className}" placeholder="${label}">
-            ${allowNesting ? '<button onclick="addNestedFunction(this)">Anidar Función</button>' : ''}
+            ${allowNesting ? '<button onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
             <div class="nested-function-container" style="margin-left: 10px;"></div>
         </div>
     `;
     container.appendChild(argumentDiv);
 }
 
-function addCriteriaArgument(label, className, container) {
+function agregarCriterio(label, className, container) {
     const argumentDiv = document.createElement('div');
     argumentDiv.classList.add('argumento');
     argumentDiv.innerHTML = `
@@ -102,10 +102,10 @@ function addCriteriaArgument(label, className, container) {
         </div>
     `;
     container.appendChild(argumentDiv);
-    populateVariableDropdown(argumentDiv.querySelector('.variable-selector'));
+    popularDropdown(argumentDiv.querySelector('.variable-selector'));
 }
 
-function addNestedFunction(button) {
+function agregarFuncionAnidada(button) {
     const nestedContainer = button.nextElementSibling;
     const functionSelect = document.createElement('select');
     functionSelect.classList.add('selectorFuncionAnidada');
@@ -126,7 +126,7 @@ function addNestedFunction(button) {
             const nestedDiv = document.createElement('div');
             nestedDiv.classList.add('nested-function');
             nestedContainer.appendChild(nestedDiv);
-            buildFunctionStructure(event.target, nestedDiv);
+            definirEstructura(event.target, nestedDiv);
 
             const removeNestedButton = document.createElement('button');
             removeNestedButton.textContent = 'Eliminar Anidado';
@@ -142,7 +142,7 @@ function addNestedFunction(button) {
     nestedContainer.appendChild(functionSelect);
 }
 
-function addCountifsArgument(container, prefix = '') {
+function agregarArgumentoCountIf(container, prefix = '') {
     const argumentDiv = document.createElement('div');
     argumentDiv.classList.add('argumento');
     argumentDiv.innerHTML = `
@@ -165,10 +165,10 @@ function addCountifsArgument(container, prefix = '') {
         <button onclick="addMoreCountifsArgument(this.parentNode)">+ Añadir otro criterio</button>
     `;
     container.appendChild(argumentDiv);
-    populateVariableDropdown(argumentDiv.querySelector('.variable-selector'));
+    popularDropdown(argumentDiv.querySelector('.variable-selector'));
 }
 
-function addMoreCountifsArgument(container) {
+function masArgumentosCountif(container) {
     const argCount = container.querySelectorAll('.argumento').length + 1;
     const newArgument = document.createElement('div');
     newArgument.classList.add('argumento');
@@ -191,7 +191,7 @@ function addMoreCountifsArgument(container) {
         </div>
     `;
     container.appendChild(newArgument);
-    populateVariableDropdown(newArgument.querySelector('.variable-selector'));
+    popularDropdown(newArgument.querySelector('.variable-selector'));
 }
 
 function generarFormulaCompleja() {
@@ -201,66 +201,66 @@ function generarFormulaCompleja() {
         return;
     }
 
-    const formula = buildFormulaFromContainer(document.getElementById('function-arguments'), mainFunctionSelect.value);
+    const formula = construirFormulaDesdeContenedor(document.getElementById('function-arguments'), mainFunctionSelect.value);
     document.getElementById('resultado').innerText = `Fórmula generada (en inglés para HyperFormula):\n=${formula}`;
 }
 
-function buildFormulaFromContainer(container, functionName) {
+function construirFormulaDesdeContenedor(container, functionName) {
     let args = [];
-    const translate = translateFunction;
+    const translate = traducirFuncion;
     const argumentElements = Array.from(container.children);
 
     switch (functionName) {
         case 'IF':
-            args.push(buildCondition(argumentElements[0], false));
-            args.push(processArgument(argumentElements[1]));
-            args.push(processArgument(argumentElements[2]));
+            args.push(construirCondicion(argumentElements[0], false));
+            args.push(procesarArgumento(argumentElements[1]));
+            args.push(procesarArgumento(argumentElements[2]));
             break;
         case 'COUNTIF':
-            args.push(getSelectedVariable(argumentElements[0].querySelector('.variable-selector')));
-            args.push(buildCondition(argumentElements[1], false));
+            args.push(obtenerVariables(argumentElements[0].querySelector('.variable-selector')));
+            args.push(construirCondicion(argumentElements[1], false));
             break;
         case 'COUNTIFS':
             argumentElements.forEach(argumentElement => {
-                const condition = buildCondition(argumentElement, false);
+                const condition = construirCondicion(argumentElement, false);
                 if (condition) {
                     args.push(condition);
                 }
             });
             break;
         case 'IFERROR':
-            args.push(processArgument(argumentElements[0]));
-            args.push(processArgument(argumentElements[1]));
+            args.push(procesarArgumento(argumentElements[0]));
+            args.push(procesarArgumento(argumentElements[1]));
             break;
         case 'VLOOKUP':
-            args.push(processArgument(argumentElements[0]));
-            args.push(getValue(argumentElements[1].querySelector('input')));
-            args.push(getValue(argumentElements[2].querySelector('input')));
-            args.push(getValue(argumentElements[3].querySelector('input')));
+            args.push(procesarArgumento(argumentElements[0]));
+            args.push(obtenerValor(argumentElements[1].querySelector('input')));
+            args.push(obtenerValor(argumentElements[2].querySelector('input')));
+            args.push(obtenerValor(argumentElements[3].querySelector('input')));
             break;
         case 'ARITHMETIC':
-            return getValue(argumentElements[0].querySelector('input'));
+            return obtenerValor(argumentElements[0].querySelector('input'));
         default:
             return '';
     }
     return `${translate(functionName)}(${args.join(',')})`;
 }
 
-function getSelectedVariable(selectElement) {
+function obtenerVariables(selectElement) {
     return selectElement ? selectElement.value : '';
 }
 
-function getValue(inputElement) {
+function obtenerValor(inputElement) {
     return inputElement ? inputElement.value.trim().replace(/,/g, '.') : '';
 }
 
-function processArgument(argumentElement) {
+function procesarArgumento(argumentElement) {
     if (!argumentElement) return '';
 
     const nestedFunctionSelect = argumentElement.querySelector('.selectorFuncionAnidada');
     if (nestedFunctionSelect && nestedFunctionSelect.value) {
         const nestedFunctionContainer = argumentElement.querySelector('.nested-function');
-        return buildFormulaFromContainer(nestedFunctionContainer, nestedFunctionSelect.value);
+        return construirFormulaDesdeContenedor(nestedFunctionContainer, nestedFunctionSelect.value);
     }
 
     const variableSelect = argumentElement.querySelector('.variable-selector');
@@ -272,7 +272,7 @@ function processArgument(argumentElement) {
     return inputElement ? inputElement.value.trim().replace(/,/g, '.') : '';
 }
 
-function buildCondition(argumentElement, quoteValue = true) {
+function construirCondicion(argumentElement, quoteValue = true) {
     const variableSelect = argumentElement.querySelector('.variable-selector');
     const operatorSelect = argumentElement.querySelector('.operator-selector');
     const valueInput = argumentElement.querySelector('input[type="text"]');
@@ -288,7 +288,7 @@ function buildCondition(argumentElement, quoteValue = true) {
     return value;
 }
 
-function translateFunction(name) {
+function traducirFuncion(name) {
     const map = {
         "SI": "IF",
         "CONTAR.SI": "COUNTIF",
@@ -300,7 +300,7 @@ function translateFunction(name) {
     return map[name] || name;
 }
 
-function populateVariableDropdown(selectElement) {
+function popularDropdown(selectElement) {
     const sampleColumns = ["Gasolina", "Kilometraje", "Fecha", "Estado", "Valor"];
     selectElement.innerHTML = '<option value="">Seleccionar</option>';
     sampleColumns.forEach(column => {
