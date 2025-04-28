@@ -206,7 +206,15 @@ function crearCuadroFormulas(columnas, idGrafica) {
     cuadroFormulas.remove();
   });
 
-  window.previsualizacion.parentNode.insertBefore(cuadroFormulas, window.previsualizacion);
+// 1) Busca la sección de elementos de reporte
+  const reporteSection = document.querySelector('.seccion-elemento-reporte');
+  // 2) Inserta el panel justo después de esa sección
+  if (reporteSection) {
+    reporteSection.insertAdjacentElement('afterend', cuadroFormulas);
+  } else {
+    // Fallback: si no lo encuentra, lo añade al final del frame
+    document.querySelector('.frame-analisis').appendChild(cuadroFormulas);
+  }
 }
 
 /**
