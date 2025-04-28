@@ -23,17 +23,15 @@ function cargarModulo(seccion) {
           if (window.botonCargar) {
             window.botonCargar();
           }
-          if (window.configurarBotonAnalisis) {
-            window.configurarBotonAnalisis();
+          if (window.botonAnalisis) {
+            window.botonAnalisis();
           }
           if (window.botonBorrar) {
             window.botonBorrar();
           }
         } else if (seccion === 'analisis') {
-          if (window.inicializarModuloAnalisis) {
-            // Recuperar datos del localStorage si existen
-            const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
-            window.inicializarModuloAnalisis(datosExcel);
+          if (window.cargarDatosExcel) {
+            window.cargarDatosExcel();
           }
         } else if (seccion === 'plantillas'){
           if (window.inicializarModuloPlantillas) {

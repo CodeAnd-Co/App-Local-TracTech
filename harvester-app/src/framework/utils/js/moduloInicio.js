@@ -11,8 +11,8 @@ function botonBorrar() {
         const botonBorrar = document.getElementById('boton-borrar');
         botonBorrar.addEventListener('click', () => {
             borrarExcel();
-        botonAnalisis.setAttribute('disabled', 'true');
-        botonBorrar.style.display = 'none';
+            botonAnalisis.setAttribute('disabled', 'true');
+            botonBorrar.style.display = 'none';
         });
     }, 100);
 }
@@ -38,76 +38,58 @@ function botonCargar() {
         // Eliminar cualquier dato de sección activa al cargar el módulo inicio
         localStorage.removeItem('seccion-activa');
 
-        if (entradaArchivo.files && entradaArchivo.files.length > 0) {
-            elementoNombreArchivo.textContent = entradaArchivo.files[0].name;
-            botonAnalisis.removeAttribute('disabled');
-        }
-
         entradaArchivo.addEventListener('change', () => {
             leerExcel(entradaArchivo.files[0]);
+            botonAnalisis.removeAttribute('disabled');
             botonBorrar.style.display = 'block';
         });
     }, 100);
 }
 
-function configurarBotonAnalisis() {
+function botonAnalisis() {
     setTimeout(() => {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
-        const entradaArchivo = document.querySelector('.cargar-input');
 
-        // Verificar si hay datos Excel guardados y habilitar el botón de análisis
-        const datosExcelGuardados = localStorage.getItem('datosExcel');
-        if (datosExcelGuardados) {
-            try {
-                const datosParseados = JSON.parse(datosExcelGuardados);
-                if (datosParseados) {
-                    if (botonAnalisis) {
-                        botonAnalisis.removeAttribute('disabled');
-                    }
-                }
-            } catch (error) {
-                console.error("Error al procesar los datos guardados del Excel:", error);
-            }
+        if (localStorage.getItem('nombreArchivoExcel')) {
+            // Habilitar el botón de analisis
+            botonAnalisis.removeAttribute('disabled');
         }
         
-        if (botonAnalisis && entradaArchivo) {
+        if (botonAnalisis) {
             botonAnalisis.addEventListener('click', () => {
-                if (entradaArchivo.files && entradaArchivo.files.length > 0) {
+                // Esperar un momento para que se procesen los datos antes de cambiar de módulo
+                setTimeout(() => {
+                    // Buscar todos los botones del sidebar con data-seccion="analisis" 
+                    // y marcarlos como activos
+                    const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
+                    const todosBotones = document.querySelectorAll('.boton-sidebar');
                     
-                    // Esperar un momento para que se procesen los datos antes de cambiar de módulo
-                    setTimeout(() => {
-                        // Buscar todos los botones del sidebar con data-seccion="analisis" 
-                        // y marcarlos como activos
-                        const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
-                        const todosBotones = document.querySelectorAll('.boton-sidebar');
-                        
-                        // Quitar activo de todos los botones
-                        todosBotones.forEach(boton => boton.classList.remove('activo'));
-                        
-                        // Marcar como activos los botones de análisis
-                        botonesAnalisis.forEach(boton => boton.classList.add('activo'));
-                        
-                        // Actualizar topbar directamente
-                        if (window.actualizarTopbar) {
-                            window.actualizarTopbar('analisis');
-                        }
-                        
-                        // Cargar el módulo de análisis
-                        const ventanaPrincipal = document.getElementById('ventana-principal');
-                        if (ventanaPrincipal) {
-                            fetch('../vistas/moduloAnalisis.html')
-                                .then(res => res.text())
-                                .then(html => {
-                                    ventanaPrincipal.innerHTML = html;
-                                    // Si el script de análisis ya está cargado, inicializarlo
-                                    if (window.inicializarModuloAnalisis) {
-                                        window.inicializarModuloAnalisis();
-                                    }
-                                })
-                                .catch(err => console.error("Error cargando módulo de análisis:", err));
-                        }
-                    }, 500); // Esperar 500ms para asegurar que los datos se guarden correctamente
-                }
+                    // Quitar activo de todos los botones
+                    todosBotones.forEach(boton => boton.classList.remove('activo'));
+                    
+                    // Marcar como activos los botones de análisis
+                    botonesAnalisis.forEach(boton => boton.classList.add('activo'));
+                    
+                    // Actualizar topbar directamente
+                    if (window.actualizarTopbar) {
+                        window.actualizarTopbar('analisis');
+                    }
+                    
+                    // Cargar el módulo de análisis
+                    const ventanaPrincipal = document.getElementById('ventana-principal');
+                    if (ventanaPrincipal) {
+                        fetch('../vistas/moduloAnalisis.html')
+                            .then(res => res.text())
+                            .then(html => {
+                                ventanaPrincipal.innerHTML = html;
+                                // Si el script de análisis ya está cargado, inicializarlo
+                                if (window.inicializarModuloAnalisis) {
+                                    window.inicializarModuloAnalisis();
+                                }
+                            })
+                            .catch(err => console.error("Error cargando módulo de análisis:", err));
+                    }
+                }, 500); // Esperar 500ms para asegurar que los datos se guarden correctamente
             });
         }
     }, 100);
@@ -115,4 +97,4 @@ function configurarBotonAnalisis() {
 
 window.botonBorrar = botonBorrar;
 window.botonCargar = botonCargar;
-window.configurarBotonAnalisis = configurarBotonAnalisis;
+window.botonAnalisis = botonAnalisis;

@@ -41,9 +41,6 @@ function leerExcel(archivo) {
             // Guardar los datos en localStorage con la nueva estructura
             localStorage.setItem('datosExcel', JSON.stringify(datosCompletos));
             
-            // También guardar un indicador de que hay datos disponibles
-            localStorage.setItem('datosExcelDisponibles', 'true');
-            
             if (elementoNombreArchivo) {
                 elementoNombreArchivo.textContent = archivo.name;
             }
