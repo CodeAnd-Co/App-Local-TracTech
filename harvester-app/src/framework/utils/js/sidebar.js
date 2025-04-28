@@ -95,6 +95,9 @@ function inicializarSidebar() {
   }
 
   activarBotonesSidebar();
+  
+  // Siempre iniciar en el módulo "inicio"
+  localStorage.setItem('seccion-activa', 'inicio');
   aplicarActivoDesdeStorage();
 }
 
