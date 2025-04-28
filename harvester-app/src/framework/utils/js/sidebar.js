@@ -108,11 +108,11 @@ function activarBotonesSidebar() {
       const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
 
       // Quitar "activo" de todos los botones
-      document.querySelectorAll('.boton-sidebar').forEach(b => b.classList.remove('activo'));
+      document.querySelectorAll('.boton-sidebar').forEach(boton => boton.classList.remove('activo'));
 
       // Activar el botón visualmente representativo
       document.querySelectorAll(`.boton-sidebar[data-seccion="${seccionVisual}"]`)
-        .forEach(b => b.classList.add('activo'));
+        .forEach(boton => boton.classList.add('activo'));
 
       // Actualizar topbar y cargar el contenido real
       actualizarTopbar(seccion);
