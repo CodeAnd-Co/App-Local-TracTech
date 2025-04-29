@@ -1,12 +1,8 @@
 // Carga los datos del Excel desde localStorage
 function cargarDatosExcel() {
     try {
-        // Verificar si hay datos disponibles
-        console.log("Verificando si hay datos de Excel disponibles en localStorage...");
-
         // Recuperar los datos de Excel
         const datosExcelJSON = localStorage.getItem('datosExcel');
-        console.log("Datos de Excel recuperados:", datosExcelJSON);
         
         
         if (!datosExcelJSON) {
@@ -17,6 +13,7 @@ function cargarDatosExcel() {
         
         // Parsear los datos JSON
         const datosExcel = JSON.parse(datosExcelJSON);
+        console.log("Datos de Excel cargados:", datosExcel);
         return datosExcel;
     } catch (error) {
         console.error("Error al cargar datos de Excel:", error);

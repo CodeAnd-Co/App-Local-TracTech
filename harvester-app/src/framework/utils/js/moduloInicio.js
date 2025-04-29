@@ -102,8 +102,8 @@ function botonAnalisis() {
                             .then(html => {
                                 ventanaPrincipal.innerHTML = html;
                                 // Si el script de análisis ya está cargado, inicializarlo
-                                if (window.inicializarModuloAnalisis) {
-                                    window.inicializarModuloAnalisis();
+                                if (window.cargarDatosExcel) {
+                                    window.cargarDatosExcel();
                                 }
                             })
                             .catch(err => console.error("Error cargando módulo de análisis:", err));
