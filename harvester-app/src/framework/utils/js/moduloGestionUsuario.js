@@ -1,3 +1,7 @@
+const usuariosPorPagina = 3;
+let paginaActual = 1;
+let listaUsuarios = [];
+
 async function inicializarModuloGestionUsuarios() {
     console.log("Módulo de Gestión de Usuarios inicializado");
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
@@ -5,23 +9,90 @@ async function inicializarModuloGestionUsuarios() {
     try {
         const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
         const usuarios = await obtenerUsuarios();
-        mostrarUsuarios(usuarios?.obtenerUsuarios() ?? []);
+        listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
+        cargarPagina(1);
     } catch (error) {
         console.error("Error al obtener usuarios:", error);
     }
 }
 
+function cargarPagina(pagina) {
+    paginaActual = pagina;
+    const paginasTotales = Math.ceil(listaUsuarios.length / usuariosPorPagina);
+
+    const inicio = (pagina - 1) * usuariosPorPagina;
+    const fin = inicio + usuariosPorPagina;
+    const usuariosPagina = listaUsuarios.slice(inicio, fin);
+
+    mostrarUsuarios(usuariosPagina);
+
+    const paginacion = document.querySelector('.paginacion');
+    paginacion.innerHTML = '';
+
+    const previo = document.createElement('button');
+    previo.href = '#';
+    previo.textContent = '<';
+    previo.classList.add('boton-pagina-previa');
+    previo.onclick = paginaPrevia => {
+        paginaPrevia.preventDefault();
+        if (paginaActual > 1) {
+            cargarPagina(paginaActual - 1);
+        }
+    };
+    paginacion.appendChild(previo);
+
+    for (let i = 1; i <= paginasTotales; i++) {
+        if (
+            i === 1 || // Siempre mostrar la primera página
+            i === paginasTotales || // Siempre mostrar la última página
+            (i >= paginaActual - 1 && i <= paginaActual + 1) // Mostrar páginas cercanas a la actual
+        ) {
+            const botonPagina = document.createElement('button');
+            botonPagina.textContent = i;
+            botonPagina.classList.add('boton-pagina');
+            if (i === paginaActual) {
+                botonPagina.classList.add('pagina-actual');
+            }
+            botonPagina.onclick = paginas => {
+                paginas.preventDefault();
+                cargarPagina(i);
+            };
+            paginacion.appendChild(botonPagina);
+        } else if (
+            i === paginaActual - 2 || // Mostrar "..." antes de las páginas cercanas
+            i === paginaActual + 2 // Mostrar "..." después de las páginas cercanas
+        ) {
+            const puntos = document.createElement('span');
+            puntos.textContent = '...';
+            puntos.classList.add('puntos-paginacion');
+            paginacion.appendChild(puntos);
+        }
+    }
+
+    const siguiente = document.createElement('button');
+    siguiente.href = '#';
+    siguiente.textContent = '>';
+    siguiente.classList.add('boton-pagina-siguiente');
+    siguiente.onclick = paginaSiguiente => {
+        paginaSiguiente.preventDefault();
+        if (paginaActual < paginasTotales) {
+            cargarPagina(paginaActual + 1);
+        }
+    };
+    paginacion.appendChild(siguiente);
+}
+
 function mostrarUsuarios(usuarios) {
-    const listaUsuarios = document.getElementById('lista-usuarios');
-    if (!listaUsuarios) {
+    const listaUsuariosElemento = document.getElementById('lista-usuarios');
+    if (!listaUsuariosElemento) {
         console.error("No se encontró el elemento de la lista de usuarios en el DOM.");
         return;
     }
 
-    listaUsuarios.innerHTML = '';
+    listaUsuariosElemento.innerHTML = '';
 
     if (usuarios.length === 0) {
-        listaUsuarios.innerHTML = '<li>No hay usuarios disponibles.</li>';
+        listaUsuariosElemento.innerHTML = '<li>No hay usuarios disponibles.</li>';
         return;
     }
 
@@ -38,7 +109,7 @@ function mostrarUsuarios(usuarios) {
         `;
         fragmento.appendChild(div);
     }
-    listaUsuarios.appendChild(fragmento);
+    listaUsuariosElemento.appendChild(fragmento);
 }
 
 window.inicializarModuloGestionUsuarios = inicializarModuloGestionUsuarios;
