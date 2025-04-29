@@ -21,7 +21,6 @@ function inicializarCrearFormula() {
     const botonCrearFormula = document.getElementById('crearFormula');
     if (botonCrearFormula) {
         botonCrearFormula.addEventListener('click', async () => {
-            console.log("Cargando el módulo de creación de fórmulas...");
             localStorage.setItem('seccion-activa', 'crearFormula');
             const ventanaPrincipal = document.getElementById('ventana-principal');
             if (ventanaPrincipal) {
@@ -75,7 +74,7 @@ async function guardarFormulaFront() {
 function definirEstructura(elementoElegido, contenedor) {
     const funcionElegida = elementoElegido.value;
     contenedor.innerHTML = '';
-
+    // Aquí se define la estructura de la función
     switch (funcionElegida) {
         case 'IF':
             agregarCriterio('Condición', 'if-condition', contenedor);
