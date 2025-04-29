@@ -90,22 +90,22 @@ function botonAnalisis() {
                     
                     // Actualizar topbar directamente
                     if (window.actualizarTopbar) {
-                        window.actualizarTopbar('analisis');
+                        window.actualizarTopbar('tractores');
                     }
                     
-                    // Cargar el módulo de análisis
+                    // Cargar el módulo de tractores
                     const ventanaPrincipal = document.getElementById('ventana-principal');
                     if (ventanaPrincipal) {
-                        fetch('../vistas/moduloAnalisis.html')
+                        fetch('../vistas/moduloTractores.html')
                             .then(res => res.text())
                             .then(html => {
                                 ventanaPrincipal.innerHTML = html;
                                 // Si el script de análisis ya está cargado, inicializarlo
-                                if (window.inicializarModuloAnalisis) {
-                                    window.inicializarModuloAnalisis();
+                                if (window.inicializarModuloTractores) {
+                                    window.inicializarModuloTractores();
                                 }
                             })
-                            .catch(err => console.error("Error cargando módulo de análisis:", err));
+                            .catch(err => console.error("Error cargando módulo de tractores:", err));
                     }
                 }, 500); // Esperar 500ms para asegurar que los datos se guarden correctamente
             });
