@@ -118,6 +118,7 @@ function definirEstructura(elementoElegido, contenedor) {
  */
 function agregarArgumento(etiqueta, nombreClase, contenedor, permitirAnidado = false) {
     const argumentoDiv = document.createElement('div');
+    // Agrega un argumento al contenedor
     argumentoDiv.classList.add('argumento');
     argumentoDiv.innerHTML = `
         <div class="argumentoEncabezado">
@@ -143,6 +144,7 @@ function agregarArgumento(etiqueta, nombreClase, contenedor, permitirAnidado = f
  */
 function agregarCriterio(etiqueta, nombreClase, contenedor) {
     const argumentoDiv = document.createElement('div');
+    // Agrega un criterio al contenedor
     argumentoDiv.classList.add('argumento');
     argumentoDiv.innerHTML = `
         <div class="argumentoEncabezado">
@@ -177,6 +179,7 @@ function agregarFuncionAnidada(boton) {
     const contenedorAnidado = boton.nextElementSibling;
     const seleccionarFuncion = document.createElement('select');
     seleccionarFuncion.classList.add('selectorFuncionAnidada');
+    // Agrega un selector de función anidada al contenedor
     seleccionarFuncion.innerHTML = `
         <option value="">Seleccionar función anidada</option>
         <option value="IF">SI</option>
@@ -191,18 +194,20 @@ function agregarFuncionAnidada(boton) {
     seleccionarFuncion.onchange = (evento) => {
         const valorSeleccionado = evento.target.value;
         if (valorSeleccionado) {
+            // Si se selecciona una función, se crea un nuevo contenedor para los argumentos de la función anidada
             const divAnidado = document.createElement('div');
             divAnidado.classList.add('nested-function');
             contenedorAnidado.appendChild(divAnidado);
+            // Se define la estructura de la función anidada
             definirEstructura(evento.target, divAnidado);
-
+            // Se agrega un botón para eliminar la función anidada
             const eliminarBotonAnidado = document.createElement('button');
             eliminarBotonAnidado.textContent = 'Eliminar Anidado';
             eliminarBotonAnidado.classList.add('botonEliminar');
             eliminarBotonAnidado.onclick = () => {
                 evento.target.remove();
                 divAnidado.remove();
-                eliminarBotonAnidado.remove(); // Remove the button itself
+                eliminarBotonAnidado.remove(); // borra el botón de eliminar
             };
             contenedorAnidado.appendChild(eliminarBotonAnidado);
         }
@@ -220,6 +225,7 @@ function agregarFuncionAnidada(boton) {
  */
 function agregarArgumentoCountIf(contenedor, prefijo = '') {
     const argumentoDiv = document.createElement('div');
+    // Agrega un argumento para la función COUNTIF o COUNTIFS
     argumentoDiv.classList.add('argumento');
     argumentoDiv.innerHTML = `
         <div class="argumentoEncabezado">
