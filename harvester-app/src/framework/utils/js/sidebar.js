@@ -20,17 +20,18 @@ function cargarModulo(seccion) {
         
         // Inicializar el módulo según la sección
         if (seccion === 'inicio') {
-          if (window.cambiarNombreArchivo) {
-            window.cambiarNombreArchivo();
+          if (window.botonCargar) {
+            window.botonCargar();
           }
-          if (window.configurarBotonAnalisis) {
-            window.configurarBotonAnalisis();
+          if (window.botonAnalisis) {
+            window.botonAnalisis();
+          }
+          if (window.botonBorrar) {
+            window.botonBorrar();
           }
         } else if (seccion === 'analisis') {
-          if (window.inicializarModuloAnalisis) {
-            // Recuperar datos del localStorage si existen
-            const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
-            window.inicializarModuloAnalisis(datosExcel);
+          if (window.cargarDatosExcel) {
+            window.cargarDatosExcel();
           }
         } else if (seccion === 'plantillas'){
           if (window.inicializarModuloPlantillas) {
@@ -38,7 +39,6 @@ function cargarModulo(seccion) {
           }
         } else if (seccion == 'usuario') {
           if (window.inicializarModuloUsuario) {
-            console.log("Inicializando módulo de usuario...");
             window.inicializarModuloUsuario();
           }
         }
@@ -80,6 +80,9 @@ function inicializarSidebar() {
   }
 
   activarBotonesSidebar();
+  
+  // Siempre iniciar en el módulo "inicio"
+  localStorage.setItem('seccion-activa', 'inicio');
   aplicarActivoDesdeStorage();
 }
 
@@ -88,7 +91,7 @@ function activarBotonesSidebar() {
 
   botones.forEach(boton => {
     boton.addEventListener('click', () => {
-      let seccion = boton.getAttribute('data-seccion');
+      const seccion = boton.getAttribute('data-seccion');
       if (!seccion) return;
 
       if (seccion === "tema") {
@@ -101,14 +104,14 @@ function activarBotonesSidebar() {
       console.log("Sección activa guardada:", seccion);
 
       // Determinar cuál botón mostrar como activo visualmente
-      let seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
+      const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
 
       // Quitar "activo" de todos los botones
-      document.querySelectorAll('.boton-sidebar').forEach(b => b.classList.remove('activo'));
+      document.querySelectorAll('.boton-sidebar').forEach(boton => boton.classList.remove('activo'));
 
       // Activar el botón visualmente representativo
       document.querySelectorAll(`.boton-sidebar[data-seccion="${seccionVisual}"]`)
-        .forEach(b => b.classList.add('activo'));
+        .forEach(boton => boton.classList.add('activo'));
 
       // Actualizar topbar y cargar el contenido real
       actualizarTopbar(seccion);
