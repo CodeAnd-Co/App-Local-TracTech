@@ -6,6 +6,7 @@ const modalInfo = document.querySelector("#modalContacto");
 const btnAcceder = document.querySelector(".boton-acceder");
 const entradaCorreo = document.querySelector(".correo[type='email']");
 const entradaContrasena = document.querySelector(".contrasena");
+const { verificarPermisos } = require("../../backend/servicios/verificarPermisos");
 const { iniciarSesion } = require("../../backend/casosUso/sesion/iniciarSesion");
 
 /**
@@ -29,6 +30,11 @@ btnAcceder.addEventListener("click", async () => {
     if (respuesta.ok) {
       // Guardar el token en localStorage
       localStorage.setItem("token", respuesta.token);
+
+      const permisos = await verificarPermisos(respuesta.token);
+
+      // Guardar los permisos en localStorage como una cadena JSON
+      localStorage.setItem("permisos", JSON.stringify(permisos));
 
       // Redirigir al usuario a la página principal
       window.location.href = "./frameLayout.html";

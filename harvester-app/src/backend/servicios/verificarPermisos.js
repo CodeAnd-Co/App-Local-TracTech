@@ -1,3 +1,8 @@
+/**
+ * Función para verificar los permisos de un token enviando una solicitud al servidor.
+ * @param {string} token - El token JWT a verificar
+ * @returns {Promise<boolean>} - Retorna true si el token es válido, false en caso contrario
+ */
 async function verificarPermisos(token) {
   if (!token) {
     // Si no se proporciona un token, se considera inválido
@@ -21,6 +26,7 @@ async function verificarPermisos(token) {
     return respuesta.ok && datos;
   } catch (error) {
     console.error("Error al verificar el token:", error);
+
     // En caso de error en la solicitud, se considera que el token no es válido
     return false;
   }
