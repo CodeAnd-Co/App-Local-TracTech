@@ -32,6 +32,10 @@ function cargarModulo(seccion) {
             const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
             window.inicializarModuloAnalisis(datosExcel);
           }
+        } else if (seccion === 'plantillas'){
+          if (window.inicializarModuloPlantillas) {
+            window.inicializarModuloPlantillas();
+          }
         } else if (seccion == 'usuario') {
           if (window.inicializarModuloUsuario) {
             console.log("Inicializando módulo de usuario...");
