@@ -24,8 +24,8 @@ function cargarModulo(seccion) {
           if (window.botonCargar) {
             window.botonCargar();
           }
-          if (window.botonAnalisis) {
-            window.botonAnalisis();
+          if (window.botonTractores) {
+            window.botonTractores();
           }
           if (window.botonBorrar) {
             window.botonBorrar();
@@ -171,6 +171,15 @@ function actualizarTopbar(seccion) {
   } else {
     botonRegresar.style.display = "flex";
     tituloElem.style.marginLeft = "10px";
+    // Obtenemos la sección real
+    localStorage.getItem('seccion-activa');
+    console.log("Sección activa actual:", seccion);
+    if (seccion == 'tractores') {
+      botonRegresar.addEventListener('click', () => {
+        
+        console.log("Regresar desde tractores");
+      })
+    }
   }
 }
 

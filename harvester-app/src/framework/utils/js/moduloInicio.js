@@ -59,35 +59,24 @@ function botonCargar() {
 }
 
 /**
- * Inicializa la funcionalidad del botón de análisis.
- * Configura el evento click para navegar al módulo de análisis cuando
+ * Inicializa la funcionalidad del botón de tractores.
+ * Configura el evento click para navegar al módulo de tractores cuando
  * se ha cargado un archivo Excel correctamente.
  * @returns {void}
  */
-function botonAnalisis() {
+function botonTractores() {
     setTimeout(() => {
-        const botonAnalisis = document.querySelector('.avanzar-analisis');
+        const botonTractores = document.querySelector('.avanzar-analisis');
 
         if (localStorage.getItem('nombreArchivoExcel')) {
             // Habilitar el botón de analisis
-            botonAnalisis.removeAttribute('disabled');
+            botonTractores.removeAttribute('disabled');
         }
         
-        if (botonAnalisis) {
-            botonAnalisis.addEventListener('click', () => {
+        if (botonTractores) {
+            botonTractores.addEventListener('click', () => {
                 // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                 setTimeout(() => {
-                    // Buscar todos los botones del sidebar con data-seccion="analisis" 
-                    // y marcarlos como activos
-                    const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
-                    const todosBotones = document.querySelectorAll('.boton-sidebar');
-                    
-                    // Quitar activo de todos los botones
-                    todosBotones.forEach(boton => boton.classList.remove('activo'));
-                    
-                    // Marcar como activos los botones de análisis
-                    botonesAnalisis.forEach(boton => boton.classList.add('activo'));
-                    
                     // Actualizar topbar directamente
                     if (window.actualizarTopbar) {
                         window.actualizarTopbar('tractores');
@@ -116,4 +105,4 @@ function botonAnalisis() {
 // Exponer las funciones al objeto window para que puedan ser utilizadas por otros módulos
 window.botonBorrar = botonBorrar;
 window.botonCargar = botonCargar;
-window.botonAnalisis = botonAnalisis;
+window.botonTractores = botonTractores;
