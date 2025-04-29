@@ -13,5 +13,4 @@ async function plantillas() {
   
   module.exports = {
     plantillas,
-  };
-  
+};
