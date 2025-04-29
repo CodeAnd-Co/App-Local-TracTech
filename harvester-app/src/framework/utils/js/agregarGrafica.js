@@ -1,5 +1,5 @@
 // RF36 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
-
+// RF38 - Usuario modifica gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF38
 const { Chart } = require('chart.js/auto');
 
 /**

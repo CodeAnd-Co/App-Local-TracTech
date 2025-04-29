@@ -1,9 +1,28 @@
+// RF17 Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF17
+// RF18 Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF18
+// RF19 Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF19
+/**
+ * @file agregarTexto.js
+ * @module agregarTexto
+ * @description Proporciona la funcionalidad para añadir tarjetas de texto editables y sus previsualizaciones en el módulo de análisis.
+ * @version 1.0
+ * @date 2025-04-28
+ */
+
+/**
+ * Crea y agrega una tarjeta de texto al contenedor de edición y su correspondiente previsualización.
+ *
+ * @param {string} contenedorId - ID del elemento donde se añadirán las tarjetas de texto.
+ * @param {string} previewId - ID del elemento donde se mostrará la previsualización del texto.
+ */
 function agregarTexto(contenedorId, previewId) {
   const contenedor = document.getElementById(contenedorId);
   const previewContainer = document.getElementById(previewId);
 
   const tarjetas = contenedor.querySelectorAll('.tarjeta-texto');
-  const nuevaId = tarjetas.length ? (parseInt(tarjetas[tarjetas.length - 1].id) || 0) + 1 : 1;
+  const nuevaId = tarjetas.length
+    ? (parseInt(tarjetas[tarjetas.length - 1].id, 10) || 0) + 1
+    : 1;
 
   const tarjeta = document.createElement('div');
   tarjeta.classList.add('tarjeta-texto');
@@ -15,21 +34,17 @@ function agregarTexto(contenedorId, previewId) {
         <option value="subtitulo">Subtítulo</option>
         <option value="contenido">Contenido</option>
       </select>
-      <img class="type" src="../utils/iconos/Texto.svg" />
+      <img class="type" src="../utils/iconos/Texto.svg" alt="Icono Texto" />
     </div>
     <textarea class="area-escritura" placeholder="Escribe aquí tu contenido..."></textarea>
     <div class="botones-editar-eliminar">
-      <!-- Botón Alinear -->
       <div class="alinear">
-        <div class="icono-align align-left">
-          <span></span><span></span><span></span>
-        </div>
+        <div class="icono-align align-left"><span></span><span></span><span></span></div>
         <div class="texto-editar">Alinear</div>
       </div>
       <div class="divisor"></div>
-      <!-- Botón Eliminar -->
       <div class="eliminar">
-        <img class="eliminar-icono" src="../utils/iconos/Basura.svg" />
+        <img class="eliminar-icono" src="../utils/iconos/Basura.svg" alt="Eliminar" />
         <div class="texto-eliminar">Eliminar</div>
       </div>
     </div>
@@ -38,27 +53,30 @@ function agregarTexto(contenedorId, previewId) {
   const preview = document.createElement('div');
   preview.classList.add('previsualizacion-texto', 'preview-titulo');
   preview.id = `preview-texto-${nuevaId}`;
-  preview.alignIndex = 0;  
+  preview.alignIndex = 0;
   previewContainer.appendChild(preview);
 
-  const selectTipo  = tarjeta.querySelector('.tipo-texto');
-  const textarea    = tarjeta.querySelector('.area-escritura');
+  const selectTipo = tarjeta.querySelector('.tipo-texto');
+  const textarea = tarjeta.querySelector('.area-escritura');
   const btnEliminar = tarjeta.querySelector('.eliminar');
-  const btnAlinear  = tarjeta.querySelector('.alinear');
-  const iconoAlign  = btnAlinear.querySelector('.icono-align');
+  const btnAlinear = tarjeta.querySelector('.alinear');
+  const iconoAlign = btnAlinear.querySelector('.icono-align');
 
+  /**
+   * Actualiza el contenido y estilo de la previsualización según la selección y texto ingresado.
+   * @private
+   */
   function actualizarPreview() {
     preview.textContent = textarea.value;
-    preview.classList.remove('preview-titulo','preview-subtitulo','preview-contenido');
+    preview.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
     preview.classList.add(`preview-${selectTipo.value}`);
   }
 
   btnAlinear.addEventListener('click', () => {
-    const alignments = ['left','center','justify','right'];
+    const alignments = ['left', 'center', 'justify', 'right'];
     preview.alignIndex = (preview.alignIndex + 1) % alignments.length;
     const modo = alignments[preview.alignIndex];
     preview.style.textAlign = modo;
-    // actualizar icono
     iconoAlign.className = `icono-align align-${modo}`;
   });
 
@@ -72,4 +90,5 @@ function agregarTexto(contenedorId, previewId) {
   contenedor.appendChild(tarjeta);
 }
 
+// Exponer la función en el ámbito global para listeners
 window.agregarTexto = agregarTexto;

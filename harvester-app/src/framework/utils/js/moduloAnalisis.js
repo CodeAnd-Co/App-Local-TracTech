@@ -1,9 +1,18 @@
-// Importar funciones de elementos de reporte
-//import { agregarTexto } from './agregarTexto.js';
+/**
+ * @file moduloAnalisis.js
+ * @module moduloAnalisis
+ * @description Módulo que inicializa la interfaz de análisis, configura eventos de botones para agregar texto, gráficas y descargar el reporte en PDF.
+ * @version 1.0
+ * @date 2025-04-28
+ */
 
-// Función para inicializar el módulo de análisis
+/**
+ * Inicializa el módulo de análisis.
+ * - Actualiza el estado de los botones del sidebar y topbar.
+ * - Configura listeners para los botones de agregar texto, agregar gráfica y descargar PDF.
+ * - Carga datos de Excel desde localStorage.
+ */
 function inicializarModuloAnalisis() {
-
   // Actualizar el sidebar visualmente sin modificar localStorage
   const todosBotones = document.querySelectorAll('.boton-sidebar');
   todosBotones.forEach(boton => boton.classList.remove('activo'));
@@ -16,134 +25,124 @@ function inicializarModuloAnalisis() {
     window.actualizarTopbar('analisis');
   }
 
-  // Configurar botones para añadir elementos a reporte
+  // IDs de contenedores
   const contenedor = 'contenedorElementos';
   const previsualizacion = 'contenedor-elementos-previsualizacion';
 
-  document.getElementById('agregarTexto').addEventListener('click', () => {
-    // Le pasamos ambos contenedores: edición y preview
-    window.agregarTexto(contenedor, previsualizacion);
-  });
-
-  document.getElementById('agregarGrafica').addEventListener('click', () => {
-    window.agregarGrafica(contenedor, previsualizacion);
-  });
-
+  // Configurar listeners de botones
+  document.getElementById('agregarTexto')
+          .addEventListener('click', () => window.agregarTexto(contenedor, previsualizacion));
+  document.getElementById('agregarGrafica')
+          .addEventListener('click', () => window.agregarGrafica(contenedor, previsualizacion));
   document.getElementById('descargarPDF')
           .addEventListener('click', descargarPDF);
 
-  // Cargar los datos del Excel desde localStorage
+  // Cargar los datos del Excel
   const datosExcel = cargarDatosExcel();
-  console.log("Datos de Excel:", datosExcel);
-
-  // Si tienes datos, puedes inicializar tu visualización aquí
+  console.log('Datos de Excel:', datosExcel);
   if (!datosExcel) {
-    console.warn("No hay datos disponibles para análisis");
+    console.warn('No hay datos disponibles para análisis');
   }
 }
 
-// Carga los datos del Excel desde localStorage
+/**
+ * Carga los datos de Excel almacenados en localStorage.
+ * @returns {Object|null} Datos de Excel parseados o null si no hay datos.
+ */
 function cargarDatosExcel() {
   try {
-    // Verificar si hay datos disponibles
     const hayDatos = localStorage.getItem('datosExcelDisponibles');
-
     if (!hayDatos || hayDatos !== 'true') {
-      console.warn("No hay datos de Excel disponibles");
+      console.warn('No hay datos de Excel disponibles');
       return null;
     }
 
-    // Recuperar los datos de Excel
     const datosExcelJSON = localStorage.getItem('datosExcel');
-
     if (!datosExcelJSON) {
-      console.warn("No se encontraron datos de Excel en localStorage");
+      console.warn('No se encontraron datos de Excel en localStorage');
       return null;
     }
 
-    // Parsear los datos JSON
     const datosExcel = JSON.parse(datosExcelJSON);
-
-    // Guardar en variable global para fácil acceso desde otras funciones
     window.datosExcelGlobal = datosExcel;
-
     return datosExcel;
   } catch (error) {
-    console.error("Error al cargar datos de Excel:", error);
+    console.error('Error al cargar datos de Excel:', error);
     return null;
   }
 }
 
+/**
+ * Genera y descarga el reporte en formato PDF usando jsPDF.
+ * Recorre los elementos de previsualización y los añade al documento.
+ * @throws {Error} Si jsPDF no está cargado o el contenedor de preview no existe.
+ */
 function descargarPDF() {
   console.log('[PDF] Generando reporte…');
-
   const { jsPDF } = window.jspdf || {};
-  if (!jsPDF) { console.error('[PDF] jsPDF no cargado'); return; }
+  if (!jsPDF) {
+    throw new Error('[PDF] jsPDF no cargado');
+  }
 
-  const doc     = new jsPDF({ orientation:'portrait', unit:'pt', format:'a4' });
-  const margin  = 40;
-  const pageW   = doc.internal.pageSize.getWidth()  - margin * 2;
-  const pageH   = doc.internal.pageSize.getHeight() - margin * 2;
-  let   y       = margin;
-  let   pagina  = 1;
+  const doc    = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const margin = 40;
+  const pageW  = doc.internal.pageSize.getWidth()  - margin * 2;
+  const pageH  = doc.internal.pageSize.getHeight() - margin * 2;
+  let   y      = margin;
 
   const preview = document.getElementById('contenedor-elementos-previsualizacion');
-  if (!preview) { console.warn('[PDF] Contenedor de preview no encontrado'); return; }
+  if (!preview) {
+    throw new Error('[PDF] Contenedor de preview no encontrado');
+  }
 
-  Array.from(preview.children).forEach((elem, i) => {
-
-    /* —— Bloques de texto —— */
+  Array.from(preview.children).forEach(elem => {
     if (elem.classList.contains('previsualizacion-texto')) {
       const texto = elem.textContent.trim();
       if (!texto) return;
-
-      // Tamaños según tipo
+  
       let size = 12;
       let weight = 'normal';
       if (elem.classList.contains('preview-titulo'))    { size = 24; weight = 'bold'; }
       if (elem.classList.contains('preview-subtitulo')) { size = 18; weight = 'bold'; }
-
+  
       doc.setFontSize(size);
       doc.setFont(undefined, weight);
-
       const lines = doc.splitTextToSize(texto, pageW);
       if (y + lines.length * size > pageH + margin) {
-        doc.addPage(); y = margin; pagina++;
+        doc.addPage(); 
+        y = margin;
       }
       doc.text(lines, margin, y);
       y += lines.length * size + 12;
-      return;
-    }
-
-    /* —— Gráficas (canvas) —— */
-    if (elem.classList.contains('previsualizacion-grafica')) {
+  
+    } else if (elem.classList.contains('previsualizacion-grafica')) {
       const canvas = elem.querySelector('canvas');
       if (!canvas) return;
-
       const img    = canvas.toDataURL('image/png');
       const aspect = canvas.height / canvas.width;
       const imgH   = pageW * aspect;
-
       if (y + imgH > pageH + margin) {
-        doc.addPage(); y = margin; pagina++;
+        doc.addPage(); 
+        y = margin;
       }
       doc.addImage(img, 'PNG', margin, y, pageW, imgH);
       y += imgH + 12;
     }
   });
+  
 
   doc.save('reporte.pdf');
   console.log('[PDF] Descarga completa ✔');
 }
 
+// Exponer funciones en el ámbito global
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
-window.descargarPDF = descargarPDF; // Para el listener global
+window.descargarPDF = descargarPDF;
 window.cargarDatosExcel = cargarDatosExcel;
 
-// Ejecutar inicialización si el DOM ya está cargado
+// Ejecutar inicialización al cargar el DOM
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', inicializarModuloAnalisis);
 } else {
-  // DOM ya está cargado
   setTimeout(inicializarModuloAnalisis, 100);
 }
