@@ -32,12 +32,8 @@ function mostrarUsuarios(usuarios) {
         div.innerHTML = `
             <div class="nombre-usuario">
                 <div class="texto-usuario">${nombre}</div>
-            </div>
-            <div class="editar">
-                <img class="editar-icono" src="../utils/iconos/Editar2.svg" />
-            </div>
-            <div class="eliminar">
-                <img class="eliminar-icono" src="../utils/iconos/BasuraBlanca.svg" />
+                <button class="boton-editar"><img src="../utils/iconos/Editar2.svg" alt="Editar"/></button>
+                <button class="boton-eliminar"><img src="../utils/iconos/BasuraBlanca.svg" alt="Eliminar"/></button>
             </div>
         `;
         fragmento.appendChild(div);

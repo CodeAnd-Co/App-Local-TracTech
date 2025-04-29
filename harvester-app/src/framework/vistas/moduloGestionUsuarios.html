@@ -2,28 +2,105 @@
 <link href="../utils/resetStyles.css" rel="stylesheet" />
 <link href="../utils/moduloGestionUsuarios.css" rel="stylesheet" />
 
-<div class="frame-gestion-usuario">
+<div class="container">
+  <div class="columna-busqueda-usuario">
+    
     <div class="frame-busqueda-usuario">
-      <div class="frame-busqueda-usuario2">
-        <div class="formulario-busqueda-usuario">
-          <div class="texto-buscar-usuario">Gestionar Usuarios</div>
-          <div class="nombre-de-la-f-rmula">
-            Administración de usuarios del sistema
-          </div>
-        </div>
-      </div>
+      <!-- Toolbar de búsqueda + botón Agregar -->
       <div class="busqueda-y-agregar-usuario">
         <div class="secundario">
-          <img class="icon" src="../utils/iconos/Buscar.svg" />
-          <div class="e-g-john-doe-com">e.g, john@doe.com</div>
+          <img class="icon" src="../utils/iconos/Buscar.svg" alt="lupa"/>
+          <div class="placeholder">e.g. john@doe.com</div>
         </div>
-        <div class="primario">
-          <img class="mas" src="../utils/iconos/AgregarBlanco.svg" />
-          <div class="agregar">Agregar</div>
-        </div>
-      </div>
-      <div class="lista-usuarios" id="lista-usuarios">
+        <button class="primario">
+          <img class="mas" src="../utils/iconos/AgregarBlanco.svg" alt="+"/>
+          <span>Agregar</span>
+        </button>
       </div>
     </div>
+    
+    <!-- Listado de usuarios -->
+    <!-- TODO: Añadir el id "lista-usuarios" cuando logré replicar la interfaz de manera estática -->
+    <div class="lista-usuarios"> 
+      <div class="frame-usuario">
+        <div class="nombre-usuario">Nombre de Usuario</div>
+        <button class="boton-editar"><img src="../utils/iconos/Editar2.svg" alt="Editar"/></button>
+        <button class="boton-eliminar"><img src="../utils/iconos/BasuraBlanca.svg" alt="Eliminar"/></button>
+      </div>
+    </div>
+    
+    <!-- Paginación -->
+    <nav class="paginacion">
+      <a href="#">1</a>
+      <a href="#" class="activo">2</a>
+      <a href="#">3</a>
+      <span>…</span>
+      <a href="#">99</a>
+    </nav>
+    
   </div>
-  <script src="../utils/js/moduloGestionUsuario.js"></script>
+
+  <div class="columna-crear-usuario" id="columna-crear-usuario">
+    <div class="pop-out">
+      <h2 class="crear-usuario">Crear usuario</h2>
+      <form class="modificacion">
+        <!-- Nombre de usuario -->
+        <div class="campo">
+          <label for="username">Nombre del usuario</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Nombre del nuevo usuario"
+            required
+          />
+        </div>
+      
+        <!-- Correo -->
+        <div class="campo">
+          <label for="email">Correo</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Correo del nuevo contacto"
+            required
+          />
+        </div>
+      
+        <!-- Contraseña -->
+        <div class="campo">
+          <label for="password">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Contraseña"
+            required
+          />
+        </div>
+      
+        <!-- Rol -->
+        <div class="campo">
+          <label for="role">Rol</label>
+          <select id="role" name="role" required>
+            <option value="" disabled selected>Selecciona un rol</option>
+            <option value="admin">Administrador</option>
+            <option value="user">Usuario</option>
+            <!-- añade los roles que necesites -->
+          </select>
+        </div>
+      
+        <!-- Línea divisoria -->
+        <div class="line-1"></div>
+      
+        <!-- Botones -->
+        <div class="botones">
+          <button type="submit" class="btn-guardar">Guardar</button>
+          <button type="button" class="btn-cancelar">Cancelar</button>
+        </div>
+      </form>      
+    </div>    
+  </div>
+
+</div>
