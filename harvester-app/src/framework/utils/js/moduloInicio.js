@@ -30,6 +30,7 @@ function botonBorrar() {
  * @returns {void}
  */
 function botonCargar() {
+    const permisos = localStorage.getItem('permisos'); 
     setTimeout(() => {
         const entradaArchivo = document.querySelector('.cargar-excel');
         const elementoNombreArchivo = document.querySelector('.texto-archivo');
