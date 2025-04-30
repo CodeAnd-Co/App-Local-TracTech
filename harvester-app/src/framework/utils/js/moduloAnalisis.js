@@ -13,9 +13,9 @@
  * - Carga datos de Excel desde localStorage.
  */
 function inicializarModuloAnalisis() {
-  // Actualizar el sidebar visualmente sin modificar localStorage
-  const todosBotones = document.querySelectorAll('.boton-sidebar');
-  todosBotones.forEach(boton => boton.classList.remove('activo'));
+  // Actualizar visualmente el sidebar sin modificar localStorage
+  const botonesSidebar = document.querySelectorAll('.boton-sidebar');
+  botonesSidebar.forEach(boton => boton.classList.remove('activo'));
 
   const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
   botonesAnalisis.forEach(boton => boton.classList.add('activo'));
@@ -26,20 +26,19 @@ function inicializarModuloAnalisis() {
   }
 
   // IDs de contenedores
-  const contenedor = 'contenedorElementos';
-  const previsualizacion = 'contenedor-elementos-previsualizacion';
+  const idContenedor = 'contenedorElementos';
+  const idPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
   // Configurar listeners de botones
   document.getElementById('agregarTexto')
-          .addEventListener('click', () => window.agregarTexto(contenedor, previsualizacion));
+          .addEventListener('click', () => window.agregarTexto(idContenedor, idPrevisualizacion));
   document.getElementById('agregarGrafica')
-          .addEventListener('click', () => window.agregarGrafica(contenedor, previsualizacion));
+          .addEventListener('click', () => window.agregarGrafica(idContenedor, idPrevisualizacion));
   document.getElementById('descargarPDF')
           .addEventListener('click', descargarPDF);
 
   // Cargar los datos del Excel
   const datosExcel = cargarDatosExcel();
-  console.log('Datos de Excel:', datosExcel);
   if (!datosExcel) {
     console.warn('No hay datos disponibles para análisis');
   }
@@ -51,8 +50,8 @@ function inicializarModuloAnalisis() {
  */
 function cargarDatosExcel() {
   try {
-    const hayDatos = localStorage.getItem('datosExcelDisponibles');
-    if (!hayDatos || hayDatos !== 'true') {
+    const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
+    if (!datosDisponibles || datosDisponibles !== 'true') {
       console.warn('No hay datos de Excel disponibles');
       return null;
     }
@@ -75,64 +74,66 @@ function cargarDatosExcel() {
 /**
  * Genera y descarga el reporte en formato PDF usando jsPDF.
  * Recorre los elementos de previsualización y los añade al documento.
- * @throws {Error} Si jsPDF no está cargado o el contenedor de preview no existe.
+ * @throws {Error} Si jsPDF no está cargado o el contenedor de previsualización no existe.
  */
 function descargarPDF() {
-  console.log('[PDF] Generando reporte…');
   const { jsPDF } = window.jspdf || {};
   if (!jsPDF) {
     throw new Error('[PDF] jsPDF no cargado');
   }
 
-  const doc    = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-  const margin = 40;
-  const pageW  = doc.internal.pageSize.getWidth()  - margin * 2;
-  const pageH  = doc.internal.pageSize.getHeight() - margin * 2;
-  let   y      = margin;
+  const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const margen = 40;
+  const anchoPagina = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
+  const altoPagina  = documentoPDF.internal.pageSize.getHeight() - margen * 2;
+  let posicionY = margen;
 
-  const preview = document.getElementById('contenedor-elementos-previsualizacion');
-  if (!preview) {
-    throw new Error('[PDF] Contenedor de preview no encontrado');
+  const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
+  if (!contenedorPrevisualizacion) {
+    throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
 
-  Array.from(preview.children).forEach(elem => {
-    if (elem.classList.contains('previsualizacion-texto')) {
-      const texto = elem.textContent.trim();
+  Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
+    if (elemento.classList.contains('previsualizacion-texto')) {
+      const texto = elemento.textContent.trim();
       if (!texto) return;
-  
-      let size = 12;
-      let weight = 'normal';
-      if (elem.classList.contains('preview-titulo'))    { size = 24; weight = 'bold'; }
-      if (elem.classList.contains('preview-subtitulo')) { size = 18; weight = 'bold'; }
-  
-      doc.setFontSize(size);
-      doc.setFont(undefined, weight);
-      const lines = doc.splitTextToSize(texto, pageW);
-      if (y + lines.length * size > pageH + margin) {
-        doc.addPage(); 
-        y = margin;
+
+      let tamanoFuente = 12;
+      let estiloFuente = 'normal';
+      if (elemento.classList.contains('preview-titulo'))    { tamanoFuente = 24; estiloFuente = 'bold'; }
+      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 18; estiloFuente = 'bold'; }
+
+      documentoPDF.setFontSize(tamanoFuente);
+      documentoPDF.setFont(undefined, estiloFuente);
+      const lineas = documentoPDF.splitTextToSize(texto, anchoPagina);
+
+      if (posicionY + lineas.length * tamanoFuente > altoPagina + margen) {
+        documentoPDF.addPage();
+        posicionY = margen;
       }
-      doc.text(lines, margin, y);
-      y += lines.length * size + 12;
-  
-    } else if (elem.classList.contains('previsualizacion-grafica')) {
-      const canvas = elem.querySelector('canvas');
-      if (!canvas) return;
-      const img    = canvas.toDataURL('image/png');
-      const aspect = canvas.height / canvas.width;
-      const imgH   = pageW * aspect;
-      if (y + imgH > pageH + margin) {
-        doc.addPage(); 
-        y = margin;
+
+      documentoPDF.text(lineas, margen, posicionY);
+      posicionY += lineas.length * tamanoFuente + 12;
+
+    } else if (elemento.classList.contains('previsualizacion-grafica')) {
+      const lienzo = elemento.querySelector('canvas');
+      if (!lienzo) return;
+
+      const imagen = lienzo.toDataURL('image/png');
+      const proporcion = lienzo.height / lienzo.width;
+      const altoImagen = anchoPagina * proporcion;
+
+      if (posicionY + altoImagen > altoPagina + margen) {
+        documentoPDF.addPage();
+        posicionY = margen;
       }
-      doc.addImage(img, 'PNG', margin, y, pageW, imgH);
-      y += imgH + 12;
+
+      documentoPDF.addImage(imagen, 'PNG', margen, posicionY, anchoPagina, altoImagen);
+      posicionY += altoImagen + 12;
     }
   });
-  
 
-  doc.save('reporte.pdf');
-  console.log('[PDF] Descarga completa ✔');
+  documentoPDF.save('reporte.pdf');
 }
 
 // Exponer funciones en el ámbito global

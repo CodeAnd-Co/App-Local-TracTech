@@ -126,7 +126,6 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   
   const titulo = hijosTarjeta[0]
   titulo.addEventListener('input', () => {
-    console.log(titulo.value, titulo.textContent)
     grafico.options.plugins.title.text = titulo.value;
     grafico.update()
   });
@@ -153,7 +152,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
  */
 function crearCuadroFormulas(columnas, idGrafica) {
   if (eliminarCuadroFormulas()) {
-    console.log('Cuadro de fórmulas existía');
+    console.error('Cuadro de fórmulas existía');
   }
   console.log(idGrafica)
 

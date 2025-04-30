@@ -1,6 +1,3 @@
-// RF17 Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF17
-// RF18 Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF18
-// RF19 Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF19
 /**
  * @file agregarTexto.js
  * @module agregarTexto
@@ -12,22 +9,22 @@
 /**
  * Crea y agrega una tarjeta de texto al contenedor de edición y su correspondiente previsualización.
  *
- * @param {string} contenedorId - ID del elemento donde se añadirán las tarjetas de texto.
- * @param {string} previewId - ID del elemento donde se mostrará la previsualización del texto.
+ * @param {string} idContenedor - ID del elemento donde se añadirán las tarjetas de texto.
+ * @param {string} idContenedorVistaPrevia - ID del elemento donde se mostrará la previsualización del texto.
  */
-function agregarTexto(contenedorId, previewId) {
-  const contenedor = document.getElementById(contenedorId);
-  const previewContainer = document.getElementById(previewId);
+function agregarTexto(idContenedor, idContenedorVistaPrevia) {
+  const contenedor = document.getElementById(idContenedor);
+  const contenedorVistaPrevia = document.getElementById(idContenedorVistaPrevia);
 
-  const tarjetas = contenedor.querySelectorAll('.tarjeta-texto');
-  const nuevaId = tarjetas.length
-    ? (parseInt(tarjetas[tarjetas.length - 1].id, 10) || 0) + 1
+  const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
+  const nuevaId = tarjetasTexto.length
+    ? (parseInt(tarjetasTexto[tarjetasTexto.length - 1].id, 10) || 0) + 1
     : 1;
 
-  const tarjeta = document.createElement('div');
-  tarjeta.classList.add('tarjeta-texto');
-  tarjeta.id = nuevaId;
-  tarjeta.innerHTML = `
+  const tarjetaTexto = document.createElement('div');
+  tarjetaTexto.classList.add('tarjeta-texto');
+  tarjetaTexto.id = nuevaId;
+  tarjetaTexto.innerHTML = `
     <div class="titulo-texto">
       <select class="tipo-texto">
         <option value="titulo">Título</option>
@@ -50,44 +47,44 @@ function agregarTexto(contenedorId, previewId) {
     </div>
   `;
 
-  const preview = document.createElement('div');
-  preview.classList.add('previsualizacion-texto', 'preview-titulo');
-  preview.id = `preview-texto-${nuevaId}`;
-  preview.alignIndex = 0;
-  previewContainer.appendChild(preview);
+  const vistaPrevia = document.createElement('div');
+  vistaPrevia.classList.add('previsualizacion-texto', 'preview-titulo');
+  vistaPrevia.id = `preview-texto-${nuevaId}`;
+  vistaPrevia.alignIndex = 0;
+  contenedorVistaPrevia.appendChild(vistaPrevia);
 
-  const selectTipo = tarjeta.querySelector('.tipo-texto');
-  const textarea = tarjeta.querySelector('.area-escritura');
-  const btnEliminar = tarjeta.querySelector('.eliminar');
-  const btnAlinear = tarjeta.querySelector('.alinear');
-  const iconoAlign = btnAlinear.querySelector('.icono-align');
+  const selectorTipoTexto = tarjetaTexto.querySelector('.tipo-texto');
+  const areaTexto = tarjetaTexto.querySelector('.area-escritura');
+  const botonEliminar = tarjetaTexto.querySelector('.eliminar');
+  const botonAlinear = tarjetaTexto.querySelector('.alinear');
+  const iconoAlineacion = botonAlinear.querySelector('.icono-align');
 
   /**
-   * Actualiza el contenido y estilo de la previsualización según la selección y texto ingresado.
+   * Actualiza el contenido y estilo de la vista previa según el texto y tipo seleccionado.
    * @private
    */
-  function actualizarPreview() {
-    preview.textContent = textarea.value;
-    preview.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
-    preview.classList.add(`preview-${selectTipo.value}`);
+  function actualizarVistaPrevia() {
+    vistaPrevia.textContent = areaTexto.value;
+    vistaPrevia.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
+    vistaPrevia.classList.add(`preview-${selectorTipoTexto.value}`);
   }
 
-  btnAlinear.addEventListener('click', () => {
-    const alignments = ['left', 'center', 'justify', 'right'];
-    preview.alignIndex = (preview.alignIndex + 1) % alignments.length;
-    const modo = alignments[preview.alignIndex];
-    preview.style.textAlign = modo;
-    iconoAlign.className = `icono-align align-${modo}`;
+  botonAlinear.addEventListener('click', () => {
+    const alineaciones = ['left', 'center', 'justify', 'right'];
+    vistaPrevia.alignIndex = (vistaPrevia.alignIndex + 1) % alineaciones.length;
+    const modo = alineaciones[vistaPrevia.alignIndex];
+    vistaPrevia.style.textAlign = modo;
+    iconoAlineacion.className = `icono-align align-${modo}`;
   });
 
-  selectTipo.addEventListener('change', actualizarPreview);
-  textarea.addEventListener('input', actualizarPreview);
-  btnEliminar.addEventListener('click', () => {
-    tarjeta.remove();
-    preview.remove();
+  selectorTipoTexto.addEventListener('change', actualizarVistaPrevia);
+  areaTexto.addEventListener('input', actualizarVistaPrevia);
+  botonEliminar.addEventListener('click', () => {
+    tarjetaTexto.remove();
+    vistaPrevia.remove();
   });
 
-  contenedor.appendChild(tarjeta);
+  contenedor.appendChild(tarjetaTexto);
 }
 
 // Exponer la función en el ámbito global para listeners
