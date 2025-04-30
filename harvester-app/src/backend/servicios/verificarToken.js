@@ -22,9 +22,10 @@ async function verificarToken(token) {
 
       // Parsear la respuesta del servidor
       const datos = await respuesta.json();
+      localStorage.setItem("permisos", datos.permisos); // Guardar los permisos en el localStorage
 
       // Retornar true si la respuesta fue exitosa y el servidor confirmó la validez
-      return respuesta.ok && datos.valido;
+      return respuesta.ok;
   } catch (error) {
       console.error("Error al verificar el token:", error);
       // En caso de error en la solicitud, se considera que el token no es válido

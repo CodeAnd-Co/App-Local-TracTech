@@ -1,4 +1,5 @@
 const { verificarToken } = require("../../backend/servicios/verificarToken"); // Importar la función verificarToken
+const { verificarPermisos } = require("../../backend/servicios/verificarPermisos"); // Importar la función verificarPermisos
 
 /**
  * Evento que se dispara cuando el contenido del DOM ha sido completamente cargado.
@@ -12,6 +13,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         const tokenValido = await verificarToken(token);
 
         if (tokenValido) {
+            // Si el token es válido, obtener los permisos del usuario
+            const permisos = await verificarPermisos(token);
+
+            // Guardar los permisos en localStorage como una cadena JSON
+            localStorage.setItem("permisos", JSON.stringify(permisos.permisos));
+
             // Si el token es válido, mostrar la pantalla de carga 2 segundos y luego redirigir a la página principal
             setTimeout(() => {
                 window.location.href = "../vistas/FrameLayout.html";
