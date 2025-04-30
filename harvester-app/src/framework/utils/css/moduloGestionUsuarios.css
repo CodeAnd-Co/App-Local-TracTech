@@ -1,15 +1,21 @@
+/* === Layout de dos columnas === */
 .container {
   display: flex;         /* activa Flexbox */
-  gap: 16px;             /* espacio entre las áreas (ajusta a tu gusto) */
-  /* opcional: */
-  /* justify-content: space-between;  para separarlas al máximo ancho */
-  /* align-items: flex-start;         para alinear al tope */
+  gap: 16px;             /* espacio entre columnas */
 }
 
-.functional-area {
-  flex: 1;               /* reparte el espacio sobrante a partes iguales */
-  /* ó puedes usar: width: 50%; */
+/* Ajuste de anchos: puedes cambiar 2/1 por la proporción que necesites */
+.columna-busqueda-usuario {
+  padding: 30px 0;
+  gap: 30px;
+  flex: 2;
 }
+
+.columna-crear-usuario {
+  flex: 1;
+  display: block;        /* antes estaba “none”: ahora siempre visible */
+}
+
 
 /* === Toolbar de búsqueda + botón “Agregar” === */
 .busqueda-y-agregar-usuario {
@@ -55,10 +61,10 @@
   gap: 1.25rem;
 }
 
-/* Fila de usuario */
 .frame-usuario {
   display: flex;
   align-items: center;
+  flex-direction: row;
   gap: .75rem;
 }
 
@@ -69,9 +75,9 @@
   border: 1.5px solid #000;
   border-radius: .4rem;
   font-size: 1.125rem;
+  flex-direction: row;
 }
 
-/* Botones editar / eliminar */
 .boton-editar,
 .boton-eliminar {
   background: #fff;
@@ -98,22 +104,41 @@
   justify-content: center;
   font-size: 1rem;
 }
-.paginacion a {
+.paginacion button,
+.paginacion span {
   text-decoration: none;
   color: #000;
   padding: .25rem .5rem;
 }
-.paginacion a.activo {
+.paginacion button.pagina-actual {
   font-size: 1.5rem;
   color: #a61930;
 }
 
-/* === Pop-out (columna crear usuario) === */
-#columna-crear-usuario {
-  display: none;
+/* Botones de paginación */
+.boton-pagina-previa,
+.boton-pagina,
+.boton-pagina-siguiente {
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 8px; /* para mantener el «click‐area» */
+  color: inherit;    /* hereda el color del texto */
+  cursor: pointer;
 }
 
+/* El botón de la página actual puede llevar subrayado o color distinto */
+.boton-pagina.pagina-actual {
+  text-decoration: underline;
+  font-weight: bold;
+}
 
+/* Los «…» también pueden ir sin fondo */
+.puntos-paginacion {
+  background: transparent;
+  padding: 0 4px;
+}
+
+/* === Pop-out (columna crear usuario) === */
 .pop-out {
   background: #fff;
   border: 1px solid #000;
@@ -122,17 +147,15 @@
   display: flex;
   flex-direction: column;
   gap: 1.125rem;
-  height: 100%; /* o un max-height razonable */
+  height: 100%;
 }
 
-/* Título */
 .pop-out .crear-usuario {
   font-size: 1.5rem;
   text-align: center;
   margin-bottom: .5rem;
 }
 
-/* Formulario */
 .pop-out form.modificacion {
   display: flex;
   flex-direction: column;
@@ -157,13 +180,11 @@
   font-size: 1rem;
 }
 
-/* Separador */
 .pop-out .line-1 {
   border-top: 1px solid rgba(109,108,108,.3);
   width: 100%;
 }
 
-/* Botones */
 .pop-out .botones {
   display: flex;
   gap: 1rem;

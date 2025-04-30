@@ -6,6 +6,9 @@ async function inicializarModuloGestionUsuarios() {
     console.log("Módulo de Gestión de Usuarios inicializado");
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
+    const columnaCrear = document.getElementById('columna-crear-usuario');
+    columnaCrear.style.display = 'none';
+
     try {
         const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
         const usuarios = await obtenerUsuarios();
@@ -14,6 +17,18 @@ async function inicializarModuloGestionUsuarios() {
     } catch (error) {
         console.error("Error al obtener usuarios:", error);
     }
+
+    const btnAgregar = document.querySelector('.primario');
+    btnAgregar.addEventListener('click', ev => {
+        ev.preventDefault();
+        columnaCrear.style.display = 'block';
+    });
+
+    const btnCancelar = document.querySelector('.btn-cancelar');
+    btnCancelar.addEventListener('click', ev => {
+        ev.preventDefault();
+        columnaCrear.style.display = 'none';
+    });
 }
 
 function cargarPagina(pagina) {
@@ -30,11 +45,10 @@ function cargarPagina(pagina) {
     paginacion.innerHTML = '';
 
     const previo = document.createElement('button');
-    previo.href = '#';
     previo.textContent = '<';
     previo.classList.add('boton-pagina-previa');
-    previo.onclick = paginaPrevia => {
-        paginaPrevia.preventDefault();
+    previo.onclick = ev => {
+        ev.preventDefault();
         if (paginaActual > 1) {
             cargarPagina(paginaActual - 1);
         }
@@ -43,9 +57,9 @@ function cargarPagina(pagina) {
 
     for (let i = 1; i <= paginasTotales; i++) {
         if (
-            i === 1 || // Siempre mostrar la primera página
-            i === paginasTotales || // Siempre mostrar la última página
-            (i >= paginaActual - 1 && i <= paginaActual + 1) // Mostrar páginas cercanas a la actual
+            i === 1 ||
+            i === paginasTotales ||
+            (i >= paginaActual - 1 && i <= paginaActual + 1)
         ) {
             const botonPagina = document.createElement('button');
             botonPagina.textContent = i;
@@ -53,14 +67,14 @@ function cargarPagina(pagina) {
             if (i === paginaActual) {
                 botonPagina.classList.add('pagina-actual');
             }
-            botonPagina.onclick = paginas => {
-                paginas.preventDefault();
+            botonPagina.onclick = ev => {
+                ev.preventDefault();
                 cargarPagina(i);
             };
             paginacion.appendChild(botonPagina);
         } else if (
-            i === paginaActual - 2 || // Mostrar "..." antes de las páginas cercanas
-            i === paginaActual + 2 // Mostrar "..." después de las páginas cercanas
+            i === paginaActual - 2 ||
+            i === paginaActual + 2
         ) {
             const puntos = document.createElement('span');
             puntos.textContent = '...';
@@ -70,11 +84,10 @@ function cargarPagina(pagina) {
     }
 
     const siguiente = document.createElement('button');
-    siguiente.href = '#';
     siguiente.textContent = '>';
     siguiente.classList.add('boton-pagina-siguiente');
-    siguiente.onclick = paginaSiguiente => {
-        paginaSiguiente.preventDefault();
+    siguiente.onclick = ev => {
+        ev.preventDefault();
         if (paginaActual < paginasTotales) {
             cargarPagina(paginaActual + 1);
         }
@@ -103,9 +116,13 @@ function mostrarUsuarios(usuarios) {
         div.innerHTML = `
             <div class="nombre-usuario">
                 <div class="texto-usuario">${nombre}</div>
-                <button class="boton-editar"><img src="../utils/iconos/Editar2.svg" alt="Editar"/></button>
-                <button class="boton-eliminar"><img src="../utils/iconos/BasuraBlanca.svg" alt="Eliminar"/></button>
             </div>
+                <button class="boton-editar">
+                  <img src="../utils/iconos/Editar2.svg" alt="Editar"/>
+                </button>
+                <button class="boton-eliminar">
+                  <img src="../utils/iconos/BasuraBlanca.svg" alt="Eliminar"/>
+                </button>
         `;
         fragmento.appendChild(div);
     }
