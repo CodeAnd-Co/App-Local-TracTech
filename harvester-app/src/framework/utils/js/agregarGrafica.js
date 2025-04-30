@@ -141,11 +141,10 @@ function agregarGrafica(contenedorId, previsualizacionId) {
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
  * @param {number} idGrafica - ID de la gráfica asociada.
  */
-function crearCuadroFormulas(columnas, idGrafica) {
+function crearCuadroFormulas(columnas) {
   if (eliminarCuadroFormulas()) {
     console.error('Cuadro de fórmulas existía');
   }
-  console.log(idGrafica)
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';

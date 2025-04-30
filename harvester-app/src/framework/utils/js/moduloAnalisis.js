@@ -3,14 +3,18 @@
  * @module moduloAnalisis
  * @description Módulo que inicializa la interfaz de análisis, configura eventos de botones para agregar texto, gráficas y descargar el reporte en PDF.
  * @version 1.0
- * @date 2025-04-28
+ * @since 2025-04-28
  */
 
 /**
- * Inicializa el módulo de análisis.
+ * Inicializa la interfaz de análisis:
  * - Actualiza el estado de los botones del sidebar y topbar.
- * - Configura listeners para los botones de agregar texto, agregar gráfica y descargar PDF.
- * - Carga datos de Excel desde localStorage.
+ * - Configura los listeners para los botones de agregar texto, agregar gráfica y descargar PDF.
+ * - Carga los datos de Excel desde localStorage.
+ *
+ * @function inicializarModuloAnalisis
+ * @memberof module:moduloAnalisis
+ * @returns {void}
  */
 function inicializarModuloAnalisis() {
   // Actualizar visualmente el sidebar sin modificar localStorage
@@ -26,7 +30,7 @@ function inicializarModuloAnalisis() {
   }
 
   // IDs de contenedores
-  const idContenedor = 'contenedorElementos';
+  const idContenedor       = 'contenedorElementos';
   const idPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
   // Configurar listeners de botones
@@ -46,12 +50,15 @@ function inicializarModuloAnalisis() {
 
 /**
  * Carga los datos de Excel almacenados en localStorage.
- * @returns {Object|null} Datos de Excel parseados o null si no hay datos.
+ *
+ * @function cargarDatosExcel
+ * @memberof module:moduloAnalisis
+ * @returns {Object|null} Datos de Excel parseados o null si no hay datos o ocurre un error.
  */
 function cargarDatosExcel() {
   try {
     const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
-    if (!datosDisponibles || datosDisponibles !== 'true') {
+    if (datosDisponibles !== 'true') {
       console.warn('No hay datos de Excel disponibles');
       return null;
     }
@@ -65,35 +72,21 @@ function cargarDatosExcel() {
     const datosExcel = JSON.parse(datosExcelJSON);
     window.datosExcelGlobal = datosExcel;
     return datosExcel;
+
   } catch (error) {
     console.error('Error al cargar datos de Excel:', error);
     return null;
   }
-    try {
-        // Recuperar los datos de Excel
-        const datosExcelJSON = localStorage.getItem('datosExcel');
-        
-        
-        if (!datosExcelJSON) {
-            console.log("No hay datos de Excel disponibles en localStorage");
-            alert("No hay datos de Excel disponibles");
-            return null;
-        }
-        
-        // Parsear los datos JSON
-        const datosExcel = JSON.parse(datosExcelJSON);
-        console.log("Datos de Excel cargados:", datosExcel);
-        return datosExcel;
-    } catch (error) {
-        console.error("Error al cargar datos de Excel:", error);
-        return null;
-    }
 }
 
 /**
  * Genera y descarga el reporte en formato PDF usando jsPDF.
- * Recorre los elementos de previsualización y los añade al documento.
+ * Recorre los elementos de previsualización en pantalla (texto y gráficas) y los añade al documento PDF.
+ *
+ * @function descargarPDF
+ * @memberof module:moduloAnalisis
  * @throws {Error} Si jsPDF no está cargado o el contenedor de previsualización no existe.
+ * @returns {void}
  */
 function descargarPDF() {
   const { jsPDF } = window.jspdf || {};
@@ -102,10 +95,10 @@ function descargarPDF() {
   }
 
   const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-  const margen = 40;
-  const anchoPagina = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
-  const altoPagina  = documentoPDF.internal.pageSize.getHeight() - margen * 2;
-  let posicionY = margen;
+  const margen       = 40;
+  const anchoPagina  = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
+  const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
+  let posicionY      = margen;
 
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
@@ -138,7 +131,7 @@ function descargarPDF() {
       const lienzo = elemento.querySelector('canvas');
       if (!lienzo) return;
 
-      const imagen = lienzo.toDataURL('image/png');
+      const imagen     = lienzo.toDataURL('image/png');
       const proporcion = lienzo.height / lienzo.width;
       const altoImagen = anchoPagina * proporcion;
 
@@ -157,12 +150,13 @@ function descargarPDF() {
 
 // Exponer funciones en el ámbito global
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
-window.descargarPDF = descargarPDF;
-window.cargarDatosExcel = cargarDatosExcel;
+window.cargarDatosExcel          = cargarDatosExcel;
+window.descargarPDF              = descargarPDF;
 
 // Ejecutar inicialización al cargar el DOM
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', inicializarModuloAnalisis);
 } else {
+  // Ejecutar tras un breve retardo en caso de que ya esté listo
   setTimeout(inicializarModuloAnalisis, 100);
 }
