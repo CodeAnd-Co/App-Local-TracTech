@@ -8,143 +8,134 @@ const { Chart } = require('chart.js/auto');
  * @param {string} previsualizacionId - ID del contenedor de previsualización de la gráfica.
  */
 function agregarGrafica(contenedorId, previsualizacionId) {
-  window.contenedor = document.getElementById(contenedorId);
-  window.previsualizacion = document.getElementById(previsualizacionId);
+  const contenedor = document.getElementById(contenedorId);
+  const previsualizacion = document.getElementById(previsualizacionId);
 
-  //Crea tarjeta para nuevo gráfico
+  //Crear tarjeta
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
-  //Obtiene la lista de todas las trajetas de gráfico que ya existen
-  const tarjetasGraficas = window.contenedor.querySelectorAll('.tarjeta-grafica');
-
-  //Asigna Id, si ya hay tarjetas de gráficos asigna la id siguiente, si no la nueva id se manteiene en 1
-  let nuevaId = 1;
-
-  if (tarjetasGraficas && tarjetasGraficas.length > 0) {
-    const idPrevia = parseInt(tarjetasGraficas[tarjetasGraficas.length - 1].id);
-    nuevaId = idPrevia + 1;
-  }
-
+  //Calcular ID único
+  const tarjetasExistentes = contenedor.querySelectorAll('.tarjeta-grafica');
+  const nuevaId = tarjetasExistentes.length
+    ? parseInt(tarjetasExistentes[tarjetasExistentes.length - 1].id, 10) + 1
+    : 1;
   tarjetaGrafica.id = nuevaId;
-  tarjetaGrafica.innerHTML = `<input class="titulo-grafica" placeholder="Nombre de la gráfica">
+
+  //Inyectar HTML base: nombre, selector tipo (igual a agregarTexto.js), botones
+  tarjetaGrafica.innerHTML = `
+    <input class="titulo-grafica" placeholder="Nombre de la gráfica" />
+    <div class="titulo-texto">
+      <select class="tipo-texto tipo-grafica">
+        <option value="line">Línea</option>
+        <option value="bar">Barras</option>
+        <option value="pie">Pastel</option>
+        <option value="doughnut">Dona</option>
+        <option value="radar">Radar</option>
+        <option value="polarArea">Polar</option>
+      </select>
+      <img class="type" src="../utils/iconos/GraficaBarras.svg" alt="Icono Gráfica" />
+    </div>
     <div class="boton-formulas">
       <div class="formulas">Fórmulas</div>
     </div>
-    <div class="botones-editar-eliminar">
+    <div class="botones-eliminar">
       <div class="eliminar">
         <img class="eliminar-icono" src="../utils/iconos/Basura.svg" />
         <div class="texto-eliminar">Eliminar</div>
       </div>
     </div>
-    `;
+  `;
 
-  //Obtener los datos para la gráfica
+  //Datos disponibles
   let columnas = [];
-
   if (window.datosExcelGlobal) {
-    window.datosGrafica = window.datosExcelGlobal.hojas[Object.keys(window.datosExcelGlobal.hojas)[0]]
-    console.log(window.datosGrafica[0])
-
-    columnas = window.datosGrafica[0].slice(3)
+    window.datosGrafica = window.datosExcelGlobal.hojas[
+      Object.keys(window.datosExcelGlobal.hojas)[0]
+    ];
+    columnas = window.datosGrafica[0].slice(3);
   }
 
+  //Botón Fórmulas
+  tarjetaGrafica
+    .querySelector('.boton-formulas')
+    .addEventListener('click', () =>
+      crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
 
-  // Configura el botón de fórmulas
-  const botonFormulas = tarjetaGrafica.querySelector('.boton-formulas');
-  botonFormulas.addEventListener('click', () => crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
-
-  //Inicia la creación de la gráfica
-
-  //Crea el cuadro que contiene la grafica en la previsualizacion
+  //Área de previsualización
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
   graficaDiv.id = nuevaId;
 
-  //Crea la gráfica que se va a agregar
-  const contenedorGrafico = document.createElement('canvas');
-  var contexto = contenedorGrafico.getContext('2d');
+  const canvasGrafica = document.createElement('canvas');
+  const contexto = canvasGrafica.getContext('2d');
+  graficaDiv.appendChild(canvasGrafica);
+
+  //Iniciar Chart.js
   const grafico = new Chart(contexto, {
     type: 'line',
-
     data: {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: ['January','February','March','April','May','June','July'],
       datasets: [{
-        label: 'My First dataset',
+        label: '',
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
-        fontColor: 'rgb(255, 255, 255)',
-        data: [0, 10, 5, 2, 20, 30, 45]
+        data: [0,10,5,2,20,30,45]
       }]
     },
     options: {
       plugins: {
-        title: {
-          display: true,
-          text: '',
-        },
+        title: { display: true, text: '' },
         legend: {
           labels: {
-            generateLabels: (grafica) => {
-              return grafica.data.datasets.map(
-                (datos) => ({
-                  text: datos.label,
-                  fillStyle: datos.backgroundColor,
-                  strokeStyle: datos.backgroundColor,
-                  fontColor: 'rgb(255, 255, 255)'
-                })
-              )
-            }
+            generateLabels: chart =>
+              chart.data.datasets.map(ds => ({
+                text: ds.label,
+                fillStyle: ds.backgroundColor,
+                strokeStyle: ds.backgroundColor
+              }))
           }
         }
       },
       scales: {
-        x: {
-          ticks: {
-            color: 'rgb(255, 255, 255)',
-          },
-          grid: {
-            color: 'rgb(255, 255, 255)'
-          }
-        },
-        y: {
-          ticks: {
-            color: 'rgb(255, 255, 255)',
-          },
-          grid: {
-            color: 'rgb(255, 255, 255)'
-          },
-        },
-      },
+        x: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } },
+        y: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } }
+      }
     }
   });
 
-  graficaDiv.appendChild(contenedorGrafico);
+  graficaDiv.appendChild(canvasGrafica);
 
-  // Cambiar título dinámicamente
-  const hijosTarjeta = tarjetaGrafica.children;
-  
-  const titulo = hijosTarjeta[0]
-  titulo.addEventListener('input', () => {
-    grafico.options.plugins.title.text = titulo.value;
-    grafico.update()
+  //Cambiar título dinámicamente
+  tarjetaGrafica
+    .querySelector('.titulo-grafica')
+    .addEventListener('input', function() {
+      grafico.options.plugins.title.text = this.value;
+      grafico.update();
+    });
+
+  //Selector de tipo de gráfica (igual a agregarTexto.js) :contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaicite:1]{index=1}
+  const selectorTipoGrafica = tarjetaGrafica.querySelector('.tipo-grafica');
+  selectorTipoGrafica.value = grafico.config.type;
+  selectorTipoGrafica.addEventListener('change', () => {
+    grafico.config.type = selectorTipoGrafica.value;
+    grafico.update();
   });
 
+  //Eliminar gráfica
+  tarjetaGrafica
+    .querySelector('.eliminar')
+    .addEventListener('click', () => {
+      tarjetaGrafica.remove();
+      const graficaEliminada = encontrarGrafica(nuevaId); // función original :contentReference[oaicite:2]{index=2}&#8203;:contentReference[oaicite:3]{index=3}
+      if (graficaEliminada) graficaEliminada.remove();
+      eliminarCuadroFormulas();
+    });
 
-  // Eliminar gráfica
-  tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () => {
-    tarjetaGrafica.remove();
-    const graficaElim = encontrarGráfica(tarjetaGrafica.id);
-    if (graficaElim) graficaElim.remove();
-    eliminarCuadroFormulas();
-  });
-
-
-  //Añadir tarjeta y gráfico a página
-  window.contenedor.appendChild(tarjetaGrafica);
-  window.previsualizacion.appendChild(graficaDiv);
+  // 11) Añadir al DOM
+  contenedor.appendChild(tarjetaGrafica);
+  previsualizacion.appendChild(graficaDiv);
 }
-
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
@@ -246,7 +237,7 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
  * @param {string|number} id - ID de la gráfica a buscar.
  * @returns {HTMLElement} Gráfica encontrada.
  */
-function encontrarGráfica(id) {
+function encontrarGrafica(id) {
   const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll(".previsualizacion-grafica"));
   return graficasExistentes.filter(grafica => grafica.id == id)[0];
 }
