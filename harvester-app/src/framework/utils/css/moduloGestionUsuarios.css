@@ -6,10 +6,12 @@
 
 /* Ajuste de anchos: puedes cambiar 2/1 por la proporción que necesites */
 .columna-busqueda-usuario {
-  padding: 30px 0;
   gap: 30px;
+  display: flex;       /* necesario para que gap funcione */
+  flex-direction: column; /* para que los elementos se apilen verticalmente */
   flex: 2;
 }
+
 
 .columna-crear-usuario {
   flex: 1;
@@ -69,6 +71,7 @@
 }
 
 .nombre-usuario {
+  height: 100%;
   flex: 1;
   padding: 1rem;
   background: #fff;

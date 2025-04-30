@@ -1,4 +1,4 @@
-const usuariosPorPagina = 3;
+const usuariosPorPagina = 6;
 let paginaActual = 1;
 let listaUsuarios = [];
 
