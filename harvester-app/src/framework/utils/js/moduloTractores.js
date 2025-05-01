@@ -1,16 +1,13 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
 
 /**
- * Inicializa el módulo de tractores configurando los eventos del DOM
+ * Inicializa el módulo de tractores configurando los elementos del DOM y 
+ * mostrando los datos cargados desde el almacenamiento local.
  * 
  * @function inicializarModuloTractores
+ * @returns {void}
  */
 function inicializarModuloTractores() {
-    // Actualizar el topbar si está disponible
-    if (window.actualizarTopbar) {
-        window.actualizarTopbar('tractores');
-    }
-
     console.log('Cargando el módulo de Tractores...');
 
     // Cargar los datos del Excel desde localStorage

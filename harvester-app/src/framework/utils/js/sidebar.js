@@ -14,12 +14,13 @@ function cargarModulo(seccion) {
   const contenedor = document.querySelector(".ventana-principal");
 
   if (contenedor && rutaModulo[seccion]) {
-    // Guardar la vista actual en la pila antes de cambiar
-    const pila = JSON.parse(localStorage.getItem("vistaPila") || "[]");
+    // Guardar la vista actual una la pila antes de cambiar
+    const pila = JSON.parse(localStorage.getItem('vistaPila') || '[]');
     const vistaActual = localStorage.getItem("seccion-activa");
     if (vistaActual) {
+      // Agregar la vista actual en la pila y gaurdarla en localStorage
       pila.push(vistaActual);
-      localStorage.setItem("vistaPila", JSON.stringify(pila));
+      localStorage.setItem('vistaPila', JSON.stringify(pila));
     }
     fetch(rutaModulo[seccion])
       .then(res => res.text())
@@ -57,9 +58,7 @@ function cargarModulo(seccion) {
           }
         } else if (seccion == 'tractores') {
           if (window.inicializarModuloTractores) {
-            // Recuperar datos del localStorage si existen
-            const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
-            window.inicializarModuloTractores(datosExcel);
+            window.inicializarModuloTractores();
           }
         }
         // Añadir más inicializaciones para otros módulos según sea necesario
@@ -160,10 +159,18 @@ function aplicarActivoDesdeStorage() {
   cargarModulo(seccion);
 }
 
+/** 
+ * Actualiza el componente topbar con el nombre del modulo actual
+ * 
+ * @function actualizarTopbar
+ * @param {string} seccion - Nombre de modulo que se actualiza en el topbar
+ * @returns {void}
+*/
 function actualizarTopbar(seccion) {
   const tituloElem = document.getElementById('topbar-titulo');
   const iconoElem = document.getElementById('topbar-icono');
   const botonRegresar = document.getElementById('btn-regresar');
+  console.log('Topbar actualizado para tractores')
 
   if (!tituloElem || !iconoElem || !topbarInfo[seccion]) return;
 
@@ -180,10 +187,11 @@ function actualizarTopbar(seccion) {
     botonRegresar.style.display = "flex";
     tituloElem.style.marginLeft = "10px";
     botonRegresar.onclick = () => {
-      const pila = JSON.parse(localStorage.getItem("vistaPila") || "[]");
+      const pila = JSON.parse(localStorage.getItem('vistaPila') || "[]");
       if (pila.length > 0) {
+        // Sacar la última vista, guardar la pila actualizada y estableces la vista anterior como activa
         const vistaAnterior = pila.pop();
-        localStorage.setItem("vistaPila", JSON.stringify(pila));
+        localStorage.setItem('vistaPila', JSON.stringify(pila));
         localStorage.setItem("seccion-activa", vistaAnterior);
         cargarModulo(vistaAnterior);
 
