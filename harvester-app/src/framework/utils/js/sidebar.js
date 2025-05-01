@@ -1,22 +1,22 @@
 function cargarModulo(seccion) {
   const rutaModulo = {
-    inicio:      "../vistas/moduloInicio.html",
-    analisis:    "../vistas/moduloAnalisis.html",
-    plantillas:  "../vistas/moduloPlantillas.html",
-    formulas:    "../vistas/moduloFormulas.html",
-    envios:      "../vistas/moduloEnvios.html",
-    usuario:     "../vistas/moduloUsuario.html",
-    gestionUsuarios:     "../vistas/moduloGestionUsuarios.html",
-    tractores:  "../vistas/moduloTractores.html"
+    inicio:      '../vistas/moduloInicio.html',
+    analisis:    '../vistas/moduloAnalisis.html',
+    plantillas:  '../vistas/moduloPlantillas.html',
+    formulas:    '../vistas/moduloFormulas.html',
+    envios:      '../vistas/moduloEnvios.html',
+    usuario:     '../vistas/moduloUsuario.html',
+    gestionUsuarios:     '../vistas/moduloGestionUsuarios.html',
+    tractores:  '../vistas/moduloTractores.html'
     // tema no va aquí
   };
 
-  const contenedor = document.querySelector(".ventana-principal");
+  const contenedor = document.querySelector('.ventana-principal');
 
   if (contenedor && rutaModulo[seccion]) {
     // Guardar la vista actual una la pila antes de cambiar
     const pila = JSON.parse(localStorage.getItem('vistaPila') || '[]');
-    const vistaActual = localStorage.getItem("seccion-activa");
+    const vistaActual = localStorage.getItem('seccion-activa');
     if (vistaActual) {
       // Agregar la vista actual en la pila y gaurdarla en localStorage
       pila.push(vistaActual);
@@ -64,19 +64,19 @@ function cargarModulo(seccion) {
         // Añadir más inicializaciones para otros módulos según sea necesario
       })
       .catch(err => {
-        console.error("Error al cargar el módulo:", err);
+        console.error('Error al cargar el módulo:', err);
       });
   }
 }
 const topbarInfo = {
-  inicio:    { titulo: "Inicio",     icono: "../utils/iconos/Casa.svg" },
-  analisis:  { titulo: "Análisis",   icono: "../utils/iconos/GraficaBarras.svg" },
-  plantillas:{ titulo: "Plantillas", icono: "../utils/iconos/Portapapeles.svg" },
-  formulas:  { titulo: "Fórmulas",   icono: "../utils/iconos/Funcion.svg" },
-  envios:    { titulo: "Envíos",     icono: "../utils/iconos/Correo.svg" },
-  usuario:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" },
-  gestionUsuarios:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" },
-  tractores:   { titulo: "Tractores",    icono: "../utils/iconos/GraficaBarras.svg" }
+  inicio:    { titulo: 'Inicio',     icono: '../utils/iconos/Casa.svg' },
+  analisis:  { titulo: 'Análisis',   icono: '../utils/iconos/GraficaBarras.svg' },
+  plantillas:{ titulo: 'Plantillas', icono: '../utils/iconos/Portapapeles.svg' },
+  formulas:  { titulo: 'Fórmulas',   icono: '../utils/iconos/Funcion.svg' },
+  envios:    { titulo: 'Envíos',     icono: '../utils/iconos/Correo.svg' },
+  usuario:   { titulo: 'Usuario',    icono: '../utils/iconos/Usuario.svg' },
+  gestionUsuarios:   { titulo: 'Usuario',    icono: '../utils/iconos/Usuario.svg' },
+  tractores:   { titulo: 'Tractores',    icono: '../utils/iconos/GraficaBarras.svg' }
 };
 
 function inicializarSidebar() {
@@ -114,7 +114,7 @@ function activarBotonesSidebar() {
       const seccion = boton.getAttribute('data-seccion');
       if (!seccion) return;
 
-      if (seccion === "tema") {
+      if (seccion === 'tema') {
         // Aquí más adelante activaremos modo oscuro/claro
         return;
       }
@@ -132,7 +132,7 @@ function activarBotonesSidebar() {
       document.querySelectorAll('.boton-sidebar').forEach(boton => boton.classList.remove('activo'));
 
       // Activar el botón visualmente representativo
-      document.querySelectorAll(`.boton-sidebar[data-seccion="${seccionVisual}"]`)
+      document.querySelectorAll(`.boton-sidebar[data-seccion='${seccionVisual}']`)
         .forEach(boton => boton.classList.add('activo'));
 
       // Actualizar topbar y cargar el contenido real
@@ -148,11 +148,11 @@ function aplicarActivoDesdeStorage() {
   const todosBotones = document.querySelectorAll('.boton-sidebar');
   todosBotones.forEach(boton => boton.classList.remove('activo'));
 
-  if (!seccion || seccion === "tema") return;
+  if (!seccion || seccion === 'tema') return;
 
-  const seccionVisual = seccion === "gestionUsuarios" ? "usuario" : seccion;
+  const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
 
-  const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccionVisual}"]`);
+  const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion='${seccionVisual}']`);
   botonesCoincidentes.forEach(boton => boton.classList.add('activo'));
 
   actualizarTopbar(seccion);
@@ -179,20 +179,20 @@ function actualizarTopbar(seccion) {
   iconoElem.src = topbarInfo[seccion].icono;
 
   // Ocultar botón de regresar para ciertas secciones
-  const seccionesSinRegresar = ["inicio", "envios", "plantillas", "usuario"];
+  const seccionesSinRegresar = ['inicio', 'envios', 'plantillas', 'usuario'];
   if (seccionesSinRegresar.includes(seccion)) {
-    botonRegresar.style.display = "none";
-    tituloElem.style.marginLeft = "0px";
+    botonRegresar.style.display = 'none';
+    tituloElem.style.marginLeft = '0px';
   } else {
-    botonRegresar.style.display = "flex";
-    tituloElem.style.marginLeft = "10px";
+    botonRegresar.style.display = 'flex';
+    tituloElem.style.marginLeft = '10px';
     botonRegresar.onclick = () => {
-      const pila = JSON.parse(localStorage.getItem('vistaPila') || "[]");
+      const pila = JSON.parse(localStorage.getItem('vistaPila') || '[]');
       if (pila.length > 0) {
         // Sacar la última vista, guardar la pila actualizada y estableces la vista anterior como activa
         const vistaAnterior = pila.pop();
         localStorage.setItem('vistaPila', JSON.stringify(pila));
-        localStorage.setItem("seccion-activa", vistaAnterior);
+        localStorage.setItem('seccion-activa', vistaAnterior);
         cargarModulo(vistaAnterior);
 
       }
