@@ -33,6 +33,9 @@ function cargarModulo(seccion) {
           if (window.cargarDatosExcel) {
             window.cargarDatosExcel();
           }
+          if (window.inicializarModuloAnalisis) {
+            window.inicializarModuloAnalisis();
+          }
         } else if (seccion === 'plantillas'){
           if (window.inicializarModuloPlantillas) {
             window.inicializarModuloPlantillas();
