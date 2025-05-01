@@ -31,10 +31,9 @@ btnAcceder.addEventListener("click", async () => {
       // Guardar el token en localStorage
       localStorage.setItem("token", respuesta.token);
 
-      const permisos = await verificarPermisos(respuesta.token);
-
-      // Guardar los permisos en localStorage como una cadena JSON
-      localStorage.setItem("permisos", JSON.stringify(permisos));
+      const resultado = await verificarPermisos(respuesta.token);
+      const listaPermisos = resultado.permisos || [];
+      localStorage.setItem("permisos", JSON.stringify(listaPermisos));
 
       // Redirigir al usuario a la página principal
       window.location.href = "./frameLayout.html";

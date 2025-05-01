@@ -8,39 +8,29 @@ const { cerrarSesion } = require("../../backend/casosUso/sesion/cerrarSesion");
 function inicializarModuloUsuario() {
     // Seleccionar el botón para gestión de usuarios
     const botonGestion = document.querySelector("#botonGestion");
+    const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
 
-    if (botonGestion) {
-        // Agregar listener al botón de gestión de usuarios
+    if (!verificarPermisos(PERMISOS.ADMIN)) {
+        botonGestion?.remove();  // o botonGestion.style.display = "none";
+      } else {
+        // 2) Sólo si existe y tiene permiso, le pones el listener:
         botonGestion.addEventListener("click", async () => {
-            console.log("Cargando el módulo de gestión de usuarios...");
-
-            // Actualizar el localStorage para indicar la sección activa
-            localStorage.setItem('seccion-activa', 'gestionUsuarios');
-
-            // Cargar el contenido del módulo de gestión de usuarios en la ventana principal
-            const ventanaPrincipal = document.getElementById('ventana-principal');
-            if (ventanaPrincipal) {
-                fetch('../vistas/moduloGestionUsuarios.html')
-                    .then(res => res.text())
-                    .then(html => {
-                        ventanaPrincipal.innerHTML = html;
-                        // Cargar y ejecutar el script manualmente
-                        const script = document.createElement('script');
-                        script.src = '../utils/js/moduloGestionUsuario.js';
-                        script.onload = () => {
-                            if (window.inicializarModuloGestionUsuarios) {
-                                window.inicializarModuloGestionUsuarios();
-                            }
-                        };
-                        document.body.appendChild(script);
-                    })
-                    .catch(err => console.error("Error cargando módulo de gestión de usuarios:", err));
-            }
+          console.log("Cargando módulo de gestión de usuarios...");
+          localStorage.setItem("seccion-activa", "gestionUsuarios");
+          const ventanaPrincipal = document.getElementById("ventana-principal");
+          if (!ventanaPrincipal) return;
+          try {
+            const html = await fetch("../vistas/moduloGestionUsuarios.html").then(r => r.text());
+            ventanaPrincipal.innerHTML = html;
+            const script = document.createElement("script");
+            script.src = "../utils/js/moduloGestionUsuario.js";
+            document.body.appendChild(script);
+            script.onload = () => window.inicializarModuloGestionUsuarios?.();
+          } catch (err) {
+            console.error("Error cargando módulo de gestión de usuarios:", err);
+          }
         });
-    } else {
-        // Mostrar error si no se encuentra el botón en el DOM
-        console.error("El botón de gestión de usuarios no se encontró en el DOM.");
-    }
+      }
 
     // Seleccionar el botón para cerrar sesión
     const btnCerrarSesion = document.querySelector(".boton-cerrar-sesion");
