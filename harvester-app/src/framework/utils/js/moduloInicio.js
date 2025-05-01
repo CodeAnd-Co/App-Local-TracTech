@@ -78,11 +78,6 @@ function botonTractores() {
             botonTractores.addEventListener('click', () => {
                 // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                 setTimeout(() => {
-                    // Actualizar topbar directamente
-                    if (window.actualizarTopbar) {
-                        window.actualizarTopbar('tractores');
-                    }
-                    
                     // Cargar el módulo de tractores
                     const ventanaPrincipal = document.getElementById('ventana-principal');
                     if (ventanaPrincipal) {

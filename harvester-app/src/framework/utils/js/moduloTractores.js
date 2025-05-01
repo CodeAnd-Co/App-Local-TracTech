@@ -8,10 +8,14 @@
  * @returns {void}
  */
 function inicializarModuloTractores() {
+    // Actualizar topbar directamente
+    if (window.actualizarTopbar) {
+        window.actualizarTopbar('tractores');
+    }
     console.log('Cargando el módulo de Tractores...');
 
     // Cargar los datos del Excel desde localStorage
-    const datosExcel = cargarDatosExcel();
+    const datosExcel = cargarDatosDeExcel();
     console.log('Datos de Excel:', datosExcel);
     
     // Si hay datos, inicializar la visualización aquí
@@ -62,12 +66,26 @@ function inicializarModuloTractores() {
     }
 }
 
-// Ejecutar inicialización si el DOM ya está cargado
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', inicializarModuloTractores);
-} else {
-    // DOM ya está cargado
-    setTimeout(inicializarModuloTractores, 100);
+function cargarDatosDeExcel() {
+    try {
+        // Recuperar los datos de Excel
+        const datosExcelJSON = localStorage.getItem('datosExcel');
+        
+        
+        if (!datosExcelJSON) {
+            console.log("No hay datos de Excel disponibles en localStorage");
+            alert("No hay datos de Excel disponibles");
+            return null;
+        }
+        
+        // Parsear los datos JSON
+        const datosExcel = JSON.parse(datosExcelJSON);
+        console.log("Datos de Excel cargados:", datosExcel);
+        return datosExcel;
+    } catch (error) {
+        console.error("Error al cargar datos de Excel:", error);
+        return null;
+    }
 }
 
 // Exportar funciones para uso global

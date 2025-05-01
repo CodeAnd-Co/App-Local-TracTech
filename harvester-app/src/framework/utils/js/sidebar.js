@@ -170,7 +170,7 @@ function actualizarTopbar(seccion) {
   const tituloElem = document.getElementById('topbar-titulo');
   const iconoElem = document.getElementById('topbar-icono');
   const botonRegresar = document.getElementById('btn-regresar');
-  console.log('Topbar actualizado para tractores')
+  console.log('Topbar actualizado para:', seccion)
 
   if (!tituloElem || !iconoElem || !topbarInfo[seccion]) return;
 
