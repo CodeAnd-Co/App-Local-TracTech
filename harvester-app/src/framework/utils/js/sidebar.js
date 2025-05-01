@@ -14,11 +14,20 @@ function cargarModulo(seccion) {
   const contenedor = document.querySelector(".ventana-principal");
 
   if (contenedor && rutaModulo[seccion]) {
+    // Guardar la vista actual en la pila antes de cambiar
+    const pila = JSON.parse(localStorage.getItem("vistaPila") || "[]");
+    const vistaActual = localStorage.getItem("seccion-activa");
+    if (vistaActual) {
+      pila.push(vistaActual);
+      localStorage.setItem("vistaPila", JSON.stringify(pila));
+    }
     fetch(rutaModulo[seccion])
       .then(res => res.text())
       .then(html => {
         contenedor.innerHTML = html;
-        
+
+        actualizarTopbar(seccion);
+
         // Inicializar el módulo según la sección
         if (seccion === 'inicio') {
           if (window.botonCargar) {
@@ -48,7 +57,6 @@ function cargarModulo(seccion) {
           }
         } else if (seccion == 'tractores') {
           if (window.inicializarModuloTractores) {
-            console.log("Inicializando módulo de tractores...");
             // Recuperar datos del localStorage si existen
             const datosExcel = JSON.parse(localStorage.getItem('datosExcel') || 'null');
             window.inicializarModuloTractores(datosExcel);
@@ -112,9 +120,11 @@ function activarBotonesSidebar() {
         return;
       }
 
+      // Limpiar la pila de vistas al cambiar de sección desde la sidebar
+      localStorage.removeItem('vistaPila');
+
       // Guardamos la sección real
       localStorage.setItem('seccion-activa', seccion);
-      console.log("Sección activa guardada:", seccion);
 
       // Determinar cuál botón mostrar como activo visualmente
       const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
@@ -154,8 +164,6 @@ function actualizarTopbar(seccion) {
   const tituloElem = document.getElementById('topbar-titulo');
   const iconoElem = document.getElementById('topbar-icono');
   const botonRegresar = document.getElementById('btn-regresar');
-  console.log("Actualizando topbar para:", seccion);
-
 
   if (!tituloElem || !iconoElem || !topbarInfo[seccion]) return;
 
@@ -171,6 +179,16 @@ function actualizarTopbar(seccion) {
   } else {
     botonRegresar.style.display = "flex";
     tituloElem.style.marginLeft = "10px";
+    botonRegresar.onclick = () => {
+      const pila = JSON.parse(localStorage.getItem("vistaPila") || "[]");
+      if (pila.length > 0) {
+        const vistaAnterior = pila.pop();
+        localStorage.setItem("vistaPila", JSON.stringify(pila));
+        localStorage.setItem("seccion-activa", vistaAnterior);
+        cargarModulo(vistaAnterior);
+
+      }
+    };    
   }
 }
 
