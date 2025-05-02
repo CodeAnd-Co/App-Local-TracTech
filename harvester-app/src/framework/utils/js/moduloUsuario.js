@@ -2,6 +2,7 @@
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
 
 const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
+const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
 
 /**
  * Inicializa el módulo de usuario, incluyendo gestión de usuarios y cierre de sesión.
@@ -16,7 +17,6 @@ const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
 function inicializarModuloUsuario() {
 
     const botonGestion = document.querySelector('#botonGestion');
-    const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
 
     if (!verificarPermisos(PERMISOS.ADMIN)) {
         botonGestion?.remove();
@@ -39,9 +39,9 @@ function inicializarModuloUsuario() {
         });
       }
 
-    const btnCerrarSesion = document.querySelector('.boton-cerrar-sesion');
+    const botonCerrarSesion = document.querySelector('.boton-cerrar-sesion');
 
-    btnCerrarSesion.addEventListener('click', async () => {
+    botonCerrarSesion.addEventListener('click', async () => {
         
         const respuesta = await cerrarSesion();
     
