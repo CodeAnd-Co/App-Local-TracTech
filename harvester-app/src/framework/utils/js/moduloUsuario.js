@@ -1,4 +1,5 @@
 // RF3 Usuario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
+// RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
 
 const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
 
@@ -13,50 +14,42 @@ const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
  * @returns {void}
  */
 function inicializarModuloUsuario() {
-    // Seleccionar el botón para gestión de usuarios
+
     const botonGestion = document.querySelector('#botonGestion');
+    const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
 
-    if (botonGestion) {
-        // Agregar listener al botón de gestión de usuarios
+    if (!verificarPermisos(PERMISOS.ADMIN)) {
+        botonGestion?.remove();
+      } else {
+
         botonGestion.addEventListener('click', async () => {
-
-            // Actualizar el localStorage para indicar la sección activa
-            localStorage.setItem('seccion-activa', 'gestionUsuarios');
-
-            // Cargar el contenido del módulo de gestión de usuarios en la ventana principal
-            const ventanaPrincipal = document.getElementById('ventana-principal');
-            if (ventanaPrincipal) {
-                fetch('../vistas/moduloGestionUsuarios.html')
-                    .then(res => res.text())
-                    .then(html => {
-                        ventanaPrincipal.innerHTML = html;
-                    })
-                    .catch(err => console.error('Error cargando módulo de gestión de usuarios:', err));
-            }
+          localStorage.setItem('seccion-activa', 'gestionUsuarios');
+          const ventanaPrincipal = document.getElementById('ventana-principal');
+          if (!ventanaPrincipal) return;
+          try {
+            const html = await fetch('../vistas/moduloGestionUsuarios.html').then(response => response.text());
+            ventanaPrincipal.innerHTML = html;
+            const cargadorGestionUsuarios = document.createElement('script');
+            cargadorGestionUsuarios.src = '../utils/js/moduloGestionUsuario.js';
+            document.body.appendChild(cargadorGestionUsuarios);
+            cargadorGestionUsuarios.onload = () => window.inicializarModuloGestionUsuarios?.();
+          } catch (error) {
+            console.error('Error cargando módulo de gestión de usuarios:', error);
+          }
         });
-    } else {
-        // Mostrar error si no se encuentra el botón en el DOM
-        console.error('El botón de gestión de usuarios no se encontró en el DOM.');
-    }
+      }
 
-    // Seleccionar el botón para cerrar sesión
-    const botonCerrarSesion = document.querySelector('.boton-cerrar-sesion');
+    const btnCerrarSesion = document.querySelector('.boton-cerrar-sesion');
 
-    // Agregar listener al botón de cerrar sesión
-    botonCerrarSesion.addEventListener('click', async () => {
+    btnCerrarSesion.addEventListener('click', async () => {
         
-        // Llamar a la función cerrarSesion para finalizar la sesión
         const respuesta = await cerrarSesion();
     
         if (respuesta.ok) {
-            // Eliminar el token de localStorage al cerrar sesión exitosamente
             localStorage.removeItem('token');
-    
-            // Redirigir al usuario a la página de inicio de sesión
             window.location.href = './inicioSesion.html';
         } else {
-            // Mostrar mensaje de error si ocurre un problema al cerrar sesión
-            alert(respuesta.message || 'Error al cerrar sesión.');
+            alert(respuesta.mensaje || 'Error al cerrar sesión.');
         }
     });
 }
