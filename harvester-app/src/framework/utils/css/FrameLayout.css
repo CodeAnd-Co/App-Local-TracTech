@@ -49,7 +49,15 @@ body, html {
   flex-direction: column;
   gap: 25px;
   align-items: center;         /* Centra horizontalmente */
-  justify-content: center;     /* Centra verticalmente */
+
+}
+
+/* Sobrescribe estilos sólo cuando #contenedor-Formulas esté dentro de content-container */
+.content-container #contenedorFormulas {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
 }
 
 /* ===== GENERAL ===== */

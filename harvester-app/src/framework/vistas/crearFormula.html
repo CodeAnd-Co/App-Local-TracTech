@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang='es'>
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>Generador de Fórmulas Complejas Anidadas</title>
-    <link href="../utils/resetStyles.css" rel="stylesheet" />
-    <link href="../utils/css/moduloFormulas.css" rel="stylesheet" />
-    <script src="../utils/js/crearFormula.js"></script>
+    <link href='../utils/resetStyles.css' rel='stylesheet' />
+    <link href='../utils/css/moduloFormulas.css' rel='stylesheet' />
+    <script src='../utils/js/crearFormula.js'></script>
 
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
@@ -15,29 +15,31 @@
 <body>
     <h2>Crear Fórmula</h2>
     <p><br>Nombre de la fórmula</p>
-    <input type="text" id="nombreFormula" placeholder="Nombre de la fórmula" />
+    <input type='text' id='nombreFormula' placeholder='Nombre de la fórmula' />
 
-    <div id="formula-container">
-        <div class="bloqueFormula" data-level="0">
+    <div id='formula-container'>
+        <div class='bloqueFormula' data-level='0'>
             <label>Función Principal:
-                <select id="main-function" onchange="definirEstructura(this, document.getElementById('function-arguments'))">
-                    <option value="">Seleccionar función</option>
-                    <option value="IF">SI</option>
-                    <!--<option value="COUNTIF">CONTAR.SI</option>
-                    <option value="COUNTIFS">CONTAR.SI.CONJUNTO</option>
+                <select id='main-function' onchange="definirEstructura(this, document.getElementById('function-arguments'))">
+                    <option value=''>Seleccionar función</option>
+                    <option value='IF'>SI</option>
+                    <!--<option value='COUNTIF'>CONTAR.SI</option>
+                    <option value='COUNTIFS'>CONTAR.SI.CONJUNTO</option>
                 -->
-                    <option value="IFERROR">SI.ERROR</option>
-                    <option value="VLOOKUP">BUSCARV</option>
-                    <option value="ARITHMETIC">Operación Aritmética</option>
+                    <option value='IFERROR'>SI.ERROR</option>
+                    <option value='VLOOKUP'>BUSCARV</option>
+                    <option value='ARITHMETIC'>Operación Aritmética</option>
                 </select>
             </label>
-            <div id="function-arguments" class="argumentosContenedor">
+            <div id='function-arguments' class='argumentosContenedor'>
             </div>
         </div>
     </div>
+    <button onclick='generarFormulaCompleja()'>Generar fórmula</button>
+    <p><br>Fórmula generada:</p>
+    <div class='resultado' id='resultado'></div>
+    <button id='btnGuardar' onclick='guardarFormulaFront()'>Guardar fórmula</button>
+    <button id='btnCancelar' onclick='cancelarVista()'>Cancelar</button>
 
-    <button onclick="generarFormulaCompleja()">Generar fórmula</button>
-    <button id="btnGuardar" onclick="guardarFormulaFront()">Guardar fórmula</button>
-    <div class="resultado" id="resultado"></div>
 </body>
 </html>

@@ -1,15 +1,15 @@
 function cargarModulo(seccion) {
   const rutaModulo = {
-    inicio:      "../vistas/moduloInicio.html",
-    analisis:    "../vistas/moduloAnalisis.html",
-    plantillas:  "../vistas/moduloPlantillas.html",
-    formulas:    "../vistas/moduloFormulas.html",
-    envios:      "../vistas/moduloEnvios.html",
-    usuario:     "../vistas/moduloUsuario.html",
-    gestionUsuarios:     "../vistas/moduloGestionUsuarios.html",    
+    inicio:      '../vistas/moduloInicio.html',
+    analisis:    '../vistas/moduloAnalisis.html',
+    plantillas:  '../vistas/moduloPlantillas.html',
+    formulas:    '../vistas/moduloFormulas.html',
+    envios:      '../vistas/moduloEnvios.html',
+    usuario:     '../vistas/moduloUsuario.html',
+    gestionUsuarios:     '../vistas/moduloGestionUsuarios.html',    
   };
 
-  const contenedor = document.querySelector(".ventana-principal");
+  const contenedor = document.querySelector('.ventana-principal');
 
   if (contenedor && rutaModulo[seccion]) {
     fetch(rutaModulo[seccion])
@@ -55,18 +55,18 @@ function cargarModulo(seccion) {
         // Añadir más inicializaciones para otros módulos según sea necesario
       })
       .catch(err => {
-        console.error("Error al cargar el módulo:", err);
+        console.error('Error al cargar el módulo:', err);
       });
   }
 }
 const topbarInfo = {
-  inicio:    { titulo: "Inicio",     icono: "../utils/iconos/Casa.svg" },
-  analisis:  { titulo: "Análisis",   icono: "../utils/iconos/GraficaBarras.svg" },
-  plantillas:{ titulo: "Plantillas", icono: "../utils/iconos/Portapapeles.svg" },
-  formulas:  { titulo: "Fórmulas",   icono: "../utils/iconos/Funcion.svg" },
-  envios:    { titulo: "Envíos",     icono: "../utils/iconos/Correo.svg" },
-  usuario:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" },
-  gestionUsuarios:   { titulo: "Usuario",    icono: "../utils/iconos/Usuario.svg" }
+  inicio:    { titulo: 'Inicio',     icono: '../utils/iconos/Casa.svg' },
+  analisis:  { titulo: 'Análisis',   icono: '../utils/iconos/GraficaBarras.svg' },
+  plantillas:{ titulo: 'Plantillas', icono: '../utils/iconos/Portapapeles.svg' },
+  formulas:  { titulo: 'Fórmulas',   icono: '../utils/iconos/Funcion.svg' },
+  envios:    { titulo: 'Envíos',     icono: '../utils/iconos/Correo.svg' },
+  usuario:   { titulo: 'Usuario',    icono: '../utils/iconos/Usuario.svg' },
+  gestionUsuarios:   { titulo: 'Usuario',    icono: '../utils/iconos/Usuario.svg' }
 };
 
 function inicializarSidebar() {
@@ -91,7 +91,7 @@ function inicializarSidebar() {
 
   activarBotonesSidebar();
   
-  // Siempre iniciar en el módulo "inicio"
+  // Siempre iniciar en el módulo 'inicio'
   localStorage.setItem('seccion-activa', 'inicio');
   aplicarActivoDesdeStorage();
 }
@@ -104,23 +104,23 @@ function activarBotonesSidebar() {
       const seccion = boton.getAttribute('data-seccion');
       if (!seccion) return;
 
-      if (seccion === "tema") {
+      if (seccion === 'tema') {
         // Aquí más adelante activaremos modo oscuro/claro
         return;
       }
 
       // Guardamos la sección real
       localStorage.setItem('seccion-activa', seccion);
-      console.log("Sección activa guardada:", seccion);
+      console.log('Sección activa guardada:', seccion);
 
       // Determinar cuál botón mostrar como activo visualmente
       const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
 
-      // Quitar "activo" de todos los botones
+      // Quitar 'activo' de todos los botones
       document.querySelectorAll('.boton-sidebar').forEach(boton => boton.classList.remove('activo'));
 
       // Activar el botón visualmente representativo
-      document.querySelectorAll(`.boton-sidebar[data-seccion="${seccionVisual}"]`)
+      document.querySelectorAll(`.boton-sidebar[data-seccion='${seccionVisual}']`)
         .forEach(boton => boton.classList.add('activo'));
 
       // Actualizar topbar y cargar el contenido real
@@ -136,11 +136,11 @@ function aplicarActivoDesdeStorage() {
   const todosBotones = document.querySelectorAll('.boton-sidebar');
   todosBotones.forEach(boton => boton.classList.remove('activo'));
 
-  if (!seccion || seccion === "tema") return;
+  if (!seccion || seccion === 'tema') return;
 
-  const seccionVisual = seccion === "gestionUsuarios" ? "usuario" : seccion;
+  const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
 
-  const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion="${seccionVisual}"]`);
+  const botonesCoincidentes = document.querySelectorAll(`.boton-sidebar[data-seccion='${seccionVisual}']`);
   botonesCoincidentes.forEach(boton => boton.classList.add('activo'));
 
   actualizarTopbar(seccion);
@@ -159,13 +159,13 @@ function actualizarTopbar(seccion) {
   iconoElem.src = topbarInfo[seccion].icono;
 
   // Ocultar botón de regresar para ciertas secciones
-  const seccionesSinRegresar = ["inicio", "envios", "plantillas", "usuario"];
+  const seccionesSinRegresar = ['inicio', 'envios', 'plantillas', 'usuario','formulas' ];
   if (seccionesSinRegresar.includes(seccion)) {
-    botonRegresar.style.display = "none";
-    tituloElem.style.marginLeft = "0px";
+    botonRegresar.style.display = 'none';
+    tituloElem.style.marginLeft = '0px';
   } else {
-    botonRegresar.style.display = "flex";
-    tituloElem.style.marginLeft = "10px";
+    botonRegresar.style.display = 'flex';
+    tituloElem.style.marginLeft = '10px';
   }
 }
 

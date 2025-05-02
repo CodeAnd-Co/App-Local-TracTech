@@ -1,9 +1,10 @@
 const { guardarFormula }  = require('../../backend/casosUso/formulas/crearFormula');
+const { sidebar } = require('./sidebar.js');
 
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
- * * @param {HTMLElement} boton - El botón que se ha pulsado para eliminar el elemento.
+ * @param {HTMLElement} boton - El botón que se ha pulsado para eliminar el elemento.
  * @returns {void}
  * @throws {Error} Si el elemento no se puede eliminar.
  */
@@ -11,6 +12,11 @@ function eliminarElemento(boton) {
             const elementoABorrar = boton.parentNode.parentNode;
             elementoABorrar.remove();
         }
+
+function cancelarVista(){
+    window.cargarModulo('formulas');
+
+}
 /**
  * @function inicializarCrearFormula
  * @description Inicializa el módulo de creación de fórmulas al cargar la página.
@@ -29,12 +35,12 @@ function inicializarCrearFormula() {
                     .then(html => {
                         ventanaPrincipal.innerHTML = html;
                     })
-                    .catch(err => console.error("Error cargando módulo de creación de fórmulas:", err));
+                    .catch(err => console.error('Error cargando módulo de creación de fórmulas:', err));
             }
     });
 
     } else {
-        console.error("El botón de creación de fórmulas no se encontró en el DOM.");
+        console.error('El botón de creación de fórmulas no se encontró en el DOM.');
     }
 }
 
@@ -52,14 +58,14 @@ async function guardarFormulaFront() {
     try{
         const respuesta = await guardarFormula(nombreFormula, formula);
         if (respuesta.ok) {
-            window.location.href = "./moduloFormulas.html";
+            window.cargarModulo('formulas');
         }
         else {
-            alert(respuesta.message || "Error al guardar la fórmula.");
+            alert(respuesta.message || 'Error al guardar la fórmula.');
         }
     } catch (error) {
-        console.error("Error al conectar con el backend:", error);
-        alert("No se pudo conectar con el servidor.");
+        console.error('Error al conectar con el backend:', error);
+        alert('No se pudo conectar con el servidor.');
     }
 }
 
@@ -121,13 +127,13 @@ function agregarArgumento(etiqueta, nombreClase, contenedor, permitirAnidado = f
     // Agrega un argumento al contenedor
     argumentoDiv.classList.add('argumento');
     argumentoDiv.innerHTML = `
-        <div class="argumentoEncabezado">
+        <div class='argumentoEncabezado'>
             <label>${etiqueta}:</label>
         </div>
-        <div class="argumentoContenido">
-            <input type="text" class="${nombreClase}" placeholder="${etiqueta}">
+        <div class='argumentoContenido'>
+            <input type='text' class='${nombreClase}' placeholder='${etiqueta}'>
             ${permitirAnidado ? '<button onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
-            <div class="nested-function-container" style="margin-left: 10px;"></div>
+            <div class='nested-function-container' style='margin-left: 10px;'></div>
         </div>
     `;
     contenedor.appendChild(argumentoDiv);
@@ -147,21 +153,21 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
     // Agrega un criterio al contenedor
     argumentoDiv.classList.add('argumento');
     argumentoDiv.innerHTML = `
-        <div class="argumentoEncabezado">
+        <div class='argumentoEncabezado'>
             <label>${etiqueta}:</label>
         </div>
-        <div class="argumentoContenido">
-            <select class="variable-selector ${nombreClase}-variable">
-                <option value="">Seleccionar variable</option>
+        <div class='argumentoContenido'>
+            <select class='variable-selector ${nombreClase}-variable'>
+                <option value=''>Seleccionar variable</option>
             </select>
-            <select class="operator-selector ${nombreClase}-operator">
-                <option value="=">=</option>
-                <option value=">">></option>
-                <option value="<"><</option>
-                <option value=">=">>=</option>
-                <option value="<="><=</option>
+            <select class='operator-selector ${nombreClase}-operator'>
+                <option value='='>=</option>
+                <option value='>'>></option>
+                <option value='<'><</option>
+                <option value='>='>>=</option>
+                <option value='<='><=</option>
             </select>
-            <input type="text" class="${nombreClase}-value" placeholder="Valor">
+            <input type='text' class='${nombreClase}-value' placeholder='Valor'>
         </div>
     `;
     contenedor.appendChild(argumentoDiv);
@@ -181,15 +187,15 @@ function agregarFuncionAnidada(boton) {
     seleccionarFuncion.classList.add('selectorFuncionAnidada');
     // Agrega un selector de función anidada al contenedor
     seleccionarFuncion.innerHTML = `
-        <option value="">Seleccionar función anidada</option>
-        <option value="IF">SI</option>
+        <option value=''>Seleccionar función anidada</option>
+        <option value='IF'>SI</option>
         <!--
-        <option value="COUNTIF">CONTAR.SI</option>
-        <option value="COUNTIFS">CONTAR.SI.CONJUNTO</option>
+        <option value='COUNTIF'>CONTAR.SI</option>
+        <option value='COUNTIFS'>CONTAR.SI.CONJUNTO</option>
         -->
-        <option value="IFERROR">SI.ERROR</option>
-        <option value="VLOOKUP">BUSCARV</option>
-        <option value="ARITHMETIC">Operación Aritmética</option>
+        <option value='IFERROR'>SI.ERROR</option>
+        <option value='VLOOKUP'>BUSCARV</option>
+        <option value='ARITHMETIC'>Operación Aritmética</option>
     `;
     seleccionarFuncion.onchange = (evento) => {
         const valorSeleccionado = evento.target.value;
@@ -228,21 +234,21 @@ function agregarArgumentoCountIf(contenedor, prefijo = '') {
     // Agrega un argumento para la función COUNTIF o COUNTIFS
     argumentoDiv.classList.add('argumento');
     argumentoDiv.innerHTML = `
-        <div class="argumentoEncabezado">
+        <div class='argumentoEncabezado'>
             <label>Criterio ${contenedor.querySelectorAll('.argumento').length + 1}:</label>
         </div>
-        <div class="argumentoContenido">
-            <select class="variable-selector ${prefijo}countifs-variable">
-                <option value="">Seleccionar variable</option>
+        <div class='argumentoContenido'>
+            <select class='variable-selector ${prefijo}countifs-variable'>
+                <option value=''>Seleccionar variable</option>
             </select>
-            <select class="operator-selector ${prefijo}countifs-operator">
-                <option value="=">=</option>
-                <option value=">">></option>
-                <option value="<"><</option>
-                <option value=">=">>=</option>
-                <option value="<="><=</option>
+            <select class='operator-selector ${prefijo}countifs-operator'>
+                <option value='='>=</option>
+                <option value='>'>></option>
+                <option value='<'><</option>
+                <option value='>='>>=</option>
+                <option value='<='><=</option>
             </select>
-            <input type="text" class="${prefijo}countifs-value" placeholder="Valor">
+            <input type='text' class='${prefijo}countifs-value' placeholder='Valor'>
         </div>
         <button onclick="masArgumentosCountif(this.parentNode)">+ Añadir otro criterio</button>
     `;
@@ -262,21 +268,21 @@ function masArgumentosCountif(contenedor) {
     const nuevoArgumento = document.createElement('div');
     nuevoArgumento.classList.add('argumento');
     nuevoArgumento.innerHTML = `
-        <div class="argumentoEncabezado">
+        <div class='argumentoEncabezado'>
             <label>Criterio ${contadorArgumentos}:</label>
         </div>
-        <div class="argumentoContenido">
-            <select class="variable-selector countifs-variable">
-                <option value="">Seleccionar variable</option>
+        <div class='argumentoContenido'>
+            <select class='variable-selector countifs-variable'>
+                <option value=''>Seleccionar variable</option>
             </select>
-            <select class="operator-selector countifs-operator">
-                <option value="=">=</option>
-                <option value=">">></option>
-                <option value="<"><</option>
-                <option value=">=">>=</option>
-                <option value="<="><=</option>
+            <select class='operator-selector countifs-operator'>
+                <option value='='>=</option>
+                <option value='>'>></option>
+                <option value='<'><</option>
+                <option value='>='>>=</option>
+                <option value='<='><=</option>
             </select>
-            <input type="text" class="countifs-value" placeholder="Valor">
+            <input type='text' class='countifs-value' placeholder='Valor'>
         </div>
     `;
     contenedor.appendChild(nuevoArgumento);
@@ -410,7 +416,7 @@ function construirCondicion(argumentElement, valor = true) {
     let value = valorIngresado ? valorIngresado.value.trim().replace(/,/g, '.') : '';
 
     if (valor) {
-        value = `"${value}"`;
+        value = `'${value}'`;
     }
 
     if (variableElegida && operadorElegido && valorIngresado && variableElegida.value) {
@@ -428,12 +434,12 @@ function construirCondicion(argumentElement, valor = true) {
 */
 function traducirFuncion(nombre) {
     const map = {
-        "SI": "IF",
-        "CONTAR.SI": "COUNTIF",
-        "CONTAR.SI.CONJUNTO": "COUNTIFS",
-        "SI.ERROR": "IFERROR",
-        "BUSCARV": "VLOOKUP",
-        "ARITHMETIC": "ARITHMETIC"
+        'SI': 'IF',
+        'CONTAR.SI': 'COUNTIF',
+        'CONTAR.SI.CONJUNTO': 'COUNTIFS',
+        'SI.ERROR': 'IFERROR',
+        'BUSCARV': 'VLOOKUP',
+        'ARITHMETIC': 'ARITHMETIC'
     };
     return map[nombre] || nombre;
 }
@@ -447,8 +453,8 @@ function traducirFuncion(nombre) {
 */
 function popularDropdown(elementoSeleccionado) {
     // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo
-    const columnas = ["Gasolina", "Kilometraje", "Fecha", "Estado", "Valor"];
-    elementoSeleccionado.innerHTML = '<option value="">Seleccionar</option>';
+    const columnas = ['Gasolina', 'Kilometraje', 'Fecha', 'Estado', 'Valor'];
+    elementoSeleccionado.innerHTML = "<option value=''>Seleccionar</option>";
     columnas.forEach(columna => {
         const opcion = document.createElement('option');
         opcion.value = `[@${columna}]`;
