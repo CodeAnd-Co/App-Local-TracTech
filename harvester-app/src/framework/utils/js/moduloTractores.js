@@ -75,17 +75,17 @@ function cargarDatosDeExcel() {
         
         
         if (!datosExcelJSON) {
-            console.log("No hay datos de Excel disponibles en localStorage");
-            alert("No hay datos de Excel disponibles");
+            console.log('No hay datos de Excel disponibles en localStorage');
+            alert('No hay datos de Excel disponibles');
             return null;
         }
         
         // Parsear los datos JSON
         const datosExcel = JSON.parse(datosExcelJSON);
-        console.log("Datos de Excel cargados:", datosExcel);
+        console.log('Datos de Excel cargados:', datosExcel);
         return datosExcel;
     } catch (error) {
-        console.error("Error al cargar datos de Excel:", error);
+        console.error('Error al cargar datos de Excel:', error);
         return null;
     }
 }
