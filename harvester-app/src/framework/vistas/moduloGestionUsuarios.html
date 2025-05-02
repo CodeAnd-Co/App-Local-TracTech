@@ -1,82 +1,82 @@
 <!DOCTYPE html>
-<link href="../utils/css/resetStyles.css" rel="stylesheet" />
-<link href="../utils/css/moduloGestionUsuarios.css" rel="stylesheet" />
+<link href='../utils/css/resetStyles.css' rel='stylesheet' />
+<link href='../utils/css/moduloGestionUsuarios.css' rel='stylesheet' />
 
-<div class="container">
-  <div class="columna-busqueda-usuario">
+<div class='container'>
+  <div class='columna-busqueda-usuario'>
     
-    <div class="frame-busqueda-usuario">
+    <div class='frame-busqueda-usuario'>
 
-      <div class="busqueda-y-agregar-usuario">
-        <div class="secundario">
-          <img class="icon" src="../utils/iconos/Buscar.svg" alt="lupa"/>
-          <div class="placeholder">e.g. john@doe.com</div>
+      <div class='busqueda-y-agregar-usuario'>
+        <div class='secundario'>
+          <img class='icon' src='../utils/iconos/Buscar.svg' alt='lupa'/>
+          <div class='placeholder'>e.g. john@doe.com</div>
         </div>
-        <button class="primario">
-          <img class="mas" src="../utils/iconos/AgregarBlanco.svg" alt="+"/>
+        <button class='primario'>
+          <img class='mas' src='../utils/iconos/AgregarBlanco.svg' alt='+'/>
           <span>Agregar</span>
         </button>
       </div>
     </div>
     
-    <div class="lista-usuarios" id="lista-usuarios"></div>
-    <nav class="paginacion"></nav>
+    <div class='lista-usuarios' id='lista-usuarios'></div>
+    <nav class='paginacion'></nav>
 
   </div>
 
-  <div class="columna-crear-usuario" id="columna-crear-usuario">
-    <div class="pop-out">
-      <h2 class="crear-usuario">Crear usuario</h2>
-      <form class="modificacion">
+  <div class='columna-crear-usuario' id='columna-crear-usuario'>
+    <div class='pop-out'>
+      <h2 class='crear-usuario'>Crear usuario</h2>
+      <form class='modificacion'>
 
-        <div class="campo">
-          <label for="username">Nombre del usuario</label>
+        <div class='campo'>
+          <label for='username'>Nombre del usuario</label>
           <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Nombre del nuevo usuario"
+            type='text'
+            id='username'
+            name='username'
+            placeholder='Nombre del nuevo usuario'
             required
           />
         </div>
       
-        <div class="campo">
-          <label for="email">Correo</label>
+        <div class='campo'>
+          <label for='email'>Correo</label>
           <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Correo del nuevo contacto"
+            type='email'
+            id='email'
+            name='email'
+            placeholder='Correo del nuevo contacto'
             required
           />
         </div>
       
-        <div class="campo">
-          <label for="password">Contraseña</label>
+        <div class='campo'>
+          <label for='password'>Contraseña</label>
           <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Contraseña"
+            type='password'
+            id='password'
+            name='password'
+            placeholder='Contraseña'
             required
           />
         </div>
       
-        <div class="campo">
-          <label for="role">Rol</label>
-          <select id="role" name="role" required>
-            <option value="" disabled selected>Selecciona un rol</option>
-            <option value="admin">Administrador</option>
-            <option value="user">Usuario</option>
+        <div class='campo'>
+          <label for='role'>Rol</label>
+          <select id='role' name='role' required>
+            <option value='' disabled selected>Selecciona un rol</option>
+            <option value='admin'>Administrador</option>
+            <option value='user'>Usuario</option>
 
           </select>
         </div>
       
-        <div class="line-1"></div>
+        <div class='line-1'></div>
       
-        <div class="botones">
-          <button type="submit" class="btn-guardar">Guardar</button>
-          <button type="button" class="btn-cancelar">Cancelar</button>
+        <div class='botones'>
+          <button type='submit' class='btn-guardar'>Guardar</button>
+          <button type='button' class='btn-cancelar'>Cancelar</button>
         </div>
       </form>      
     </div>    

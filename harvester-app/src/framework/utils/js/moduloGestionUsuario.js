@@ -13,7 +13,6 @@ let listaUsuarios = [];
  * @returns {Promise<void>}
  */
 async function inicializarModuloGestionUsuarios() {
-    console.log('Módulo de Gestión de Usuarios inicializado');
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
     const columnaCrear = document.getElementById('columna-crear-usuario');

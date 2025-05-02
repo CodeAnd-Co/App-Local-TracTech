@@ -16,7 +16,6 @@ function inicializarModuloUsuario() {
       } else {
 
         botonGestion.addEventListener('click', async () => {
-          console.log('Cargando módulo de gestión de usuarios...');
           localStorage.setItem('seccion-activa', 'gestionUsuarios');
           const ventanaPrincipal = document.getElementById('ventana-principal');
           if (!ventanaPrincipal) return;
@@ -36,7 +35,6 @@ function inicializarModuloUsuario() {
     const btnCerrarSesion = document.querySelector('.boton-cerrar-sesion');
 
     btnCerrarSesion.addEventListener('click', async () => {
-        console.log('Cerrando sesión...');
         
         const respuesta = await cerrarSesion();
     
