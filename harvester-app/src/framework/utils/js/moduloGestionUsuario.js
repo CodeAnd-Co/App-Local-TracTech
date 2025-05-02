@@ -2,8 +2,16 @@ const usuariosPorPagina = 6;
 let paginaActual = 1;
 let listaUsuarios = [];
 
+/**
+ * Inicializa el módulo de gestión de usuarios.
+ * Carga los usuarios desde el backend, configura la paginación
+ * y añade event listeners a los botones de la interfaz.
+ * @async
+ * @function inicializarModuloGestionUsuarios
+ * @returns {Promise<void>}
+ */
 async function inicializarModuloGestionUsuarios() {
-    console.log("Módulo de Gestión de Usuarios inicializado");
+    console.log('Módulo de Gestión de Usuarios inicializado');
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
     const columnaCrear = document.getElementById('columna-crear-usuario');
@@ -15,7 +23,7 @@ async function inicializarModuloGestionUsuarios() {
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
         cargarPagina(1);
     } catch (error) {
-        console.error("Error al obtener usuarios:", error);
+        console.error('Error al obtener usuarios:', error);
     }
 
     const btnAgregar = document.querySelector('.primario');
@@ -31,6 +39,14 @@ async function inicializarModuloGestionUsuarios() {
     });
 }
 
+/**
+ * Carga y muestra una página específica de usuarios.
+ * Calcula los usuarios correspondientes a la página solicitada
+ * y actualiza la interfaz de paginación.
+ * @function cargarPagina
+ * @param {number} pagina - Número de la página a cargar (empezando desde 1)
+ * @returns {void}
+ */
 function cargarPagina(pagina) {
     paginaActual = pagina;
     const paginasTotales = Math.ceil(listaUsuarios.length / usuariosPorPagina);
@@ -95,10 +111,18 @@ function cargarPagina(pagina) {
     paginacion.appendChild(siguiente);
 }
 
+/**
+ * Muestra los usuarios en la interfaz gráfica.
+ * Crea elementos DOM para cada usuario y los añade a la lista de usuarios.
+ * @function mostrarUsuarios
+ * @param {Array<Object>} usuarios - Lista de usuarios a mostrar
+ * @param {string} usuarios[].nombre - Nombre del usuario
+ * @returns {void}
+ */
 function mostrarUsuarios(usuarios) {
     const listaUsuariosElemento = document.getElementById('lista-usuarios');
     if (!listaUsuariosElemento) {
-        console.error("No se encontró el elemento de la lista de usuarios en el DOM.");
+        console.error('No se encontró el elemento de la lista de usuarios en el DOM.');
         return;
     }
 
@@ -114,14 +138,14 @@ function mostrarUsuarios(usuarios) {
         const div = document.createElement('div');
         div.className = 'frame-usuario';
         div.innerHTML = `
-            <div class="nombre-usuario">
-                <div class="texto-usuario">${nombre}</div>
+            <div class='nombre-usuario'>
+                <div class='texto-usuario'>${nombre}</div>
             </div>
-                <button class="boton-editar">
-                  <img src="../utils/iconos/Editar2.svg" alt="Editar"/>
+                <button class='boton-editar'>
+                  <img src='../utils/iconos/Editar2.svg' alt='Editar'/>
                 </button>
-                <button class="boton-eliminar">
-                  <img src="../utils/iconos/BasuraBlanca.svg" alt="Eliminar"/>
+                <button class='boton-eliminar'>
+                  <img src='../utils/iconos/BasuraBlanca.svg' alt='Eliminar'/>
                 </button>
         `;
         fragmento.appendChild(div);
@@ -129,4 +153,5 @@ function mostrarUsuarios(usuarios) {
     listaUsuariosElemento.appendChild(fragmento);
 }
 
+// Expone la función de inicialización al objeto window
 window.inicializarModuloGestionUsuarios = inicializarModuloGestionUsuarios;

@@ -1,6 +1,12 @@
 const { obtenerUsuarios: obtenerUsuariosAPI } = require('../../domain/usuariosAPI/usuariosAPI');
 const { Usuario, ListaUsuarios } = require('../../data/usuariosModelos/usuarios');
 
+/**
+ * Obtiene la lista de usuarios desde la API y los transforma en objetos de dominio
+ * 
+ * @returns {Promise<ListaUsuarios>} Una promesa que resuelve a un objeto ListaUsuarios con todos los usuarios obtenidos
+ * @throws {Error} Si hay problemas al comunicarse con el servidor o al procesar la respuesta
+ */
 async function obtenerUsuarios() {
     try {
         const respuesta = await obtenerUsuariosAPI();
