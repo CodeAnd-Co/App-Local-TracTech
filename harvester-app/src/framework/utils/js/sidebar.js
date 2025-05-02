@@ -44,10 +44,6 @@ function cargarModulo(seccion) {
           if (window.inicializarModuloUsuario) {
             window.inicializarModuloUsuario();
           }
-        } else if (seccion == 'gestionUsuarios') {
-          if (window.inicializarModuloGestionUsuarios) {
-            window.inicializarModuloGestionUsuarios();
-          }
         }
         // Añadir más inicializaciones para otros módulos según sea necesario
       })
@@ -76,13 +72,11 @@ function inicializarSidebar() {
     btnCollapse.addEventListener('click', () => {
       sidebarExpanded.style.display = 'none';
       sidebarCollapsed.style.display = 'flex';
-      aplicarActivoDesdeStorage();
     });
 
     btnExpand.addEventListener('click', () => {
       sidebarCollapsed.style.display = 'none';
       sidebarExpanded.style.display = 'flex';
-      aplicarActivoDesdeStorage();
     });
   }
 
