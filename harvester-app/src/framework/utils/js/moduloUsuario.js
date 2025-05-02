@@ -12,7 +12,6 @@ function inicializarModuloUsuario() {
     if (botonGestion) {
         // Agregar listener al botón de gestión de usuarios
         botonGestion.addEventListener('click', async () => {
-            console.log('Cargando el módulo de gestión de usuarios...');
 
             // Actualizar el localStorage para indicar la sección activa
             localStorage.setItem('seccion-activa', 'gestionUsuarios');
@@ -38,7 +37,6 @@ function inicializarModuloUsuario() {
 
     // Agregar listener al botón de cerrar sesión
     btnCerrarSesion.addEventListener('click', async () => {
-        console.log('Cerrando sesión...');
         
         // Llamar a la función cerrarSesion para finalizar la sesión
         const respuesta = await cerrarSesion();
