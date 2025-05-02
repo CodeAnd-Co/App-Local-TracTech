@@ -54,7 +54,7 @@ function inicializarModuloTractores() {
     }
 
     BusquedaDistribuidores();
-
+    botonesFiltrosTractores()
     botonReporte();
 }
 
@@ -158,6 +158,28 @@ function BusquedaDistribuidores() {
             distribuidor.style.display = nombre.includes(filtro) ? '' : 'none';
         });
     })
+}
+
+/**
+ * Configura los botones para filtrar los tractores por telemetría
+ * Cambia el ícono al hacer click
+ * 
+ * 
+ * @function botonesFiltrosTractores
+ * @returns {void}
+ */
+function botonesFiltrosTractores() {
+    const filtroConCheck = document.getElementById('botonFiltroCon');
+    // Evento para mostrar sólo los tractores con telemetría
+    filtroConCheck.addEventListener('click', () => {
+        console.log('Click a boton con telemetría');
+    });
+    
+    const filtroSinCheck = document.getElementById('botonFiltroSin');
+    // Evento para mostrar sólo los tractores sin telemetría
+    filtroSinCheck.addEventListener('click', () => {
+        console.log('Click a boton con telemetría');
+    });
 }
 
 // Exportar funciones para uso global
