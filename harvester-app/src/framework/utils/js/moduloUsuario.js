@@ -4,6 +4,13 @@ const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
 
 /**
  * Inicializa el módulo de usuario, incluyendo gestión de usuarios y cierre de sesión.
+ *
+ * Este módulo gestiona la interacción con el botón de gestión de usuarios y el botón de cerrar sesión.
+ * Al hacer clic en el botón de gestión, se carga la vista correspondiente.
+ * Al hacer clic en cerrar sesión, se elimina el token del almacenamiento y se redirige al inicio de sesión.
+ *
+ * @function inicializarModuloUsuario
+ * @returns {void}
  */
 function inicializarModuloUsuario() {
     // Seleccionar el botón para gestión de usuarios
