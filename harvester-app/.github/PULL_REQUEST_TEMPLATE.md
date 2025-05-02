@@ -39,13 +39,12 @@
 - [ ] He notificado al autor del PR en caso de dudas o ajustes necesarios
 - [ ] Una vez que acepte el PR, eliminaré la rama
 
-
 <!-- ## Registro de cambios
-
-Seguir la guía para mantener un control de versiones en la documentación: https://codeandco-wiki.netlify.app/docs/guias/documentacion/trazabilidad
 
 Historial de cambios en la plantilla
 | Tipo de version | Descripción | Fecha | Colaborador |
 | --------------- | ----------- | ----- | ----------- |
 | 1.0 | Primera versión de la plantilla | 22/04/2025 | Ian Julián Estrada Castro |
+| 1.1 | Publicar en docusaurus | 26/04/2025 | Daniel Queijeiro Albo |
+| 1.2 | Corrección de errores ortográficos | 01/05/2025 | Ian Julián Estrada Castro |
  -->
