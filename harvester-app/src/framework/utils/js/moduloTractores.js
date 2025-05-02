@@ -91,7 +91,8 @@ function cargarDatosDeExcel() {
 }
 
 /**
- * Configura el botón de reporte 
+ * Inicializa la funcionalidad del botón de reporte 
+ * Configura el evento click para navegar al módulo de análisis
  * 
  * @function botonReporte
  * @returns {void}
