@@ -21,8 +21,8 @@ async function verificarArchivoSeguro(archivo) {
     }
     
     // Verificar tamaño del archivo (limitar a 10MB)
-    const tamañoMaximoBytes = 10 * 1024 * 1024; // 10MB
-    if (archivo.size > tamañoMaximoBytes) {
+    const tamanioMaximoBytes = 10 * 1024 * 1024; // 10MB
+    if (archivo.size > tamanioMaximoBytes) {
         return { 
             esSeguro: false, 
             mensaje: 'El archivo es demasiado grande. El tamaño máximo permitido es 10MB.' 
