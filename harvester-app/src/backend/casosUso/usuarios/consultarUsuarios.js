@@ -1,3 +1,5 @@
+// RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
+
 const { obtenerUsuarios: obtenerUsuariosAPI } = require('../../domain/usuariosAPI/usuariosAPI');
 const { Usuario, ListaUsuarios } = require('../../data/usuariosModelos/usuarios');
 

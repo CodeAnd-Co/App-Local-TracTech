@@ -1,3 +1,5 @@
+// RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
+
 const usuariosPorPagina = 6;
 let paginaActual = 1;
 let listaUsuarios = [];
