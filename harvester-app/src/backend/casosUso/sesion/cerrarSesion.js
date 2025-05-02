@@ -9,10 +9,11 @@ const { cerrarSesion: cerrarSesionAPI } = require('../../domain/sesionAPI/sesion
 async function cerrarSesion() {
     try {
         // Obtener el token del almacenamiento local
+        // Si no hay token, no hay sesión activa
         const token = localStorage.getItem('token');
         if (!token) {
             console.error('No hay sesión activa.');
-            return; // Si no hay token, no hay sesión activa
+            return;
         }
 
         // Llamar a la API para cerrar sesión enviando el token
@@ -21,7 +22,7 @@ async function cerrarSesion() {
     } catch (error) {
         // Capturar y mostrar errores en consola
         console.error('Error al cerrar sesión:', error);
-        throw new Error('No se pudo cerrar sesión'); // Lanzar error si ocurre un fallo
+        throw new Error('No se pudo cerrar sesión');
     }
 }
 
