@@ -68,16 +68,16 @@ input:focus {
 }
 .texto-busqueda {
   color: rgba(0, 0, 0, 0.33);
-  text-align: center;
+  text-align: left;
   font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 18px;
+  font-size: 24px;
   line-height: 112%;
   letter-spacing: -0.02em;
   font-weight: 400;
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
   
   background: transparent;
   border: none;
@@ -113,7 +113,7 @@ input:focus {
   color: #000000;
   text-align: left;
   font-family: "Inter-Regular", sans-serif;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 400;
   position: relative;
 }

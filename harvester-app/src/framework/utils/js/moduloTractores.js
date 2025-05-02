@@ -36,11 +36,11 @@ function inicializarModuloTractores() {
     for (const distribuidorNombre in datosExcel.hojas) {
         // Crear un div para el distribuidor
         const distribuidorDiv = document.createElement('div');
-        distribuidorDiv.className = 'rancho-tijuana'; // Asignar clase para estilo
+        distribuidorDiv.className = 'rancho'; // Asignar clase para estilo
 
         // Crear el nombre del distribuidor
         const nombreDistribuidorDiv = document.createElement('div');
-        nombreDistribuidorDiv.className = 'rancho-tijuana2';
+        nombreDistribuidorDiv.className = 'rancho-texto';
         nombreDistribuidorDiv.textContent = distribuidorNombre; // Nombre del distribuidor
 
         // Crear el cuadro de selección (checkbox) para el distribuidor
