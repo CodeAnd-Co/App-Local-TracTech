@@ -26,9 +26,6 @@ function inicializarModuloTractores() {
     const distribuidoresContenedor = document.querySelector('.distribuidores-contenido');
     distribuidoresContenedor.innerHTML = ''; // Limpiar contenido anterior
 
-    const tractoresContenedor = document.querySelector('.tractores');
-    tractoresContenedor.innerHTML = '';
-
     // Iterar sobre los distribuidores (asumiendo que cada hoja es un distribuidor)
     for (const distribuidorNombre in datosExcel.hojas) {
         // Crear un div para el distribuidor
