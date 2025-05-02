@@ -47,6 +47,16 @@ async function inicializarModuloPlantillas () {
                         plantillaHTML.remove();
                         modalBorrar?.close();
                     }
+                    const todasPlantillas = document.querySelectorAll('.plantilla')
+                    if(todasPlantillas.length <= 0){
+                        /** @type {HTMLElement|null} */
+                        const contenedor = document.getElementById('contenedorId');
+                        const tarjetaTexto = document.createElement('div');
+                        tarjetaTexto.innerHTML = `
+                           <div class="error-sin-plantillas">No se Encontraron Plantillas</div>
+                        `;
+                        contenedor?.appendChild(tarjetaTexto);
+                    }
                 } else {
                     alert('No se pudo eliminar la Plantilla Respuesta err');
                 }
@@ -68,57 +78,70 @@ async function inicializarModuloPlantillas () {
         /** @type {Object} */
         const respuesta = await plantillas();
 
-        for (const res in respuesta.plantillas) {
-            const tarjetaTexto = document.createElement('div', { is: respuesta.plantillas[res].idPlantillaReporte });
-            tarjetaTexto.classList.add('plantilla');
+        if(respuesta?.plantillas){
+            for (const res in respuesta.plantillas) {
+                const tarjetaTexto = document.createElement('div');
+                tarjetaTexto.classList.add('plantilla');
+    
+                tarjetaTexto.innerHTML = `
+    
+                    <div class='menu-opciones' dato-id='${respuesta.plantillas[res].idPlantillaReporte}' id='menuOpciones'>
+                        <div class='nombre-de-plantilla'>${respuesta.plantillas[res].Nombre}</div>
+                        <button id='botonExpandir'>
+                            <img class='maximize-2' src='../utils/iconos/Maximize.svg' />
+                        </button>
+                        <button id='botonModificar'>
+                            <img class='edit-2' src='../utils/iconos/Editar2.svg' />
+                        </button>
+                        <button id='botonEliminar'>
+                            <img class='trash' src='../utils/iconos/BasuraRojo.svg' />
+                        </button>
+                    </div>
+                    <img src='../utils/iconos/divisorPlantilla.svg' class='divisorPlantilla'/>
+    
+                    <scroll-container>
+                        ${respuesta.plantillas[res].Datos}
+                    </scroll-container>
+                `;
+    
+                contenedor?.appendChild(tarjetaTexto);
+            }
+    
+            /** @type {NodeListOf<HTMLButtonElement>} */
+            const botonesModificarCoinciden = document.querySelectorAll('#botonModificar');
+    
+            botonesModificarCoinciden.forEach(boton => {
+                boton.addEventListener('click', () => {
+                    const menuOpciones = boton.closest('#menuOpciones');
+                });
+            });
+    
+            /** @type {NodeListOf<HTMLButtonElement>} */
+            const botonesEliminarCoinciden = document.querySelectorAll('#botonEliminar');
+    
+            botonesEliminarCoinciden.forEach(boton => {
+                boton.addEventListener('click', async () => {
+                    const menuOpciones = boton.closest('#menuOpciones');
+                    const modalBorrar = document.querySelector('.modal-borrar');
+    
+                    if (modalBorrar && menuOpciones) {
+                        modalBorrar.showModal();
+                        modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+                    }
+                });
+            });
+        } else{
+            const tarjetaTexto = document.createElement('div');
 
             tarjetaTexto.innerHTML = `
-
-                <div class='menu-opciones' dato-id='${respuesta.plantillas[res].idPlantillaReporte}' id='menuOpciones'>
-                    <div class='nombre-de-plantilla'>${respuesta.plantillas[res].Nombre}</div>
-                    <button id='botonExpandir'>
-                        <img class='maximize-2' src='../utils/iconos/Maximize.svg' />
-                    </button>
-                    <button id='botonModificar'>
-                        <img class='edit-2' src='../utils/iconos/Editar2.svg' />
-                    </button>
-                    <button id='botonEliminar'>
-                        <img class='trash' src='../utils/iconos/BasuraRojo.svg' />
-                    </button>
-                </div>
-                <img src='../utils/iconos/divisorPlantilla.svg' class='divisorPlantilla'/>
-
-                <scroll-container>
-                    ${respuesta.plantillas[res].Datos}
-                </scroll-container>
+               <div class="error-sin-plantillas">No se Encontraron Plantillas</div>
             `;
 
             contenedor?.appendChild(tarjetaTexto);
+            
         }
 
-        /** @type {NodeListOf<HTMLButtonElement>} */
-        const botonesModificarCoinciden = document.querySelectorAll('#botonModificar');
 
-        botonesModificarCoinciden.forEach(boton => {
-            boton.addEventListener('click', () => {
-                const menuOpciones = boton.closest('#menuOpciones');
-            });
-        });
-
-        /** @type {NodeListOf<HTMLButtonElement>} */
-        const botonesEliminarCoinciden = document.querySelectorAll('#botonEliminar');
-
-        botonesEliminarCoinciden.forEach(boton => {
-            boton.addEventListener('click', async () => {
-                const menuOpciones = boton.closest('#menuOpciones');
-                const modalBorrar = document.querySelector('.modal-borrar');
-
-                if (modalBorrar && menuOpciones) {
-                    modalBorrar.showModal();
-                    modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
-                }
-            });
-        });
 
     } catch (error) {
         alert('No se pudo conectar con el servidor.');

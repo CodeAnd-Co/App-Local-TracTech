@@ -479,3 +479,21 @@ button:hover{
   background: rgba(0, 0, 0, 0.25);
   border-radius: 8px;
 }
+
+.error-sin-plantillas,
+.error-sin-plantillas * {
+  box-sizing: border-box;
+}
+.error-sin-plantillas {
+  color: #000000;
+  text-align: center;
+  font-family: var(--hero-font-family, "SegoeUi-Regular", sans-serif);
+  font-size: var(--hero-font-size, 52px);
+  line-height: var(--hero-line-height, 120%);
+  letter-spacing: var(--hero-letter-spacing, -0.02em);
+  font-weight: var(--hero-font-weight, 400);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
