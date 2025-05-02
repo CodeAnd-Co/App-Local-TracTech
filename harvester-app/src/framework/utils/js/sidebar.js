@@ -1,4 +1,10 @@
-// Función para cargar un módulo en la vista principal
+/**
+ * Carga dinámicamente el contenido HTML de un módulo en el contenedor principal.
+ *
+ * @param {string} seccion - Identificador de la sección a cargar
+ *   (p.ej., 'inicio', 'analisis', 'plantillas', 'formulas', 'envios', 'usuario', 'gestionUsuarios').
+ * @returns {void}
+ */
 function cargarModulo(seccion) {
   const rutasModulo = {
     inicio:          '../vistas/moduloInicio.html',
@@ -40,8 +46,11 @@ function cargarModulo(seccion) {
   }
 }
 
-
-// Información para la barra superior (títulos e íconos)
+/**
+ * Mapa de configuración para la barra superior: títulos e íconos según sección.
+ *
+ * @constant {Object.<string, { titulo: string, icono: string }>}
+ */
 const infoBarraSuperior = {
   inicio:          { titulo: 'Inicio',     icono: '../utils/iconos/Casa.svg' },
   analisis:        { titulo: 'Análisis',   icono: '../utils/iconos/GraficaBarras.svg' },
@@ -52,8 +61,12 @@ const infoBarraSuperior = {
   gestionUsuarios: { titulo: 'Usuario',    icono: '../utils/iconos/Usuario.svg' }
 };
 
-
-// Función para inicializar la barra lateral
+/**
+ * Inicializa la barra lateral: enlaza los botones de colapsar/expandir
+ * y configura la navegación entre secciones.
+ *
+ * @returns {void}
+ */
 function inicializarBarraLateral() {
   const botonColapsar         = document.getElementById('botonColapsar');
   const botonExpandir         = document.getElementById('botonExpandir');
@@ -78,8 +91,11 @@ function inicializarBarraLateral() {
   aplicarActivoDesdeAlmacenamiento();
 }
 
-
-// Añade listeners a los botones de la barra lateral
+/**
+ * Añade listeners de navegación a los botones de la barra lateral.
+ *
+ * @returns {void}
+ */
 function activarBotonesBarraLateral() {
   const botonesSidebar = document.querySelectorAll('.boton-sidebar');
 
@@ -110,8 +126,12 @@ function activarBotonesBarraLateral() {
   });
 }
 
-
-// Aplica la sección activa según lo guardado en localStorage
+/**
+ * Marca el botón correspondiente según la sección activa almacenada en localStorage,
+ * y carga la sección.
+ *
+ * @returns {void}
+ */
 function aplicarActivoDesdeAlmacenamiento() {
   const seccion             = localStorage.getItem('seccion-activa');
   const botonesSidebarTodos = document.querySelectorAll('.boton-sidebar');
@@ -128,8 +148,13 @@ function aplicarActivoDesdeAlmacenamiento() {
   cargarModulo(seccion);
 }
 
-
-// Actualiza el título e ícono de la barra superior, y controla el botón de regresar
+/**
+ * Actualiza el título, el ícono y el estado del botón de regresar
+ * de la barra superior según la sección actual.
+ *
+ * @param {string} seccion - Identificador de la sección activa.
+ * @returns {void}
+ */
 function actualizarBarraSuperior(seccion) {
   const elementoTituloBarraSuperior = document.getElementById('topbar-titulo');
   const elementoIconoBarraSuperior  = document.getElementById('topbar-icono');

@@ -3,14 +3,14 @@
  *
  * @param {string} idContenedor - ID del elemento donde se insertará el HTML.
  * @param {string} url - Ruta del archivo HTML a cargar.
- * @param {Function} [callback] - Función a ejecutar tras la inserción del HTML.
+ * @param {Function} [llamada] - Función a ejecutar tras la inserción del HTML.
  */
-function incluirHTML(idContenedor, url, callback) {
+function incluirHTML(idContenedor, url, llamada) {
   fetch(url)
     .then(res => res.text())
     .then(html => {
       document.getElementById(idContenedor).innerHTML = html;
-      if (callback) callback();
+      if (llamada) llamada();
     })
     .catch(error => {
       console.warn(`Error al cargar ${url}: `, error);
@@ -18,13 +18,13 @@ function incluirHTML(idContenedor, url, callback) {
 }
 
 // Inserción de componentes una vez cargado el DOM
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener('DOMContentLoaded', () => {
   incluirHTML(
-    "contenedorBarraLateral",
-    "../vistas/sideBar.html",
+    'contenedorBarraLateral',
+    '../vistas/sideBar.html',
     () => {
       inicializarBarraLateral();
     }
   );
-  incluirHTML("contenedorBarraSuperior", "../vistas/topBar.html");
+  incluirHTML('contenedorBarraSuperior', '../vistas/topBar.html');
 });
