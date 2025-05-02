@@ -44,6 +44,9 @@ function cargarModulo(seccion) {
           if (window.cargarDatosExcel) {
             window.cargarDatosExcel();
           }
+          if (window.inicializarModuloAnalisis) {
+            window.inicializarModuloAnalisis();
+          }
         } else if (seccion === 'plantillas'){
           if (window.inicializarModuloPlantillas) {
             window.inicializarModuloPlantillas();
@@ -89,13 +92,11 @@ function inicializarSidebar() {
     btnCollapse.addEventListener('click', () => {
       sidebarExpanded.style.display = 'none';
       sidebarCollapsed.style.display = 'flex';
-      aplicarActivoDesdeStorage();
     });
 
     btnExpand.addEventListener('click', () => {
       sidebarCollapsed.style.display = 'none';
       sidebarExpanded.style.display = 'flex';
-      aplicarActivoDesdeStorage();
     });
   }
 
