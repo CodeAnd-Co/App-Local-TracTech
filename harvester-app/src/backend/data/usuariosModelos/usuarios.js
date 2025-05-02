@@ -13,7 +13,6 @@ class ListaUsuarios {
         this.usuarios = new Map();
     }
 
-    // Agregar usuarios deserializados
     agregarUsuario(usuarioNuevo) {
         if (this.usuarios.has(usuarioNuevo.id)) {
             throw new Error(`El usuario con ID ${usuarioNuevo.id} ya existe.`);
@@ -21,12 +20,10 @@ class ListaUsuarios {
         this.usuarios.set(usuarioNuevo.id, usuarioNuevo);
     }
 
-    // Obtener todos los usuarios
     obtenerUsuarios() {
         return Array.from(this.usuarios.values());
     }
 
-    // Buscar un usuario por correo
     buscarUsuarioPorCorreo(correo) {
         const usuario = Array.from(this.usuarios.values()).find(usuario => usuario.correo === correo);
         if (!usuario) {
@@ -35,7 +32,6 @@ class ListaUsuarios {
         return usuario;
     }
 
-    // Eliminar un usuario por ID
     eliminarUsuario(id) {
         if (!this.usuarios.has(id)) {
             throw new Error(`No se encontró un usuario con ID ${id}.`);
@@ -43,7 +39,6 @@ class ListaUsuarios {
         this.usuarios.delete(id);
     }
 
-    // Limpiar la lista temporal
     limpiarLista() {
         this.usuarios.clear();
     }

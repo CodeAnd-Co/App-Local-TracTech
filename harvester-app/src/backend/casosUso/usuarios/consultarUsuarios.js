@@ -23,7 +23,6 @@ async function obtenerUsuarios() {
 
         datosUsuarios.forEach(usuarionInformacion => {
             const usuario = new Usuario(usuarionInformacion.id, usuarionInformacion.nombre, usuarionInformacion.correo);
-            // Deserializamos el usuario y lo agregamos a la lista  
             listaUsuarios.agregarUsuario(usuario);
         });
 
