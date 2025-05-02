@@ -16,6 +16,8 @@ function botonBorrar() {
     setTimeout(() => {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const botonBorrar = document.getElementById('boton-borrar');
+        const entradaArchivo = document.querySelector('.cargar-excel');
+
         botonBorrar.addEventListener('click', () => {
             // Modal de confirmación para eliminar el archivo
             Swal.fire({
@@ -37,6 +39,11 @@ function botonBorrar() {
                   borrarExcel();
                   botonAnalisis.setAttribute('disabled', 'true');
                   botonBorrar.style.display = 'none';
+
+                // Reiniciar el valor del input de archivos para que se pueda volver a seleccionar el mismo archivo
+                if (entradaArchivo) {
+                    entradaArchivo.value = '';
+                    }
                 }
               });
         });
@@ -72,9 +79,11 @@ function botonCargar() {
         localStorage.removeItem('seccion-activa');
 
         entradaArchivo.addEventListener('change', () => {
-            leerExcel(entradaArchivo.files[0]);
-            botonAnalisis.removeAttribute('disabled');
-            botonBorrar.style.display = 'block';
+            if (entradaArchivo.files && entradaArchivo.files[0]) {
+                leerExcel(entradaArchivo.files[0]);
+                botonAnalisis.removeAttribute('disabled');
+                botonBorrar.style.display = 'block';
+            }
         });
     }, 100);
 }
