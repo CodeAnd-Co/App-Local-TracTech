@@ -5,8 +5,8 @@
  * Importa la función `plantillas` desde la capa de dominio para obtener las plantillas disponibles.
  * @module plantillasAPI
  */
-const { plantillas } = require("../../backend/domain/plantillasAPI/plantillasAPI.js");
-const { eliminarPlantillas } = require("../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js");
+const { plantillas } = require('../../backend/domain/plantillasAPI/plantillasAPI.js');
+const { eliminarPlantillas } = require('../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js');
 
 /**
  * Inicializa el módulo de plantillas cargando la información desde el backend
@@ -19,20 +19,20 @@ const { eliminarPlantillas } = require("../../backend/domain/plantillasAPI/elimi
 
 async function inicializarModuloPlantillas () {
     /** @type {HTMLElement|null} */
-    const cancelarDialog = document.querySelector(".cancelar");
+    const cancelarDialog = document.querySelector('.cancelar');
     
-    cancelarDialog?.addEventListener("click", () => {
-        const modalBorrar = document.querySelector(".modal-borrar");
+    cancelarDialog?.addEventListener('click', () => {
+        const modalBorrar = document.querySelector('.modal-borrar');
         modalBorrar?.close();
     });
 
     /** @type {HTMLElement|null} */
-    const eliminarDialog = document.querySelector(".eliminar");
+    const eliminarDialog = document.querySelector('.eliminar');
 
-    eliminarDialog?.addEventListener("click", async () => {
-        const modalBorrar = document.querySelector(".modal-borrar");
+    eliminarDialog?.addEventListener('click', async () => {
+        const modalBorrar = document.querySelector('.modal-borrar');
 
-        if(modalBorrar?.getAttribute("dato-id")) {
+        if(modalBorrar?.getAttribute('dato-id')) {
             // RF: Eliminar Plantilla
             try {
                 const idPlantilla = modalBorrar.getAttribute('dato-id')
@@ -42,92 +42,66 @@ async function inicializarModuloPlantillas () {
                 if (respuesta.ok){
 
                     // Eliminar del DOM la tarjeta que contiene esa plantilla
-                    const plantillaHTML = document.querySelector(`.dropdown[dato-id="${idPlantilla}"]`)?.closest(".plantilla");
+                    const plantillaHTML = document.querySelector(`#menuOpciones[dato-id='${idPlantilla}']`)?.closest('.plantilla');
                     if (plantillaHTML) {
                         plantillaHTML.remove();
                         modalBorrar?.close();
                     }
                 } else {
-                    alert("No se pudo eliminar la Plantilla Respuesta err");
+                    alert('No se pudo eliminar la Plantilla Respuesta err');
                 }
                 
                 
             } catch (error) {
-                alert("No se pudo eliminar la Plantilla Catch");
+                alert('No se pudo eliminar la Plantilla Catch');
             }
 
         } else {
-            alert("La Plantilla no se pudo eliminar: No contiene ID");
+            alert('La Plantilla no se pudo eliminar: No contiene ID');
         }
     });
 
     try {
         /** @type {HTMLElement|null} */
-        const contenedor = document.getElementById("contenedorId");
+        const contenedor = document.getElementById('contenedorId');
 
         /** @type {Object} */
         const respuesta = await plantillas();
 
         for (const res in respuesta.plantillas) {
-            const tarjetaTexto = document.createElement('div');
+            const tarjetaTexto = document.createElement('div', { is: respuesta.plantillas[res].idPlantillaReporte });
             tarjetaTexto.classList.add('plantilla');
 
             tarjetaTexto.innerHTML = `
-                <div class="dropdown" dato-id="${respuesta.plantillas[res].idPlantillaReporte}">
-                    <button class="boton-opciones">
-                        <img class="icono-opciones" src="../utils/iconos/TresPuntos.svg" />
+
+                <div class='menu-opciones' dato-id='${respuesta.plantillas[res].idPlantillaReporte}' id='menuOpciones'>
+                    <div class='nombre-de-plantilla'>${respuesta.plantillas[res].Nombre}</div>
+                    <button id='botonExpandir'>
+                        <img class='maximize-2' src='../utils/iconos/Maximize.svg' />
                     </button>
-                    <div class="dropdown-content">
-                        <button class="frame-btn-Editar" id="botonModificar">
-                            <div class="boton-modificar">
-                                <img class="edit-2" src="../utils/iconos/Editar.svg" />
-                                <div class="modificar">Modificar</div>
-                            </div>
-                        </button>
-                        <button class="frame-btn-Editar" id="botonEliminar">
-                            <div class="boton-modificar">
-                                <img class="edit-2" src="../utils/iconos/Basura.svg" />
-                                <div class="modificar">Eliminar</div>
-                            </div>
-                        </button>
-                    </div>
+                    <button id='botonModificar'>
+                        <img class='edit-2' src='../utils/iconos/Editar2.svg' />
+                    </button>
+                    <button id='botonEliminar'>
+                        <img class='trash' src='../utils/iconos/BasuraRojo.svg' />
+                    </button>
                 </div>
+                <img src='../utils/iconos/divisorPlantilla.svg' class='divisorPlantilla'/>
+
                 <scroll-container>
                     ${respuesta.plantillas[res].Datos}
                 </scroll-container>
-                <div class="nombre-plantilla">
-                    <div class="nombre-de-plantilla">${respuesta.plantillas[res].Nombre}</div>
-                </div>
             `;
 
             contenedor?.appendChild(tarjetaTexto);
         }
 
         /** @type {NodeListOf<HTMLButtonElement>} */
-        const botonesOpcionesCoinciden = document.querySelectorAll('.boton-opciones');
-
-        // Activa todos los dropdowns
-        botonesOpcionesCoinciden.forEach(boton => {
-            boton.addEventListener("click", () => {
-                const dropdown = boton.closest('.dropdown');
-                const yaActivo = dropdown?.classList.contains('active');
-
-                document.querySelectorAll('.dropdown.active').forEach(drop => {
-                    drop.classList.remove('active');
-                });
-
-                if (!yaActivo && dropdown) {
-                    dropdown.classList.add('active');
-                }
-            });
-        });
-
-        /** @type {NodeListOf<HTMLButtonElement>} */
         const botonesModificarCoinciden = document.querySelectorAll('#botonModificar');
 
         botonesModificarCoinciden.forEach(boton => {
-            boton.addEventListener("click", () => {
-                const dropdown = boton.closest('.dropdown');
+            boton.addEventListener('click', () => {
+                const menuOpciones = boton.closest('#menuOpciones');
             });
         });
 
@@ -135,20 +109,19 @@ async function inicializarModuloPlantillas () {
         const botonesEliminarCoinciden = document.querySelectorAll('#botonEliminar');
 
         botonesEliminarCoinciden.forEach(boton => {
-            boton.addEventListener("click", async () => {
-                const dropdown = boton.closest('.dropdown');
+            boton.addEventListener('click', async () => {
+                const menuOpciones = boton.closest('#menuOpciones');
                 const modalBorrar = document.querySelector('.modal-borrar');
 
-                if (modalBorrar && dropdown) {
+                if (modalBorrar && menuOpciones) {
                     modalBorrar.showModal();
-                    modalBorrar.setAttribute('dato-id', dropdown.getAttribute('dato-id'));
+                    modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
                 }
             });
         });
 
     } catch (error) {
-        console.error("Error al conectar con el backend:", error);
-        alert("No se pudo conectar con el servidor.");
+        alert('No se pudo conectar con el servidor.');
     }
 }
 
