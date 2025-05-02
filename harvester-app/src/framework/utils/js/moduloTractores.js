@@ -58,6 +58,12 @@ function inicializarModuloTractores() {
     botonReporte();
 }
 
+/** 
+ * Cargamos los datos de excel que se encuentran en localStorage
+ * 
+ * @function cargarDatosDeExcel
+ * @returns {void}
+*/
 function cargarDatosDeExcel() {
     try {
         // Recuperar los datos de Excel
@@ -183,8 +189,17 @@ function botonesFiltrosTractores() {
 
 /**
  * 
+ * Aplica filtros combinados de búsqueda por nombre y estado del GPS a los distribuidores mostrados en el DOM.
+ * 
+ * Esta función obtiene los datos de un archivo de Excel, filtra los distribuidores en pantalla según:
+ * - El texto ingresado en el campo de búsqueda (por nombre del distribuidor).
+ * - Los filtros visuales activados para distribuidores "con GPS" o "sin GPS".
+ * 
+ * Para determinar si un distribuidor tiene GPS, se revisan las primeras filas de sus datos en Excel.
+ * Se muestra u oculta cada distribuidor en la interfaz según si cumple con los filtros.
  * 
  * @function aplicarFiltrosCombinados
+ * @returns {void} 
  */
 function aplicarFiltrosCombinados() {
     const datosExcel = cargarDatosDeExcel();
@@ -199,20 +214,26 @@ function aplicarFiltrosCombinados() {
     const contenedor = document.querySelector('.distribuidores-contenido');
     if (!contenedor) return;
 
+    // Obtener todos los elementos HTML que representan distribuidores
     const distribuidores = contenedor.querySelectorAll('.rancho');
 
     distribuidores.forEach(distribuidorDiv => {
+        // Obtener el nombre del distribuidor desde su texto
         const nombreDistribuidor = distribuidorDiv.querySelector('.rancho-texto')?.textContent || '';
         const coincideBusqueda = nombreDistribuidor.toLowerCase().includes(filtroTexto);
 
+        // Obtener los datos del distribuidor desde el Excel
         const datosDistribuidor = datosExcel.hojas[nombreDistribuidor];
         let tieneGPS = false;
 
+        // Revisar si hay datos y más de una fila
         if (datosDistribuidor && datosDistribuidor.length > 1) {
             const headers = datosDistribuidor[0];
             const indiceGPS = headers.indexOf("GPS");
 
+            // Se evaula si existe la columna GPS
             if (indiceGPS !== -1) {
+                // Recorrer hasta 5 filas siguientes para buscar "OK" en la columna GPS
                 for (let i = 1; i < Math.min(6, datosDistribuidor.length); i++) {
                     const fila = datosDistribuidor[i];
                     const valorGPS = fila[indiceGPS];
@@ -224,11 +245,13 @@ function aplicarFiltrosCombinados() {
             }
         }
 
+        // Determinar si el distribuidor cumple con los filtros de GPS activos
         const cumpleFiltro =
             (mostrarCon && tieneGPS) ||
             (mostrarSin && !tieneGPS) ||
             (!mostrarCon && !mostrarSin); // Si ambos filtros están apagados, mostrar todos
 
+        // Muestra u oculta el distribuidor dependiendo de si pasa ambos filtros
         distribuidorDiv.style.display = coincideBusqueda && cumpleFiltro ? '' : 'none';
     });
 }
