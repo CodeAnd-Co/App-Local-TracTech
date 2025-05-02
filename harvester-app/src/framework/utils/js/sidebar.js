@@ -55,10 +55,10 @@ const infoBarraSuperior = {
 
 // Función para inicializar la barra lateral
 function inicializarBarraLateral() {
-  const botonColapsar         = document.getElementById('collapse-button');
-  const botonExpandir         = document.getElementById('expand-button');
-  const barraLateralExpandida = document.getElementById('sidebar-expanded');
-  const barraLateralColapsada = document.getElementById('sidebar-collapsed');
+  const botonColapsar         = document.getElementById('botonColapsar');
+  const botonExpandir         = document.getElementById('botonExpandir');
+  const barraLateralExpandida = document.getElementById('barraLateralExpandida');
+  const barraLateralColapsada = document.getElementById('barraLateralColapsada');
 
   if (botonColapsar && botonExpandir && barraLateralExpandida && barraLateralColapsada) {
     botonColapsar.addEventListener('click', () => {
