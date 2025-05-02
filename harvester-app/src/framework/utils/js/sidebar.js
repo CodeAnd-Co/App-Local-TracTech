@@ -79,13 +79,11 @@ function inicializarSidebar() {
     btnCollapse.addEventListener('click', () => {
       sidebarExpanded.style.display = 'none';
       sidebarCollapsed.style.display = 'flex';
-      aplicarActivoDesdeStorage();
     });
 
     btnExpand.addEventListener('click', () => {
       sidebarCollapsed.style.display = 'none';
       sidebarExpanded.style.display = 'flex';
-      aplicarActivoDesdeStorage();
     });
   }
 

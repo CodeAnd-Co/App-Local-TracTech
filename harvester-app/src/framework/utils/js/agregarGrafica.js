@@ -39,7 +39,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
     <div class="boton-formulas">
       <div class="formulas">Fórmulas</div>
     </div>
-    <div class="botones-eliminar">
+    <div class="botones-eliminar" style="display: flex; justify-content: flex-end;">
       <div class="eliminar">
         <img class="eliminar-icono" src="../utils/iconos/Basura.svg" />
         <div class="texto-eliminar">Eliminar</div>

@@ -35,18 +35,18 @@ function agregarTexto(idContenedor, idContenedorVistaPrevia) {
     </div>
     <textarea class="area-escritura" placeholder="Escribe aquí tu contenido..."></textarea>
     <div class="botones-editar-eliminar">
-      <div class="alinear">
-        <div class="icono-align align-left"><span></span><span></span><span></span></div>
-        <div class="texto-editar">Alinear</div>
-      </div>
-      <div class="divisor"></div>
       <div class="eliminar">
         <img class="eliminar-icono" src="../utils/iconos/Basura.svg" alt="Eliminar" />
         <div class="texto-eliminar">Eliminar</div>
       </div>
+      <div class="divisor"></div>
+      <div class="alinear">
+        <div class="icono-align align-left"><span></span><span></span><span></span></div>
+        <div class="texto-editar">Alinear</div>
+      </div>
     </div>
   `;
-
+  
   const vistaPrevia = document.createElement('div');
   vistaPrevia.classList.add('previsualizacion-texto', 'preview-titulo');
   vistaPrevia.id = `preview-texto-${nuevaId}`;
