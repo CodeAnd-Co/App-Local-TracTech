@@ -1,6 +1,6 @@
 // RF3 Ususario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
 
-const { cerrarSesion: cerrarSesionAPI } = require("../../domain/sesionAPI/sesionAPI"); // Importa la función cerrarSesionAPI
+const { cerrarSesion: cerrarSesionAPI } = require('../../domain/sesionAPI/sesionAPI'); // Importa la función cerrarSesionAPI
 
 /**
  * Cierra la sesión del usuario actual.
@@ -9,9 +9,9 @@ const { cerrarSesion: cerrarSesionAPI } = require("../../domain/sesionAPI/sesion
 async function cerrarSesion() {
     try {
         // Obtener el token del almacenamiento local
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem('token');
         if (!token) {
-            console.error("No hay sesión activa.");
+            console.error('No hay sesión activa.');
             return; // Si no hay token, no hay sesión activa
         }
 
@@ -20,8 +20,8 @@ async function cerrarSesion() {
         return respuesta;
     } catch (error) {
         // Capturar y mostrar errores en consola
-        console.error("Error al cerrar sesión:", error);
-        throw new Error("No se pudo cerrar sesión"); // Lanzar error si ocurre un fallo
+        console.error('Error al cerrar sesión:', error);
+        throw new Error('No se pudo cerrar sesión'); // Lanzar error si ocurre un fallo
     }
 }
 
