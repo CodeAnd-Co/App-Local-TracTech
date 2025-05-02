@@ -64,6 +64,8 @@ function inicializarModuloTractores() {
             }
         });
     }
+
+    botonReporte();
 }
 
 function cargarDatosDeExcel() {
@@ -86,6 +88,24 @@ function cargarDatosDeExcel() {
         console.error("Error al cargar datos de Excel:", error);
         return null;
     }
+}
+
+/**
+ * Configura el botón de reporte 
+ * 
+ * @function botonReporte
+ * @returns {void}
+ */
+function botonReporte() {
+    setTimeout(() => {
+        const botonReporte = document.querySelector('.primario');
+
+        if (botonReporte) {
+            botonReporte.addEventListener('click', () => {
+                
+            });
+        }
+    }, 100);
 }
 
 // Exportar funciones para uso global
