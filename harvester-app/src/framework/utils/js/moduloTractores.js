@@ -125,7 +125,7 @@ function botonReporte() {
                                 if (window.inicializarModuloAnalisis) {
                                     window.inicializarModuloAnalisis();
                                 }
-                            }).catch(error => console.error('Error cargando módulo de análisis:', err))
+                            }).catch(error => console.error('Error cargando módulo de análisis:', error))
                     }
                 }, 500);
             });
@@ -150,11 +150,7 @@ function BusquedaDistribuidores() {
     if (!entradaBusqueda || !contenedorDistribuidores) {
         return;
     }
-
-    entradaBusqueda.addEventListener('input', () => {
-        console.log('Buscando...');
-        entradaBusqueda.addEventListener('input', aplicarFiltrosCombinados);
-    })
+    entradaBusqueda.addEventListener('input', aplicarFiltrosCombinados);
 }
 
 /**
@@ -169,8 +165,8 @@ function botonesFiltrosTractores() {
     // Evento para mostrar sólo los tractores con telemetría
     filtroConCheck.addEventListener('click', () => {
         console.log('Click a boton con telemetría');
-        const cajaMarcada = filtroConCheck.querySelector('img');
-        cambiarIconoMarcadoADescarcado(cajaMarcada)
+        const caja = filtroConCheck.querySelector('img');
+        cambiarIconoMarcadoADescarcado(caja)
         aplicarFiltrosCombinados()
     });
     
@@ -178,8 +174,8 @@ function botonesFiltrosTractores() {
     // Evento para mostrar sólo los tractores sin telemetría
     filtroSinCheck.addEventListener('click', () => {
         console.log('Click a boton con telemetría');
-        const cajaDescarcadaMarcada = filtroSinCheck.querySelector('img');
-        cambiarIconoMarcadoADescarcado(cajaDescarcadaMarcada)
+        const caja = filtroSinCheck.querySelector('img');
+        cambiarIconoMarcadoADescarcado(caja)
         aplicarFiltrosCombinados()
     });
 }
