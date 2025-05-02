@@ -73,26 +73,26 @@ function cargarPagina(pagina) {
     };
     paginacion.appendChild(previo);
 
-    for (let i = 1; i <= paginasTotales; i++) {
+    for (let numeroPagina = 1; numeroPagina <= paginasTotales; numeroPagina += 1) {
         if (
-            i === 1 ||
-            i === paginasTotales ||
-            (i >= paginaActual - 1 && i <= paginaActual + 1)
+            numeroPagina === 1
+            || numeroPagina === paginasTotales
+            || (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
         ) {
             const botonPagina = document.createElement('button');
-            botonPagina.textContent = i;
+            botonPagina.textContent = numeroPagina;
             botonPagina.classList.add('boton-pagina');
-            if (i === paginaActual) {
+            if (numeroPagina === paginaActual) {
                 botonPagina.classList.add('pagina-actual');
             }
             botonPagina.onclick = ev => {
                 ev.preventDefault();
-                cargarPagina(i);
+                cargarPagina(numeroPagina);
             };
             paginacion.appendChild(botonPagina);
         } else if (
-            i === paginaActual - 2 ||
-            i === paginaActual + 2
+            numeroPagina === paginaActual - 2
+            || numeroPagina === paginaActual + 2
         ) {
             const puntos = document.createElement('span');
             puntos.textContent = '...';

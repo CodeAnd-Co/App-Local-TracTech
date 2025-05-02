@@ -21,14 +21,14 @@ function inicializarModuloUsuario() {
           const ventanaPrincipal = document.getElementById('ventana-principal');
           if (!ventanaPrincipal) return;
           try {
-            const html = await fetch('../vistas/moduloGestionUsuarios.html').then(r => r.text());
+            const html = await fetch('../vistas/moduloGestionUsuarios.html').then(response => response.text());
             ventanaPrincipal.innerHTML = html;
             const script = document.createElement('script');
             script.src = '../utils/js/moduloGestionUsuario.js';
             document.body.appendChild(script);
             script.onload = () => window.inicializarModuloGestionUsuarios?.();
-          } catch (err) {
-            console.error('Error cargando módulo de gestión de usuarios:', err);
+          } catch (error) {
+            console.error('Error cargando módulo de gestión de usuarios:', error);
           }
         });
       }
