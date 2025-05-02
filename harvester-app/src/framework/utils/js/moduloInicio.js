@@ -2,6 +2,7 @@
 // RF45 Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
 // RF46 Usuario sustituye el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF46
 
+const Swal = require('sweetalert2');
 const { borrarExcel } = require('../../backend/casosUso/excel/borrarExcel.js');
 const { leerExcel } = require('../../backend/casosUso/excel/cargarExcel.js');
 
@@ -16,9 +17,28 @@ function botonBorrar() {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const botonBorrar = document.getElementById('boton-borrar');
         botonBorrar.addEventListener('click', () => {
-            borrarExcel();
-            botonAnalisis.setAttribute('disabled', 'true');
-            botonBorrar.style.display = 'none';
+            // Modal de confirmación para eliminar el archivo
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'No podrás recuperar el archivo eliminado.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Swal.fire({
+                    title: 'Eliminado',
+                    text: 'El archivo ha sido eliminado.',
+                    icon: 'success'
+                  });
+                  borrarExcel();
+                  botonAnalisis.setAttribute('disabled', 'true');
+                  botonBorrar.style.display = 'none';
+                }
+              });
         });
     }, 100);
 }
