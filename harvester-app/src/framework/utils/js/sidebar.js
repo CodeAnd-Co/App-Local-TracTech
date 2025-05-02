@@ -31,12 +31,12 @@ function cargarModulo(seccion) {
           if (window.botonAnalisis)  window.botonAnalisis();
           if (window.botonBorrar)    window.botonBorrar();
         } else if (seccion === 'analisis') {
-          if (window.cargarDatosExcel)           window.cargarDatosExcel();
-          if (window.inicializarModuloAnalisis)  window.inicializarModuloAnalisis();
+            if (window.cargarDatosExcel)           window.cargarDatosExcel();
+            if (window.inicializarModuloAnalisis)  window.inicializarModuloAnalisis();
         } else if (seccion === 'plantillas') {
-          if (window.inicializarModuloPlantillas) window.inicializarModuloPlantillas();
+            if (window.inicializarModuloPlantillas) window.inicializarModuloPlantillas();
         } else if (seccion === 'usuario') {
-          if (window.inicializarModuloUsuario)    window.inicializarModuloUsuario();
+            if (window.inicializarModuloUsuario)    window.inicializarModuloUsuario();
         }
         // Añadir más inicializaciones para otros módulos según sea necesario
       })
