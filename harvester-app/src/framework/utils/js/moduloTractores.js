@@ -65,6 +65,8 @@ function inicializarModuloTractores() {
         });
     }
 
+    BusquedaDistribuidores();
+
     botonReporte();
 }
 
@@ -138,6 +140,36 @@ function botonReporte() {
             });
         }
     }, 100);
+}
+
+/**
+ * Configura el campo de búsqueda para filtrar los distribuidores por nombre
+ * 
+ * Al escribir, se compara el texto ingresado con el contenido de cada distribuidor,
+ * ocultando aquellos que no coincidan.
+ * 
+ * @function BusquedaDistribuidores
+ * @returns {void}
+ */
+function BusquedaDistribuidores() {
+    const entradaBusqueda = document.getElementById('buscador-distribuidor');
+    const contenedorDistribuidores = document.querySelector('.distribuidores-contenido');
+
+    // Devolver la lista completa si no se escribe nada o no hay elementos
+    if (!entradaBusqueda || !contenedorDistribuidores) {
+        return;
+    }
+
+    entradaBusqueda.addEventListener('input', () => {
+        const filtro = entradaBusqueda.value.toLowerCase();
+        const distribuidores = contenedorDistribuidores.querySelectorAll('div');
+
+        distribuidores.forEach(distribuidor => {
+            const nombre = distribuidor.textContent.toLowerCase();
+            // Comparar si el nombre del distribuidor contiene el texto escrito
+            distribuidor.style.display = nombre.includes(filtro) ? '' : 'none';
+        });
+    })
 }
 
 // Exportar funciones para uso global
