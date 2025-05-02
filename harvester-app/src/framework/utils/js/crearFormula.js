@@ -452,7 +452,7 @@ function traducirFuncion(nombre) {
  * @throws {Error} Si el elemento no es un elemento HTML válido.
 */
 function popularDropdown(elementoSeleccionado) {
-    // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo
+    // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo TODO()
     const columnas = ['Gasolina', 'Kilometraje', 'Fecha', 'Estado', 'Valor'];
     elementoSeleccionado.innerHTML = "<option value=''>Seleccionar</option>";
     columnas.forEach(columna => {
