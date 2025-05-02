@@ -1,331 +1,216 @@
-.frame-gestion-usuario,
-.frame-gestion-usuario * {
-  box-sizing: border-box;
+/* === Layout de dos columnas === */
+.container {
+  display: flex;         /* activa Flexbox */
+  gap: 16px;             /* espacio entre columnas */
 }
-.frame-gestion-usuario {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 25px;
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  align-items: center;
-  justify-content: center;
-  align-self: stretch;
-  flex: 1;
-  position: relative;
-}
-.frame-busqueda-usuario {
-  display: flex;
-  flex-direction: column;
+
+/* Ajuste de anchos: puedes cambiar 2/1 por la proporción que necesites */
+.columna-busqueda-usuario {
   gap: 30px;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 600px;
-  position: relative;
+  display: flex;       /* necesario para que gap funcione */
+  flex-direction: column; /* para que los elementos se apilen verticalmente */
+  flex: 2;
 }
-.frame-busqueda-usuario2 {
-  display: flex;
-  flex-direction: row;
-  gap: 25px;
-  align-items: center;
-  justify-content: flex-start;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
+
+
+.columna-crear-usuario {
+  flex: 1;
+  display: block;        /* antes estaba “none”: ahora siempre visible */
 }
-.formulario-busqueda-usuario {
-  background: #ffffff;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 455px;
-  height: 73px;
-  position: relative;
-  overflow: hidden;
-}
-.texto-buscar-usuario {
-  color: #000000;
-  text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 32px;
-  line-height: 112%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-  width: 274px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-.nombre-de-la-f-rmula {
-  color: #6d6c6c;
-  text-align: left;
-  font-family: "Inter-Regular", sans-serif;
-  font-size: 18px;
-  line-height: 100%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-  align-self: stretch;
-  height: 30px;
-}
+
+
+/* === Toolbar de búsqueda + botón “Agregar” === */
 .busqueda-y-agregar-usuario {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
+  gap: 1rem;
 }
+
 .secundario {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: 1rem;
   background: #e8e8e8;
-  border-radius: 8px;
-  border-style: solid;
-  border-color: rgba(38, 43, 64, 0.1);
-  border-width: 4px;
-  padding: 20px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  width: 394px;
-  position: relative;
+  border: 4px solid rgba(38,43,64,.1);
+  border-radius: .5rem;
 }
-.icon {
-  flex-shrink: 0;
-  width: 26px;
-  height: 26px;
-  position: relative;
-  overflow: visible;
+.secundario .icon { width: 1.6rem; height: 1.6rem; }
+.secundario .placeholder {
+  flex: 1;
+  color: rgba(0,0,0,.33);
+  font-size: 1.125rem;
 }
-.e-g-john-doe-com {
-  color: rgba(0, 0, 0, 0.33);
-  text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 18px;
-  line-height: 112%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 .primario {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .75rem 1.5rem;
   background: #a61930;
-  border-radius: 8px;
-  border-style: solid;
-  border-color: rgba(255, 255, 255, 0.2);
-  border-width: 2px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 177px;
-  height: 66px;
-  position: relative;
-  transform-origin: 0 0;
-  transform: rotate(0deg) scale(1, 1);
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: .5rem;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
 }
-.mas {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
-}
-.agregar {
-  color: #ffffff;
-  text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 24px;
-  font-weight: 400;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.primario .mas { width: 3rem; height: 3rem; }
+
+/* === Lista de usuarios === */
 .lista-usuarios {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
+  gap: 1.25rem;
 }
-.frame-usuarios {
+
+.frame-usuario {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
   align-items: center;
-  justify-content: flex-start;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
+  flex-direction: row;
+  gap: .75rem;
 }
+
 .nombre-usuario {
-  background: #ffffff;
-  border-radius: 6.44px;
-  border-style: solid;
-  border-color: #000000;
-  border-width: 1.61px;
-  padding: 25px;
+  height: 100%;
+  flex: 1;
+  padding: 1rem;
+  background: #fff;
+  border: 1.5px solid #000;
+  border-radius: .4rem;
+  font-size: 1.125rem;
+  flex-direction: row;
+}
+
+.boton-editar,
+.boton-eliminar {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: .5rem;
+  padding: .5rem;
+  cursor: pointer;
+}
+.boton-eliminar {
+  background: #a61930;
+  border-color: rgba(255,255,255,.15);
+}
+.boton-editar img,
+.boton-eliminar img {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+}
+
+/* === Paginación === */
+.paginacion {
+  display: flex;
+  gap: .5rem;
+  justify-content: center;
+  font-size: 1rem;
+}
+.paginacion button,
+.paginacion span {
+  text-decoration: none;
+  color: #000;
+  padding: .25rem .5rem;
+}
+.paginacion button.pagina-actual {
+  font-size: 1.5rem;
+  color: #a61930;
+}
+
+/* Botones de paginación */
+.boton-pagina-previa,
+.boton-pagina,
+.boton-pagina-siguiente {
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 8px; /* para mantener el «click‐area» */
+  color: inherit;    /* hereda el color del texto */
+  cursor: pointer;
+}
+
+/* El botón de la página actual puede llevar subrayado o color distinto */
+.boton-pagina.pagina-actual {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+/* Los «…» también pueden ir sin fondo */
+.puntos-paginacion {
+  background: transparent;
+  padding: 0 4px;
+}
+
+/* === Pop-out (columna crear usuario) === */
+.pop-out {
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-  justify-content: center;
-  flex: 1;
-  position: relative;
-  overflow: hidden;
+  gap: 1.125rem;
+  height: 100%;
 }
-.texto-usuario {
-  color: #000000;
+
+.pop-out .crear-usuario {
+  font-size: 1.5rem;
   text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 18px;
-  line-height: 112%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
+  margin-bottom: .5rem;
+}
+
+.pop-out form.modificacion {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1.75rem;
 }
-.editar {
-  background: #ffffff;
-  border-radius: 8px;
-  border-style: solid;
-  border-color: #000000;
-  border-width: 2px;
-  padding: 10px;
+
+.pop-out .campo {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 71px;
-  height: 70px;
-  position: relative;
+  flex-direction: column;
+  gap: .5rem;
 }
-.editar-icono {
-  border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
+
+.pop-out .campo label {
+  font-size: 1.125rem;
 }
-.eliminar {
+
+.pop-out .campo input,
+.pop-out .campo select {
+  padding: .75rem;
+  border: 2px solid rgba(0,0,0,.2);
+  border-radius: .5rem;
+  font-size: 1rem;
+}
+
+.pop-out .line-1 {
+  border-top: 1px solid rgba(109,108,108,.3);
+  width: 100%;
+}
+
+.pop-out .botones {
+  display: flex;
+  gap: 1rem;
+}
+
+.pop-out .btn-guardar {
+  flex: 1;
   background: #a61930;
-  border-radius: 8px;
-  border-style: solid;
-  border-color: rgba(255, 255, 255, 0.15);
-  border-width: 2px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 71px;
-  height: 70px;
-  position: relative;
+  color: #fff;
+  border: none;
+  border-radius: .5rem;
+  padding: .75rem;
+  font-size: 1.25rem;
+  cursor: pointer;
 }
-.eliminar-icono {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
-}
-.editar-icono2 {
-  border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
-}
-.eliminar-icono2 {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
-}
-.editar-icono3 {
-  border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
-}
-.eliminar-icono3 {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
-}
-.editar-icono4 {
-  border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
-}
-.eliminar-icono4 {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
-}
-.editar-icono5 {
-  border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
-}
-.eliminar-icono5 {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
-}
-.editar-icono6 {
-  border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
-}
-.eliminar-icono6 {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
+
+.pop-out .btn-cancelar {
+  flex: 1;
+  background: #fff;
+  color: #262b40;
+  border: 1px solid #262b40;
+  border-radius: .5rem;
+  padding: .75rem;
+  font-size: 1.25rem;
+  cursor: pointer;
 }
