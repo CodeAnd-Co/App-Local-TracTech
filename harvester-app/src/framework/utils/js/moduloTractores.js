@@ -128,8 +128,8 @@ function botonReporte() {
                             .then(html => {
                                 ventanaPrincipal.innerHTML = html;
                                 // Si el script de análisis ya está cargado, inicializarlo
-                                if (window.cargarDatosExcel) {
-                                    window.cargarDatosExcel();
+                                if (window.inicializarModuloAnalisis) {
+                                    window.inicializarModuloAnalisis();
                                 }
                             }).catch(error => console.error('Error cargando módulo de análisis:', err))
                     }
