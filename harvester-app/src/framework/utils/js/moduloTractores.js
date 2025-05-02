@@ -23,31 +23,34 @@ function inicializarModuloTractores() {
         console.warn('No hay datos disponibles para análisis');
     }
 
-    const distribuidoresContenedor = document.querySelector('.distribuidores-contenido');
+    const distribuidoresContenedor = document.querySelector('.distribuidor');
     distribuidoresContenedor.innerHTML = ''; // Limpiar contenido anterior
 
+    const tractoresContenedor = document.querySelector('.tractores-contenido');
+    tractoresContenedor.innerHTML = ''; // Limpiar contenido anterior
+
     // Iterar sobre los distribuidores (asumiendo que cada hoja es un distribuidor)
-    for (const distribuidorNombre in datosExcel.hojas) {
-        // Crear un div para el distribuidor
-        const distribuidorDiv = document.createElement('div');
-        distribuidorDiv.className = 'rancho'; // Asignar clase para estilo
+    for (const tractorNombre in datosExcel.hojas) {
+        // Crear un div para el tractor
+        const tractorDiv = document.createElement('div');
+        tractorDiv.className = 'rancho'; // Asignar clase para estilo
 
-        // Crear el nombre del distribuidor
-        const nombreDistribuidorDiv = document.createElement('div');
-        nombreDistribuidorDiv.className = 'rancho-texto';
-        nombreDistribuidorDiv.textContent = distribuidorNombre; // Nombre del distribuidor
+        // Crear el nombre del tractor
+        const nombreTractorDiv = document.createElement('div');
+        nombreTractorDiv.className = 'rancho-texto';
+        nombreTractorDiv.textContent = tractorNombre; // Nombre del tractor
 
-        // Crear el cuadro de selección (checkbox) para el distribuidor
+        // Crear el cuadro de selección (checkbox) para el tractor
         const checkBox = document.createElement('img');
         checkBox.className = 'check-box-outline-blank4';
         checkBox.src = '../utils/iconos/check_box_outline_blank.svg'; 
 
-        // Añadir el nombre y el checkbox al div del distribuidor
-        distribuidorDiv.appendChild(nombreDistribuidorDiv);
-        distribuidorDiv.appendChild(checkBox);
+        // Añadir el nombre y el checkbox al div del tractor
+        tractorDiv.appendChild(nombreTractorDiv);
+        tractorDiv.appendChild(checkBox);
 
-        // Añadir el div del distribuidor al contenedor
-        distribuidoresContenedor.appendChild(distribuidorDiv);
+        // Añadir el div del tractor al contenedor
+        tractoresContenedor.appendChild(tractorDiv);
     }
 
     BusquedaDistribuidores();
@@ -143,11 +146,11 @@ function botonReporte() {
  * @returns {void}
  */
 function BusquedaDistribuidores() {
-    const entradaBusqueda = document.getElementById('buscador-distribuidor');
-    const contenedorDistribuidores = document.querySelector('.distribuidores-contenido');
+    const entradaBusqueda = document.getElementById('buscador-tractor');
+    const contenedorTractores = document.querySelector('.tractores-contenido');
 
     // Devolver la lista completa si no se escribe nada o no hay elementos
-    if (!entradaBusqueda || !contenedorDistribuidores) {
+    if (!entradaBusqueda || !contenedorTractores) {
         return;
     }
     entradaBusqueda.addEventListener('input', aplicarFiltrosCombinados);
@@ -198,13 +201,13 @@ function aplicarFiltrosCombinados() {
     const datosExcel = cargarDatosDeExcel();
     if (!datosExcel) return;
 
-    const entradaBusqueda = document.getElementById('buscador-distribuidor');
+    const entradaBusqueda = document.getElementById('buscador-tractor');
     const filtroTexto = entradaBusqueda?.value.toLowerCase() || '';
 
     const mostrarCon = document.querySelector('#botonFiltroCon img')?.src.includes('check_box.svg');
     const mostrarSin = document.querySelector('#botonFiltroSin img')?.src.includes('check_box.svg');
 
-    const contenedor = document.querySelector('.distribuidores-contenido');
+    const contenedor = document.querySelector('.tractores-contenido');
     if (!contenedor) return;
 
     // Obtener todos los elementos HTML que representan distribuidores
