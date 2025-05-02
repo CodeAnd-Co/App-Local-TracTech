@@ -17,21 +17,22 @@ function botonBorrar() {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const botonBorrar = document.getElementById('boton-borrar');
         botonBorrar.addEventListener('click', () => {
+            // Modal de confirmación para eliminar el archivo
             Swal.fire({
-                title: "¿Estás seguro?",
-                text: "No podrás recuperar el archivo eliminado.",
-                icon: "warning",
+                title: '¿Estás seguro?',
+                text: 'No podrás recuperar el archivo eliminado.',
+                icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí, eliminar",
-                cancelButtonText: "Cancelar"
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
               }).then((result) => {
                 if (result.isConfirmed) {
                   Swal.fire({
-                    title: "Eliminado",
-                    text: "El archivo ha sido eliminado.",
-                    icon: "success"
+                    title: 'Eliminado',
+                    text: 'El archivo ha sido eliminado.',
+                    icon: 'success'
                   });
                   borrarExcel();
                   botonAnalisis.setAttribute('disabled', 'true');
