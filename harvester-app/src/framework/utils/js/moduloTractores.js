@@ -146,7 +146,7 @@ function botonReporte() {
  * @returns {void}
  */
 function BusquedaDistribuidores() {
-    const entradaBusqueda = document.getElementById('buscador-tractor');
+    const entradaBusqueda = document.getElementById('buscadorTractor');
     const contenedorTractores = document.querySelector('.tractores-contenido');
 
     // Devolver la lista completa si no se escribe nada o no hay elementos
@@ -201,7 +201,7 @@ function aplicarFiltrosCombinados() {
     const datosExcel = cargarDatosDeExcel();
     if (!datosExcel) return;
 
-    const entradaBusqueda = document.getElementById('buscador-tractor');
+    const entradaBusqueda = document.getElementById('buscadorTractor');
     const filtroTexto = entradaBusqueda?.value.toLowerCase() || '';
 
     const mostrarCon = document.querySelector('#botonFiltroCon img')?.src.includes('check_box.svg');
