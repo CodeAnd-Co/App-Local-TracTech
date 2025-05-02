@@ -149,14 +149,8 @@ function BusquedaDistribuidores() {
     }
 
     entradaBusqueda.addEventListener('input', () => {
-        const filtro = entradaBusqueda.value.toLowerCase();
-        const distribuidores = contenedorDistribuidores.querySelectorAll('div');
-
-        distribuidores.forEach(distribuidor => {
-            const nombre = distribuidor.textContent.toLowerCase();
-            // Comparar si el nombre del distribuidor contiene el texto escrito
-            distribuidor.style.display = nombre.includes(filtro) ? '' : 'none';
-        });
+        console.log('Buscando...');
+        entradaBusqueda.addEventListener('input', aplicarFiltrosCombinados);
     })
 }
 
@@ -174,6 +168,7 @@ function botonesFiltrosTractores() {
         console.log('Click a boton con telemetría');
         const cajaMarcada = filtroConCheck.querySelector('img');
         cambiarIconoMarcadoADescarcado(cajaMarcada)
+        aplicarFiltrosCombinados()
     });
     
     const filtroSinCheck = document.getElementById('botonFiltroSin');
@@ -182,8 +177,62 @@ function botonesFiltrosTractores() {
         console.log('Click a boton con telemetría');
         const cajaDescarcadaMarcada = filtroSinCheck.querySelector('img');
         cambiarIconoMarcadoADescarcado(cajaDescarcadaMarcada)
+        aplicarFiltrosCombinados()
     });
 }
+
+/**
+ * 
+ * 
+ * @function aplicarFiltrosCombinados
+ */
+function aplicarFiltrosCombinados() {
+    const datosExcel = cargarDatosDeExcel();
+    if (!datosExcel) return;
+
+    const entradaBusqueda = document.getElementById('buscador-distribuidor');
+    const filtroTexto = entradaBusqueda?.value.toLowerCase() || '';
+
+    const mostrarCon = document.querySelector('#botonFiltroCon img')?.src.includes('check_box.svg');
+    const mostrarSin = document.querySelector('#botonFiltroSin img')?.src.includes('check_box.svg');
+
+    const contenedor = document.querySelector('.distribuidores-contenido');
+    if (!contenedor) return;
+
+    const distribuidores = contenedor.querySelectorAll('.rancho');
+
+    distribuidores.forEach(distribuidorDiv => {
+        const nombreDistribuidor = distribuidorDiv.querySelector('.rancho-texto')?.textContent || '';
+        const coincideBusqueda = nombreDistribuidor.toLowerCase().includes(filtroTexto);
+
+        const datosDistribuidor = datosExcel.hojas[nombreDistribuidor];
+        let tieneGPS = false;
+
+        if (datosDistribuidor && datosDistribuidor.length > 1) {
+            const headers = datosDistribuidor[0];
+            const indiceGPS = headers.indexOf("GPS");
+
+            if (indiceGPS !== -1) {
+                for (let i = 1; i < Math.min(6, datosDistribuidor.length); i++) {
+                    const fila = datosDistribuidor[i];
+                    const valorGPS = fila[indiceGPS];
+                    if (valorGPS && valorGPS.toUpperCase() === "OK") {
+                        tieneGPS = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        const cumpleFiltro =
+            (mostrarCon && tieneGPS) ||
+            (mostrarSin && !tieneGPS) ||
+            (!mostrarCon && !mostrarSin); // Si ambos filtros están apagados, mostrar todos
+
+        distribuidorDiv.style.display = coincideBusqueda && cumpleFiltro ? '' : 'none';
+    });
+}
+
 
 /**
  * Cambia el ícono de marcado a desmarcado
