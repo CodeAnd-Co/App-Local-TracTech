@@ -29,9 +29,6 @@ function inicializarModuloTractores() {
     const tractoresContenedor = document.querySelector('.tractores');
     tractoresContenedor.innerHTML = '';
 
-    const filtrosContenedor = document.querySelector('.filtros');
-    filtrosContenedor.innerHTML = '';
-
     // Iterar sobre los distribuidores (asumiendo que cada hoja es un distribuidor)
     for (const distribuidorNombre in datosExcel.hojas) {
         // Crear un div para el distribuidor
@@ -45,8 +42,8 @@ function inicializarModuloTractores() {
 
         // Crear el cuadro de selección (checkbox) para el distribuidor
         const checkBox = document.createElement('img');
-        checkBox.className = 'check-box';
-        checkBox.src = 'check-box-outline-blank0.svg'; // Imagen del checkbox vacío (puedes cambiar el icono según el estado)
+        checkBox.className = 'check-box-outline-blank4';
+        checkBox.src = '../utils/iconos/check_box_outline_blank.svg'; 
 
         // Añadir el nombre y el checkbox al div del distribuidor
         distribuidorDiv.appendChild(nombreDistribuidorDiv);
@@ -54,15 +51,6 @@ function inicializarModuloTractores() {
 
         // Añadir el div del distribuidor al contenedor
         distribuidoresContenedor.appendChild(distribuidorDiv);
-
-        // Agregar interactividad al checkbox (si es necesario)
-        checkBox.addEventListener('click', () => {
-            if (checkBox.src.includes('check-box-outline-blank0.svg')) {
-                checkBox.src = 'check-box2.svg'; // Imagen del checkbox marcado
-            } else {
-                checkBox.src = 'check-box-outline-blank0.svg'; // Imagen del checkbox vacío
-            }
-        });
     }
 
     BusquedaDistribuidores();
