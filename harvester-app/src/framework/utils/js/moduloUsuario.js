@@ -33,10 +33,10 @@ function inicializarModuloUsuario() {
     }
 
     // Seleccionar el botón para cerrar sesión
-    const btnCerrarSesion = document.querySelector('.boton-cerrar-sesion');
+    const botonCerrarSesion = document.querySelector('.boton-cerrar-sesion');
 
     // Agregar listener al botón de cerrar sesión
-    btnCerrarSesion.addEventListener('click', async () => {
+    botonCerrarSesion.addEventListener('click', async () => {
         
         // Llamar a la función cerrarSesion para finalizar la sesión
         const respuesta = await cerrarSesion();
