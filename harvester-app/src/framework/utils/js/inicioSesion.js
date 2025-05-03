@@ -12,7 +12,7 @@ const { iniciarSesion } = require('../../backend/casosUso/sesion/iniciarSesion')
 /**
  * Maneja el evento de clic en el botón de acceso para iniciar sesión.
  */
-btnAcceder.addEventListener('click', async () => {
+async function manejarInicioSesion() {
   // Obtener valores de los campos de entrada
   const correo = entradaCorreo.value;
   const contrasena = entradaContrasena.value;
@@ -47,6 +47,18 @@ btnAcceder.addEventListener('click', async () => {
     // Mostrar alerta si ocurre un error de conexión
     alert('No se pudo conectar con el servidor.');
   }
+}
+
+// Agregar evento al botón "Acceder"
+btnAcceder.addEventListener('click', manejarInicioSesion);
+
+// Agregar evento para detectar la tecla "Enter" en los campos de entrada
+[entradaCorreo, entradaContrasena].forEach(entrada => {
+  entrada.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Enter') {
+      manejarInicioSesion();
+    }
+  });
 });
 
 /**
@@ -59,10 +71,10 @@ btnAbrirInfo.addEventListener('click', () => {
 /**
  * Cierra el modal si el usuario hace clic fuera del contenido del mismo.
  *
- * @param {Event} event - Evento de clic.
+ * @param {Event} evento - Evento de clic.
  */
-function onClick(event) {
-  if (event.target === dialog) {
+function onClick(evento) {
+  if (evento.target === dialog) {
     dialog.close();
   }
 }
