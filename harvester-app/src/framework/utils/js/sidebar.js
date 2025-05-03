@@ -168,3 +168,4 @@ function actualizarTopbar(seccion) {
 }
 
 window.actualizarTopbar = actualizarTopbar;
+window.cargarModulo = cargarModulo;

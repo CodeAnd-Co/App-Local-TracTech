@@ -9,7 +9,7 @@ const { guardarFormula: guardarFormulaAPI} = require("../../domain/formulasAPI/f
  * @returns {Promise<Object>} Respuesta del servidor.
  * @throws {Error} Si no se pudo guardar la fórmula.
  */
-async function guardarFormula(nombre, formula){
+const guardarFormula= async function (nombre, formula){
     try{
         console.log("Nombre de la fórmula (JS/BAck):", nombre, "Fórmula:", formula);
         const respuesta = await guardarFormulaAPI(nombre, formula);
@@ -20,6 +20,4 @@ async function guardarFormula(nombre, formula){
     }
 }
 
-module.exports = {
-    guardarFormula,
-};
+window.guardarFormula = guardarFormula; // Para que sea accesible desde el frontend

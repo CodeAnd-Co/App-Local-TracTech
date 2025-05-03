@@ -1,6 +1,3 @@
-const { guardarFormula }  = require('../../backend/casosUso/formulas/crearFormula');
-const { sidebar } = require('./sidebar.js');
-
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -11,12 +8,32 @@ const { sidebar } = require('./sidebar.js');
 function eliminarElemento(boton) {
             const elementoABorrar = boton.parentNode.parentNode;
             elementoABorrar.remove();
-        }
+}
 
 function cancelarVista(){
     window.cargarModulo('formulas');
 
 }
+
+btnGuardar.addEventListener('click', async () => {
+    procesarFormula();
+}); 
+
+btnCancelar.addEventListener('click', () => {
+    cancelarVista();
+});
+
+btnGenerar.addEventListener('click', () => {
+    const contenedor = document.getElementById('function-arguments');
+    console.log(contenedor);
+    if (contenedor) {
+        generarFormulaCompleja();
+    } else {
+        console.error('El contenedor de argumentos no se encontró en el DOM.');
+    }
+});
+
+
 /**
  * @function inicializarCrearFormula
  * @description Inicializa el módulo de creación de fórmulas al cargar la página.
@@ -34,6 +51,11 @@ function inicializarCrearFormula() {
                     .then(res => res.text())
                     .then(html => {
                         ventanaPrincipal.innerHTML = html;
+                        const script = document.createElement('script');
+                        script.src = '../utils/js/crearFormula.js';
+                        document.body.appendChild(script);
+                        
+
                     })
                     .catch(err => console.error('Error cargando módulo de creación de fórmulas:', err));
             }
@@ -44,23 +66,37 @@ function inicializarCrearFormula() {
     }
 }
 
+async function guardarFormulaTemporal(nombre, formula) {
+    // REFACTORIZAR
+    const respuesta = await fetch("http://localhost:3000/formulas/guardarFormula", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({nombre, formula}),
+    });
+
+    const datos = await respuesta.json();
+    return { ok: respuesta.ok, ...datos };
+}
+
 /**
- * @function guardarFormulaFront
+ * @function procesarFormula
  * @description Guarda la fórmula generada en el backend.
  * @returns {Promise<void>} - Una promesa que se resuelve cuando la fórmula se guarda correctamente.
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
-async function guardarFormulaFront() {
+async function procesarFormula() {
     const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     const nombreFormula = document.getElementById('nombreFormula').value;
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     try{
-        const respuesta = await guardarFormula(nombreFormula, formula);
+        // console.log('Nombre de la fórmula:', nombreFormula, 'Fórmula:', formula); Quitar el console.log
+        const respuesta = await guardarFormulaTemporal(nombreFormula, formula);
         if (respuesta.ok) {
             window.cargarModulo('formulas');
-        }
-        else {
+        } else {
             alert(respuesta.message || 'Error al guardar la fórmula.');
         }
     } catch (error) {
@@ -70,7 +106,7 @@ async function guardarFormulaFront() {
 }
 
 /**
- * @function guardarFormulaFront
+ * @function definirEstructura
  * @description Guarda la fórmula generada en el backend.
  * @param {HTMLElement} elementoElegido - El elemento HTML que contiene la función seleccionada.
  * @param {HTMLElement} contenedor - El contenedor donde se generará la fórmula.
@@ -132,7 +168,7 @@ function agregarArgumento(etiqueta, nombreClase, contenedor, permitirAnidado = f
         </div>
         <div class='argumentoContenido'>
             <input type='text' class='${nombreClase}' placeholder='${etiqueta}'>
-            ${permitirAnidado ? '<button onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
+            ${permitirAnidado ? '<button class="botonFuncionAnidada" onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
             <div class='nested-function-container' style='margin-left: 10px;'></div>
         </div>
     `;
@@ -250,7 +286,7 @@ function agregarArgumentoCountIf(contenedor, prefijo = '') {
             </select>
             <input type='text' class='${prefijo}countifs-value' placeholder='Valor'>
         </div>
-        <button onclick="masArgumentosCountif(this.parentNode)">+ Añadir otro criterio</button>
+        <button class="botonMasArgumentosCountif" onclick="masArgumentosCountif(this.parentNode)">+ Añadir otro criterio</button>
     `;
     contenedor.appendChild(argumentoDiv);
     popularDropdown(argumentoDiv.querySelector('.variable-selector'));
@@ -315,7 +351,7 @@ function generarFormulaCompleja() {
  * @throws {Error} Si hay un error al construir la fórmula.
  */
 function construirFormulaDesdeContenedor(contenedor, nombreFuncion) {
-    let argumentos = [];
+    const argumentos = [];
     const traduccion = traducirFuncion;
     const elementosArgumentos = Array.from(contenedor.children);
 
@@ -463,8 +499,49 @@ function popularDropdown(elementoSeleccionado) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {    
+    const { guardarFormula} = require('../../backend/casosUso/formulas/crearFormula');
+    const { cargarModulo } = require('./sidebar.js');
+
+    
+    const btnGuardar = document.getElementById('btnGuardar');
+    const formulaContainer = document.getElementById('formula-container');
+    
+    // Crear la estructura principal de selección de funciones
+    if (formulaContainer) {
+        formulaContainer.innerHTML = `
+            <div class='bloqueFormula'>
+                <label for='main-function'>Seleccione una función:</label>
+                <select id='main-function'>
+                    <option value=''>Seleccionar función</option>
+                    <option value='IF'>SI</option>
+                    <option value='COUNTIF'>CONTAR.SI</option>
+                    <option value='COUNTIFS'>CONTAR.SI.CONJUNTO</option>
+                    <option value='IFERROR'>SI.ERROR</option>
+                    <option value='VLOOKUP'>BUSCARV</option>
+                    <option value='ARITHMETIC'>Operación Aritmética</option>
+                </select>
+                <div id='function-arguments'></div>
+            </div>
+        `;
+    }
+    
+    // Configurar eventos para los botones
+    if (btnGuardar) {
+        btnGuardar.addEventListener('click', async () => {
+            procesarFormula();
+    });
+    }
+    // Agregar el evento al selector de función principal
     const mainFunctionSelect = document.getElementById('main-function');
+    if (mainFunctionSelect) {
+        mainFunctionSelect.addEventListener('change', () => {
+            const contenedor = document.getElementById('function-arguments');
+            definirEstructura(mainFunctionSelect, contenedor);
+        });
+    }
 });
+
+
 
 window.inicializarCrearFormula = inicializarCrearFormula;

@@ -6,7 +6,6 @@
     <title>Generador de Fórmulas Complejas Anidadas</title>
     <link href='../utils/resetStyles.css' rel='stylesheet' />
     <link href='../utils/css/moduloFormulas.css' rel='stylesheet' />
-    <script src='../utils/js/crearFormula.js'></script>
 
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
@@ -35,11 +34,11 @@
             </div>
         </div>
     </div>
-    <button onclick='generarFormulaCompleja()'>Generar fórmula</button>
+    <button id='btnGenerar'> Generar fórmula</button>
     <p><br>Fórmula generada:</p>
     <div class='resultado' id='resultado'></div>
-    <button id='btnGuardar' onclick='guardarFormulaFront()'>Guardar fórmula</button>
-    <button id='btnCancelar' onclick='cancelarVista()'>Cancelar</button>
-
+    <button id='btnGuardar'> Guardar fórmula </button>
+    <button id='btnCancelar'> Cancelar</button>
+    <script src='../utils/js/crearFormula.js'></script>
 </body>
 </html>
