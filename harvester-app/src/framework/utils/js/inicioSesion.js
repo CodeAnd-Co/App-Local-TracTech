@@ -1,25 +1,25 @@
 // RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
 
 // Seleccionar elementos del DOM necesarios
-const btnAbrirInfo = document.querySelector("#btn-abrir-info");
-const modalInfo = document.querySelector("#modalContacto");
-const btnAcceder = document.querySelector(".boton-acceder");
-const entradaCorreo = document.querySelector(".correo[type='email']");
-const entradaContrasena = document.querySelector(".contrasena");
-const { verificarPermisos } = require("../../backend/servicios/verificarPermisos");
-const { iniciarSesion } = require("../../backend/casosUso/sesion/iniciarSesion");
+const btnAbrirInfo = document.querySelector('#btn-abrir-info');
+const modalInfo = document.querySelector('#modalContacto');
+const btnAcceder = document.querySelector('.boton-acceder');
+const entradaCorreo = document.querySelector('.correo[type="email"]');
+const entradaContrasena = document.querySelector('.contrasena');
+const { verificarPermisos } = require('../../backend/servicios/verificarPermisos');
+const { iniciarSesion } = require('../../backend/casosUso/sesion/iniciarSesion');
 
 /**
  * Maneja el evento de clic en el botón de acceso para iniciar sesión.
  */
-btnAcceder.addEventListener("click", async () => {
+btnAcceder.addEventListener('click', async () => {
   // Obtener valores de los campos de entrada
   const correo = entradaCorreo.value;
   const contrasena = entradaContrasena.value;
 
   // Validar que ambos campos estén completos
   if (!correo || !contrasena) {
-    alert("Por favor, completa todos los campos.");
+    alert('Por favor, completa todos los campos.');
     return;
   }
 
@@ -29,30 +29,31 @@ btnAcceder.addEventListener("click", async () => {
 
     if (respuesta.ok) {
       // Guardar el token en localStorage
-      localStorage.setItem("token", respuesta.token);
+      localStorage.setItem('token', respuesta.token);
 
       const resultado = await verificarPermisos(respuesta.token);
       const listaPermisos = resultado.permisos || [];
-      localStorage.setItem("permisos", JSON.stringify(listaPermisos));
+      localStorage.setItem('permisos', JSON.stringify(listaPermisos));
 
       // Redirigir al usuario a la página principal
-      window.location.href = "./frameLayout.html";
+      window.location.href = './frameLayout.html';
 
     } else {
+      console.log('Error en la respuesta del servidor:', respuesta);
       // Mostrar mensaje de error si las credenciales no son válidas
-      alert(respuesta.message || "Error al iniciar sesión.");
+      alert(respuesta.mensaje);
     }
   } catch (error) {
-    console.error("Error al conectar con el backend:", error);
+    console.error('Error al conectar con el backend:', error);
     // Mostrar alerta si ocurre un error de conexión
-    alert("No se pudo conectar con el servidor.");
+    alert('No se pudo conectar con el servidor.');
   }
 });
 
 /**
  * Muestra el modal de información al hacer clic en el botón correspondiente.
  */
-btnAbrirInfo.addEventListener("click", () => {
+btnAbrirInfo.addEventListener('click', () => {
   modalInfo.showModal();
 });
 
@@ -68,5 +69,5 @@ function onClick(event) {
 }
 
 // Seleccionar el elemento dialog y agregar evento de cierre al hacer clic fuera
-const dialog = document.querySelector("dialog");
-dialog.addEventListener("click", onClick);
+const dialog = document.querySelector('dialog');
+dialog.addEventListener('click', onClick);
