@@ -39,7 +39,6 @@ btnAcceder.addEventListener('click', async () => {
       window.location.href = './frameLayout.html';
 
     } else {
-      console.log('Error en la respuesta del servidor:', respuesta);
       // Mostrar mensaje de error si las credenciales no son válidas
       alert(respuesta.mensaje);
     }

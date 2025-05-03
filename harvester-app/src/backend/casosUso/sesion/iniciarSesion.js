@@ -1,5 +1,6 @@
 // RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
 
+const validator = require('validator');
 const { iniciarSesion: iniciarSesionAPI } = require('../../domain/sesionAPI/sesionAPI');
 
 /**
@@ -11,6 +12,12 @@ const { iniciarSesion: iniciarSesionAPI } = require('../../domain/sesionAPI/sesi
 function validarCorreo(correo) {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return regex.test(correo);
+}
+
+function sanitizarEntrada(correo, contrasena) {
+  const correoSanitizado = validator.normalizeEmail(correo);
+  const contrasenaSanitizada = validator.escape(contrasena); // Escapa caracteres peligrosos
+  return { correoSanitizado, contrasenaSanitizada };
 }
 
 /**
@@ -27,9 +34,11 @@ async function iniciarSesion(correo, contrasena) {
     return { ok: false, mensaje: 'Correo inválido' };
   }
 
+  const { correoSanitizado, contrasenaSanitizada } = sanitizarEntrada(correo, contrasena);
+  
   try {
 
-    const respuesta = await iniciarSesionAPI(correo, contrasena);
+    const respuesta = await iniciarSesionAPI(correoSanitizado, contrasenaSanitizada);
     return respuesta;
 
   } catch (error) {
