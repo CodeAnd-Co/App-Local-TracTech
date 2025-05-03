@@ -40,20 +40,14 @@ function inicializarModuloTractores() {
         nombreTractorDiv.className = 'rancho-texto';
         nombreTractorDiv.textContent = tractorNombre; // Nombre del tractor
 
-        // Crear el cuadro de selección (checkbox) para el tractor
-        const checkBox = document.createElement('img');
-        checkBox.className = 'check-box-outline-blank4';
-        checkBox.src = '../utils/iconos/check_box_outline_blank.svg'; 
-
         // Añadir el nombre y el checkbox al div del tractor
         tractorDiv.appendChild(nombreTractorDiv);
-        tractorDiv.appendChild(checkBox);
 
         // Añadir el div del tractor al contenedor
         tractoresContenedor.appendChild(tractorDiv);
     }
 
-    BusquedaDistribuidores();
+    BusquedaTractores();
     botonesFiltrosTractores()
     botonReporte();
 }
@@ -137,15 +131,15 @@ function botonReporte() {
 }
 
 /**
- * Configura el campo de búsqueda para filtrar los distribuidores por nombre
+ * Configura el campo de búsqueda para filtrar los tractores por nombre
  * 
  * Al escribir, se compara el texto ingresado con el contenido de cada distribuidor,
  * ocultando aquellos que no coincidan.
  * 
- * @function BusquedaDistribuidores
+ * @function BusquedaTractores
  * @returns {void}
  */
-function BusquedaDistribuidores() {
+function BusquedaTractores() {
     const entradaBusqueda = document.getElementById('buscadorTractor');
     const contenedorTractores = document.querySelector('.tractores-contenido');
 
