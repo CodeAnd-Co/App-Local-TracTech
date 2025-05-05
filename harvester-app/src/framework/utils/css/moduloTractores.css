@@ -298,7 +298,7 @@ input:focus {
 .tractores {
   background: #bcbcbc;
   border-radius: 8px;
-  padding: 28px 14px 28px 14px;
+  padding: 20px 14px 20px 14px;
   display: flex;
   flex-direction: column;
   gap: 12px;

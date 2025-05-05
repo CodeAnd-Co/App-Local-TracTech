@@ -23,15 +23,28 @@ function inicializarModuloTractores() {
         console.warn('No hay datos disponibles para análisis');
     }
 
-    const distribuidoresContenedor = document.querySelector('.distribuidor');
-    distribuidoresContenedor.innerHTML = ''; // Limpiar contenido anterior
-    distribuidoresContenedor.style.visibility = 'hidden'; 
+    const distribuidorContenedor = document.querySelector('.distribuidor');
+    const distribuidoresContenedor = document.querySelector('.distribuidores-contenido');
+    distribuidorContenedor.innerHTML = '';
+    distribuidorContenedor.style.visibility = 'hidden';
+    if (!distribuidores || distribuidores.length === 0) {
+        const mensaje = document.createElement('div');
+        mensaje.className = 'rancho';
+        mensaje.textContent = 'No se encontraron distribuidores';
+        distribuidoresContenedor.appendChild(mensaje);
+    }
 
     const tractoresContenedor = document.querySelector('.tractores-contenido');
-    tractoresContenedor.innerHTML = ''; // Limpiar contenido anterior
-
-    // Iterar sobre los distribuidores (asumiendo que cada hoja es un distribuidor)
-    for (const tractorNombre in datosExcel.hojas) {
+    tractoresContenedor.innerHTML = '';
+    const tractores = Object.keys(datosExcel.hojas);
+    if (tractores.length === 0) {
+        const mensaje = document.createElement('div');
+        mensaje.className = 'rancho';
+        mensaje.textContent = 'No se encontraron tractores';
+        tractoresContenedor.appendChild(mensaje);
+    } else {
+        // Iterar sobre los distribuidores (asumiendo que cada hoja es un distribuidor)
+        tractores.forEach(tractorNombre => {
         // Crear un div para el tractor
         const tractorDiv = document.createElement('div');
         tractorDiv.className = 'rancho'; // Asignar clase para estilo
@@ -46,6 +59,7 @@ function inicializarModuloTractores() {
 
         // Añadir el div del tractor al contenedor
         tractoresContenedor.appendChild(tractorDiv);
+        })
     }
 
     BusquedaTractores();
