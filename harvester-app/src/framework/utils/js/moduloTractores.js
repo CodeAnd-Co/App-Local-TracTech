@@ -25,6 +25,7 @@ function inicializarModuloTractores() {
 
     const distribuidoresContenedor = document.querySelector('.distribuidor');
     distribuidoresContenedor.innerHTML = ''; // Limpiar contenido anterior
+    distribuidoresContenedor.style.visibility = 'hidden'; 
 
     const tractoresContenedor = document.querySelector('.tractores-contenido');
     tractoresContenedor.innerHTML = ''; // Limpiar contenido anterior
