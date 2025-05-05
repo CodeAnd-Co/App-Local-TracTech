@@ -27,12 +27,6 @@ function inicializarModuloTractores() {
     const distribuidoresContenedor = document.querySelector('.distribuidores-contenido');
     distribuidorContenedor.innerHTML = '';
     distribuidorContenedor.style.visibility = 'hidden';
-    if (!distribuidores || distribuidores.length === 0) {
-        const mensaje = document.createElement('div');
-        mensaje.className = 'rancho';
-        mensaje.textContent = 'No se encontraron distribuidores';
-        distribuidoresContenedor.appendChild(mensaje);
-    }
 
     const tractoresContenedor = document.querySelector('.tractores-contenido');
     tractoresContenedor.innerHTML = '';
