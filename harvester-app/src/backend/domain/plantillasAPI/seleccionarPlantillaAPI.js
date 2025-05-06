@@ -1,5 +1,5 @@
-async function eliminarPlantillas(idPlantilla) {
-    const respuesta = await fetch('http://localhost:3000/plantillas/eliminar', {
+async function seleccionarPlantillas(idPlantilla) {
+    const respuesta = await fetch('http://localhost:3000/plantillas/seleccionar', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -13,5 +13,5 @@ async function eliminarPlantillas(idPlantilla) {
   }
   
   module.exports = {
-    eliminarPlantillas,
+    seleccionarPlantillas,
   };
