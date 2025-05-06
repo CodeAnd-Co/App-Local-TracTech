@@ -5,152 +5,182 @@
  * Importa la función `plantillas` desde la capa de dominio para obtener las plantillas disponibles.
  * @module plantillasAPI
  */
-const { plantillas } = require("../../backend/domain/plantillasAPI/plantillasAPI.js");
-const { eliminarPlantillas } = require("../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js");
+
+const { plantillas } = require('../../backend/domain/plantillasAPI/plantillasAPI.js');
+const { eliminarPlantillas } = require('../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js');
+const { seleccionarPlantillas } = require('../../backend/domain/plantillasAPI/seleccionarPlantillaAPI.js');
 
 /**
- * Inicializa el módulo de plantillas cargando la información desde el backend
- * y configurando los eventos del DOM (modificar, eliminar, cancelar, etc.).
- * 
+ * Inicializa el módulo de plantillas, encargándose de:
+ * - Obtener las plantillas desde el backend.
+ * - Renderizar dinámicamente las tarjetas de plantilla.
+ * - Configurar los eventos para eliminar, modificar y visualizar plantillas.
+ *
  * @async
  * @function inicializarModuloPlantillas
  * @returns {Promise<void>}
  */
-
 async function inicializarModuloPlantillas () {
-    /** @type {HTMLElement|null} */
-    const cancelarDialog = document.querySelector(".cancelar");
+    /** @type {HTMLElement|null} Botón para cancelar el diálogo de eliminación */
+    const cancelarDialog = document.querySelector('.cancelar');
     
-    cancelarDialog?.addEventListener("click", () => {
-        const modalBorrar = document.querySelector(".modal-borrar");
+    cancelarDialog?.addEventListener('click', () => {
+        const modalBorrar = document.querySelector('.modal-borrar');
         modalBorrar?.close();
     });
 
-    /** @type {HTMLElement|null} */
-    const eliminarDialog = document.querySelector(".eliminar");
+    /** @type {HTMLElement|null} Botón para confirmar la eliminación de plantilla */
+    const eliminarDialog = document.querySelector('.eliminar');
 
-    eliminarDialog?.addEventListener("click", async () => {
-        const modalBorrar = document.querySelector(".modal-borrar");
+    eliminarDialog?.addEventListener('click', async () => {
+        const modalBorrar = document.querySelector('.modal-borrar');
 
-        if(modalBorrar?.getAttribute("dato-id")) {
-            // RF: Eliminar Plantilla
+        if(modalBorrar?.getAttribute('dato-id')) {
             try {
-                const idPlantilla = modalBorrar.getAttribute('dato-id')
+                /** @type {string|null} ID de la plantilla a eliminar */
+                const idPlantilla = modalBorrar.getAttribute('dato-id');
                 
                 const respuesta = await eliminarPlantillas(idPlantilla);
 
                 if (respuesta.ok){
-
-                    // Eliminar del DOM la tarjeta que contiene esa plantilla
-                    const plantillaHTML = document.querySelector(`.dropdown[dato-id="${idPlantilla}"]`)?.closest(".plantilla");
+                    // Eliminar del DOM la tarjeta correspondiente
+                    const plantillaHTML = document.querySelector(`#menuOpciones[dato-id='${idPlantilla}']`)?.closest('.plantilla');
                     if (plantillaHTML) {
                         plantillaHTML.remove();
                         modalBorrar?.close();
                     }
-                } else {
-                    alert("No se pudo eliminar la Plantilla Respuesta err");
-                }
-                
-                
-            } catch (error) {
-                alert("No se pudo eliminar la Plantilla Catch");
-            }
 
+                    // Verificar si ya no quedan plantillas visibles
+                    const todasPlantillas = document.querySelectorAll('.plantilla');
+                    if(todasPlantillas.length <= 0){
+                        /** @type {HTMLElement|null} Contenedor de plantillas */
+                        const contenedor = document.getElementById('contenedorId');
+                        const tarjetaTexto = document.createElement('div');
+                        tarjetaTexto.innerHTML = `<div class='error-sin-plantillas'>No se Encontraron Plantillas</div>`;
+                        contenedor?.appendChild(tarjetaTexto);
+                    }
+                } else {
+                    alert('No se pudo eliminar la Plantilla Respuesta err');
+                }
+            } catch (error) {
+                alert('No se pudo eliminar la Plantilla Catch');
+            }
         } else {
-            alert("La Plantilla no se pudo eliminar: No contiene ID");
+            alert('La Plantilla no se pudo eliminar: No contiene ID');
         }
     });
 
     try {
-        /** @type {HTMLElement|null} */
-        const contenedor = document.getElementById("contenedorId");
+        /** @type {HTMLElement|null} Contenedor de plantillas */
+        const contenedor = document.getElementById('contenedorId');
 
-        /** @type {Object} */
+        /** @type {Object} Respuesta del backend con las plantillas */
         const respuesta = await plantillas();
 
-        for (const res in respuesta.plantillas) {
-            const tarjetaTexto = document.createElement('div');
-            tarjetaTexto.classList.add('plantilla');
+        if(respuesta?.plantillas){
+            for (const res in respuesta.plantillas) {
+                const tarjetaTexto = document.createElement('div');
+                tarjetaTexto.classList.add('plantilla');
 
-            tarjetaTexto.innerHTML = `
-                <div class="dropdown" dato-id="${respuesta.plantillas[res].idPlantillaReporte}">
-                    <button class="boton-opciones">
-                        <img class="icono-opciones" src="../utils/iconos/TresPuntos.svg" />
-                    </button>
-                    <div class="dropdown-content">
-                        <button class="frame-btn-Editar" id="botonModificar">
-                            <div class="boton-modificar">
-                                <img class="edit-2" src="../utils/iconos/Editar.svg" />
-                                <div class="modificar">Modificar</div>
-                            </div>
+                tarjetaTexto.innerHTML = `
+                    <div class='menu-opciones' dato-id='${respuesta.plantillas[res].idPlantillaReporte}' id='menuOpciones'>
+                        <div class='nombre-de-plantilla'>${respuesta.plantillas[res].Nombre}</div>
+                        <button id='botonExpandir'>
+                            <img class='maximize-2' src='../utils/iconos/Maximize.svg' />
                         </button>
-                        <button class="frame-btn-Editar" id="botonEliminar">
-                            <div class="boton-modificar">
-                                <img class="edit-2" src="../utils/iconos/Basura.svg" />
-                                <div class="modificar">Eliminar</div>
-                            </div>
+                        <button id='botonModificar'>
+                            <img class='edit-2' src='../utils/iconos/Editar2.svg' />
+                        </button>
+                        <button id='botonEliminar'>
+                            <img class='trash' src='../utils/iconos/BasuraRojo.svg' />
                         </button>
                     </div>
-                </div>
-                <scroll-container>
-                    ${respuesta.plantillas[res].Datos}
-                </scroll-container>
-                <div class="nombre-plantilla">
-                    <div class="nombre-de-plantilla">${respuesta.plantillas[res].Nombre}</div>
-                </div>
-            `;
+                    <img src='../utils/iconos/divisorPlantilla.svg' class='divisorPlantilla'/>
+                    <scroll-container>
+                        ${respuesta.plantillas[res].Datos}
+                    </scroll-container>
+                `;
 
+                contenedor?.appendChild(tarjetaTexto);
+            }
+
+            /** @type {NodeListOf<HTMLButtonElement>} Botones para expandir plantilla */
+            const botonesExpandirCoinciden = document.querySelectorAll('#botonExpandir');
+
+            botonesExpandirCoinciden.forEach(boton => {
+                boton.addEventListener('click', async () => {
+                    const menuOpciones = boton.closest('#menuOpciones');
+                    const modalVizualizador = document.getElementById('modalVizualizador');
+
+                    modalVizualizador.showModal();
+
+                    try {
+                        const respuesta = await seleccionarPlantillas(menuOpciones.getAttribute('dato-id'));
+                        if(respuesta.ok){
+                            /** @type {HTMLElement|null} */
+                            const tituloMaximisado = document.getElementById('Titulo-Maximisado');
+                            tituloMaximisado.innerText = respuesta.plantilla.Nombre;
+
+                            /** @type {HTMLElement|null} */
+                            const scroll = document.getElementById('Scroll');
+                            scroll.innerHTML  = respuesta.plantilla.Datos;
+
+                            /** @type {HTMLElement|null} Botón para eliminar desde visualizador */
+                            const boton_editar_Visualizador = document.getElementById('boton_eliminar_Visualizador');
+                            boton_editar_Visualizador.addEventListener('click', async () => {
+                                const modalBorrar = document.querySelector('.modal-borrar');
+                                if (modalBorrar && menuOpciones) {
+                                    modalBorrar.showModal();
+                                    modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        alert(`No se pudo conectar con el servidor, error: ${error}`);
+                    }
+                });
+            });
+
+            /** @type {NodeListOf<HTMLButtonElement>} Botones para modificar plantilla */
+            const botonesModificarCoinciden = document.querySelectorAll('#botonModificar');
+
+            botonesModificarCoinciden.forEach(boton => {
+                boton.addEventListener('click', () => {
+                    const menuOpciones = boton.closest('#menuOpciones');
+                    alert(menuOpciones.getAttribute('dato-id'));
+                });
+            });
+
+            /** @type {NodeListOf<HTMLButtonElement>} Botones para eliminar plantilla */
+            const botonesEliminarCoinciden = document.querySelectorAll('#botonEliminar');
+
+            botonesEliminarCoinciden.forEach(boton => {
+                boton.addEventListener('click', async () => {
+                    const menuOpciones = boton.closest('#menuOpciones');
+                    const modalBorrar = document.querySelector('.modal-borrar');
+
+                    if (modalBorrar && menuOpciones) {
+                        modalBorrar.showModal();
+                        modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+                    }
+                });
+            });
+
+        } else {
+            const tarjetaTexto = document.createElement('div');
+            tarjetaTexto.innerHTML = `<div class='error-sin-plantillas'>No se Encontraron Plantillas</div>`;
             contenedor?.appendChild(tarjetaTexto);
         }
-
-        /** @type {NodeListOf<HTMLButtonElement>} */
-        const botonesOpcionesCoinciden = document.querySelectorAll('.boton-opciones');
-
-        // Activa todos los dropdowns
-        botonesOpcionesCoinciden.forEach(boton => {
-            boton.addEventListener("click", () => {
-                const dropdown = boton.closest('.dropdown');
-                const yaActivo = dropdown?.classList.contains('active');
-
-                document.querySelectorAll('.dropdown.active').forEach(drop => {
-                    drop.classList.remove('active');
-                });
-
-                if (!yaActivo && dropdown) {
-                    dropdown.classList.add('active');
-                }
-            });
-        });
-
-        /** @type {NodeListOf<HTMLButtonElement>} */
-        const botonesModificarCoinciden = document.querySelectorAll('#botonModificar');
-
-        botonesModificarCoinciden.forEach(boton => {
-            boton.addEventListener("click", () => {
-                const dropdown = boton.closest('.dropdown');
-            });
-        });
-
-        /** @type {NodeListOf<HTMLButtonElement>} */
-        const botonesEliminarCoinciden = document.querySelectorAll('#botonEliminar');
-
-        botonesEliminarCoinciden.forEach(boton => {
-            boton.addEventListener("click", async () => {
-                const dropdown = boton.closest('.dropdown');
-                const modalBorrar = document.querySelector('.modal-borrar');
-
-                if (modalBorrar && dropdown) {
-                    modalBorrar.showModal();
-                    modalBorrar.setAttribute('dato-id', dropdown.getAttribute('dato-id'));
-                }
-            });
-        });
-
     } catch (error) {
-        console.error("Error al conectar con el backend:", error);
-        alert("No se pudo conectar con el servidor.");
+        alert('No se pudo conectar con el servidor.');
     }
 }
 
-// Asignación al objeto global para poder ejecutarlo desde otros scripts o el HTML
+/**
+ * Expone la función `inicializarModuloPlantillas` al contexto global `window`
+ * para que pueda ser invocada desde el HTML u otros scripts.
+ * 
+ * @global
+ * @function
+ */
 window.inicializarModuloPlantillas = inicializarModuloPlantillas;
