@@ -1,5 +1,5 @@
 // RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
-// RF3 Ususario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
+// RF3 Usuario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
 
 /**
  * Realiza la solicitud para iniciar sesión en el servidor.
@@ -9,10 +9,10 @@
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
 async function iniciarSesion(correo, contrasena) {
-  const respuesta = await fetch("http://localhost:3000/sesion/iniciar-sesion", {
-    method: "POST", // Método HTTP POST para enviar las credenciales
+  const respuesta = await fetch('http://localhost:3000/sesion/iniciar-sesion', {
+    method: 'POST', // Método HTTP POST para enviar las credenciales
     headers: {
-      "Content-Type": "application/json", // Especificar el tipo de contenido
+      'Content-Type': 'application/json', // Especificar el tipo de contenido
     },
     body: JSON.stringify({ correo, contrasena }), // Convertir los datos a JSON
   });
@@ -31,10 +31,10 @@ async function iniciarSesion(correo, contrasena) {
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
 async function cerrarSesion(token) {
-  const respuesta = await fetch("http://localhost:3000/sesion/cerrar-sesion", {
-    method: "POST", // Método HTTP POST para cerrar sesión
+  const respuesta = await fetch('http://localhost:3000/sesion/cerrar-sesion', {
+    method: 'POST', // Método HTTP POST para cerrar sesión
     headers: {
-      "Content-Type": "application/json", // Especificar el tipo de contenido
+      'Content-Type': 'application/json', // Especificar el tipo de contenido
       Authorization: `Bearer ${token}`, // Incluir el token en el encabezado Authorization  
     },
   });

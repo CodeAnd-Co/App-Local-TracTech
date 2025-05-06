@@ -9,8 +9,8 @@
  */
 function inicializarModuloTractores() {
     // Actualizar topbar directamente
-    if (window.actualizarTopbar) {
-        window.actualizarTopbar('tractores');
+    if (window.actualizarBarraSuperior) {
+        window.actualizarBarraSuperior('tractores');
     }
     console.log('Cargando el módulo de Tractores...');
 
