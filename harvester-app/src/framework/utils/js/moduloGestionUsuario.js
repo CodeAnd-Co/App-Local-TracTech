@@ -28,8 +28,8 @@ async function inicializarModuloGestionUsuarios() {
         cargarPagina(1);
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
-        document.getElementById('lista-usuarios').innerHTML = 
-            '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
+        document.getElementById('lista-usuarios').innerHTML
+        = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
 
     const botonAgregar = document.querySelector('.primario');
@@ -134,8 +134,8 @@ function cargarPagina(pagina) {
             };
             paginacion.appendChild(botonPagina);
         } else if (
-            (numeroPagina === paginaActual - 2 && numeroPagina > 1) ||
-            (numeroPagina === paginaActual + 2 && numeroPagina < paginasTotales)
+            (numeroPagina === paginaActual - 2 && numeroPagina > 1)
+            || (numeroPagina === paginaActual + 2 && numeroPagina < paginasTotales)
         ) {
             // Evitamos duplicar los puntos
             const puntos = document.createElement('span');
