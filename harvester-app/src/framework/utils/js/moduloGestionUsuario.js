@@ -2,6 +2,7 @@
 
 const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
 const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
+const Swal2 = require('sweetalert2');
 
 const usuariosPorPagina = 6;
 let paginaActual = 1;
@@ -51,25 +52,25 @@ async function inicializarModuloGestionUsuarios() {
  * @returns {Promise<void>}
  */
 async function eliminarUsuario(id) {
-    console.log('FUNCION:', id);
     try {
         const respuesta = await eliminarUsuarioCU(id);
 
         if (!respuesta.ok) {
-            return Swal.fire({
+            return Swal2.fire({
                 title: 'Error',
                 text: 'Error al eliminar el usuario.',
                 icon: 'error'
             });
         }
         
-        return Swal.fire({
+        return Swal2.fire({
             title: 'Eliminación exitosa',
             text: 'El usuario ha sido eliminado.',
             icon: 'success'
         });
     } catch (error) {
-        return Swal.fire({
+        console.error('Error al eliminar el usuario:', error);
+        return Swal2.fire({
                 title: 'Error de conexión',
                 text: 'Verifica tu conexión e inténtalo de nuevo.',
                 icon: 'error'
@@ -196,7 +197,7 @@ function mostrarUsuarios(usuarios) {
         boton.addEventListener('click', async evento => {
             evento.preventDefault();
             const id = boton.getAttribute('data-id');
-            Swal.fire({
+            Swal2.fire({
                 title: '¿Eliminar usuario?',
                 text: 'Esta acción no se puede deshacer.',
                 icon: 'warning',
