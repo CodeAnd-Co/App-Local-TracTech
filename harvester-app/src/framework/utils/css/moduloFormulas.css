@@ -1,38 +1,71 @@
-.lista,
-.lista * {
+.bloqueFormula { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #f9f9f9; }
+        label, select, input { display: block; margin-top: 10px; }
+        .argumentosContenedor { margin-left: 20px; }
+        .argumento { margin-top: 5px; border: 1px dashed #ddd; padding: 10px; margin-bottom: 10px; }
+        .argumentoEncabezado { display: flex; justify-content: space-between; align-items: center; }
+        .argumentoContenido { margin-left: 10px; display: flex; flex-wrap: wrap; align-items: center; }
+        .argumentoContenido > * { margin-right: 5px; margin-bottom: 5px; }
+        button { margin-top: 10px; margin-right: 5px; }
+        .botonEliminar { background-color: #f44336; color: white; border: none; padding: 5px 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 12px; border-radius: 3px; cursor: pointer; }
+        .resultado { margin-top: 20px; padding: 10px; background: #f2f2f2; border-radius: 5px; white-space: pre-wrap; }
+        .selectorFuncionAnidada { margin-top: 5px; }
+
+
+.contenido-vista,
+.contenido-vista * {
   box-sizing: border-box;
 }
+.contenido-vista {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+}
 .lista {
-  background: #ffffff;
+  background: var(--box-light, #ffffff);
   border-radius: 8px;
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   align-self: stretch;
   flex: 1;
   position: relative;
 }
-.barra-busqueda {
-  background: #e8e8e8;
-  border-radius: 8px;
-  border-style: solid;
-  border-color: rgba(0, 0, 0, 0.2);
-  border-width: 2px;
-  padding: 17px 10px 17px 10px;
+.buscar-y-agregar {
+  padding: 10px 31px 10px 31px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 10px;
   align-items: flex-start;
   justify-content: flex-start;
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+  overflow: hidden;
+}
+.barra-busqueda {
+  background: var(--box-textoporllenar, #e8e8e8);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: var(--bordenegro, rgba(0, 0, 0, 0.2));
+  border-width: 2px;
+  padding: 17px 10px 17px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  position: relative;
 }
 .nombre-de-la-f-rmula {
-  color: rgba(0, 0, 0, 0.33);
+  color: var(--texto-porllenar, #9c9c9c);
   text-align: left;
   font-family: "SegoeUi-Regular", sans-serif;
   font-size: 18px;
@@ -41,51 +74,80 @@
   position: relative;
   width: 176px;
 }
-.tabla-columnas {
+.primario {
+  background: #a61930;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.2);
+  border-width: 2px;
+  padding: 0px 7px 0px 7px;
   display: flex;
-  flex-direction: row;
-  gap: 125px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
   justify-content: center;
-  align-self: stretch;
   flex-shrink: 0;
+  height: 55px;
   position: relative;
+  transform-origin: 0 0;
+  transform: rotate(0deg) scale(1, 1);
 }
-.nombre {
-  color: #000000;
-  text-align: center;
-  font-family: "Inter-Regular", sans-serif;
-  font-size: 32px;
-  line-height: 112%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
+.mas {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.par-metros {
-  color: #000000;
-  text-align: center;
-  font-family: "Inter-Regular", sans-serif;
-  font-size: 32px;
-  line-height: 112%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: visible;
 }
 .frame-listado-formulas {
+  padding: 25px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   align-items: center;
   justify-content: flex-start;
+  align-self: stretch;
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
+}
+.tabla-columnas {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.nombre {
+  color: var(--texto-light, #000000);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 32px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.par-metros {
+  color: var(--texto-light, #000000);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 32px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .frame-f-rmulas {
   display: flex;
@@ -93,14 +155,15 @@
   gap: 10px;
   align-items: center;
   justify-content: flex-start;
+  align-self: stretch;
   flex-shrink: 0;
   position: relative;
 }
 .nombre-usuario {
-  background: #ffffff;
+  background: var(--background-light, #dbdce0);
   border-radius: 6.44px;
   border-style: solid;
-  border-color: #000000;
+  border-color: var(--texto-light, #000000);
   border-width: 1.61px;
   padding: 25px;
   display: flex;
@@ -108,13 +171,12 @@
   gap: 10px;
   align-items: flex-start;
   justify-content: center;
-  flex-shrink: 0;
-  width: 438px;
+  flex: 1;
   position: relative;
   overflow: hidden;
 }
 .texto-usuario {
-  color: #000000;
+  color: var(--texto-light, #000000);
   text-align: center;
   font-family: "SegoeUi-Regular", sans-serif;
   font-size: 18px;
@@ -126,28 +188,11 @@
   align-items: center;
   justify-content: center;
 }
-.nombre-usuario2 {
-  background: #ffffff;
-  border-radius: 6.44px;
-  border-style: solid;
-  border-color: #000000;
-  border-width: 1.61px;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 300px;
-  position: relative;
-  overflow: hidden;
-}
 .editar {
-  background: #ffffff;
+  background: var(--blanco, #ffffff);
   border-radius: 8px;
   border-style: solid;
-  border-color: #000000;
+  border-color: var(--negro, #000000);
   border-width: 2px;
   padding: 10px;
   display: flex;
@@ -169,10 +214,10 @@
   overflow: visible;
 }
 .eliminar {
-  background: #a61930;
+  background: var(--primario, #a61930);
   border-radius: 8px;
   border-style: solid;
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--bordeblanco, rgba(255, 255, 255, 0.2));
   border-width: 2px;
   display: flex;
   flex-direction: row;
