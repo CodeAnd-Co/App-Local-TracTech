@@ -1,5 +1,8 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
-const { guardarFormula: guardarFormulaAPI} = require("../../domain/formulasAPI/formulasApi");
+// RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
+// RF72 Usuario selecciona parámetros de fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF72
+
+const { guardarFormula: guardarFormulaAPI} = require("../../domain/formulasAPI/formulaApi");
 
 /**
  * Guarda una fórmula a través de la API y retorna la respuesta obtenida.
