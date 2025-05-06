@@ -1,4 +1,5 @@
-// RF3 Ususario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
+// RF3 Usuario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
+// RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
 
 const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
 const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
@@ -45,11 +46,8 @@ function inicializarModuloUsuario() {
         const respuesta = await cerrarSesion();
     
         if (respuesta.ok) {
-            // Eliminar el token de localStorage al cerrar sesión exitosamente
-            localStorage.removeItem("token");
-    
-            // Redirigir al usuario a la página de inicio de sesión
-            window.location.href = "./inicioSesion.html";
+          localStorage.removeItem('token');
+          window.location.href = './inicioSesion.html';
         } else {
             alert(respuesta.mensaje || 'Error al cerrar sesión.');
         }

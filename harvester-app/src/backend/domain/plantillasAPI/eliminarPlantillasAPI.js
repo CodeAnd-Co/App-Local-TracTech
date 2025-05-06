@@ -1,8 +1,8 @@
 async function eliminarPlantillas(idPlantilla) {
-    const respuesta = await fetch("http://localhost:3000/plantillas/eliminar", {
-      method: "POST",
+    const respuesta = await fetch('http://localhost:3000/plantillas/eliminar', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({idPlantilla})
     });
