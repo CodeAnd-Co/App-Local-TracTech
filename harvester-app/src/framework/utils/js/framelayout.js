@@ -1,19 +1,30 @@
-function incluirHTML(id, url, llamada) {
+/**
+ * Inserta un fragmento HTML en un contenedor dado por ID.
+ *
+ * @param {string} idContenedor - ID del elemento donde se insertará el HTML.
+ * @param {string} url - Ruta del archivo HTML a cargar.
+ * @param {Function} [llamada] - Función a ejecutar tras la inserción del HTML.
+ */
+function incluirHTML(idContenedor, url, llamada) {
   fetch(url)
     .then(res => res.text())
     .then(html => {
-      document.getElementById(id).innerHTML = html;
-      if (llamada) llamada(); // Ejecuta la función si la mandas
+      document.getElementById(idContenedor).innerHTML = html;
+      if (llamada) llamada();
     })
-    .catch(err => {
-      console.warn(`Error al cargar ${url}: `, err);
+    .catch(error => {
+      console.warn(`Error al cargar ${url}: `, error);
     });
 }
 
-// Llamadas para insertar los componentes
-window.addEventListener("DOMContentLoaded", () => {
-  incluirHTML("sidebar-wrapper-container", "../vistas/sidebar.html", () => {
-    inicializarSidebar(); // Ejecuta el script una vez insertado el sidebar
-  });
-  incluirHTML("topbar-container", "../vistas/topBar.html");
+// Inserción de componentes una vez cargado el DOM
+window.addEventListener('DOMContentLoaded', () => {
+  incluirHTML(
+    'contenedorBarraLateral',
+    '../vistas/sideBar.html',
+    () => {
+      inicializarBarraLateral();
+    }
+  );
+  incluirHTML('contenedorBarraSuperior', '../vistas/topBar.html');
 });
