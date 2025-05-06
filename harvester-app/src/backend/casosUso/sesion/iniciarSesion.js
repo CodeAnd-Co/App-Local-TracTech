@@ -10,7 +10,7 @@ const { iniciarSesion: iniciarSesionAPI } = require('../../domain/sesionAPI/sesi
  * @returns {boolean} `true` si el correo es válido, de lo contrario `false`.
  */
 function validarCorreo(correo) {
-  const regex = /^[a-z0-9!#$%&'*+\=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+  const regex = /^[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
   return regex.test(correo);
 }
 

@@ -8,6 +8,7 @@ const entradaCorreo = document.querySelector('.correo[type="email"]');
 const entradaContrasenia = document.querySelector('.contrasena');
 const { verificarPermisos } = require('../../backend/servicios/verificarPermisos');
 const { iniciarSesion } = require('../../backend/casosUso/sesion/iniciarSesion');
+const Swal = require('sweetalert2');
 
 /**
  * Maneja el evento de clic en el botón de acceso para iniciar sesión.
@@ -19,7 +20,11 @@ async function manejarInicioSesion() {
 
   // Validar que ambos campos estén completos
   if (!correo || !contrasenia) {
-    alert('Por favor, completa todos los campos.');
+    Swal.fire({
+      title: 'Campos faltantes',
+      text: 'Por favor, completa todos los campos.',
+      icon: 'warning'
+    });
     return;
   }
 
@@ -40,19 +45,27 @@ async function manejarInicioSesion() {
 
     } else {
       // Mostrar mensaje de error si las credenciales no son válidas
-      alert(respuesta.mensaje);
+      Swal.fire({
+        title: 'Verifica tus datos',
+        text: respuesta.mensaje,
+        icon: 'warning'
+      });
     }
   } catch (error) {
     console.error('Error al conectar con el backend:', error);
     // Mostrar alerta si ocurre un error de conexión
-    alert('No se pudo conectar con el servidor.');
+    Swal.fire({
+      title: 'Error de conexión',
+      text: 'Verifica tu conexión e inténtalo de nuevo.',
+      icon: 'error'
+    });
   }
 }
 
-// Agregar evento al botón "Acceder"
+// Agregar evento al botón 'Acceder'
 botonAcceder.addEventListener('click', manejarInicioSesion);
 
-// Agregar evento para detectar la tecla "Enter" en los campos de entrada
+// Agregar evento para detectar la tecla 'Enter' en los campos de entrada
 [entradaCorreo, entradaContrasenia].forEach(entrada => {
   entrada.addEventListener('keydown', (evento) => {
     if (evento.key === 'Enter') {
