@@ -127,6 +127,15 @@ async function inicializarModuloPlantillas () {
                             const scroll = document.getElementById("Scroll")
                             scroll.innerHTML  = respuesta.plantilla.Datos;
                             
+                            const boton_editar_Visualizador = document.getElementById("boton_eliminar_Visualizador");
+                            boton_editar_Visualizador.addEventListener('click', async () => {
+                                const modalBorrar = document.querySelector('.modal-borrar');
+                
+                                if (modalBorrar && menuOpciones) {
+                                    modalBorrar.showModal();
+                                    modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+                                }
+                            })
                         }
                     } catch (error) {
                         alert(`No se pudo conectar con el servidor, error: ${error}`);
