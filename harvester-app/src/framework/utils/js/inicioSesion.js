@@ -21,9 +21,9 @@ async function manejarInicioSesion() {
   // Validar que ambos campos estén completos
   if (!correo || !contrasenia) {
     Swal.fire({
-      title: "Campos faltantes",
-      text: "Por favor, completa todos los campos.",
-      icon: "warning"
+      title: 'Campos faltantes',
+      text: 'Por favor, completa todos los campos.',
+      icon: 'warning'
     });
     return;
   }
@@ -46,26 +46,26 @@ async function manejarInicioSesion() {
     } else {
       // Mostrar mensaje de error si las credenciales no son válidas
       Swal.fire({
-        title: "Verifica tus datos",
+        title: 'Verifica tus datos',
         text: respuesta.mensaje,
-        icon: "warning"
+        icon: 'warning'
       });
     }
   } catch (error) {
     console.error('Error al conectar con el backend:', error);
     // Mostrar alerta si ocurre un error de conexión
     Swal.fire({
-      title: "Error de conexión",
-      text: "Verifica tu conexión e inténtalo de nuevo.",
-      icon: "error"
+      title: 'Error de conexión',
+      text: 'Verifica tu conexión e inténtalo de nuevo.',
+      icon: 'error'
     });
   }
 }
 
-// Agregar evento al botón "Acceder"
+// Agregar evento al botón 'Acceder'
 botonAcceder.addEventListener('click', manejarInicioSesion);
 
-// Agregar evento para detectar la tecla "Enter" en los campos de entrada
+// Agregar evento para detectar la tecla 'Enter' en los campos de entrada
 [entradaCorreo, entradaContrasenia].forEach(entrada => {
   entrada.addEventListener('keydown', (evento) => {
     if (evento.key === 'Enter') {
