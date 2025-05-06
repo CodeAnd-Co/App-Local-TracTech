@@ -3,6 +3,8 @@
 const usuariosPorPagina = 6;
 let paginaActual = 1;
 let listaUsuarios = [];
+let usuariosFiltrados = [];
+let terminoBusqueda = '';
 
 /**
  * Inicializa el módulo de gestión de usuarios.
@@ -22,22 +24,52 @@ async function inicializarModuloGestionUsuarios() {
         const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
+        usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
+        document.getElementById('lista-usuarios').innerHTML
+        = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
 
-    const btnAgregar = document.querySelector('.primario');
-    btnAgregar.addEventListener('click', ev => {
-        ev.preventDefault();
+    const botonAgregar = document.querySelector('.primario');
+    botonAgregar.addEventListener('click', evento => {
+        evento.preventDefault();
         columnaCrear.style.display = 'block';
     });
 
-    const btnCancelar = document.querySelector('.btn-cancelar');
-    btnCancelar.addEventListener('click', ev => {
-        ev.preventDefault();
+    const botonCancelar = document.querySelector('.btn-cancelar');
+    botonCancelar.addEventListener('click', evento => {
+        evento.preventDefault();
         columnaCrear.style.display = 'none';
     });
+
+    // Configurar el campo de búsqueda
+    const inputBusqueda = document.getElementById('buscar-usuario');
+    inputBusqueda.addEventListener('input', evento => {
+        terminoBusqueda = evento.target.value.toLowerCase().trim();
+        filtrarUsuarios();
+    });
+
+    // Agregar también un listener para cuando se presiona Enter
+    inputBusqueda.addEventListener('keypress', evento => {
+        if (evento.key === 'Enter') {
+            evento.preventDefault(); // Evitar que se envíe un formulario si está dentro de uno
+            terminoBusqueda = inputBusqueda.value.toLowerCase().trim();
+            filtrarUsuarios();
+        }
+    });
+}
+function filtrarUsuarios() {
+    if (terminoBusqueda === '') {
+        usuariosFiltrados = [...listaUsuarios];
+    } else {
+        usuariosFiltrados = listaUsuarios.filter(usuario => 
+            usuario.nombre.toLowerCase().includes(terminoBusqueda) 
+            || (usuario.correo && usuario.correo.toLowerCase().includes(terminoBusqueda)));
+    }
+    paginaActual = 1; // Reiniciar la página actual al filtrar
+    cargarPagina(1); // Volver a la primera página con resultados filtrados
 }
 
 /**
@@ -50,22 +82,34 @@ async function inicializarModuloGestionUsuarios() {
  */
 function cargarPagina(pagina) {
     paginaActual = pagina;
-    const paginasTotales = Math.ceil(listaUsuarios.length / usuariosPorPagina);
+    const paginasTotales = Math.ceil(usuariosFiltrados.length / usuariosPorPagina);
 
     const inicio = (pagina - 1) * usuariosPorPagina;
     const fin = inicio + usuariosPorPagina;
-    const usuariosPagina = listaUsuarios.slice(inicio, fin);
+    const usuariosPagina = usuariosFiltrados.slice(inicio, fin);
 
     mostrarUsuarios(usuariosPagina);
 
     const paginacion = document.querySelector('.paginacion');
     paginacion.innerHTML = '';
 
+    if (usuariosFiltrados.length === 0) {
+        const listaUsuariosElemento = document.getElementById('lista-usuarios');
+        listaUsuariosElemento.innerHTML = '<div class="sin-resultados">No hay usuarios que coincidan con la búsqueda.</div>';
+        return;
+    }
+
+    // Solo mostrar paginación si hay más de una página
+    if (paginasTotales <= 1) {
+        return;
+    }
+
     const previo = document.createElement('button');
     previo.textContent = '<';
     previo.classList.add('boton-pagina-previa');
-    previo.onclick = ev => {
-        ev.preventDefault();
+    previo.disabled = paginaActual === 1;
+    previo.onclick = evento => {
+        evento.preventDefault();
         if (paginaActual > 1) {
             cargarPagina(paginaActual - 1);
         }
@@ -84,15 +128,16 @@ function cargarPagina(pagina) {
             if (numeroPagina === paginaActual) {
                 botonPagina.classList.add('pagina-actual');
             }
-            botonPagina.onclick = ev => {
-                ev.preventDefault();
+            botonPagina.onclick = evento => {
+                evento.preventDefault();
                 cargarPagina(numeroPagina);
             };
             paginacion.appendChild(botonPagina);
         } else if (
-            numeroPagina === paginaActual - 2
-            || numeroPagina === paginaActual + 2
+            (numeroPagina === paginaActual - 2 && numeroPagina > 1)
+            || (numeroPagina === paginaActual + 2 && numeroPagina < paginasTotales)
         ) {
+            // Evitamos duplicar los puntos
             const puntos = document.createElement('span');
             puntos.textContent = '...';
             puntos.classList.add('puntos-paginacion');
@@ -103,8 +148,9 @@ function cargarPagina(pagina) {
     const siguiente = document.createElement('button');
     siguiente.textContent = '>';
     siguiente.classList.add('boton-pagina-siguiente');
-    siguiente.onclick = ev => {
-        ev.preventDefault();
+    siguiente.disabled = paginaActual === paginasTotales;
+    siguiente.onclick = evento => {
+        evento.preventDefault();
         if (paginaActual < paginasTotales) {
             cargarPagina(paginaActual + 1);
         }
