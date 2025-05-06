@@ -1,11 +1,11 @@
 // RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
 
 // Seleccionar elementos del DOM necesarios
-const btnAbrirInfo = document.querySelector('#btn-abrir-info');
+const botonAbrirInfo = document.querySelector('#btn-abrir-info');
 const modalInfo = document.querySelector('#modalContacto');
-const btnAcceder = document.querySelector('.boton-acceder');
+const botonAcceder = document.querySelector('.boton-acceder');
 const entradaCorreo = document.querySelector('.correo[type="email"]');
-const entradaContrasena = document.querySelector('.contrasena');
+const entradaContrasenia = document.querySelector('.contrasena');
 const { verificarPermisos } = require('../../backend/servicios/verificarPermisos');
 const { iniciarSesion } = require('../../backend/casosUso/sesion/iniciarSesion');
 
@@ -15,17 +15,17 @@ const { iniciarSesion } = require('../../backend/casosUso/sesion/iniciarSesion')
 async function manejarInicioSesion() {
   // Obtener valores de los campos de entrada
   const correo = entradaCorreo.value;
-  const contrasena = entradaContrasena.value;
+  const contrasenia = entradaContrasenia.value;
 
   // Validar que ambos campos estén completos
-  if (!correo || !contrasena) {
+  if (!correo || !contrasenia) {
     alert('Por favor, completa todos los campos.');
     return;
   }
 
   try {
     // Intentar iniciar sesión llamando a la función iniciarSesion
-    const respuesta = await iniciarSesion(correo, contrasena);
+    const respuesta = await iniciarSesion(correo, contrasenia);
 
     if (respuesta.ok) {
       // Guardar el token en localStorage
@@ -50,10 +50,10 @@ async function manejarInicioSesion() {
 }
 
 // Agregar evento al botón "Acceder"
-btnAcceder.addEventListener('click', manejarInicioSesion);
+botonAcceder.addEventListener('click', manejarInicioSesion);
 
 // Agregar evento para detectar la tecla "Enter" en los campos de entrada
-[entradaCorreo, entradaContrasena].forEach(entrada => {
+[entradaCorreo, entradaContrasenia].forEach(entrada => {
   entrada.addEventListener('keydown', (evento) => {
     if (evento.key === 'Enter') {
       manejarInicioSesion();
@@ -64,7 +64,7 @@ btnAcceder.addEventListener('click', manejarInicioSesion);
 /**
  * Muestra el modal de información al hacer clic en el botón correspondiente.
  */
-btnAbrirInfo.addEventListener('click', () => {
+botonAbrirInfo.addEventListener('click', () => {
   modalInfo.showModal();
 });
 
@@ -74,11 +74,11 @@ btnAbrirInfo.addEventListener('click', () => {
  * @param {Event} evento - Evento de clic.
  */
 function onClick(evento) {
-  if (evento.target === dialog) {
-    dialog.close();
+  if (evento.target === dialogo) {
+    dialogo.close();
   }
 }
 
 // Seleccionar el elemento dialog y agregar evento de cierre al hacer clic fuera
-const dialog = document.querySelector('dialog');
-dialog.addEventListener('click', onClick);
+const dialogo = document.querySelector('dialog');
+dialogo.addEventListener('click', onClick);
