@@ -19,7 +19,7 @@
 }
 
 
-/* === Toolbar de búsqueda + botón "Agregar" === */
+/* === Toolbar de búsqueda + botón 'Agregar' === */
 .busqueda-y-agregar-usuario {
   display: flex;
   gap: 1rem;
