@@ -1,5 +1,8 @@
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
 
+const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
+const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
+
 const usuariosPorPagina = 6;
 let paginaActual = 1;
 let listaUsuarios = [];
@@ -19,7 +22,6 @@ async function inicializarModuloGestionUsuarios() {
     columnaCrear.style.display = 'none';
 
     try {
-        const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
         cargarPagina(1);
@@ -38,6 +40,41 @@ async function inicializarModuloGestionUsuarios() {
         ev.preventDefault();
         columnaCrear.style.display = 'none';
     });
+}
+
+/**
+ * Elimina un usuario del sistema.
+ * Llama al backend para eliminar el usuario y actualiza la lista de usuarios.
+ * @async
+ * @function eliminarUsuario
+ * @param {string} id - ID del usuario a eliminar
+ * @returns {Promise<void>}
+ */
+async function eliminarUsuario(id) {
+    console.log('FUNCION:', id);
+    try {
+        const respuesta = await eliminarUsuarioCU(id);
+
+        if (!respuesta.ok) {
+            return Swal.fire({
+                title: 'Error',
+                text: 'Error al eliminar el usuario.',
+                icon: 'error'
+            });
+        }
+        
+        return Swal.fire({
+            title: 'Eliminación exitosa',
+            text: 'El usuario ha sido eliminado.',
+            icon: 'success'
+        });
+    } catch (error) {
+        return Swal.fire({
+                title: 'Error de conexión',
+                text: 'Verifica tu conexión e inténtalo de nuevo.',
+                icon: 'error'
+            });
+    }
 }
 
 /**
@@ -135,7 +172,7 @@ function mostrarUsuarios(usuarios) {
     }
 
     const fragmento = document.createDocumentFragment();
-    for (const { nombre } of usuarios) {
+    for (const { id, nombre } of usuarios) {
         const div = document.createElement('div');
         div.className = 'frame-usuario';
         div.innerHTML = `
@@ -145,13 +182,39 @@ function mostrarUsuarios(usuarios) {
                 <button class='boton-editar'>
                   <img src='../utils/iconos/Editar2.svg' alt='Editar'/>
                 </button>
-                <button class='boton-eliminar'>
+                <button class='boton-eliminar' data-id='${id}'>
                   <img src='../utils/iconos/BasuraBlanca.svg' alt='Eliminar'/>
                 </button>
         `;
         fragmento.appendChild(div);
     }
     listaUsuariosElemento.appendChild(fragmento);
+
+    // Añadir eventos a los botones de eliminar
+    const botonesEliminar = listaUsuariosElemento.querySelectorAll('.boton-eliminar');
+    botonesEliminar.forEach(boton => {
+        boton.addEventListener('click', async evento => {
+            evento.preventDefault();
+            const id = boton.getAttribute('data-id');
+            Swal.fire({
+                title: '¿Eliminar usuario?',
+                text: 'Esta acción no se puede deshacer.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar'
+              }).then(async (resultado) => { // Cambiar el callback a async
+                if (resultado.isConfirmed) {
+                    await eliminarUsuario(id); // Ahora puedes usar await aquí
+                    setTimeout(() => {
+                        inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
+                    }, 500);
+                }
+            });
+        });
+    });
 }
 
 // Expone la función de inicialización al objeto window

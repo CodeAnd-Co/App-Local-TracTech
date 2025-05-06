@@ -22,6 +22,21 @@ async function obtenerUsuarios() {
     return { ok: respuesta.ok, ...datos };
 }
 
+async function eliminarUsuario(id) {
+    const respuesta = await fetch(`http://localhost:3000/usuarios/eliminar-usuario/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    
+    const datos = await respuesta.json();
+
+    return { ok: respuesta.ok, ...datos };
+}
+
 module.exports = {
     obtenerUsuarios,
+    eliminarUsuario,
 };
