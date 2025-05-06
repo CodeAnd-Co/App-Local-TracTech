@@ -23,8 +23,8 @@ function inicializarModuloTractores() {
 
     const distribuidorContenedor = document.querySelector('.distribuidor');
     const distribuidoresContenedor = document.querySelector('.distribuidores-contenido');
-    distribuidorContenedor.innerHTML = '';
-    distribuidorContenedor.style.visibility = 'hidden';
+    // distribuidorContenedor.innerHTML = '';
+    // distribuidorContenedor.style.visibility = 'hidden';
 
     const tractoresContenedor = document.querySelector('.tractores-contenido');
     tractoresContenedor.innerHTML = '';
