@@ -12,11 +12,9 @@ function inicializarModuloTractores() {
     if (window.actualizarBarraSuperior) {
         window.actualizarBarraSuperior('tractores');
     }
-    console.log('Cargando el módulo de Tractores...');
 
     // Cargar los datos del Excel desde localStorage
     const datosExcel = cargarDatosDeExcel();
-    console.log('Datos de Excel:', datosExcel);
     
     // Si hay datos, inicializar la visualización aquí
     if (!datosExcel) {
@@ -55,7 +53,6 @@ function inicializarModuloTractores() {
         tractoresContenedor.appendChild(tractorDiv);
         })
     }
-
     BusquedaTractores();
     botonesFiltrosTractores()
     botonReporte();
@@ -71,8 +68,6 @@ function cargarDatosDeExcel() {
     try {
         // Recuperar los datos de Excel
         const datosExcelJSON = localStorage.getItem('datosExcel');
-        
-        
         if (!datosExcelJSON) {
             console.log('No hay datos de Excel disponibles en localStorage');
             alert('No hay datos de Excel disponibles');
@@ -99,27 +94,10 @@ function cargarDatosDeExcel() {
 function botonReporte() {
     setTimeout(() => {
         const botonReporte = document.querySelector('.primario');
-
         if (botonReporte) {
             botonReporte.addEventListener('click', () => {
                 // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                 setTimeout(() => {
-                    // Buscar todos los botones del sidebar con data-seccion="analisis" 
-                    // y marcarlos como activos
-                    const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
-                    const todosBotones = document.querySelectorAll('.boton-sidebar');
-                    
-                    // Quitar activo de todos los botones
-                    todosBotones.forEach(boton => boton.classList.remove('activo'));
-                    
-                    // Marcar como activos los botones de análisis
-                    botonesAnalisis.forEach(boton => boton.classList.add('activo'));
-                    
-                    // Actualizar topbar directamente
-                    if (window.actualizarTopbar) {
-                        window.actualizarTopbar('analisis');
-                    }
-
                     // Cargar el módulo de análisis
                     const ventanaPrincipal = document.getElementById('ventana-principal');
                     if (ventanaPrincipal) {
@@ -170,7 +148,6 @@ function botonesFiltrosTractores() {
     const filtroConCheck = document.getElementById('botonFiltroCon');
     // Evento para mostrar sólo los tractores con telemetría
     filtroConCheck.addEventListener('click', () => {
-        console.log('Click a boton con telemetría');
         const caja = filtroConCheck.querySelector('img');
         cambiarIconoMarcadoADescarcado(caja)
         aplicarFiltrosCombinados()
@@ -179,7 +156,6 @@ function botonesFiltrosTractores() {
     const filtroSinCheck = document.getElementById('botonFiltroSin');
     // Evento para mostrar sólo los tractores sin telemetría
     filtroSinCheck.addEventListener('click', () => {
-        console.log('Click a boton con telemetría');
         const caja = filtroSinCheck.querySelector('img');
         cambiarIconoMarcadoADescarcado(caja)
         aplicarFiltrosCombinados()
