@@ -1,14 +1,59 @@
-.bloqueFormula { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 5px; background-color: #f9f9f9; }
-        label, select, input { display: block; margin-top: 10px; }
-        .argumentosContenedor { margin-left: 20px; }
-        .argumento { margin-top: 5px; border: 1px dashed #ddd; padding: 10px; margin-bottom: 10px; }
-        .argumentoEncabezado { display: flex; justify-content: space-between; align-items: center; }
-        .argumentoContenido { margin-left: 10px; display: flex; flex-wrap: wrap; align-items: center; }
-        .argumentoContenido > * { margin-right: 5px; margin-bottom: 5px; }
-        button { margin-top: 10px; margin-right: 5px; }
-        .botonEliminar { background-color: #f44336; color: white; border: none; padding: 5px 10px; text-align: center; text-decoration: none; display: inline-block; font-size: 12px; border-radius: 3px; cursor: pointer; }
-        .resultado { margin-top: 20px; padding: 10px; background: #f2f2f2; border-radius: 5px; white-space: pre-wrap; }
-        .selectorFuncionAnidada { margin-top: 5px; }
+.bloqueFormula { border: 1px solid #ccc; 
+  padding: 10px; 
+  margin: 10px 0; 
+  border-radius: 5px; 
+  background-color: #f9f9f9; }
+  label, select, input { display: block; 
+    margin-top: 10px; }
+
+  .argumentosContenedor { 
+    margin-left: 20px;
+  }
+  .argumento { 
+    margin-top: 5px; 
+    border: 1px dashed #ddd; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+  }
+  .argumentoEncabezado { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+  }
+  .argumentoContenido { 
+    margin-left: 10px; 
+    display: flex; 
+    flex-wrap: wrap; 
+    align-items: center; 
+  }
+  .argumentoContenido > * { 
+    margin-right: 5px; 
+    margin-bottom: 5px; }
+    button { 
+      margin-top: 10px; 
+      margin-right: 5px; }
+  .botonEliminar { 
+    background-color: #f44336;
+     color: white; 
+     border: none; 
+     padding: 5px 10px; 
+     text-align: center; 
+     text-decoration: none; 
+     display: inline-block; 
+     font-size: 12px; 
+     border-radius: 3px; 
+     cursor: pointer; 
+    }
+  .resultado { 
+    margin-top: 20px; 
+    padding: 10px; 
+    background: #f2f2f2; 
+    border-radius: 5px; 
+    white-space: pre-wrap; 
+  }
+  .selectorFuncionAnidada { 
+    margin-top: 5px; 
+  }
 
 
 .contenido-vista,
