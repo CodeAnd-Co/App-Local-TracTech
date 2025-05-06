@@ -72,37 +72,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   graficaDiv.appendChild(canvasGrafica);
 
   //Iniciar Chart.js
-  const grafico = new Chart(contexto, {
-    type: 'line',
-    data: {
-      labels: ['January','February','March','April','May','June','July'],
-      datasets: [{
-        label: '',
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgb(255, 99, 132)',
-        data: [0,10,5,2,20,30,45]
-      }]
-    },
-    options: {
-      plugins: {
-        title: { display: true, text: '' },
-        legend: {
-          labels: {
-            generateLabels: chart =>
-              chart.data.datasets.map(ds => ({
-                text: ds.label,
-                fillStyle: ds.backgroundColor,
-                strokeStyle: ds.backgroundColor
-              }))
-          }
-        }
-      },
-      scales: {
-        x: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } },
-        y: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } }
-      }
-    }
-  });
+  const grafico = crearGrafica(contexto, 'line');
 
   graficaDiv.appendChild(canvasGrafica);
 
@@ -118,6 +88,16 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   const selectorTipoGrafica = tarjetaGrafica.querySelector('.tipo-grafica');
   selectorTipoGrafica.value = grafico.config.type;
   selectorTipoGrafica.addEventListener('change', () => {
+
+    
+    if (selectorTipoGrafica.value !== 'radar' && selectorTipoGrafica.value !== 'polarArea') {
+      //* remove the RadialLinearScale from the chart's scales
+      if (grafico.config.options.scales?.r) {
+        console.log('[Solid-ChartJS]: Removing un-needed RadialLinearScale')
+        delete grafico.config.options.scales?.r
+      }
+    }
+
     grafico.config.type = selectorTipoGrafica.value;
     grafico.update();
   });
@@ -254,6 +234,65 @@ function eliminarCuadroFormulas() {
   } else {
     return false
   }
+}
+
+function crearGrafica(contexto, tipo) {
+  // Línea y radar 1 color
+  // barras, pastel, dona, polar 2 colores
+  const colores = generarDegradadoHaciaBlanco([255, 99, 132], 7)
+  console.log(colores)
+  console.log(colores[0])
+
+  const grafico = new Chart(contexto, {
+    type: tipo,
+    data: {
+      labels: ['January','February','March','April','May','June','July'],
+      datasets: [{
+        label: '',
+        backgroundColor: colores,
+        borderColor: 'rgb(255, 99, 132)',
+        data: [5, 10, 5, 2, 20, 30, 45]
+      }]
+    },
+    options: {
+      plugins: {
+        title: { display: true, text: '' },
+        legend: {
+          labels: {
+            generateLabels: chart =>
+              chart.data.datasets.map(ds => ({
+                text: ds.label,
+                fillStyle: ds.backgroundColor,
+                strokeStyle: ds.backgroundColor
+              }))
+          }
+        }
+      },
+      scales: {
+        x: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } },
+        y: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } }
+      }
+    }
+  });
+
+  return grafico;
+}
+
+function generarDegradadoHaciaBlanco(rgb, pasos) {
+  const [rojo, verde, azul] = rgb; // rgb debe ser un array: [r, g, b]
+  const degradado = new Array(pasos);
+
+  degradado.forEach((_, indice) => {
+    console.log(indice);
+    const factor = indice / (pasos - 1); // Factor de interpolación
+    const nuevoRojo = Math.round(rojo + (255 - rojo) * factor);
+    const nuevoVerde = Math.round(verde + (255 - verde) * factor);
+    const nuevoAzul = Math.round(azul + (255 - azul) * factor);
+    console.log(`rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`);
+    degradado[indice] = `rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`;
+  });
+
+  return degradado;
 }
 
 // Hace la función agregarGrafica disponible en todo el proyecto
