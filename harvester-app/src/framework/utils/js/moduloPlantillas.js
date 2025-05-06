@@ -7,6 +7,7 @@
  */
 const { plantillas } = require('../../backend/domain/plantillasAPI/plantillasAPI.js');
 const { eliminarPlantillas } = require('../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js');
+const { seleccionarPlantillas } = require('../../backend/domain/plantillasAPI/seleccionarPlantillaAPI.js')
 
 /**
  * Inicializa el módulo de plantillas cargando la información desde el backend
@@ -106,6 +107,36 @@ async function inicializarModuloPlantillas () {
     
                 contenedor?.appendChild(tarjetaTexto);
             }
+
+            /** @type {NodeListOf<HTMLButtonElement>} */
+            const botonesExpandirCoinciden = document.querySelectorAll('#botonExpandir');
+
+            botonesExpandirCoinciden.forEach(boton => {
+                boton.addEventListener('click', async () => {
+                    const menuOpciones = boton.closest('#menuOpciones');
+
+                    const modalVizualizador = document.getElementById("modalVizualizador");
+                    
+                    modalVizualizador.showModal();
+                    try{
+                        const respuesta = await seleccionarPlantillas(menuOpciones.getAttribute('dato-id'));
+                        if(respuesta.ok){
+                            let tituloMaximisado = document.getElementById("Titulo-Maximisado")
+                            tituloMaximisado.innerText = respuesta.plantilla.Nombre
+
+                            const scroll = document.getElementById("Scroll")
+                            scroll.innerHTML  = respuesta.plantilla.Datos;
+                            
+                        }
+                    } catch (error) {
+                        alert(`No se pudo conectar con el servidor, error: ${error}`);
+                    }
+                    
+
+                    
+
+                });
+            });
     
             /** @type {NodeListOf<HTMLButtonElement>} */
             const botonesModificarCoinciden = document.querySelectorAll('#botonModificar');
@@ -113,6 +144,7 @@ async function inicializarModuloPlantillas () {
             botonesModificarCoinciden.forEach(boton => {
                 boton.addEventListener('click', () => {
                     const menuOpciones = boton.closest('#menuOpciones');
+                    alert(menuOpciones.getAttribute('dato-id'))
                 });
             });
     
@@ -141,7 +173,7 @@ async function inicializarModuloPlantillas () {
             
         }
 
-
+        
 
     } catch (error) {
         alert('No se pudo conectar con el servidor.');
