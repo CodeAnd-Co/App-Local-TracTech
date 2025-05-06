@@ -34,7 +34,6 @@ async function inicializarModuloPlantillas () {
 
     eliminarDialog?.addEventListener('click', async () => {
         const modalBorrar = document.querySelector('.modal-borrar');
-
         if(modalBorrar?.getAttribute('dato-id')) {
             try {
                 /** @type {string|null} ID de la plantilla a eliminar */
@@ -117,6 +116,26 @@ async function inicializarModuloPlantillas () {
                     try {
                         const respuesta = await seleccionarPlantillas(menuOpciones.getAttribute('dato-id'));
                         if(respuesta.ok){
+                            const modal = document.getElementById('modalVizualizador');
+
+                            // Asegúrate de que el modal está abierto para que detecte eventos
+                            if (modal) {
+                              modal.addEventListener('click', (event) => {
+                                const rect = modal.getBoundingClientRect();
+                                const clickedInDialog = (
+                                  event.clientX >= rect.left &&
+                                  event.clientX <= rect.right &&
+                                  event.clientY >= rect.top &&
+                                  event.clientY <= rect.bottom
+                                );
+                          
+                                // Si el clic fue fuera del área visible del <dialog>, ciérralo
+                                if (!clickedInDialog) {
+                                  modal.close();
+                                }
+                              });
+                            }
+
                             /** @type {HTMLElement|null} */
                             const tituloMaximisado = document.getElementById('Titulo-Maximisado');
                             tituloMaximisado.innerText = respuesta.plantilla.Nombre;
@@ -132,6 +151,22 @@ async function inicializarModuloPlantillas () {
                                 if (modalBorrar && menuOpciones) {
                                     modalBorrar.showModal();
                                     modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+
+                                     // Asegúrate de que el modal está abierto para que detecte eventos
+                                    modalBorrar.addEventListener('click', (event) => {
+                                    const rect = modalBorrar.getBoundingClientRect();
+                                    const clickedInDialog = (
+                                    event.clientX >= rect.left &&
+                                    event.clientX <= rect.right &&
+                                    event.clientY >= rect.top &&
+                                    event.clientY <= rect.bottom
+                                    );
+                            
+                                    // Si el clic fue fuera del área visible del <dialog>, ciérralo
+                                    if (!clickedInDialog) {
+                                        modalBorrar.close();
+                                    }
+                                });
                                 }
                             });
                         }
@@ -162,6 +197,21 @@ async function inicializarModuloPlantillas () {
                     if (modalBorrar && menuOpciones) {
                         modalBorrar.showModal();
                         modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+                        // Asegúrate de que el modal está abierto para que detecte eventos
+                        modalBorrar.addEventListener('click', (event) => {
+                        const rect = modalBorrar.getBoundingClientRect();
+                        const clickedInDialog = (
+                        event.clientX >= rect.left &&
+                        event.clientX <= rect.right &&
+                        event.clientY >= rect.top &&
+                        event.clientY <= rect.bottom
+                        );
+                
+                        // Si el clic fue fuera del área visible del <dialog>, ciérralo
+                        if (!clickedInDialog) {
+                            modalBorrar.close();
+                            }
+                        })
                     }
                 });
             });
