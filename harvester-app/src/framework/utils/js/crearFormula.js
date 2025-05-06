@@ -71,10 +71,10 @@ function inicializarCrearFormula() {
 
 async function guardarFormulaTemporal(nombre, formula) {
     // REFACTORIZAR
-    const respuesta = await fetch("http://localhost:3000/formulas/guardarFormula", {
-        method: "POST",
+    const respuesta = await fetch('http://localhost:3000/formulas/guardarFormula', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({nombre, formula}),
     });

@@ -2,7 +2,7 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 // RF72 Usuario selecciona parámetros de fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF72
 
-const { guardarFormula: guardarFormulaAPI} = require("../../domain/formulasAPI/formulaApi");
+const { guardarFormula: guardarFormulaAPI} = require('../../domain/formulasAPI/formulaApi');
 
 /**
  * Guarda una fórmula a través de la API y retorna la respuesta obtenida.
@@ -18,8 +18,8 @@ const guardarFormula= async function (nombre, formula){
         const respuesta = await guardarFormulaAPI(nombre, formula);
         return respuesta;
     } catch(error){
-        console.error("Error al guardar la fórmula:", error);
-        throw new Error("No se pudo guardar la fórmula");
+        console.error('Error al guardar la fórmula:', error);
+        throw new Error('No se pudo guardar la fórmula');
     }
 }
 
