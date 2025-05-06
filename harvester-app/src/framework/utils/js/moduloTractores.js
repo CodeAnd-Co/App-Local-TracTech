@@ -46,8 +46,14 @@ function inicializarModuloTractores() {
         nombreTractorDiv.className = 'rancho-texto';
         nombreTractorDiv.textContent = tractorNombre; // Nombre del tractor
 
+        // Crear el cuadro de selección (checkbox) para el tractor
+        const caja = document.createElement('img');
+        caja.className = 'check-box';
+        caja.src = '../utils/iconos/check_box_outline_blank.svg'; // Imagen del checkbox vacío 
+
         // Añadir el nombre y el checkbox al div del tractor
         tractorDiv.appendChild(nombreTractorDiv);
+        tractorDiv.appendChild(caja);
 
         // Añadir el div del tractor al contenedor
         tractoresContenedor.appendChild(tractorDiv);
