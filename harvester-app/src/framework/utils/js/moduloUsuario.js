@@ -46,8 +46,8 @@ function inicializarModuloUsuario() {
         const respuesta = await cerrarSesion();
     
         if (respuesta.ok) {
-          localStorage.removeItem('token');
-          window.location.href = './inicioSesion.html';
+            localStorage.removeItem('token');
+            window.location.href = './inicioSesion.html';
         } else {
             alert(respuesta.mensaje || 'Error al cerrar sesión.');
         }
