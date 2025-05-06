@@ -22,6 +22,17 @@ async function obtenerUsuarios() {
     return { ok: respuesta.ok, ...datos };
 }
 
+/**
+ * Elimina un usuario del sistema mediante una solicitud HTTP DELETE a la API.
+ *
+ * Esta función realiza una petición al endpoint de eliminación de usuarios del servidor
+ * y devuelve el resultado indicando si la operación fue exitosa o no.
+ *
+ * @async
+ * @function eliminarUsuario
+ * @param {string} id - ID del usuario a eliminar.
+ * @returns {Promise<{ok: boolean, mensaje?: string}>} Objeto con el estado de la operación y un posible mensaje del servidor.
+ */
 async function eliminarUsuario(id) {
     const respuesta = await fetch(`http://localhost:3000/usuarios/eliminar-usuario/${id}`, {
         method: 'DELETE',
