@@ -74,7 +74,7 @@ function inicializarModuloTractores() {
         mensaje.textContent = 'No se encontraron tractores';
         tractoresContenedor.appendChild(mensaje);
     } else {
-        // Iterar sobre los distribuidores (asumiendo que cada hoja es un distribuidor)
+        // Iterar sobre los tractores asumiendo que cada hoja es un tractor
         tractores.forEach(tractorNombre => {
         // Crear un div para el tractor
         const tractorDiv = document.createElement('div');
