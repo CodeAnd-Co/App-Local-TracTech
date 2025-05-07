@@ -11,7 +11,7 @@ let paginaActual = 1;
 let listaUsuarios = [];
 let usuariosFiltrados = [];
 let terminoBusqueda = '';
-
+console.log('Modulo de gestion de usuarios cargado.');
 /**
  * Inicializa el módulo de gestión de usuarios.
  * Carga los usuarios desde el backend, configura la paginación
