@@ -5,16 +5,16 @@
  * Realiza la solicitud para iniciar sesión en el servidor.
  * Envía el correo y la contraseña como datos en el cuerpo de la petición.
  * @param {string} correo - Correo del usuario
- * @param {string} contrasena - Contraseña del usuario
+ * @param {string} contrasenia - Contraseña del usuario
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
-async function iniciarSesion(correo, contrasena) {
+async function iniciarSesion(correo, contrasenia) {
   const respuesta = await fetch('http://localhost:3000/sesion/iniciar-sesion', {
     method: 'POST', // Método HTTP POST para enviar las credenciales
     headers: {
       'Content-Type': 'application/json', // Especificar el tipo de contenido
     },
-    body: JSON.stringify({ correo, contrasena }), // Convertir los datos a JSON
+    body: JSON.stringify({ correo, contrasenia }), // Convertir los datos a JSON
   });
 
   // Convertir la respuesta a JSON

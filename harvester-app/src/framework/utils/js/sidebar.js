@@ -41,30 +41,18 @@ function cargarModulo(seccion) {
           if (window.botonTractores)  window.botonTractores();
           if (window.botonBorrar)    window.botonBorrar();
         } else if (seccion === 'analisis') {
-          if (window.cargarDatosExcel) {
-            window.cargarDatosExcel();
-          }
-          if (window.inicializarModuloAnalisis) {
-            window.inicializarModuloAnalisis();
-          }
-        } else if (seccion === 'plantillas'){
-          if (window.inicializarModuloPlantillas) {
-            window.inicializarModuloPlantillas();
-          }
-        } else if (seccion == 'usuario') {
-          if (window.inicializarModuloUsuario) {
-            window.inicializarModuloUsuario();
-          }
-        } else if (seccion == 'gestionUsuarios') {
-          if (window.inicializarModuloGestionUsuarios) {
-            window.inicializarModuloGestionUsuarios();
-          }
+            if (window.cargarDatosExcel)           window.cargarDatosExcel();
+            if (window.inicializarModuloAnalisis)  window.inicializarModuloAnalisis();
+        } else if (seccion === 'plantillas') {
+            if (window.inicializarModuloPlantillas) window.inicializarModuloPlantillas();
+        } else if (seccion === 'usuario') {
+            if (window.inicializarModuloUsuario)    window.inicializarModuloUsuario();
+        } else if (seccion ==='formulas'){
+          if (window.inicializarCrearFormula) window.inicializarCrearFormula();
         } else if (seccion === 'tractores') {
-          if (window.inicializarModuloTractores) {
-            window.inicializarModuloTractores();
-          }
-        }
+          if (window.inicializarModuloTractores) window.inicializarModuloTractores();
         // Añadir más inicializaciones para otros módulos según sea necesario
+        }
       })
       .catch(error => {
         console.error('Error al cargar el módulo:', error);
@@ -197,7 +185,7 @@ function actualizarBarraSuperior(seccion) {
   elementoIconoBarraSuperior.src         = infoBarraSuperior[seccion].icono;
 
   // Ocultar o mostrar botón de regresar
-  const seccionesSinRegresar = ['inicio', 'envios', 'plantillas', 'usuario'];
+  const seccionesSinRegresar = ['inicio', 'envios', 'plantillas', 'usuario','formulas'];
   if (seccionesSinRegresar.includes(seccion)) {
     botonRegresar.style.display                  = 'none';
     elementoTituloBarraSuperior.style.marginLeft = '0px';
@@ -219,3 +207,4 @@ function actualizarBarraSuperior(seccion) {
 
 // Exponer la función de actualización de barra superior globalmente
 window.actualizarBarraSuperior = actualizarBarraSuperior;
+window.cargarModulo          = cargarModulo;

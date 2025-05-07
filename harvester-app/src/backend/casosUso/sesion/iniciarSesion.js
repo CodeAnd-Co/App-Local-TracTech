@@ -49,7 +49,6 @@ async function iniciarSesion(correo, contrasenia) {
   const { correoSanitizado, contraseniaSanitizada } = sanitizarEntrada(correo, contrasenia);
 
   try {
-
     const respuesta = await iniciarSesionAPI(correoSanitizado, contraseniaSanitizada);
     return respuesta;
 
