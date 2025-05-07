@@ -99,8 +99,8 @@ function inicializarModuloTractores() {
 
         // Agregar evento para mostrar columnas
         nombreTractorDiv.addEventListener('click', () => {
-            console.log("Click a tractor");
-            mostrarColumnasTractor(tractorNombre, datosExcel);
+            console.log('Click a nombre de tractor');
+            manejarClickTractor(tractorNombre, datosExcel);
             });
         })
     }
@@ -190,6 +190,28 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
         columnaDiv.appendChild(caja);
         columnasContenedor.appendChild(columnaDiv);
     });
+}
+
+/**
+ * Mostrar u ocultar las columnas de una hoja perteneciente a un tractor
+ * 
+ * @function manejarClickTractor
+ * @param {string} nombreTractor
+ * @param {object} datosExcel
+ * @returns {void}
+ */
+function manejarClickTractor(tractorNombre, datosExcel) {
+    const contenedor = document.getElementById('contenedorColumnas');
+
+    // Si ya se muestran las columnas de una hoja, la ocultamos
+    if (contenedor.dataset.tractorActual === tractorNombre) {
+        contenedor.style.display = 'none';
+        contenedor.dataset.tractorActual = '';
+    } else {
+        mostrarColumnasTractor(tractorNombre, datosExcel);
+        contenedor.style.display = 'block';
+        contenedor.dataset.tractorActual = tractorNombre;
+    }
 }
 
 
