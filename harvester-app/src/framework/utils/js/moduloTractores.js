@@ -144,8 +144,10 @@ function cargarDatosDeExcel() {
  * @returns {void}
  */
 function mostrarColumnasTractor(nombreTractor, datosExcel) {
+    const columnaContenedor = document.getElementById('contenedorColumnas');
     const columnasContenedor = document.querySelector('.columnas-contenido');
     columnasContenedor.innerHTML = '';
+    columnaContenedor.style.display = 'block';
 
     const datosHoja = datosExcel.hojas[nombreTractor];
 
