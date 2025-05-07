@@ -113,7 +113,7 @@ function inicializarModuloTractores() {
  * Cargamos los datos de excel que se encuentran en localStorage
  * 
  * @function cargarDatosDeExcel
- * @returns {void}
+ * @returns {object|null} - objeto con las hojas de excel parseadas
 */
 function cargarDatosDeExcel() {
     try {
@@ -138,9 +138,9 @@ function cargarDatosDeExcel() {
 /**
  * Muestra las colmunas de un tractor específico en el contenedor de columnas
  * 
- * @param {string} nombreTractor
- * @param {object} datosExcel
  * @function mostrarColumnasTractor
+ * @param {string} nombreTractor
+ * @param {object} datosExcel - objeto con als hojas del excel
  * @returns {void}
  */
 function mostrarColumnasTractor(nombreTractor, datosExcel) {
@@ -196,7 +196,7 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
  * 
  * @function manejarClickTractor
  * @param {string} nombreTractor
- * @param {object} datosExcel
+ * @param {object} datosExcel - objeto con las hojas del excel
  * @returns {void}
  */
 function manejarClickTractor(tractorNombre, datosExcel) {
@@ -364,6 +364,7 @@ function aplicarFiltrosCombinados() {
  * 
  * @function cambiarIconoMarcadoADescarcado
  * @param {HTMLElement} icono El elemento de imagen a actualizar
+ * @returns {void}
  */
 function cambiarIconoMarcadoADescarcado(icono) {
     // Verificar si el icono actual es el de desmarcado
