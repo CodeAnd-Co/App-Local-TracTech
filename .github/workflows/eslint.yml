@@ -19,6 +19,9 @@ jobs:
 
       - name: Install dependencies
         run: cd harvester-app && npm install
+        
+      - name: Debug ESLint Run
+        run: cd harvester-app && npx eslint . --max-warnings=0
 
       - name: Run ESLint via reviewdog
         uses: reviewdog/action-eslint@v1
@@ -26,6 +29,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review  # Comenta en la PR
           workdir: harvester-app  # Cambia al directorio del proyecto
-          eslint_flags: '.'  # Ejecuta eslint sobre todos los archivos
+          eslint_flags: './src'  # Ejecuta eslint sobre todos los archivos
           fail_on_error: true  # Falla el workflow si hay errores
           filter_mode: diff_context  # Actualiza comentarios, no duplica
