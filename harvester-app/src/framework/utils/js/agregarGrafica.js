@@ -79,7 +79,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   //Cambiar título dinámicamente
   tarjetaGrafica
     .querySelector('.titulo-grafica')
-    .addEventListener('input', function() {
+    .addEventListener('input', function () {
       grafico.options.plugins.title.text = this.value;
       grafico.update();
     });
@@ -88,18 +88,12 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   const selectorTipoGrafica = tarjetaGrafica.querySelector('.tipo-grafica');
   selectorTipoGrafica.value = grafico.config.type;
   selectorTipoGrafica.addEventListener('change', () => {
+    const contexto = encontrarGrafica(nuevaId).children[0].getContext('2d');
 
-    
-    if (selectorTipoGrafica.value !== 'radar' && selectorTipoGrafica.value !== 'polarArea') {
-      //* remove the RadialLinearScale from the chart's scales
-      if (grafico.config.options.scales?.r) {
-        console.log('[Solid-ChartJS]: Removing un-needed RadialLinearScale')
-        delete grafico.config.options.scales?.r
-      }
-    }
+    Chart.getChart(contexto).destroy();
 
-    grafico.config.type = selectorTipoGrafica.value;
-    grafico.update();
+    const nuevaGrafica = crearGrafica(contexto, selectorTipoGrafica.value);
+    nuevaGrafica.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
   });
 
   //Eliminar gráfica
@@ -169,13 +163,13 @@ function crearCuadroFormulas(columnas) {
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
   crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
   contenedoesSeleccion[1] //Fórmulas
-  
+
   const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
   botonRegresar.addEventListener('click', () => {
     cuadroFormulas.remove();
   });
 
-// 1) Busca la sección de elementos de reporte
+  // 1) Busca la sección de elementos de reporte
   const reporteSection = document.querySelector('.seccion-elemento-reporte');
   // 2) Inserta el panel justo después de esa sección
   if (reporteSection) {
@@ -236,21 +230,36 @@ function eliminarCuadroFormulas() {
   }
 }
 
-function crearGrafica(contexto, tipo) {
+function crearGrafica(contexto, tipo, color) {
   // Línea y radar 1 color
   // barras, pastel, dona, polar 2 colores
-  const colores = generarDegradadoHaciaBlanco([255, 99, 132], 7)
-  console.log(colores)
-  console.log(colores[0])
+  if (!color) {
+    color = [255, 99, 132];
+  }
+
+  const colores = generarDegradadoHaciaBlanco(color, 7)
+  color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
   const grafico = new Chart(contexto, {
     type: tipo,
     data: {
-      labels: ['January','February','March','April','May','June','July'],
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
       datasets: [{
         label: '',
-        backgroundColor: colores,
-        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: fondo => {
+          if (tipo == 'line' || tipo == 'radar') {
+            return color;
+          } else {
+            return colores[fondo.dataIndex];
+          }
+        },
+        borderColor: borde => {
+          if (tipo == 'line' || tipo == 'radar') {
+            return color;
+          } else {
+            return colores[borde.dataIndex];
+          }
+        },
         data: [5, 10, 5, 2, 20, 30, 45]
       }]
     },
@@ -262,15 +271,15 @@ function crearGrafica(contexto, tipo) {
             generateLabels: chart =>
               chart.data.datasets.map(ds => ({
                 text: ds.label,
-                fillStyle: ds.backgroundColor,
-                strokeStyle: ds.backgroundColor
+                fillStyle: color,
+                strokeStyle: color
               }))
-          }
-        }
+          },
+        },
       },
       scales: {
-        x: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } },
-        y: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } }
+        x: { ticks: { color: '#fff' }, grid: { color: '#fff' } },
+        y: { ticks: { color: '#fff' }, grid: { color: '#fff' } }
       }
     }
   });
@@ -279,20 +288,18 @@ function crearGrafica(contexto, tipo) {
 }
 
 function generarDegradadoHaciaBlanco(rgb, pasos) {
-  const [rojo, verde, azul] = rgb; // rgb debe ser un array: [r, g, b]
-  const degradado = new Array(pasos);
+  const [rojo, verde, azul] = rgb;
 
-  degradado.forEach((_, indice) => {
-    console.log(indice);
-    const factor = indice / (pasos - 1); // Factor de interpolación
-    const nuevoRojo = Math.round(rojo + (255 - rojo) * factor);
-    const nuevoVerde = Math.round(verde + (255 - verde) * factor);
-    const nuevoAzul = Math.round(azul + (255 - azul) * factor);
-    console.log(`rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`);
-    degradado[indice] = `rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`;
-  });
-
-  return degradado;
+  return Array.from(
+    { length: pasos },
+    (__, indice) => {
+      const factor = indice / (pasos); // Factor de interpolación
+      const nuevoRojo = Math.round(rojo + (255 - rojo) * factor);
+      const nuevoVerde = Math.round(verde + (255 - verde) * factor);
+      const nuevoAzul = Math.round(azul + (255 - azul) * factor);
+      return `rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`;
+    }
+  );
 }
 
 // Hace la función agregarGrafica disponible en todo el proyecto
