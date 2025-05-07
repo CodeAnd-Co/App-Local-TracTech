@@ -306,6 +306,8 @@ function crearGrafica(contexto, tipo, color) {
   return grafico;
 }
 
+console.log('agregarGrafica.js cargado correctamente.');
+
 /**
  * Crea un arreglo de colores en formato rgb que van desde el color dado hasta el blanco.
  * @param {Int[]} rgb - Arreglo de 3 enteros que representan el color RGB inicial.
