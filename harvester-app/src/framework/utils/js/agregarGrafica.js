@@ -80,11 +80,14 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   tarjetaGrafica
     .querySelector('.titulo-grafica')
     .addEventListener('input', function () {
-      grafico.options.plugins.title.text = this.value;
-      grafico.update();
+      const contexto = encontrarGrafica(nuevaId).children[0].getContext('2d');
+      const graficaEncontrada = Chart.getChart(contexto);
+
+      graficaEncontrada.options.plugins.title.text = this.value;
+      graficaEncontrada.update();
     });
 
-  //Selector de tipo de gráfica (igual a agregarTexto.js) :contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaicite:1]{index=1}
+  //Selector de tipo de gráfica
   const selectorTipoGrafica = tarjetaGrafica.querySelector('.tipo-grafica');
   selectorTipoGrafica.value = grafico.config.type;
   selectorTipoGrafica.addEventListener('change', () => {
@@ -94,6 +97,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
 
     const nuevaGrafica = crearGrafica(contexto, selectorTipoGrafica.value);
     nuevaGrafica.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
+    nuevaGrafica.update();
   });
 
   //Eliminar gráfica
@@ -265,7 +269,7 @@ function crearGrafica(contexto, tipo, color) {
     },
     options: {
       plugins: {
-        title: { display: true, text: '' },
+        title: { display: true},
         legend: {
           labels: {
             generateLabels: chart =>
