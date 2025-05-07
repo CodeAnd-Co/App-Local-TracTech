@@ -11,6 +11,7 @@ let paginaActual = 1;
 let listaUsuarios = [];
 let usuariosFiltrados = [];
 let terminoBusqueda = '';
+const si2 = 1;
 const si = 0;
 console.log('Modulo de gestion de usuarios cargado2.');
 /**
