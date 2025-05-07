@@ -29,9 +29,6 @@
   .argumentoContenido > * { 
     margin-right: 5px; 
     margin-bottom: 5px; }
-    button { 
-      margin-top: 10px; 
-      margin-right: 5px; }
   .botonEliminar { 
     background-color: #f44336;
      color: white; 
