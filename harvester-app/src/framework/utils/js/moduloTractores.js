@@ -21,50 +21,70 @@ function inicializarModuloTractores() {
         console.warn('No hay datos disponibles para análisis');
     }
 
+    iniciarDistribuidores(datosExcel);
+    inicializarTractores(datosExcel);
+    
+    busquedaTractores();
+    botonesFiltrosTractores()
+    botonReporte();
+}
+
+/**
+ * Inicia la lista de distribuidores en el DOM
+ * utilizando los datos cargados desde el Excel
+ * 
+ * @function iniciarDistribuidores
+ * @param {object} datosExcel - Objeto que contiene las hojas del excel cargado
+ * @returns {void}
+ */
+function iniciarDistribuidores(datosExcel) {
     const distribuidorContenedor = document.querySelector('.distribuidor');
     const distribuidoresContenedor = document.querySelector('.distribuidores-contenido');
     distribuidorContenedor.innerHTML = '';
     distribuidorContenedor.style.visibility = 'hidden';
     distribuidoresContenedor.innerHTML = '';
 
-    // Mostrar distribuidores si existe la hoja
-    if (datosExcel.hojas.hasOwnProperty('Distribuidor')) {
-        const distribuidores = datosExcel.hojas.Distribuidor;
-
-        if (Array.isArray(distribuidores) && distribuidores.length > 0) {
-            // Mostrar contenedor si hay datos
-            distribuidorContenedor.style.visibility = 'visible';
-
-            distribuidores.forEach(fila => {
-                const nombreDistribuidor = fila.Distribuidor || fila.Nombre || fila.NombreDistribuidor;
-                if (!nombreDistribuidor) return;
-
-                // Crear div para distribuidor
-                const distribuidorDiv = document.createElement('div');
-                distribuidorDiv.className = 'rancho';
-
-                // Crear nombre del distribuidor
-                const nombreDistribuidorDiv = document.createElement('div');
-                nombreDistribuidorDiv.className = 'rancho-texto';
-                nombreDistribuidorDiv.textContent = nombreDistribuidor;
-
-                // Crear checkbox
-                const caja = document.createElement('img');
-                caja.className = 'check-box';
-                caja.src = '../utils/iconos/check_box_outline_blank.svg';
-
-                // Añadir elementos
-                distribuidorDiv.appendChild(nombreDistribuidorDiv);
-                distribuidorDiv.appendChild(caja);
-                distribuidoresContenedor.appendChild(distribuidorDiv);
-            });
-        } else {
-            console.warn('Hoja de distribuidores vacía');
-        }
-    } else {
+    const hojaExcel = datosExcel.hojas.Distribuidor;
+    
+    if (!hojaExcel || !Array.isArray(hoja) || hoja.length === 0) {
         console.warn('No se encontraron distribuidores');
+    } else {
+        distribuidorContenedor.style.visibility = 'visible';
+        hojaExcel.forEach(fila => {
+            const nombreDistribuidor = fila.Distribuidor || fila.Nombre || fila.NombreDistribuidor;
+            if (!nombreDistribuidor) return;
+    
+            // Crear div para distribuidor
+            const distribuidorDiv = document.createElement('div');
+            distribuidorDiv.className = 'rancho';
+    
+            // Crear nombre del distribuidor
+            const nombreDistribuidorDiv = document.createElement('div');
+            nombreDistribuidorDiv.className = 'rancho-texto';
+            nombreDistribuidorDiv.textContent = nombreDistribuidor;
+    
+            // Crear checkbox
+            const caja = document.createElement('img');
+            caja.className = 'check-box';
+            caja.src = '../utils/iconos/check_box_outline_blank.svg';
+    
+            // Añadir elementos
+            distribuidorDiv.appendChild(nombreDistribuidorDiv);
+            distribuidorDiv.appendChild(caja);
+            distribuidoresContenedor.appendChild(distribuidorDiv);
+        });
     }
 
+}
+
+/**
+ * Inicia la lista de tractores en el DOM
+ * 
+ * @function inicializarTractores 
+ * @param {object} datosExcel - Objeto que contiene las hojas del Excel cargado.
+ * @returns {void}
+ */
+function inicializarTractores(datosExcel) {
     const tractoresContenedor = document.querySelector('.tractores-contenido');
     tractoresContenedor.innerHTML = '';
     const tractores = Object.keys(datosExcel.hojas);
@@ -103,9 +123,6 @@ function inicializarModuloTractores() {
             });
         })
     }
-    busquedaTractores();
-    botonesFiltrosTractores()
-    botonReporte();
 }
 
 /** 
