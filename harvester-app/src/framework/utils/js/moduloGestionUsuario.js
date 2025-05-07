@@ -14,6 +14,10 @@ let terminoBusqueda = '';
 const si2 = 1;
 const si = 0;
 console.log('Modulo de gestion de usuarios cargado2.');
+
+function si (){
+    console.log('si2');
+}
 /**
  * Inicializa el módulo de gestión de usuarios.
  * Carga los usuarios desde el backend, configura la paginación

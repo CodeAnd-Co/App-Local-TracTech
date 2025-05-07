@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: cd harvester-app && npm install
 
-      - name: Run ESLint via reviewdog
+      - name: Run ESLint via reviewdog (Comentario en files changed)
         uses: reviewdog/action-eslint@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -29,3 +29,14 @@ jobs:
           eslint_flags: './src'  # Ejecuta eslint sobre todos los archivos
           fail_on_error: true  # Falla el workflow si hay errores
           filter_mode: nofilter  # Actualiza comentarios, no duplica
+
+      - name: Run ESLint (Comentario en checks)
+        uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-check
+          workdir: harvester-app
+          eslint_flags: './src'
+          fail_on_error: true
+          filter_mode: nofilter
+        if: always()
