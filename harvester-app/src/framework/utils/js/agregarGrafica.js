@@ -234,6 +234,13 @@ function eliminarCuadroFormulas() {
   }
 }
 
+/**
+ * Crea una gráfica utilizando Chart.js.
+ * @param {CanvasRenderingContext2D} contexto - 2dcontext del canvas donde se dibujará la gráfica.
+ * @param {String} tipo - String que representa el tipo de gráfica (ej. 'line', 'bar', 'pie', 'doughnut', 'radar', 'polarArea').
+ * @param {Int[]} color - Arreglo de 3 enteros que representan el color RGB de la gráfica.
+ * @returns {Chart} - Instancia de la gráfica creada.
+ */
 function crearGrafica(contexto, tipo, color) {
   // Línea y radar 1 color
   // barras, pastel, dona, polar 2 colores
@@ -291,12 +298,21 @@ function crearGrafica(contexto, tipo, color) {
   return grafico;
 }
 
+/**
+ * Crea un arreglo de colores en formato rgb que van desde el color dado hasta el blanco.
+ * @param {Int[]} rgb - Arreglo de 3 enteros que representan el color RGB inicial.
+ * @param {Int} pasos - Número de pasos para el degradado.
+ * @returns {String[]} Arreglo de strings que representan los colores en formato rgb
+ */
 function generarDegradadoHaciaBlanco(rgb, pasos) {
   const [rojo, verde, azul] = rgb;
 
   return Array.from(
+    // Crea un arreglo de la longitud de pasps
     { length: pasos },
+    //Ejecuta la siguiente gunción en cada valor del arreglo
     (__, indice) => {
+      // Calcula el factor por el cual se va a multiplicar el color para acercarse un poco al blanco
       const factor = indice / (pasos); // Factor de interpolación
       const nuevoRojo = Math.round(rojo + (255 - rojo) * factor);
       const nuevoVerde = Math.round(verde + (255 - verde) * factor);
