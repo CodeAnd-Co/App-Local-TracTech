@@ -102,6 +102,16 @@ input:focus {
   flex-shrink: 0;
   position: relative;
 }
+.columnas-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
 .rancho {
   background: #ffffff;
   border-radius: 8px;

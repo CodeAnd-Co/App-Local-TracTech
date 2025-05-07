@@ -96,6 +96,12 @@ function inicializarModuloTractores() {
 
         // Añadir el div del tractor al contenedor
         tractoresContenedor.appendChild(tractorDiv);
+
+        // Agregar evento para mostrar columnas
+        tractorDiv.addEventListener('click', () => {
+            console.log("Click a tractor");
+            mostrarColumnasTractor(tractorNombre, datosExcel);
+            });
         })
     }
     BusquedaTractores();
@@ -128,6 +134,57 @@ function cargarDatosDeExcel() {
         return null;
     }
 }
+
+/**
+ * Muestra las colmunas de un tractor específico en el contenedor de columnas
+ * 
+ * @param {string} nombreTractor
+ * @param {object} datosExcel
+ * @function mostrarColumnasTractor
+ * @returns {void}
+ */
+function mostrarColumnasTractor(nombreTractor, datosExcel) {
+    const columnasContenedor = document.querySelector('.columnas-contenido');
+    columnasContenedor.innerHTML = '';
+
+    const datosHoja = datosExcel.hojas[nombreTractor];
+
+    if (!Array.isArray(datosHoja) || datosHoja.length === 0) {
+        const mensaje = document.createElement('div');
+        mensaje.className = 'rancho';
+        mensaje.textContent = 'No hay datos en esta hoja';
+        columnasContenedor.appendChild(mensaje);
+        return;
+    }
+
+    // Obtener las columnas del primer objeto
+    let columnas = [];
+
+    // Si el primer elemento es un objeto, usamos sus claves
+    if (typeof datosHoja[0] === 'object' && !Array.isArray(datosHoja[0])) {
+        columnas = Object.keys(datosHoja[0]);
+    }
+    // Si el primer elemento es un array, usamos sus valores como encabezados
+    else if (Array.isArray(datosHoja[0])) {
+        columnas = datosHoja[0];
+    }
+
+    columnas.forEach(nombreColumna => {
+        // Crear div para la columna
+        const columnaDiv = document.createElement('div');
+        columnaDiv.className = 'rancho';
+
+        // Texto del nombre
+        const nombreColumnaDiv = document.createElement('div');
+        nombreColumnaDiv.className = 'rancho-texto';
+        nombreColumnaDiv.textContent = nombreColumna;
+
+        // Agregar al DOM
+        columnaDiv.appendChild(nombreColumnaDiv);
+        columnasContenedor.appendChild(columnaDiv);
+    });
+}
+
 
 /**
  * Inicializa la funcionalidad del botón de reporte 
