@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 /**
  * Carga dinámicamente el contenido HTML de un módulo en el contenedor principal.
  *
@@ -15,7 +17,6 @@ function cargarModulo(seccion) {
     usuario:         '../vistas/moduloUsuario.html',
     gestionUsuarios: '../vistas/moduloGestionUsuarios.html',
     tractores:  '../vistas/moduloTractores.html'
-    // tema no va aquí
   };
 
   const contenedorVentanaPrincipal = document.querySelector('.ventana-principal');
@@ -121,7 +122,6 @@ function activarBotonesBarraLateral() {
 
       // Guardamos la sección real
       localStorage.setItem('seccion-activa', seccion);
-      console.log('Sección activa guardada:', seccion);
 
       // Determinar cuál botón mostrar como activo visualmente
       const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
