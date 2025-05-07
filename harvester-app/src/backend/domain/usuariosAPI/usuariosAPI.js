@@ -47,7 +47,39 @@ async function eliminarUsuario(id) {
     return { ok: respuesta.ok, ...datos };
 }
 
+/**
+ * Crea un nuevo usuario enviando una solicitud POST al backend.
+ *
+ * Esta función es utilizada por el administrador para registrar usuarios nuevos en el sistema.
+ * Envia los datos al endpoint correspondiente, incluyendo autenticación con token.
+ *
+ * @async
+ * @function crearUsuarioAPI
+ * @param {object} datos - Objeto con los datos del usuario a crear.
+ * @param {string} datos.nombre - Nombre del nuevo usuario.
+ * @param {string} datos.correo - Correo electrónico del nuevo usuario.
+ * @param {string} datos.contrasenia - Contraseña del nuevo usuario.
+ * @param {number} datos.idRol_FK - ID del rol asignado al usuario.
+ * @returns {Promise<{ok: boolean, mensaje: string, id?: number}>} Resultado de la operación.
+ */
+async function crearUsuario(datos) {
+    const token = localStorage.getItem('token');
+
+    const respuesta = await fetch('http://localhost:3000/usuarios/crear-usuario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(datos),
+    });
+
+    const resultado = await respuesta.json();
+    return { ok: respuesta.ok, ...resultado };
+}
+
 module.exports = {
     obtenerUsuarios,
     eliminarUsuario,
+    crearUsuario,
 };

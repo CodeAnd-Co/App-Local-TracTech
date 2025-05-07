@@ -1,5 +1,7 @@
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
+// RF39 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF39
 
+const { crearUsuario: crearUsuarioCU } = require('../../backend/casosUso/usuarios/crearUsuario');
 const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
 const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
 const Swal2 = require('sweetalert2');
@@ -263,6 +265,78 @@ function mostrarUsuarios(usuarios) {
         });
     });
 }
+
+/**
+ * Crea un nuevo usuario en el sistema.
+ * Captura los datos del formulario, valida los campos, 
+ * realiza la petición al backend mediante crearUsuarioAPI y muestra retroalimentación.
+ * @async
+ * @function crearUsuario
+ * @returns {Promise<void>}
+ */
+async function crearUsuario() {
+    const nombreInput = document.getElementById('username');
+    const correoInput = document.getElementById('email');
+    const contraseniaInput = document.getElementById('password');
+    const rolInput = document.getElementById('rol');
+
+    const nombre = nombreInput.value.trim();
+    const correo = correoInput.value.trim();
+    const contrasenia = contraseniaInput.value.trim();
+    const idRol_FK = parseInt(rolInput.value, 10);
+
+    console.log('Datos enviados al backend:');
+    console.log({ nombre, correo, contrasenia, idRol_FK });
+
+    if (!nombre || !correo || !contrasenia || isNaN(idRol_FK)) {
+        return Swal2.fire({
+            title: 'Datos incompletos',
+            text: 'Por favor, completa todos los campos.',
+            icon: 'warning',
+        });
+    }
+
+    try {
+        const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRol_FK });
+
+        if (resultado.ok) {
+            Swal2.fire({
+                title: 'Usuario creado',
+                text: resultado.mensaje || 'El usuario fue registrado correctamente.',
+                icon: 'success',
+            });
+
+            // Limpiar los campos del formulario
+            nombreInput.value = '';
+            correoInput.value = '';
+            contraseniaInput.value = '';
+            rolInput.value = '';
+
+            document.getElementById('columna-crear-usuario').style.display = 'none';
+            await inicializarModuloGestionUsuarios(); // Recargar usuarios
+        } else {
+            Swal2.fire({
+                title: 'Error al crear usuario',
+                text: resultado.mensaje || 'No se pudo registrar el usuario.',
+                icon: 'error',
+            });
+        }
+    } catch (error) {
+        console.error('Error al crear usuario:', error);
+        Swal2.fire({
+            title: 'Error de red',
+            text: 'Hubo un problema al conectar con el servidor.',
+            icon: 'error',
+        });
+    }
+}
+
+// Asociar el evento al botón btn-guardar
+const botonGuardar = document.querySelector('.btn-guardar');
+botonGuardar.addEventListener('click', async evento => {
+    evento.preventDefault();
+    await crearUsuario();
+});
 
 // Expone la función de inicialización al objeto window
 window.inicializarModuloGestionUsuarios = inicializarModuloGestionUsuarios;
