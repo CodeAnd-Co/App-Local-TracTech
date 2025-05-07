@@ -28,3 +28,7 @@ async function modificarUsuario(idUsuario, nombre, correo, contrasenia) {
         return { ok: false, mensaje: 'Error al conectar con el servidor' };
     }
 }
+
+module.exports = {
+    modificarUsuario,
+};
