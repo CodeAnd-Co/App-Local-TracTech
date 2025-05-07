@@ -1,6 +1,9 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -15,8 +18,8 @@ function eliminarElemento(boton) {
 
 function cancelarVista(){
     window.cargarModulo('formulas');
-
 }
+
 
 btnGuardar.addEventListener('click', async () => {
     procesarFormula();
@@ -58,7 +61,6 @@ function inicializarCrearFormula() {
                         script.src = '../utils/js/crearFormula.js';
                         document.body.appendChild(script);
                         
-
                     })
                     .catch(err => console.error('Error cargando módulo de creación de fórmulas:', err));
             }
@@ -502,7 +504,7 @@ function popularDropdown(elementoSeleccionado) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {    
+document.addEventListener('DOMContentLoaded', () => {
     const { guardarFormula} = require('../../backend/casosUso/formulas/crearFormula');
     const { cargarModulo } = require('./sidebar.js');
 
