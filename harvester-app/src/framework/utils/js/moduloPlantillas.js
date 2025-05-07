@@ -62,6 +62,7 @@ async function inicializarModuloPlantillas () {
                     alert('No se pudo eliminar la Plantilla Respuesta err');
                 }
             } catch (error) {
+                console.error('Error al eliminar la plantilla:', error);
                 alert('No se pudo eliminar la Plantilla Catch');
             }
         } else {
@@ -123,10 +124,10 @@ async function inicializarModuloPlantillas () {
                               modal.addEventListener('click', (event) => {
                                 const rect = modal.getBoundingClientRect();
                                 const clickedInDialog = (
-                                  event.clientX >= rect.left &&
-                                  event.clientX <= rect.right &&
-                                  event.clientY >= rect.top &&
-                                  event.clientY <= rect.bottom
+                                  event.clientX >= rect.left
+                                  && event.clientX <= rect.right
+                                  && event.clientY >= rect.top
+                                  && event.clientY <= rect.bottom
                                 );
                           
                                 // Si el clic fue fuera del área visible del <dialog>, ciérralo
@@ -145,8 +146,8 @@ async function inicializarModuloPlantillas () {
                             scroll.innerHTML  = respuesta.plantilla.Datos;
 
                             /** @type {HTMLElement|null} Botón para eliminar desde visualizador */
-                            const boton_editar_Visualizador = document.getElementById('boton_eliminar_Visualizador');
-                            boton_editar_Visualizador.addEventListener('click', async () => {
+                            const botonEditarVisualizador = document.getElementById('boton_eliminar_Visualizador');
+                            botonEditarVisualizador.addEventListener('click', async () => {
                                 const modalBorrar = document.querySelector('.modal-borrar');
                                 if (modalBorrar && menuOpciones) {
                                     modalBorrar.showModal();
@@ -156,10 +157,10 @@ async function inicializarModuloPlantillas () {
                                     modalBorrar.addEventListener('click', (event) => {
                                     const rect = modalBorrar.getBoundingClientRect();
                                     const clickedInDialog = (
-                                    event.clientX >= rect.left &&
-                                    event.clientX <= rect.right &&
-                                    event.clientY >= rect.top &&
-                                    event.clientY <= rect.bottom
+                                    event.clientX >= rect.left
+                                    && event.clientX <= rect.right
+                                    && event.clientY >= rect.top
+                                    && event.clientY <= rect.bottom
                                     );
                             
                                     // Si el clic fue fuera del área visible del <dialog>, ciérralo
@@ -201,10 +202,10 @@ async function inicializarModuloPlantillas () {
                         modalBorrar.addEventListener('click', (event) => {
                         const rect = modalBorrar.getBoundingClientRect();
                         const clickedInDialog = (
-                        event.clientX >= rect.left &&
-                        event.clientX <= rect.right &&
-                        event.clientY >= rect.top &&
-                        event.clientY <= rect.bottom
+                        event.clientX >= rect.left
+                        && event.clientX <= rect.right
+                        && event.clientY >= rect.top
+                        && event.clientY <= rect.bottom
                         );
                 
                         // Si el clic fue fuera del área visible del <dialog>, ciérralo
@@ -222,6 +223,7 @@ async function inicializarModuloPlantillas () {
             contenedor?.appendChild(tarjetaTexto);
         }
     } catch (error) {
+        console.error('Error al cargar las plantillas:', error);
         alert('No se pudo conectar con el servidor.');
     }
 }

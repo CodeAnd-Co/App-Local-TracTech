@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 /**
  * Carga dinámicamente el contenido HTML de un módulo en el contenedor principal.
  *
@@ -14,7 +16,6 @@ function cargarModulo(seccion) {
     envios:          '../vistas/moduloEnvios.html',
     usuario:         '../vistas/moduloUsuario.html',
     gestionUsuarios: '../vistas/moduloGestionUsuarios.html'
-    // tema no va aquí
   };
 
   const contenedorVentanaPrincipal = document.querySelector('.ventana-principal');
