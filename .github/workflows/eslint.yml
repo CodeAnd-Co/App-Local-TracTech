@@ -18,7 +18,7 @@ jobs:
           node-version: 20.x 
 
       - name: Install dependencies
-        run: npm install
+        run: cd harvester-app && npm install
 
       - name: Run ESLint via reviewdog
         uses: reviewdog/action-eslint@v1
