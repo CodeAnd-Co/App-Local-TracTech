@@ -29,7 +29,7 @@ function inicializarModuloTractores() {
 
     // Mostrar distribuidores si existe la hoja
     if (datosExcel.hojas.hasOwnProperty('Distribuidor')) {
-        const distribuidores = datosExcel.hojas['Distribuidor'];
+        const distribuidores = datosExcel.hojas.Distribuidor;
 
         if (Array.isArray(distribuidores) && distribuidores.length > 0) {
             // Mostrar contenedor si hay datos
@@ -104,7 +104,7 @@ function inicializarModuloTractores() {
             });
         })
     }
-    BusquedaTractores();
+    busquedaTractores();
     botonesFiltrosTractores()
     botonReporte();
 }
@@ -165,9 +165,8 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
     // Si el primer elemento es un objeto, usamos sus claves
     if (typeof datosHoja[0] === 'object' && !Array.isArray(datosHoja[0])) {
         columnas = Object.keys(datosHoja[0]);
-    }
-    // Si el primer elemento es un array, usamos sus valores como encabezados
-    else if (Array.isArray(datosHoja[0])) {
+    } else if (Array.isArray(datosHoja[0])) {
+        // Si el primer elemento es un array, usamos sus valores como encabezados
         columnas = datosHoja[0];
     }
 
@@ -254,10 +253,10 @@ function botonReporte() {
  * Al escribir, se compara el texto ingresado con el contenido de cada distribuidor,
  * ocultando aquellos que no coincidan.
  * 
- * @function BusquedaTractores
+ * @function busquedaTractores
  * @returns {void}
  */
-function BusquedaTractores() {
+function busquedaTractores() {
     const entradaBusqueda = document.getElementById('buscadorTractor');
     const contenedorTractores = document.querySelector('.tractores-contenido');
 
@@ -339,23 +338,20 @@ function aplicarFiltrosCombinados() {
 
             // Se evaula si existe la columna GPS
             if (indiceGPS !== -1) {
-                // Recorrer hasta 5 filas siguientes para buscar "OK" en la columna GPS
-                for (let i = 1; i < Math.min(6, datosDistribuidor.length); i++) {
-                    const fila = datosDistribuidor[i];
+                // Máximo cinco filas después del encabezado
+                const filasValidas = datosDistribuidor.slice(1, 6);
+                tieneGPS = filasValidas.some((fila) => {
                     const valorGPS = fila[indiceGPS];
-                    if (valorGPS && valorGPS.toUpperCase() === "OK") {
-                        tieneGPS = true;
-                        break;
-                    }
-                }
+                    return valorGPS && valorGPS.toUpperCase() === 'OK';
+                });
             }
         }
 
         // Determinar si el distribuidor cumple con los filtros de GPS activos
-        const cumpleFiltro =
-            (mostrarCon && tieneGPS) ||
-            (mostrarSin && !tieneGPS) ||
-            (!mostrarCon && !mostrarSin); // Si ambos filtros están apagados, mostrar todos
+        const cumpleFiltro
+            = (mostrarCon && tieneGPS)
+            || (mostrarSin && !tieneGPS)
+            || (!mostrarCon && !mostrarSin); // Si ambos filtros están apagados, mostrar todos
 
         // Muestra u oculta el distribuidor dependiendo de si pasa ambos filtros
         distribuidorDiv.style.display = coincideBusqueda && cumpleFiltro ? '' : 'none';
