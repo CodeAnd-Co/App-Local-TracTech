@@ -34,7 +34,6 @@ async function inicializarModuloPlantillas () {
 
     eliminarDialog?.addEventListener('click', async () => {
         const modalBorrar = document.querySelector('.modal-borrar');
-
         if(modalBorrar?.getAttribute('dato-id')) {
             try {
                 /** @type {string|null} ID de la plantilla a eliminar */
@@ -63,6 +62,7 @@ async function inicializarModuloPlantillas () {
                     alert('No se pudo eliminar la Plantilla Respuesta err');
                 }
             } catch (error) {
+                console.error('Error al eliminar la plantilla:', error);
                 alert('No se pudo eliminar la Plantilla Catch');
             }
         } else {
@@ -117,6 +117,26 @@ async function inicializarModuloPlantillas () {
                     try {
                         const respuesta = await seleccionarPlantillas(menuOpciones.getAttribute('dato-id'));
                         if(respuesta.ok){
+                            const modal = document.getElementById('modalVizualizador');
+
+                            // Asegúrate de que el modal está abierto para que detecte eventos
+                            if (modal) {
+                              modal.addEventListener('click', (event) => {
+                                const rect = modal.getBoundingClientRect();
+                                const clickedInDialog = (
+                                  event.clientX >= rect.left
+                                  && event.clientX <= rect.right
+                                  && event.clientY >= rect.top
+                                  && event.clientY <= rect.bottom
+                                );
+                          
+                                // Si el clic fue fuera del área visible del <dialog>, ciérralo
+                                if (!clickedInDialog) {
+                                  modal.close();
+                                }
+                              });
+                            }
+
                             /** @type {HTMLElement|null} */
                             const tituloMaximisado = document.getElementById('Titulo-Maximisado');
                             tituloMaximisado.innerText = respuesta.plantilla.Nombre;
@@ -126,12 +146,28 @@ async function inicializarModuloPlantillas () {
                             scroll.innerHTML  = respuesta.plantilla.Datos;
 
                             /** @type {HTMLElement|null} Botón para eliminar desde visualizador */
-                            const boton_editar_Visualizador = document.getElementById('boton_eliminar_Visualizador');
-                            boton_editar_Visualizador.addEventListener('click', async () => {
+                            const botonEditarVisualizador = document.getElementById('boton_eliminar_Visualizador');
+                            botonEditarVisualizador.addEventListener('click', async () => {
                                 const modalBorrar = document.querySelector('.modal-borrar');
                                 if (modalBorrar && menuOpciones) {
                                     modalBorrar.showModal();
                                     modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+
+                                     // Asegúrate de que el modal está abierto para que detecte eventos
+                                    modalBorrar.addEventListener('click', (event) => {
+                                    const rect = modalBorrar.getBoundingClientRect();
+                                    const clickedInDialog = (
+                                    event.clientX >= rect.left
+                                    && event.clientX <= rect.right
+                                    && event.clientY >= rect.top
+                                    && event.clientY <= rect.bottom
+                                    );
+                            
+                                    // Si el clic fue fuera del área visible del <dialog>, ciérralo
+                                    if (!clickedInDialog) {
+                                        modalBorrar.close();
+                                    }
+                                });
                                 }
                             });
                         }
@@ -162,6 +198,21 @@ async function inicializarModuloPlantillas () {
                     if (modalBorrar && menuOpciones) {
                         modalBorrar.showModal();
                         modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+                        // Asegúrate de que el modal está abierto para que detecte eventos
+                        modalBorrar.addEventListener('click', (event) => {
+                        const rect = modalBorrar.getBoundingClientRect();
+                        const clickedInDialog = (
+                        event.clientX >= rect.left
+                        && event.clientX <= rect.right
+                        && event.clientY >= rect.top
+                        && event.clientY <= rect.bottom
+                        );
+                
+                        // Si el clic fue fuera del área visible del <dialog>, ciérralo
+                        if (!clickedInDialog) {
+                            modalBorrar.close();
+                            }
+                        })
                     }
                 });
             });
@@ -172,6 +223,7 @@ async function inicializarModuloPlantillas () {
             contenedor?.appendChild(tarjetaTexto);
         }
     } catch (error) {
+        console.error('Error al cargar las plantillas:', error);
         alert('No se pudo conectar con el servidor.');
     }
 }
