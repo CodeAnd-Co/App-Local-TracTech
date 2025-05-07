@@ -23,6 +23,24 @@ async function obtenerUsuarios() {
     return { ok: respuesta.ok, ...datos };
 }
 
+/**
+ * Envía una solicitud HTTP PUT para modificar un usuario existente.
+ *
+ * Esta función se utiliza para actualizar los datos de un usuario ya existente
+ * en la base de datos. Incluye el token JWT en la cabecera para verificar
+ * permisos del usuario autenticado.
+ *
+ * @async
+ * @function modificarUsuario
+ * @param {number} idUsuario - ID del usuario a modificar
+ * @param {string} nombre - Nuevo nombre del usuario
+ * @param {string} correo - Nuevo correo electrónico del usuario
+ * @param {string} contrasenia - Nueva contraseña del usuario (se enviará en texto plano y será hasheada en el backend)
+ * @returns {Promise<{ok: boolean, [key: string]: any}>}
+ * Objeto con `ok` indicando éxito o fallo, y propiedades adicionales como `mensaje`.
+ *
+ * @throws {Error} Si ocurre un problema de red o el servidor no responde.
+ */
 async function modificarUsuario(idUsuario, nombre, correo, contrasenia) {
     try {
         const respuesta = await fetch('http://localhost:3000/usuarios/modificar-usuario', {
