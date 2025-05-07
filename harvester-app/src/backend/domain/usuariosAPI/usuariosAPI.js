@@ -24,8 +24,6 @@ async function obtenerUsuarios() {
 }
 
 /**
- * Envía una solicitud HTTP PUT para modificar un usuario existente.
- *
  * Esta función se utiliza para actualizar los datos de un usuario ya existente
  * en la base de datos. Incluye el token JWT en la cabecera para verificar
  * permisos del usuario autenticado.
