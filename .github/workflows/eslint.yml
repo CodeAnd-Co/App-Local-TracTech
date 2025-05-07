@@ -2,8 +2,6 @@ name: ESLint with reviewdog
 
 on:
   pull_request:
-    branches:
-      - develop
 
 jobs:
   eslint:
@@ -17,16 +15,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.17.0 
+          node-version: 20.x 
 
       - name: Install dependencies
-        run: npm install
+        run: cd harvester-app && npm install
 
-      - name: Run ESLint via reviewdog
+      - name: Run ESLint (Comentario en checks)
         uses: reviewdog/action-eslint@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review  # Comenta en la PR
-          eslint_flags: '.'  # Ejecuta eslint sobre todos los archivos
-          fail_on_error: true  # Falla el workflow si hay errores
-          filter_mode: diff_context  # Actualiza comentarios, no duplica
+          reporter: github-pr-check
+          workdir: harvester-app
+          eslint_flags: './src'
+          fail_on_error: true
+          filter_mode: nofilter
+        if: always()

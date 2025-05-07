@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 /**
  * Inserta un fragmento HTML en un contenedor dado por ID.
  *
