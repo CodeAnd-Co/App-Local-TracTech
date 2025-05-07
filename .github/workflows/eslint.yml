@@ -25,6 +25,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review  # Comenta en la PR
+          workdir: harvester-app  # Cambia al directorio del proyecto
           eslint_flags: '.'  # Ejecuta eslint sobre todos los archivos
           fail_on_error: true  # Falla el workflow si hay errores
           filter_mode: diff_context  # Actualiza comentarios, no duplica
