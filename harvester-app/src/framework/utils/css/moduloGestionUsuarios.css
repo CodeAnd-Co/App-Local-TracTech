@@ -19,7 +19,7 @@
 }
 
 
-/* === Toolbar de búsqueda + botón “Agregar” === */
+/* === Toolbar de búsqueda + botón 'Agregar' === */
 .busqueda-y-agregar-usuario {
   display: flex;
   gap: 1rem;
@@ -36,6 +36,23 @@
   border-radius: .5rem;
 }
 .secundario .icon { width: 1.6rem; height: 1.6rem; }
+
+/* Estilos para el campo de búsqueda */
+#buscar-usuario {
+  flex: 1;
+  background: transparent; /* Fondo transparente para mostrar el fondo del contenedor */
+  border: none; /* Eliminar borde */
+  outline: none; /* Eliminar contorno al foco */
+  font-size: 1.125rem;
+  color: rgba(0,0,0,.8); /* Color de texto al escribir */
+}
+
+#buscar-usuario::placeholder {
+  color: rgba(0,0,0,.33); /* Color del placeholder */
+  font-size: 1.125rem;
+}
+
+/* Elimina la clase placeholder del input y actualiza el selector existente */
 .secundario .placeholder {
   flex: 1;
   color: rgba(0,0,0,.33);

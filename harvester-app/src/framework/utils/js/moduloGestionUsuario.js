@@ -1,8 +1,16 @@
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
+// RF43 Administrador elimina usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF43
+// RF41 Administrador consulta usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41 
+
+const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
+const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
+const Swal2 = require('sweetalert2');
 
 const usuariosPorPagina = 6;
 let paginaActual = 1;
 let listaUsuarios = [];
+let usuariosFiltrados = [];
+let terminoBusqueda = '';
 
 /**
  * Inicializa el módulo de gestión de usuarios.
@@ -19,25 +27,89 @@ async function inicializarModuloGestionUsuarios() {
     columnaCrear.style.display = 'none';
 
     try {
-        const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
+        usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
+        document.getElementById('lista-usuarios').innerHTML
+        = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
 
-    const btnAgregar = document.querySelector('.primario');
-    btnAgregar.addEventListener('click', ev => {
-        ev.preventDefault();
+    const botonAgregar = document.querySelector('.primario');
+    botonAgregar.addEventListener('click', evento => {
+        evento.preventDefault();
         columnaCrear.style.display = 'block';
     });
 
-    const btnCancelar = document.querySelector('.btn-cancelar');
-    btnCancelar.addEventListener('click', ev => {
-        ev.preventDefault();
+    const botonCancelar = document.querySelector('.btn-cancelar');
+    botonCancelar.addEventListener('click', evento => {
+        evento.preventDefault();
         columnaCrear.style.display = 'none';
     });
+
+    // Configurar el campo de búsqueda
+    const inputBusqueda = document.getElementById('buscar-usuario');
+    inputBusqueda.addEventListener('input', evento => {
+        terminoBusqueda = evento.target.value.toLowerCase().trim();
+        filtrarUsuarios();
+    });
+
+    // Agregar también un listener para cuando se presiona Enter
+    inputBusqueda.addEventListener('keypress', evento => {
+        if (evento.key === 'Enter') {
+            evento.preventDefault(); // Evitar que se envíe un formulario si está dentro de uno
+            terminoBusqueda = inputBusqueda.value.toLowerCase().trim();
+            filtrarUsuarios();
+        }
+    });
+}
+function filtrarUsuarios() {
+    if (terminoBusqueda === '') {
+        usuariosFiltrados = [...listaUsuarios];
+    } else {
+        usuariosFiltrados = listaUsuarios.filter(usuario => 
+            usuario.nombre.toLowerCase().includes(terminoBusqueda) 
+            || (usuario.correo && usuario.correo.toLowerCase().includes(terminoBusqueda)));
+    }
+    paginaActual = 1; // Reiniciar la página actual al filtrar
+    cargarPagina(1); // Volver a la primera página con resultados filtrados
+}
+
+/**
+ * Elimina un usuario del sistema.
+ * Llama al backend para eliminar el usuario y actualiza la lista de usuarios.
+ * @async
+ * @function eliminarUsuario
+ * @param {string} id - ID del usuario a eliminar
+ * @returns {Promise<void>}
+ */
+async function eliminarUsuario(id) {
+    try {
+        const respuesta = await eliminarUsuarioCU(id);
+
+        if (!respuesta.ok) {
+            return Swal2.fire({
+                title: 'Error',
+                text: 'Error al eliminar el usuario.',
+                icon: 'error'
+            });
+        }
+        
+        return Swal2.fire({
+            title: 'Eliminación exitosa',
+            text: 'El usuario ha sido eliminado.',
+            icon: 'success'
+        });
+    } catch (error) {
+        console.error('Error al eliminar el usuario:', error);
+        return Swal2.fire({
+                title: 'Error de conexión',
+                text: 'Verifica tu conexión e inténtalo de nuevo.',
+                icon: 'error'
+            });
+    }
 }
 
 /**
@@ -50,22 +122,34 @@ async function inicializarModuloGestionUsuarios() {
  */
 function cargarPagina(pagina) {
     paginaActual = pagina;
-    const paginasTotales = Math.ceil(listaUsuarios.length / usuariosPorPagina);
+    const paginasTotales = Math.ceil(usuariosFiltrados.length / usuariosPorPagina);
 
     const inicio = (pagina - 1) * usuariosPorPagina;
     const fin = inicio + usuariosPorPagina;
-    const usuariosPagina = listaUsuarios.slice(inicio, fin);
+    const usuariosPagina = usuariosFiltrados.slice(inicio, fin);
 
     mostrarUsuarios(usuariosPagina);
 
     const paginacion = document.querySelector('.paginacion');
     paginacion.innerHTML = '';
 
+    if (usuariosFiltrados.length === 0) {
+        const listaUsuariosElemento = document.getElementById('lista-usuarios');
+        listaUsuariosElemento.innerHTML = '<div class="sin-resultados">No hay usuarios que coincidan con la búsqueda.</div>';
+        return;
+    }
+
+    // Solo mostrar paginación si hay más de una página
+    if (paginasTotales <= 1) {
+        return;
+    }
+
     const previo = document.createElement('button');
     previo.textContent = '<';
     previo.classList.add('boton-pagina-previa');
-    previo.onclick = ev => {
-        ev.preventDefault();
+    previo.disabled = paginaActual === 1;
+    previo.onclick = evento => {
+        evento.preventDefault();
         if (paginaActual > 1) {
             cargarPagina(paginaActual - 1);
         }
@@ -84,15 +168,16 @@ function cargarPagina(pagina) {
             if (numeroPagina === paginaActual) {
                 botonPagina.classList.add('pagina-actual');
             }
-            botonPagina.onclick = ev => {
-                ev.preventDefault();
+            botonPagina.onclick = evento => {
+                evento.preventDefault();
                 cargarPagina(numeroPagina);
             };
             paginacion.appendChild(botonPagina);
         } else if (
-            numeroPagina === paginaActual - 2
-            || numeroPagina === paginaActual + 2
+            (numeroPagina === paginaActual - 2 && numeroPagina > 1)
+            || (numeroPagina === paginaActual + 2 && numeroPagina < paginasTotales)
         ) {
+            // Evitamos duplicar los puntos
             const puntos = document.createElement('span');
             puntos.textContent = '...';
             puntos.classList.add('puntos-paginacion');
@@ -103,8 +188,9 @@ function cargarPagina(pagina) {
     const siguiente = document.createElement('button');
     siguiente.textContent = '>';
     siguiente.classList.add('boton-pagina-siguiente');
-    siguiente.onclick = ev => {
-        ev.preventDefault();
+    siguiente.disabled = paginaActual === paginasTotales;
+    siguiente.onclick = evento => {
+        evento.preventDefault();
         if (paginaActual < paginasTotales) {
             cargarPagina(paginaActual + 1);
         }
@@ -135,7 +221,7 @@ function mostrarUsuarios(usuarios) {
     }
 
     const fragmento = document.createDocumentFragment();
-    for (const { nombre } of usuarios) {
+    for (const { id, nombre } of usuarios) {
         const div = document.createElement('div');
         div.className = 'frame-usuario';
         div.innerHTML = `
@@ -145,13 +231,39 @@ function mostrarUsuarios(usuarios) {
                 <button class='boton-editar'>
                   <img src='../utils/iconos/Editar2.svg' alt='Editar'/>
                 </button>
-                <button class='boton-eliminar'>
+                <button class='boton-eliminar' data-id='${id}'>
                   <img src='../utils/iconos/BasuraBlanca.svg' alt='Eliminar'/>
                 </button>
         `;
         fragmento.appendChild(div);
     }
     listaUsuariosElemento.appendChild(fragmento);
+
+    // Añadir eventos a los botones de eliminar
+    const botonesEliminar = listaUsuariosElemento.querySelectorAll('.boton-eliminar');
+    botonesEliminar.forEach(boton => {
+        boton.addEventListener('click', async evento => {
+            evento.preventDefault();
+            const id = boton.getAttribute('data-id');
+            Swal2.fire({
+                title: '¿Eliminar usuario?',
+                text: 'Esta acción no se puede deshacer.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar'
+              }).then(async (resultado) => { // Cambiar el callback a async
+                if (resultado.isConfirmed) {
+                    await eliminarUsuario(id); // Ahora puedes usar await aquí
+                    setTimeout(() => {
+                        inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
+                    }, 500);
+                }
+            });
+        });
+    });
 }
 
 // Expone la función de inicialización al objeto window

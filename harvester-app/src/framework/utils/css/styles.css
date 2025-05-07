@@ -333,3 +333,31 @@
   background: #1d3a7c;
   transform: scale(1.05);
 }
+
+/* Figma Styles of your File */
+:root {
+  /* Colors */
+  /* Fonts */
+  --hero-font-family: SegoeUi-Regular, sans-serif;
+  --hero-font-size: 52px;
+  --hero-line-height: 120%;
+  --hero-font-weight: 400;
+  --hero-font-style: normal;
+  --titulo-font-family: SegoeUi-Regular, sans-serif;
+  --titulo-font-size: 32px;
+  --titulo-line-height: 120%;
+  --titulo-font-weight: 400;
+  --titulo-font-style: normal;
+  --encabezado-font-family: SegoeUi-Regular, sans-serif;
+  --encabezado-font-size: 24px;
+  --encabezado-line-height: 120%;
+  --encabezado-font-weight: 400;
+  --encabezado-font-style: normal;
+  --parrafo-font-family: SegoeUi-Regular, sans-serif;
+  --parrafo-font-size: 18px;
+  --parrafo-line-height: 120%;
+  --parrafo-font-weight: 400;
+  --parrafo-font-style: normal;
+
+  /* Effects */
+}
