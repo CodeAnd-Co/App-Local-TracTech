@@ -31,7 +31,6 @@ btnCancelar.addEventListener('click', () => {
 
 btnGenerar.addEventListener('click', () => {
     const contenedor = document.getElementById('function-arguments');
-    console.log(contenedor);
     if (contenedor) {
         generarFormulaCompleja();
     } else {
@@ -97,7 +96,6 @@ async function procesarFormula() {
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     try{
-        // console.log('Nombre de la fórmula:', nombreFormula, 'Fórmula:', formula); Quitar el console.log
         const respuesta = await guardarFormulaTemporal(nombreFormula, formula);
         if (respuesta.ok) {
             window.cargarModulo('formulas');
