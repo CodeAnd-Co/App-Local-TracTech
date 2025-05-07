@@ -12,6 +12,33 @@ async function guardarFormula(nombre, formula){
     return { ok: respuesta.ok, ...datos };
 }
 
+async function consultarFormulas(){
+    const respuesta = await fetch('http://localhost:3000/formulas/consultarFormulas', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    const datos = await respuesta.json();
+    return { ok: respuesta.ok, ...datos };
+}
+
+async function eliminarFormula(id){
+    const respuesta = await fetch('http://localhost:3000/formulas/eliminarFormula/', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+    });
+
+    const datos = await respuesta.json();
+    return { ok: respuesta.ok, ...datos };
+}
+
 module.exports = {
     guardarFormula,
+    consultarFormulas,
+    eliminarFormula,
 };
