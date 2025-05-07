@@ -46,7 +46,7 @@ function iniciarDistribuidores(datosExcel) {
 
     const hojaExcel = datosExcel.hojas.Distribuidor;
     
-    if (!hojaExcel || !Array.isArray(hoja) || hoja.length === 0) {
+    if (!hojaExcel || !Array.isArray(hojaExcel) || hojaExcel.length === 0) {
         console.warn('No se encontraron distribuidores');
     } else {
         distribuidorContenedor.style.visibility = 'visible';
