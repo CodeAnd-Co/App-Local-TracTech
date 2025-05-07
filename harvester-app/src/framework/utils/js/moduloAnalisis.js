@@ -17,37 +17,143 @@
  * @returns {void}
  */
 function inicializarModuloAnalisis() {
-  // Actualizar visualmente el sidebar sin modificar localStorage
-  const botonesSidebar = document.querySelectorAll('.boton-sidebar');
-  botonesSidebar.forEach(boton => boton.classList.remove('activo'));
+  const idContenedor               = 'contenedorElementos';
+  const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
+  const contenedor                 = document.getElementById(idContenedor);
 
-  const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
-  botonesAnalisis.forEach(boton => boton.classList.add('activo'));
+  // 1) Ocultar botones globales
+  document.getElementById('agregarTexto').style.display   = 'none';
+  document.getElementById('agregarGrafica').style.display = 'none';
 
-  // Actualizar el topbar si está disponible
-  if (window.actualizarTopbar) {
-    window.actualizarTopbar('analisis');
-  }
-
-  // IDs de contenedores
-  const idContenedor       = 'contenedorElementos';
-  const idPrevisualizacion = 'contenedor-elementos-previsualizacion';
-
-  // Configurar listeners de botones
-  document.getElementById('agregarTexto')
-          .addEventListener('click', () => window.agregarTexto(idContenedor, idPrevisualizacion));
-  document.getElementById('agregarGrafica')
-          .addEventListener('click', () => window.agregarGrafica(idContenedor, idPrevisualizacion));
+  // 2) Listener de descarga de PDF
   document.getElementById('descargarPDF')
           .addEventListener('click', descargarPDF);
 
-  // Cargar los datos del Excel
-  const datosExcel = cargarDatosExcel();
-  if (!datosExcel) {
-    console.warn('No hay datos disponibles para análisis');
+  // 3) Siempre iniciar con gráfica + texto si está vacío
+  if (contenedor.children.length === 0) {
+    agregarGrafica(idContenedor, idContenedorPrevisualizacion);
+    agregarTexto( idContenedor, idContenedorPrevisualizacion);
+  }
+
+  // 4) Delegación de hover/leave para tarjetas
+  contenedor.addEventListener('mouseenter', alEntrarTarjeta, true);
+  contenedor.addEventListener('mouseleave', alSalirTarjeta, true);
+
+  /**
+   * Se ejecuta al entrar el ratón en una tarjeta.
+   */
+  function alEntrarTarjeta(evento) {
+    const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
+    if (tarjeta) mostrarBotonesAgregar(tarjeta);
+  }
+
+
+  function alSalirTarjeta(evento) {
+    const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
+    if (tarjeta) ocultarBotonesAgregar(tarjeta);
+  }
+
+  /**
+   * Muestra dos botones “+” (superior e inferior) dentro de la tarjeta.
+   */
+  function mostrarBotonesAgregar(tarjeta) {
+    if (tarjeta.querySelector('.btn-agregar-flotante')) return;
+    tarjeta.classList.add('tarjeta-con-posicion');
+
+    ['antes', 'despues'].forEach(ubicacion => {
+      const botonFlotante = document.createElement('button');
+      botonFlotante.classList.add(
+        'btn-agregar-flotante',
+        ubicacion === 'antes'
+          ? 'btn-agregar-superior'
+          : 'btn-agregar-inferior'
+      );
+      botonFlotante.textContent       = '+';
+      botonFlotante.dataset.ubicacion = ubicacion;
+      botonFlotante.addEventListener('click', evento => {
+        evento.stopPropagation();
+        abrirMenuAgregar(tarjeta, ubicacion);
+      });
+      tarjeta.appendChild(botonFlotante);
+    });
+  }
+
+  /**
+   * Elimina todos los botones “+” de una tarjeta.
+   */
+  function ocultarBotonesAgregar(tarjeta) {
+    tarjeta.querySelectorAll('.btn-agregar-flotante')
+           .forEach(boton => boton.remove());
+  }
+
+  /**
+   * Abre el menú con las opciones “Agregar texto” y “Agregar gráfica”,
+   * insertando en la posición indicada.
+   */
+  /**
+ * Abre un SweetAlert2 pequeñito dentro de la tarjeta clicada,
+ * y con dos botones horizontales para “Texto” y “Gráfica”.
+ *
+ * @param {Element} tarjeta    – La tarjeta donde se hizo clic.
+ * @param {'antes'|'despues'} ubicacion – Dónde insertar la nueva tarjeta.
+ */
+function abrirMenuAgregar(tarjeta, ubicacion) {
+  Swal.fire({
+    title: 'Agregar',
+    width: '180px',
+    padding: '0.5rem',
+    icon: undefined,
+    showCancelButton: true,
+    showDenyButton: true,
+    confirmButtonText:
+      '<img src="../utils/iconos/Texto.svg" class="icono-agregar"/> Texto',
+    denyButtonText:
+      '<img src="../utils/iconos/GraficaBarras.svg" class="icono-agregar"/> Gráfica',
+    cancelButtonText: '✕',
+    // monta el modal en la tarjeta, no en body
+    target: tarjeta,
+    // quitamos estilos por defecto, reutilizamos tus botones
+    buttonsStyling: false,
+    customClass: {
+      container: 'swal2-container-inline',
+      popup:     'swal2-popup-inline',
+      confirmButton: 'boton-agregar small',
+      denyButton:    'boton-agregar small',
+      cancelButton:  'swal2-cancel-inline'
+    }
+  }).then(resultado => {
+    const idCont  = 'contenedorElementos';
+    const idPrev  = 'contenedor-elementos-previsualizacion';
+    if (resultado.isConfirmed) {
+      agregarTexto(idCont, idPrev, tarjeta, ubicacion);
+    } else if (resultado.isDenied) {
+      agregarGrafica(idCont, idPrev, tarjeta, ubicacion);
+    }
+    // si canceló, no hace nada
+  });
+}
+  /**
+   * Cierra el menú de inserción si existe.
+   */
+  function cerrarMenuAgregar(tarjeta) {
+    const menuExistente = tarjeta.querySelector('.menu-agregar');
+    if (menuExistente) menuExistente.remove();
   }
 }
 
+// Exponer funciones globales
+window.inicializarModuloAnalisis      = inicializarModuloAnalisis;
+window.agregarTexto                   = agregarTexto;
+window.agregarGrafica                 = agregarGrafica;
+window.cargarDatosExcel               = cargarDatosExcel;
+window.descargarPDF                   = descargarPDF;
+
+// Arrancar al cargar el DOM
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', inicializarModuloAnalisis);
+} else {
+  inicializarModuloAnalisis();
+}
 /**
  * Carga los datos de Excel almacenados en localStorage.
  *
@@ -152,6 +258,8 @@ function descargarPDF() {
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel          = cargarDatosExcel;
 window.descargarPDF              = descargarPDF;
+window.agregarTexto            = agregarTexto;
+window.agregarGrafica          = agregarGrafica;
 
 // Ejecutar inicialización al cargar el DOM
 if (document.readyState === 'loading') {
