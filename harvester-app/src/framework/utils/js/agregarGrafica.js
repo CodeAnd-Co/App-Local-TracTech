@@ -242,10 +242,18 @@ function eliminarCuadroFormulas() {
  * @returns {Chart} - Instancia de la gráfica creada.
  */
 function crearGrafica(contexto, tipo, color) {
-  // Línea y radar 1 color
-  // barras, pastel, dona, polar 2 colores
+  if (!contexto) {
+    console.error('No se encontró el contexto del canvas');
+    return;
+  }
+  
+  // Color por defecto
   if (!color) {
     color = [255, 99, 132];
+  }
+  // Tipo por defecto
+  if (!tipo) {
+    tipo = 'line';
   }
 
   const colores = generarDegradadoHaciaBlanco(color, 7)
