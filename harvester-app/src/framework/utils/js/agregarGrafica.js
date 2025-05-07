@@ -72,54 +72,32 @@ function agregarGrafica(contenedorId, previsualizacionId) {
   graficaDiv.appendChild(canvasGrafica);
 
   //Iniciar Chart.js
-  const grafico = new Chart(contexto, {
-    type: 'line',
-    data: {
-      labels: ['January','February','March','April','May','June','July'],
-      datasets: [{
-        label: '',
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgb(255, 99, 132)',
-        data: [0,10,5,2,20,30,45]
-      }]
-    },
-    options: {
-      plugins: {
-        title: { display: true, text: '' },
-        legend: {
-          labels: {
-            generateLabels: chart =>
-              chart.data.datasets.map(ds => ({
-                text: ds.label,
-                fillStyle: ds.backgroundColor,
-                strokeStyle: ds.backgroundColor
-              }))
-          }
-        }
-      },
-      scales: {
-        x: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } },
-        y: { ticks:{ color:'#fff' }, grid:{ color:'#fff' } }
-      }
-    }
-  });
+  const grafico = crearGrafica(contexto, 'line');
 
   graficaDiv.appendChild(canvasGrafica);
 
   //Cambiar título dinámicamente
   tarjetaGrafica
     .querySelector('.titulo-grafica')
-    .addEventListener('input', function() {
-      grafico.options.plugins.title.text = this.value;
-      grafico.update();
+    .addEventListener('input', function () {
+      const contexto = encontrarGrafica(nuevaId).children[0].getContext('2d');
+      const graficaEncontrada = Chart.getChart(contexto);
+
+      graficaEncontrada.options.plugins.title.text = this.value;
+      graficaEncontrada.update();
     });
 
-  //Selector de tipo de gráfica (igual a agregarTexto.js) :contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaicite:1]{index=1}
+  //Selector de tipo de gráfica
   const selectorTipoGrafica = tarjetaGrafica.querySelector('.tipo-grafica');
   selectorTipoGrafica.value = grafico.config.type;
   selectorTipoGrafica.addEventListener('change', () => {
-    grafico.config.type = selectorTipoGrafica.value;
-    grafico.update();
+    const contexto = encontrarGrafica(nuevaId).children[0].getContext('2d');
+
+    Chart.getChart(contexto).destroy();
+
+    const nuevaGrafica = crearGrafica(contexto, selectorTipoGrafica.value);
+    nuevaGrafica.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
+    nuevaGrafica.update();
   });
 
   //Eliminar gráfica
@@ -189,13 +167,13 @@ function crearCuadroFormulas(columnas) {
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
   crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
   contenedoesSeleccion[1] //Fórmulas
-  
+
   const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
   botonRegresar.addEventListener('click', () => {
     cuadroFormulas.remove();
   });
 
-// 1) Busca la sección de elementos de reporte
+  // 1) Busca la sección de elementos de reporte
   const reporteSection = document.querySelector('.seccion-elemento-reporte');
   // 2) Inserta el panel justo después de esa sección
   if (reporteSection) {
@@ -254,6 +232,102 @@ function eliminarCuadroFormulas() {
   } else {
     return false
   }
+}
+
+/**
+ * Crea una gráfica utilizando Chart.js.
+ * @param {CanvasRenderingContext2D} contexto - 2dcontext del canvas donde se dibujará la gráfica.
+ * @param {String} tipo - String que representa el tipo de gráfica (ej. 'line', 'bar', 'pie', 'doughnut', 'radar', 'polarArea').
+ * @param {Int[]} color - Arreglo de 3 enteros que representan el color RGB de la gráfica.
+ * @returns {Chart} - Instancia de la gráfica creada.
+ */
+function crearGrafica(contexto, tipo, color) {
+  if (!contexto) {
+    console.error('No se encontró el contexto del canvas');
+    return;
+  }
+  
+  // Color por defecto
+  if (!color) {
+    color = [255, 99, 132];
+  }
+  // Tipo por defecto
+  if (!tipo) {
+    tipo = 'line';
+  }
+
+  const colores = generarDegradadoHaciaBlanco(color, 7)
+  color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+
+  const grafico = new Chart(contexto, {
+    type: tipo,
+    data: {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [{
+        label: '',
+        backgroundColor: fondo => {
+          if (tipo == 'line' || tipo == 'radar') {
+            return color;
+          } else {
+            return colores[fondo.dataIndex];
+          }
+        },
+        borderColor: borde => {
+          if (tipo == 'line' || tipo == 'radar') {
+            return color;
+          } else {
+            return colores[borde.dataIndex];
+          }
+        },
+        data: [5, 10, 5, 2, 20, 30, 45]
+      }]
+    },
+    options: {
+      plugins: {
+        title: { display: true},
+        legend: {
+          labels: {
+            generateLabels: chart =>
+              chart.data.datasets.map(ds => ({
+                text: ds.label,
+                fillStyle: color,
+                strokeStyle: color
+              }))
+          },
+        },
+      },
+      scales: {
+        x: { ticks: { color: '#fff' }, grid: { color: '#fff' } },
+        y: { ticks: { color: '#fff' }, grid: { color: '#fff' } }
+      }
+    }
+  });
+
+  return grafico;
+}
+
+/**
+ * Crea un arreglo de colores en formato rgb que van desde el color dado hasta el blanco.
+ * @param {Int[]} rgb - Arreglo de 3 enteros que representan el color RGB inicial.
+ * @param {Int} pasos - Número de pasos para el degradado.
+ * @returns {String[]} Arreglo de strings que representan los colores en formato rgb
+ */
+function generarDegradadoHaciaBlanco(rgb, pasos) {
+  const [rojo, verde, azul] = rgb;
+
+  return Array.from(
+    // Crea un arreglo de la longitud de pasps
+    { length: pasos },
+    //Ejecuta la siguiente gunción en cada valor del arreglo
+    (__, indice) => {
+      // Calcula el factor por el cual se va a multiplicar el color para acercarse un poco al blanco
+      const factor = indice / (pasos); // Factor de interpolación
+      const nuevoRojo = Math.round(rojo + (255 - rojo) * factor);
+      const nuevoVerde = Math.round(verde + (255 - verde) * factor);
+      const nuevoAzul = Math.round(azul + (255 - azul) * factor);
+      return `rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`;
+    }
+  );
 }
 
 // Hace la función agregarGrafica disponible en todo el proyecto
