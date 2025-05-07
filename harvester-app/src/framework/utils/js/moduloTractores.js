@@ -98,7 +98,7 @@ function inicializarModuloTractores() {
         tractoresContenedor.appendChild(tractorDiv);
 
         // Agregar evento para mostrar columnas
-        tractorDiv.addEventListener('click', () => {
+        nombreTractorDiv.addEventListener('click', () => {
             console.log("Click a tractor");
             mostrarColumnasTractor(tractorNombre, datosExcel);
             });
