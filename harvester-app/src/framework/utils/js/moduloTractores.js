@@ -59,10 +59,10 @@ function inicializarModuloTractores() {
                 distribuidoresContenedor.appendChild(distribuidorDiv);
             });
         } else {
-            console.log('Hoja de distribuidores vacía');
+            console.warn('Hoja de distribuidores vacía');
         }
     } else {
-        console.log('No se encontraron distribuidores');
+        console.warn('No se encontraron distribuidores');
     }
 
     const tractoresContenedor = document.querySelector('.tractores-contenido');
@@ -99,7 +99,6 @@ function inicializarModuloTractores() {
 
         // Agregar evento para mostrar columnas
         nombreTractorDiv.addEventListener('click', () => {
-            console.log('Click a nombre de tractor');
             manejarClickTractor(tractorNombre, datosExcel);
             });
         })
@@ -120,14 +119,12 @@ function cargarDatosDeExcel() {
         // Recuperar los datos de Excel
         const datosExcelJSON = localStorage.getItem('datosExcel');
         if (!datosExcelJSON) {
-            console.log('No hay datos de Excel disponibles en localStorage');
             alert('No hay datos de Excel disponibles');
             return null;
         }
         
         // Parsear los datos JSON
         const datosExcel = JSON.parse(datosExcelJSON);
-        console.log('Datos de Excel cargados:', datosExcel);
         return datosExcel;
     } catch (error) {
         console.error('Error al cargar datos de Excel:', error);
