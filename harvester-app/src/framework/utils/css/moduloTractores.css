@@ -125,6 +125,21 @@ input:focus {
   flex-shrink: 0;
   position: relative;
 }
+.columna-nombre {
+  background: #ffffff;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: #000000;
+  border-width: 3px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
 .rancho {
   background: #ffffff;
   border-radius: 8px;

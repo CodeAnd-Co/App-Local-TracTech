@@ -153,7 +153,7 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
 
     if (!Array.isArray(datosHoja) || datosHoja.length === 0) {
         const mensaje = document.createElement('div');
-        mensaje.className = 'rancho';
+        mensaje.className = 'columna-nombre';
         mensaje.textContent = 'No hay datos en esta hoja';
         columnasContenedor.appendChild(mensaje);
         return;
@@ -174,15 +174,20 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
     columnas.forEach(nombreColumna => {
         // Crear div para la columna
         const columnaDiv = document.createElement('div');
-        columnaDiv.className = 'rancho';
+        columnaDiv.className = 'columna-nombre';
 
         // Texto del nombre
         const nombreColumnaDiv = document.createElement('div');
         nombreColumnaDiv.className = 'rancho-texto';
         nombreColumnaDiv.textContent = nombreColumna;
 
+        const caja = document.createElement('img');
+        caja.className = 'check-box';
+        caja.src = '../utils/iconos/check_box_outline_blank.svg';
+
         // Agregar al DOM
         columnaDiv.appendChild(nombreColumnaDiv);
+        columnaDiv.appendChild(caja);
         columnasContenedor.appendChild(columnaDiv);
     });
 }
