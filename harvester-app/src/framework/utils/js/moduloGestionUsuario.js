@@ -240,6 +240,9 @@ function mostrarUsuarios(usuarios) {
     }
     listaUsuariosElemento.appendChild(fragmento);
 
+    // Añadir eventos a los botones de modificar
+    escucharEventoBotonEditar()
+
     // Añadir eventos a los botones de eliminar
     const botonesEliminar = listaUsuariosElemento.querySelectorAll('.boton-eliminar');
     botonesEliminar.forEach(boton => {
@@ -266,6 +269,108 @@ function mostrarUsuarios(usuarios) {
         });
     });
 }
+
+/**
+ * Esta función busca todos los elementos con la clase `.boton-editar` en la lista
+ * de usuarios actualmente renderizados (paginados). Al hacer clic en uno de estos
+ * botones, se obtiene el `idUsuario` correspondiente desde `usuariosFiltrados`,
+ * y se invoca la función `modificarUsuario(id)` para iniciar el proceso de edición.
+ *
+ * @param {void}
+ * @returns {void}
+ */
+function escucharEventoBotonEditar() {
+    const botonModificar = listaUsuariosElemento.querySelectorAll('.boton-editar');
+    botonModificar.forEach((boton, indice) => {
+        boton.addEventListener('click', evento => {
+            evento.preventDefault();
+            const idUsuario = usuariosFiltrados[(paginaActual - 1) * usuariosPorPagina + indice].id;
+            modificarUsuario(idUsuario);
+        });
+    });
+}
+
+/**
+ * Carga en el formulario los datos del usuario seleccionado y prepara el evento de modificación.
+ *
+ * @function modificarUsuario
+ * @param {number} idUsuario - ID del usuario a modificar
+ * @returns {void}
+ */
+function modificarUsuario(idUsuario) {
+    const columnaCrearModificar = document.getElementById('columna-crear-modificar-usuario');
+    columnaCrearModificar.style.display = 'block';
+
+    // Cambiar título del formulario
+    document.querySelector('.crear-modificar-usuario').textContent = 'Modificar usuario';
+
+    // Obtener el usuario desde la lista actual
+    const usuario = listaUsuarios.find(usuario => usuario.id === idUsuario);
+    if (!usuario) {
+        console.error('Usuario no encontrado'); //TODO: Añadir un mensaje de error al usuario
+        return;
+    }
+
+    // Precargar campos
+    document.getElementById('username').value = usuario.nombre;
+    document.getElementById('email').value = usuario.correo;
+    document.getElementById('password').value = ''; // Por seguridad, no se muestra
+    // document.getElementById('role').value = usuario.rol; // Si tuvieras esta propiedad
+
+    // Eliminar listeners anteriores del formulario
+    const formulario = document.querySelector('.modificacion');
+    const nuevoFormulario = formulario.cloneNode(true);
+    formulario.parentNode.replaceChild(nuevoFormulario, formulario);
+
+    // Botón cancelar
+    nuevoFormulario.querySelector('.btn-cancelar').addEventListener('click', evento => {
+        evento.preventDefault();
+        columnaCrearModificar.style.display = 'none';
+        nuevoFormulario.reset();
+    });
+
+    // Botón guardar
+    nuevoFormulario.addEventListener('submit', async evento => {
+        evento.preventDefault();
+
+        const nombre = document.getElementById('username').value.trim();
+        const correo = document.getElementById('email').value.trim();
+        const contrasenia = document.getElementById('password').value.trim();
+        // const rol = document.getElementById('role').value;
+
+        if (!nombre || !correo || !contrasenia) {
+            return Swal2.fire({
+                title: 'Campos incompletos',
+                text: 'Por favor completa todos los campos.',
+                icon: 'warning'
+            });
+        }
+
+        const { modificarUsuario: modificarUsuarioCU } = require('../../backend/casosUso/usuarios/modificarUsuario');
+        const respuesta = await modificarUsuarioCU(idUsuario, nombre, correo, contrasenia);
+
+        if (!respuesta.ok) {
+            return Swal2.fire({
+                title: 'Error',
+                text: respuesta.mensaje || 'No se pudo modificar el usuario.',
+                icon: 'error'
+            });
+        }
+
+        Swal2.fire({
+            title: 'Modificado',
+            text: 'El usuario fue actualizado correctamente.',
+            icon: 'success'
+        });
+
+        columnaCrearModificar.style.display = 'none';
+        nuevoFormulario.reset();
+        inicializarModuloGestionUsuarios();
+    });
+}
+
+
+
 
 // Expone la función de inicialización al objeto window
 window.inicializarModuloGestionUsuarios = inicializarModuloGestionUsuarios;
