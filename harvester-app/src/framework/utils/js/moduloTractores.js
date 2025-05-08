@@ -301,7 +301,7 @@ function botonesFiltrosTractores() {
     // Evento para mostrar sólo los tractores con telemetría
     filtroConCheck.addEventListener('click', () => {
         const caja = filtroConCheck.querySelector('img');
-        cambiarIconoMarcadoADescarcado(caja)
+        cambiarIconoMarcadoADesmarcado(caja)
         aplicarFiltrosCombinados()
     });
     
@@ -309,7 +309,7 @@ function botonesFiltrosTractores() {
     // Evento para mostrar sólo los tractores sin telemetría
     filtroSinCheck.addEventListener('click', () => {
         const caja = filtroSinCheck.querySelector('img');
-        cambiarIconoMarcadoADescarcado(caja)
+        cambiarIconoMarcadoADesmarcado(caja)
         aplicarFiltrosCombinados()
     });
 }
@@ -384,11 +384,11 @@ function aplicarFiltrosCombinados() {
 /**
  * Cambia el ícono de marcado a desmarcado
  * 
- * @function cambiarIconoMarcadoADescarcado
+ * @function cambiarIconoMarcadoADesmarcado
  * @param {HTMLElement} icono El elemento de imagen a actualizar
  * @returns {void}
  */
-function cambiarIconoMarcadoADescarcado(icono) {
+function cambiarIconoMarcadoADesmarcado(icono) {
     // Verificar si el icono actual es el de desmarcado
     if (icono.src.includes('check_box_outline_blank.svg')) {
         icono.src = '../utils/iconos/check_box.svg'; // Cambiar a marcado
