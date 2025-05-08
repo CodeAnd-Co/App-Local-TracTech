@@ -102,25 +102,33 @@ function inicializarTractores(datosExcel) {
         const tractorDiv = document.createElement('div');
         tractorDiv.className = 'rancho'; // Asignar clase para estilo
 
+        // Crear contenedor para el texto
+        const tractorDivTexto = document.createElement('div');
+        tractorDivTexto.className = 'caja-rancho-texto';
+
         // Crear el nombre del tractor
         const nombreTractorDiv = document.createElement('div');
         nombreTractorDiv.className = 'rancho-texto';
         nombreTractorDiv.textContent = tractorNombre; // Nombre del tractor
+
+        tractorDivTexto.appendChild(nombreTractorDiv);
 
         // Crear el cuadro de selección (checkbox) para el tractor
         const caja = document.createElement('img');
         caja.className = 'check-box';
         caja.src = '../utils/iconos/check_box_outline_blank.svg'; // Imagen del checkbox vacío 
 
+        
         // Añadir el nombre y el checkbox al div del tractor
-        tractorDiv.appendChild(nombreTractorDiv);
+        tractorDiv.appendChild(tractorDivTexto);
         tractorDiv.appendChild(caja);
-
+        
         // Añadir el div del tractor al contenedor
         tractoresContenedor.appendChild(tractorDiv);
-
+        
         // Agregar evento para mostrar columnas
-        nombreTractorDiv.addEventListener('click', () => {
+        tractorDivTexto.addEventListener('click', () => {
+            cambiarSeleccionVisualUnica(tractorDiv);
             manejarClickTractor(tractorNombre, datosExcel);
             });
         })
@@ -298,7 +306,7 @@ function botonesFiltrosTractores() {
     // Evento para mostrar sólo los tractores con telemetría
     filtroConCheck.addEventListener('click', () => {
         const caja = filtroConCheck.querySelector('img');
-        cambiarIconoMarcadoADescarcado(caja)
+        cambiarIconoMarcadoADesmarcado(caja)
         aplicarFiltrosCombinados()
     });
     
@@ -306,7 +314,7 @@ function botonesFiltrosTractores() {
     // Evento para mostrar sólo los tractores sin telemetría
     filtroSinCheck.addEventListener('click', () => {
         const caja = filtroSinCheck.querySelector('img');
-        cambiarIconoMarcadoADescarcado(caja)
+        cambiarIconoMarcadoADesmarcado(caja)
         aplicarFiltrosCombinados()
     });
 }
@@ -381,17 +389,35 @@ function aplicarFiltrosCombinados() {
 /**
  * Cambia el ícono de marcado a desmarcado
  * 
- * @function cambiarIconoMarcadoADescarcado
+ * @function cambiarIconoMarcadoADesmarcado
  * @param {HTMLElement} icono El elemento de imagen a actualizar
  * @returns {void}
  */
-function cambiarIconoMarcadoADescarcado(icono) {
+function cambiarIconoMarcadoADesmarcado(icono) {
     // Verificar si el icono actual es el de desmarcado
     if (icono.src.includes('check_box_outline_blank.svg')) {
         icono.src = '../utils/iconos/check_box.svg'; // Cambiar a marcado
     } else {
         icono.src = '../utils/iconos/check_box_outline_blank.svg'; // Cambiar a desmarcado
     }
+}
+
+/**
+ * Alterna visualmente la selección de un bloque
+ * 
+ * @function cambiarSeleccionVisualUnica
+ * @param {HTMLElement} contenedor - el div de un elemento al que se le hace click
+ */
+function cambiarSeleccionVisualUnica(contenedor) {
+    const todosLosDiv = document.querySelectorAll('.tractores-contenido .rancho');
+    const yaSeleccionado = contenedor.classList.contains('seleccionado');
+
+    todosLosDiv.forEach(elemento => elemento.classList.remove('seleccionado'));
+
+    if (!yaSeleccionado) {
+        contenedor.classList.add('seleccionado');
+    }
+
 }
 
 // Exportar funciones para uso global
