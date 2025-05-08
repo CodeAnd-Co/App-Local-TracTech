@@ -1,6 +1,9 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -15,8 +18,8 @@ function eliminarElemento(boton) {
 
 function cancelarVista(){
     window.cargarModulo('formulas');
-
 }
+
 
 btnGuardar.addEventListener('click', async () => {
     procesarFormula();
@@ -28,7 +31,6 @@ btnCancelar.addEventListener('click', () => {
 
 btnGenerar.addEventListener('click', () => {
     const contenedor = document.getElementById('function-arguments');
-    console.log(contenedor);
     if (contenedor) {
         generarFormulaCompleja();
     } else {
@@ -58,7 +60,6 @@ function inicializarCrearFormula() {
                         script.src = '../utils/js/crearFormula.js';
                         document.body.appendChild(script);
                         
-
                     })
                     .catch(err => console.error('Error cargando módulo de creación de fórmulas:', err));
             }
@@ -95,7 +96,6 @@ async function procesarFormula() {
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     try{
-        // console.log('Nombre de la fórmula:', nombreFormula, 'Fórmula:', formula); Quitar el console.log
         const respuesta = await guardarFormulaTemporal(nombreFormula, formula);
         if (respuesta.ok) {
             window.cargarModulo('formulas');
@@ -502,7 +502,7 @@ function popularDropdown(elementoSeleccionado) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {    
+document.addEventListener('DOMContentLoaded', () => {
     const { guardarFormula} = require('../../backend/casosUso/formulas/crearFormula');
     const { cargarModulo } = require('./sidebar.js');
 
