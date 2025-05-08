@@ -20,14 +20,11 @@
 .argumentoContenido {
   margin-top: 10px;
   display: flex;
-  flex-direction: column; /* Mantener dirección de columna */
-  gap: 15px;
+  gap: 10px;
+  align-items: center;
   width: 100%;
   margin-left: 0;
-}
-.argumentoContenido > * { 
-    margin-right: 5px; 
-    margin-bottom: 5px;
+  flex-direction: column;
 }
 .botonEliminar { 
   background-color: #f44336;
@@ -463,15 +460,7 @@
   color: #333;
 }
 
-.argumentoContenido {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  align-items: center;
-  width: 100%;
-  margin-left: 0;
-}
+
 .argumentoInputs {
   display: flex;
   flex-direction: row;
@@ -491,13 +480,6 @@
   padding: 10px;
 }
 
-.argumentoContenido select {
-  background: var(--box-textoporllenar, #e8e8e8);
-  border-radius: 6px;
-  border: 1px solid var(--bordenegro, rgba(0, 0, 0, 0.2));
-  padding: 10px;
-  width: 100%;
-}
 
 .botonFuncionAnidada {
   background-color: #f0f0f0;
