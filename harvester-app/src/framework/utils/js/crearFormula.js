@@ -247,6 +247,20 @@ function agregarFuncionAnidada(boton) {
     
     filaAnidada.appendChild(seleccionarFuncion);
     contenedorAnidado.appendChild(filaAnidada);
+
+    // Verificar si ya existe un botón de eliminar en esta fila
+    let eliminarBotonAnidado = filaAnidada.querySelector('.botonEliminarAnidado');
+
+    if (!eliminarBotonAnidado) {
+        // Si no existe, crear uno nuevo
+        eliminarBotonAnidado = document.createElement('button');
+        eliminarBotonAnidado.textContent = 'Eliminar función';
+        eliminarBotonAnidado.classList.add('botonEliminarAnidado');
+        eliminarBotonAnidado.onclick = () => {
+            filaAnidada.remove(); // Elimina toda la fila anidada
+        };
+        filaAnidada.appendChild(eliminarBotonAnidado);
+    }
     
     seleccionarFuncion.onchange = (evento) => {
         const valorSeleccionado = evento.target.value;
@@ -265,19 +279,6 @@ function agregarFuncionAnidada(boton) {
             // Se define la estructura de la función anidada
             definirEstructura(evento.target, divAnidado);
             
-            // Verificar si ya existe un botón de eliminar en esta fila
-            let eliminarBotonAnidado = filaAnidada.querySelector('.botonEliminarAnidado');
-            
-            if (!eliminarBotonAnidado) {
-                // Si no existe, crear uno nuevo
-                eliminarBotonAnidado = document.createElement('button');
-                eliminarBotonAnidado.textContent = 'Eliminar función';
-                eliminarBotonAnidado.classList.add('botonEliminarAnidado');
-                eliminarBotonAnidado.onclick = () => {
-                    filaAnidada.remove(); // Elimina toda la fila anidada
-                };
-                filaAnidada.appendChild(eliminarBotonAnidado);
-            }
         }
     };
 }
