@@ -1,8 +1,15 @@
 // RF3 Usuario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
 
+
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+
 const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
 const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
+if (typeof Swal === 'undefined'){
+  const Swal = require('sweetalert2');
+}
 
 /**
  * Inicializa el módulo de usuario, incluyendo gestión de usuarios y cierre de sesión.
@@ -49,7 +56,12 @@ function inicializarModuloUsuario() {
             localStorage.removeItem('token');
             window.location.href = './inicioSesion.html';
         } else {
-            alert(respuesta.mensaje || 'Error al cerrar sesión.');
+          Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error al cerrar sesión.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+            });
         }
     });
 }
