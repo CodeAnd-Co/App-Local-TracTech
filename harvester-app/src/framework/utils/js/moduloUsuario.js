@@ -4,6 +4,9 @@
 const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
 const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
 
+// Flag para evitar cargar dos veces el mismo script de gestión de usuarios
+let moduloGestionDeUsuariosIniciado = false;
+
 /**
  * Inicializa el módulo de usuario, incluyendo gestión de usuarios y cierre de sesión.
  *
@@ -17,41 +20,62 @@ const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
 function inicializarModuloUsuario() {
 
     const botonGestion = document.querySelector('#botonGestion');
+    if (botonGestion) {
+      botonGestion.addEventListener('click', async () => {
+        localStorage.setItem('seccion-activa', 'gestionUsuarios');
+        const ventanaPrincipal = document.getElementById('ventana-principal');
+        if (!ventanaPrincipal) return;
 
-    if (!verificarPermisos(PERMISOS.ADMIN)) {
-        botonGestion?.remove();
-      } else {
+        try {
+          // Carga el HTML del módulo de gestión de usuarios
+          const html = await fetch('../vistas/moduloGestionUsuarios.html')
+          .then(response => response.text());
+          ventanaPrincipal.innerHTML = html;
 
-        botonGestion.addEventListener('click', async () => {
-          localStorage.setItem('seccion-activa', 'gestionUsuarios');
-          const ventanaPrincipal = document.getElementById('ventana-principal');
-          if (!ventanaPrincipal) return;
-          try {
-            const html = await fetch('../vistas/moduloGestionUsuarios.html').then(response => response.text());
-            ventanaPrincipal.innerHTML = html;
+          // Añade el script de gestión de usuarios al HTML la primera vez
+          if (!moduloGestionDeUsuariosIniciado) {
+            moduloGestionDeUsuariosIniciado = true;
+
             const cargadorGestionUsuarios = document.createElement('script');
             cargadorGestionUsuarios.src = '../utils/js/moduloGestionUsuario.js';
             document.body.appendChild(cargadorGestionUsuarios);
-            cargadorGestionUsuarios.onload = () => window.inicializarModuloGestionUsuarios?.();
-          } catch (error) {
-            console.error('Error cargando módulo de gestión de usuarios:', error);
+
+            cargadorGestionUsuarios.onload = () => {
+              window.inicializarModuloGestionUsuarios?.();
+            };
+          } else {
+            window.inicializarModuloGestionUsuarios?.();
           }
-        });
-      }
 
+        } catch (error) {
+          console.error('Error cargando módulo de gestión de usuarios:', error);
+        }
+      });
+    } else {
+      console.warn('No se encontró el botón #botonGestion en el DOM.');
+    }
+
+    // Botón de Cerrar Sesión
     const botonCerrarSesion = document.querySelector('.boton-cerrar-sesion');
+    if (botonCerrarSesion) {
+      botonCerrarSesion.addEventListener('click', async () => {
+        try {
+          const respuesta = await cerrarSesion();
 
-    botonCerrarSesion.addEventListener('click', async () => {
-        
-        const respuesta = await cerrarSesion();
-    
-        if (respuesta.ok) {
+          if (respuesta.ok) {
             localStorage.removeItem('token');
             window.location.href = './inicioSesion.html';
-        } else {
+          } else {
             alert(respuesta.mensaje || 'Error al cerrar sesión.');
+          }
+        } catch (err) {
+          console.error('Error al cerrar sesión:', err);
+          alert('No se pudo cerrar sesión. Intenta nuevamente.');
         }
-    });
+      });
+    } else {
+      console.warn('No se encontró el botón .boton-cerrar-sesion en el DOM.');
+    }
 }
 
 // Exponer la función para que pueda ser llamada desde el navegador

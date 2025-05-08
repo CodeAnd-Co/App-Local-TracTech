@@ -38,11 +38,7 @@ async function inicializarModuloGestionUsuarios() {
         cargarPagina(1);
 
         // Cargar roles
-        await guardarRoles();
-        const selectRol = document.querySelector('#rol');
-        if (selectRol) {
-            llenarSelectConRoles(selectRol);
-        }
+        
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
         document.getElementById('lista-usuarios').innerHTML
@@ -53,12 +49,21 @@ async function inicializarModuloGestionUsuarios() {
     botonAgregar.addEventListener('click', evento => {
         evento.preventDefault();
         columnaCrear.style.display = 'block';
-    });
+        cargarRoles(); // Cargar roles al abrir el formulario
+    }
+);
 
     const botonCancelar = document.querySelector('.btn-cancelar');
     botonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
         columnaCrear.style.display = 'none';
+    });
+
+    // Asociar el evento al botón btn-guardar
+    const botonGuardar = document.querySelector('.btn-guardar');
+    botonGuardar.addEventListener('click', async evento => {
+        evento.preventDefault();
+        await crearUsuario();
     });
 
     // Configurar el campo de búsqueda
@@ -77,6 +82,7 @@ async function inicializarModuloGestionUsuarios() {
         }
     });
 }
+
 function filtrarUsuarios() {
     if (terminoBusqueda === '') {
         usuariosFiltrados = [...listaUsuarios];
@@ -325,7 +331,6 @@ async function crearUsuario() {
             rolInput.value = '';
 
             document.getElementById('columna-crear-usuario').style.display = 'none';
-            await inicializarModuloGestionUsuarios(); // Recargar usuarios
         } else {
             Swal2.fire({
                 title: 'Error al crear usuario',
@@ -343,12 +348,7 @@ async function crearUsuario() {
     }
 }
 
-// Asociar el evento al botón btn-guardar
-const botonGuardar = document.querySelector('.btn-guardar');
-botonGuardar.addEventListener('click', async evento => {
-    evento.preventDefault();
-    await crearUsuario();
-});
+
 
 // Variable global para almacenar los roles
 let rolesCache = [];
@@ -360,6 +360,7 @@ let rolesCache = [];
  * @returns {Promise<void>}
  */
 async function guardarRoles() {
+    console.log('Cargando roles...'); // Para depuración
     try {
         const roles = await consultarRolesCU(); // Llama a la función de consultarRoles.js
         console.log('Roles obtenidos:', roles); // Para depuración
@@ -404,18 +405,21 @@ function llenarSelectConRoles(selectRol) {
 
 
 // Ejemplo de uso
-const selectRol = document.querySelector('#rol'); // Busca el <select> con id="rol"
-if (selectRol) {
-    // Cargar y guardar los roles al iniciar
-    guardarRoles().then(() => {
-        // Llenar el <select> con los roles guardados
-        llenarSelectConRoles(selectRol);
-    });
+function cargarRoles() {
+    const selectRol = document.querySelector('#rol'); // Busca el <select> con id="rol"
+    if (selectRol) {
+        // Cargar y guardar los roles al iniciar
+        guardarRoles().then(() => {
+            // Llenar el <select> con los roles guardados
+            llenarSelectConRoles(selectRol);
+        });
 
-    // También puedes agregar un evento para recargar los roles si es necesario
-    selectRol.addEventListener('focus', () => llenarSelectConRoles(selectRol));
-} else {
-    console.error('No se encontró el elemento <select> con id="rol".');
+        // También puedes agregar un evento para recargar los roles si es necesario
+        selectRol.addEventListener('focus', () => llenarSelectConRoles(selectRol));
+    } else {
+        console.error('No se encontró el elemento <select> con id="rol".');
+    }
+    return
 }
 
 
