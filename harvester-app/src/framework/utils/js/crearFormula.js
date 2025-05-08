@@ -105,18 +105,18 @@ async function procesarFormula() {
             window.cargarModulo('formulas');
         } else {
             Swal.fire({
-                title: "Error",
-                text: "Hubo un error al guardar la fórmula.",
-                icon: "error",
+                title: 'Error',
+                text: 'Hubo un error al guardar la fórmula.',
+                icon: 'error',
                 confirmButtonColor: '#1F4281',
                 });
         }
     } catch (error) {
         console.error('Error al conectar con el backend:', error);
         Swal.fire({
-            title: "Error",
-            text: "Hubo un error en la conexión.",
-            icon: "error",
+            title: 'Error',
+            text: 'Hubo un error en la conexión.',
+            icon: 'error',
             confirmButtonColor: '#1F4281',
             });
     }
