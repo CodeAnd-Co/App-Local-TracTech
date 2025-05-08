@@ -66,10 +66,7 @@ function agregarTexto(
   vistaPrevia.alignIndex = 0;
 
   // 4) Insertar en el DOM de edición y de previsualización
-  if (
-    tarjetaRef &&
-    (posicion === 'antes' || posicion === 'despues')
-  ) {
+  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
     // Inserción en el contenedor de edición
     if (posicion === 'antes') {
       contenedor.insertBefore(tarjetaTexto, tarjetaRef);
