@@ -79,8 +79,29 @@ async function crearUsuario(datos) {
     return { ok: respuesta.ok, ...resultado };
 }
 
+/**
+ * Obtiene los roles disponibles para agregar a los nuevos usuarios
+ * @async
+ * @returns {Promise<Object>} Objeto con la propiedad 'ok' que indica si la petición fue exitosa y los datos de usuarios
+ * @throws {Error} Si hay un error en la comunicación con el servidor
+ */
+async function consultarRoles() {
+    const respuesta = await fetch('http://localhost:3000/usuarios/consultar-roles-usuarios', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    
+    const datos = await respuesta.json();
+
+    return { ok: respuesta.ok, ...datos };
+}
+
 module.exports = {
     obtenerUsuarios,
     eliminarUsuario,
     crearUsuario,
+    consultarRoles
 };
