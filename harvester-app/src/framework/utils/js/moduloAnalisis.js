@@ -5,56 +5,73 @@
  * @version 1.0
  * @since 2025-04-28
  */
-
 /**
  * Inicializa la interfaz de análisis:
- * - Actualiza el estado de los botones del sidebar y topbar.
- * - Configura los listeners para los botones de agregar texto, agregar gráfica y descargar PDF.
- * - Carga los datos de Excel desde localStorage.
+ * - Oculta los botones globales.
+ * - Configura el listener de descarga de PDF.
+ * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío.
+ * - Configura delegación de eventos para mostrar/ocultar botones flotantes en tarjetas.
  *
  * @function inicializarModuloAnalisis
  * @memberof module:moduloAnalisis
  * @returns {void}
  */
 function inicializarModuloAnalisis() {
-  const idContenedor               = 'contenedorElementos';
+  // IDs de los contenedores principales
+  const idContenedor                 = 'contenedorElementos';
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
-  const contenedor                 = document.getElementById(idContenedor);
 
-  // 1) Ocultar botones globales
+  // Obtener referencia al contenedor donde se añaden las tarjetas
+  const contenedor = document.getElementById(idContenedor);
+
+  // 1) Ocultar botones globales de agregar texto y gráfica
   document.getElementById('agregarTexto').style.display   = 'none';
   document.getElementById('agregarGrafica').style.display = 'none';
 
-  // 2) Listener de descarga de PDF
+  // 2) Listener de clic para descargar el reporte en PDF
   document.getElementById('descargarPDF')
           .addEventListener('click', descargarPDF);
 
-  // 3) Siempre iniciar con gráfica + texto si está vacío
+  // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
+    agregarTexto(idContenedor, idContenedorPrevisualizacion);
     agregarGrafica(idContenedor, idContenedorPrevisualizacion);
-    agregarTexto( idContenedor, idContenedorPrevisualizacion);
   }
 
-  // 4) Delegación de hover/leave para tarjetas
+  // 4) Delegación de eventos en el contenedor para tarjetas: mostrar/ocultar botones flotantes
   contenedor.addEventListener('mouseenter', alEntrarTarjeta, true);
   contenedor.addEventListener('mouseleave', alSalirTarjeta, true);
 
   /**
-   * Se ejecuta al entrar el ratón en una tarjeta.
+   * Muestra los botones “+” al entrar el ratón sobre una tarjeta de texto o gráfica.
+   *
+   * @param {MouseEvent} evento
+   * @returns {void}
    */
   function alEntrarTarjeta(evento) {
     const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
     if (tarjeta) mostrarBotonesAgregar(tarjeta);
   }
 
-
+  /**
+   * Oculta los botones “+” al salir el ratón de una tarjeta.
+   *
+   * @param {MouseEvent} evento
+   * @returns {void}
+   */
   function alSalirTarjeta(evento) {
     const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
     if (tarjeta) ocultarBotonesAgregar(tarjeta);
-  }
+      cerrarMenuAgregar(tarjeta);
 
+  }
   /**
-   * Muestra dos botones “+” (superior e inferior) dentro de la tarjeta.
+   * Crea y añade dos botones flotantes “+” en la tarjeta (arriba y abajo).
+   *
+   * @param {Element} tarjeta – La tarjeta destino.
+   * @function mostrarBotonesAgregar
+   * @memberof module:moduloAnalisis
+   * @returns {void}
    */
   function mostrarBotonesAgregar(tarjeta) {
     if (tarjeta.querySelector('.btn-agregar-flotante')) return;
@@ -79,7 +96,12 @@ function inicializarModuloAnalisis() {
   }
 
   /**
-   * Elimina todos los botones “+” de una tarjeta.
+   * Elimina los botones flotantes “+” de la tarjeta dada.
+   *
+   * @param {Element} tarjeta – La tarjeta destino.
+   * @function ocultarBotonesAgregar
+   * @memberof module:moduloAnalisis
+   * @returns {void}
    */
   function ocultarBotonesAgregar(tarjeta) {
     tarjeta.querySelectorAll('.btn-agregar-flotante')
@@ -87,53 +109,52 @@ function inicializarModuloAnalisis() {
   }
 
   /**
-   * Abre el menú con las opciones “Agregar texto” y “Agregar gráfica”,
-   * insertando en la posición indicada.
+   * Abre un modal de SweetAlert2 con opciones para insertar una tarjeta de texto o de gráfica.
+   *
+   * @param {Element} tarjeta    – La tarjeta donde se hizo clic.
+   * @param {'antes'|'despues'} ubicacion – Posición donde insertar la nueva tarjeta.
+   * @function abrirMenuAgregar
+   * @memberof module:moduloAnalisis
+   * @returns {void}
    */
+  function abrirMenuAgregar(tarjeta, ubicacion) {
+    Swal.fire({
+      title: 'Agregar',
+      width: '180px',
+      padding: '0.5rem',
+      showCancelButton: true,
+      showDenyButton:   true,
+      confirmButtonText:
+        '<img src="../utils/iconos/Texto.svg" class="icono-agregar"/> Texto',
+      denyButtonText:
+        '<img src="../utils/iconos/GraficaBarras.svg" class="icono-agregar"/> Gráfica',
+      cancelButtonText: '✕',
+      target:           tarjeta,
+      buttonsStyling:   false,
+      customClass: {
+        container:     'swal2-container-inline',
+        popup:         'swal2-popup-inline',
+        confirmButton: 'boton-agregar small',
+        denyButton:    'boton-agregar small',
+        cancelButton:  'swal2-cancel-inline'
+      }
+    }).then(resultado => {
+      if (resultado.isConfirmed) {
+        agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+      } else if (resultado.isDenied) {
+        agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+      }
+      // Si canceló, no hace nada
+    });
+  }
+
   /**
- * Abre un SweetAlert2 pequeñito dentro de la tarjeta clicada,
- * y con dos botones horizontales para “Texto” y “Gráfica”.
- *
- * @param {Element} tarjeta    – La tarjeta donde se hizo clic.
- * @param {'antes'|'despues'} ubicacion – Dónde insertar la nueva tarjeta.
- */
-function abrirMenuAgregar(tarjeta, ubicacion) {
-  Swal.fire({
-    title: 'Agregar',
-    width: '180px',
-    padding: '0.5rem',
-    icon: undefined,
-    showCancelButton: true,
-    showDenyButton: true,
-    confirmButtonText:
-      '<img src="../utils/iconos/Texto.svg" class="icono-agregar"/> Texto',
-    denyButtonText:
-      '<img src="../utils/iconos/GraficaBarras.svg" class="icono-agregar"/> Gráfica',
-    cancelButtonText: '✕',
-    // monta el modal en la tarjeta, no en body
-    target: tarjeta,
-    // quitamos estilos por defecto, reutilizamos tus botones
-    buttonsStyling: false,
-    customClass: {
-      container: 'swal2-container-inline',
-      popup:     'swal2-popup-inline',
-      confirmButton: 'boton-agregar small',
-      denyButton:    'boton-agregar small',
-      cancelButton:  'swal2-cancel-inline'
-    }
-  }).then(resultado => {
-    const idCont  = 'contenedorElementos';
-    const idPrev  = 'contenedor-elementos-previsualizacion';
-    if (resultado.isConfirmed) {
-      agregarTexto(idCont, idPrev, tarjeta, ubicacion);
-    } else if (resultado.isDenied) {
-      agregarGrafica(idCont, idPrev, tarjeta, ubicacion);
-    }
-    // si canceló, no hace nada
-  });
-}
-  /**
-   * Cierra el menú de inserción si existe.
+   * Cierra el menú de inserción si estuviera abierto.
+   *
+   * @param {Element} tarjeta – La tarjeta destino.
+   * @function cerrarMenuAgregar
+   * @memberof module:moduloAnalisis
+   * @returns {void}
    */
   function cerrarMenuAgregar(tarjeta) {
     const menuExistente = tarjeta.querySelector('.menu-agregar');
@@ -141,34 +162,30 @@ function abrirMenuAgregar(tarjeta, ubicacion) {
   }
 }
 
-// Exponer funciones globales
-window.inicializarModuloAnalisis      = inicializarModuloAnalisis;
-window.agregarTexto                   = agregarTexto;
-window.agregarGrafica                 = agregarGrafica;
-window.cargarDatosExcel               = cargarDatosExcel;
-window.descargarPDF                   = descargarPDF;
-
-// Arrancar al cargar el DOM
+// Ejecutar inicialización tras cargar el DOM
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', inicializarModuloAnalisis);
 } else {
   inicializarModuloAnalisis();
 }
+
 /**
  * Carga los datos de Excel almacenados en localStorage.
- *
+ * 
  * @function cargarDatosExcel
  * @memberof module:moduloAnalisis
- * @returns {Object|null} Datos de Excel parseados o null si no hay datos o ocurre un error.
+ * @returns {Object|null} Datos parseados o null si falla.
  */
 function cargarDatosExcel() {
   try {
+    // Verificar flag de disponibilidad de datos
     const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
     if (datosDisponibles !== 'true') {
       console.warn('No hay datos de Excel disponibles');
       return null;
     }
 
+    // Obtener y parsear el JSON de datos de Excel
     const datosExcelJSON = localStorage.getItem('datosExcel');
     if (!datosExcelJSON) {
       console.warn('No se encontraron datos de Excel en localStorage');
@@ -176,6 +193,7 @@ function cargarDatosExcel() {
     }
 
     const datosExcel = JSON.parse(datosExcelJSON);
+    // Almacenar globalmente para otras funciones
     window.datosExcelGlobal = datosExcel;
     return datosExcel;
 
@@ -186,33 +204,36 @@ function cargarDatosExcel() {
 }
 
 /**
- * Genera y descarga el reporte en formato PDF usando jsPDF.
- * Recorre los elementos de previsualización en pantalla (texto y gráficas) y los añade al documento PDF.
+ * Genera y descarga el reporte en PDF usando jsPDF.
  *
  * @function descargarPDF
  * @memberof module:moduloAnalisis
- * @throws {Error} Si jsPDF no está cargado o el contenedor de previsualización no existe.
- * @returns {void}
+ * @throws {Error} Si jsPDF no está cargado o falla la extracción de previsualización.
  */
 function descargarPDF() {
-  const { JSPDF } = window.jspdf || {};
-  if (!JSPDF) {
+  // Obtener constructor de jsPDF
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) {
     throw new Error('[PDF] jsPDF no cargado');
   }
 
-  const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  // Configuración básica del documento
+  const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
   const anchoPagina  = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
   let posicionY      = margen;
 
+  // Obtener contenedor de previsualización de texto y gráficas
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
     throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
 
+  // Recorrer cada elemento y añadirlo al PDF según su tipo
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
+      // Texto: ajustar tamaño de fuente y dividir en líneas
       const texto = elemento.textContent.trim();
       if (!texto) return;
 
@@ -225,16 +246,19 @@ function descargarPDF() {
       documentoPDF.setFont(undefined, estiloFuente);
       const lineas = documentoPDF.splitTextToSize(texto, anchoPagina);
 
+      // Nueva página si se excede el alto disponible
       if (posicionY + lineas.length * tamanoFuente > altoPagina + margen) {
         documentoPDF.addPage();
         posicionY = margen;
       }
 
+      // Añadir texto al documento
       documentoPDF.text(lineas, margen, posicionY);
       posicionY += lineas.length * tamanoFuente + 12;
 
     } else if (elemento.classList.contains('previsualizacion-grafica')) {
-      const lienzo = elemento.querySelector('canvas');
+      // Gráfica: convertir canvas a imagen y escalar manteniendo proporción
+      const lienzo     = elemento.querySelector('canvas');
       if (!lienzo) return;
 
       const imagen     = lienzo.toDataURL('image/png');
@@ -251,20 +275,18 @@ function descargarPDF() {
     }
   });
 
+  // Guardar el archivo PDF generado
   documentoPDF.save('reporte.pdf');
 }
 
-// Exponer funciones en el ámbito global
+// Exponer funciones en el ámbito global para uso externo
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel          = cargarDatosExcel;
 window.descargarPDF              = descargarPDF;
-window.agregarTexto            = agregarTexto;
-window.agregarGrafica          = agregarGrafica;
+window.agregarTexto              = agregarTexto;
+window.agregarGrafica            = agregarGrafica;
 
-// Ejecutar inicialización al cargar el DOM
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', inicializarModuloAnalisis);
-} else {
-  // Ejecutar tras un breve retardo en caso de que ya esté listo
+// En algunos navegadores, volver a inicializar tras un breve retardo si ya cargó el DOM
+if (document.readyState !== 'loading') {
   setTimeout(inicializarModuloAnalisis, 100);
 }

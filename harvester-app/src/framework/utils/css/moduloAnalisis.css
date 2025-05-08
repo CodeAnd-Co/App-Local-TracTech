@@ -910,12 +910,13 @@ body,
   display: flex !important;
   align-items: center;               /* centra verticalmente */
   justify-content: center;           /* centra horizontalmente */
-  pointer-events: none;              /* permite clicks sólo dentro del popup */
+  pointer-events: auto;              /* permite clicks sólo dentro del popup */
   padding: 0;                        /* sin padding extra */
 }
 
 /* — Popup reducido ahora centrado por flex, no absoluto — */
 .swal2-popup-inline {
+  pointer-events: auto !important;
   position: relative !important;
   transform: none !important;
   margin: 0 !important;
@@ -937,4 +938,24 @@ body,
   border: none !important;
   color: var(--color-text) !important;
   cursor: pointer;
+}
+/* — Forzar acciones de SweetAlert en fila dentro del popup inline — */
+.swal2-popup-inline .swal2-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem !important;  /* antes 0; ahora más separación */
+}
+
+/* — Ajustar estilo de cada botón para que no ocupen todo el ancho — */
+.swal2-popup-inline .swal2-confirm,
+.swal2-popup-inline .swal2-deny {
+  flex: none;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+}
+/* — Asegurar que el botón de denegar quede pegado a la barra — */
+.swal2-popup-inline .swal2-deny {
+  margin-left: 0 !important;
 }
