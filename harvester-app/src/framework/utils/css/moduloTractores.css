@@ -146,7 +146,7 @@ input:focus {
   border-style: solid;
   border-color: #000000;
   border-width: 3px;
-  padding: 10px;
+  padding: 0px 10px 0px 10px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -155,6 +155,9 @@ input:focus {
   flex-shrink: 0;
   height: 94px;
   position: relative;
+}
+.rancho.seleccionado {
+  background-color: #bcbcbc; /* Azul claro, por ejemplo */
 }
 .caja-rancho-texto {
   display: flex;

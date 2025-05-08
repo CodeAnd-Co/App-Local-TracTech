@@ -126,6 +126,7 @@ function inicializarTractores(datosExcel) {
         
         // Agregar evento para mostrar columnas
         tractorDivTexto.addEventListener('click', () => {
+            cambiarSeleccionVisualUnica(tractorDiv);
             manejarClickTractor(tractorNombre, datosExcel);
             });
         })
@@ -394,6 +395,24 @@ function cambiarIconoMarcadoADescarcado(icono) {
     } else {
         icono.src = '../utils/iconos/check_box_outline_blank.svg'; // Cambiar a desmarcado
     }
+}
+
+/**
+ * Alterna visualmente la selección de un bloque
+ * 
+ * @function cambiarSeleccionVisualUnica
+ * @param {HTMLElement} contenedor - el div de un elemento al que se le hace click
+ */
+function cambiarSeleccionVisualUnica(contenedor) {
+    const todosLosDiv = document.querySelectorAll('.tractores-contenido .rancho');
+    const yaSeleccionado = contenedor.classList.contains('seleccionado');
+
+    todosLosDiv.forEach(elemento => elemento.classList.remove('seleccionado'));
+
+    if (!yaSeleccionado) {
+        contenedor.classList.add('seleccionado');
+    }
+
 }
 
 // Exportar funciones para uso global
