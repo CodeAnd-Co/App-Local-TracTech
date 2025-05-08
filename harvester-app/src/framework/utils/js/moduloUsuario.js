@@ -49,19 +49,41 @@ function inicializarModuloUsuario() {
     const botonCerrarSesion = document.querySelector('.boton-cerrar-sesion');
 
     botonCerrarSesion.addEventListener('click', async () => {
+        botonCerrarSesion.disabled = true;
         
-        const respuesta = await cerrarSesion();
-    
-        if (respuesta.ok) {
-            localStorage.removeItem('token');
-            window.location.href = './inicioSesion.html';
-        } else {
-          Swal.fire({
-            title: 'Error',
-            text: 'Hubo un error al cerrar sesión.',
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
+        const contenidoOriginal = botonCerrarSesion.innerHTML;
+        
+        botonCerrarSesion.innerHTML = '<div class="cerrar-sesi-n">Cerrando sesión...</div>';
+        
+        const timeoutPromise = new Promise((reject) => {
+            setTimeout(() => reject(new Error('Tiempo de espera agotado')), 5000);
+        });
+        
+        try {
+            const respuesta = await Promise.race([
+                cerrarSesion(),
+                timeoutPromise
+            ]);
+            
+            console.log(respuesta);
+            if (respuesta.ok) {
+                localStorage.removeItem('token');
+                window.location.href = './inicioSesion.html';
+            } else {
+                throw new Error('La respuesta del servidor no fue exitosa');
+            }
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+            
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al cerrar sesión.',
+                icon: 'error',
+                confirmButtonColor: '#1F4281',
             });
+            
+            botonCerrarSesion.innerHTML = contenidoOriginal;
+            botonCerrarSesion.disabled = false;
         }
     });
 }
