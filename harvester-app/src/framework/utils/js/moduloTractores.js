@@ -1,5 +1,7 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
 
+const { seleccionaDatosAComparar } = require('../../../backend/casosUso/excel/seleccionaDatosAComparar')
+
 /**
  * Inicializa el módulo de tractores configurando los elementos del DOM y 
  * mostrando los datos cargados desde el almacenamiento local.
@@ -242,6 +244,9 @@ function botonReporte() {
             botonReporte.addEventListener('click', () => {
                 // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                 setTimeout(() => {
+                    const jsonFiltrado = seleccionaDatosAComparar(datosOriginales, tractoresSeleccionados, columnasSeleccionadas);
+                    localStorage.setItem('jsonFiltradoReporte', JSON.stringify(jsonFiltrado));
+
                     // Cargar el módulo de análisis
                     const ventanaPrincipal = document.getElementById('ventana-principal');
                     if (ventanaPrincipal) {
