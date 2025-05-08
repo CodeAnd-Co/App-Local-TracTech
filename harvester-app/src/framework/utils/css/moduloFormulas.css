@@ -1,56 +1,62 @@
-.bloqueFormula { border: 1px solid #ccc; 
-  padding: 10px; 
-  margin: 10px 0; 
-  border-radius: 5px; 
-  background-color: #f9f9f9; }
-  label, select, input { display: block; 
-    margin-top: 10px; }
+.ventana-principal {
+  width: 100%
+}
 
-  .argumentosContenedor { 
+
+.argumentosContenedor { 
     margin-left: 20px;
-  }
-  .argumento { 
+}
+.argumento { 
     margin-top: 5px; 
     border: 1px dashed #ddd; 
     padding: 10px; 
     margin-bottom: 10px; 
-  }
-  .argumentoEncabezado { 
+}
+.argumentoEncabezado { 
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
-  }
-  .argumentoContenido { 
-    margin-left: 10px; 
-    display: flex; 
-    flex-wrap: wrap; 
-    align-items: center; 
-  }
-  .argumentoContenido > * { 
+}
+.argumentoContenido {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column; /* Mantener dirección de columna */
+  gap: 15px;
+  width: 100%;
+  margin-left: 0;
+}
+.argumentoContenido > * { 
     margin-right: 5px; 
-    margin-bottom: 5px; }
-  .botonEliminar { 
-    background-color: #f44336;
-     color: white; 
-     border: none; 
-     padding: 5px 10px; 
-     text-align: center; 
-     text-decoration: none; 
-     display: inline-block; 
-     font-size: 12px; 
-     border-radius: 3px; 
-     cursor: pointer; 
-    }
-  .resultado { 
-    margin-top: 20px; 
-    padding: 10px; 
-    background: #f2f2f2; 
-    border-radius: 5px; 
-    white-space: pre-wrap; 
+    margin-bottom: 5px;
+}
+.botonEliminar { 
+  background-color: #f44336;
+    color: white; 
+    border: none; 
+    padding: 5px 10px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 12px; 
+    border-radius: 3px; 
+    cursor: pointer; 
   }
-  .selectorFuncionAnidada { 
-    margin-top: 5px; 
-  }
+.resultado { 
+  margin-top: 20px; 
+  padding: 10px; 
+  background: #f2f2f2; 
+  border-radius: 5px; 
+  white-space: pre-wrap; 
+}
+.selectorFuncionAnidada {
+  width: 100%;
+  background: var(--box-textoporllenar, #e8e8e8);
+  border-radius: 6px;
+  border: 1px solid var(--bordenegro, rgba(0, 0, 0, 0.2));
+  padding: 10px;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
 
 
 .contenido-vista,
@@ -84,8 +90,8 @@
   display: flex;
   flex-direction: row;
   gap: 10px;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: flex-end;
+  justify-content: flex-end;
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
@@ -278,48 +284,284 @@
   position: relative;
   overflow: visible;
 }
-.editar-icono2 {
+/* Mantenemos todo el CSS existente y añadimos estos estilos al final */
+
+/* Ajustes para asegurar que el módulo ocupe todo el ancho disponible */
+.formula-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  gap: 25px;
+  background-color: #ffffff;
   border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+  max-width: none; /* Elimina cualquier restricción de ancho máximo */
 }
-.eliminar-icono2 {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
+.formula-header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
-.editar-icono3 {
+
+.formula-header h2 {
+  color: var(--texto-light, #000000);
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 32px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+.formula-name-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.formula-name-input label {
+  color: var(--texto-light, #000000);
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 112%;
+}
+
+.formula-name-input input {
+  background: var(--box-textoporllenar, #e8e8e8);
   border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
+  border: 2px solid var(--bordenegro, rgba(0, 0, 0, 0.2));
+  padding: 17px 10px;
+  width: 100%;
+  font-size: 16px;
+  box-sizing: border-box;
 }
-.eliminar-icono3 {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
-  position: relative;
-  overflow: visible;
+
+.formula-builder-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
 }
-.editar-icono4 {
+
+.formula-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.formula-selector label {
+  color: var(--texto-light, #000000);
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  min-width: 150px;
+}
+
+.formula-selector select {
+  background: var(--box-textoporllenar, #e8e8e8);
   border-radius: 8px;
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  position: relative;
-  overflow: visible;
+  border: 2px solid var(--bordenegro, rgba(0, 0, 0, 0.2));
+  padding: 12px 10px;
+  font-size: 16px;
+  min-width: 250px;
+  flex-grow: 1;
 }
-.eliminar-icono4 {
-  flex-shrink: 0;
-  width: 55px;
-  height: 55px;
+
+.formula-build-area {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 250px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.formula-result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.formula-result-section label {
+  color: var(--texto-light, #000000);
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+}
+
+.resultado {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  min-height: 60px;
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+
+.formula-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 15px;
+  margin-top: 20px;
+}
+.botonesDerecha{
+  display: flex;
+  gap: 15px;
+}
+
+.formula-button {
+  border-radius: 8px;
+  border: 2px solid;
+  padding: 12px 20px;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+}
+
+.formula-button.primary {
+  background: #a61930;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.formula-button.secondary {
+  background: #ffffff;
+  border-color: #000000;
+  color: #000000;
+}
+
+.formula-button:hover {
+  opacity: 0.9;
+}
+
+/* Mejorar estilos de los argumentos */
+.argumento {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.argumentoEncabezado label {
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.argumentoContenido {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  margin-left: 0;
+}
+.argumentoInputs {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap; /* Permitir que los elementos se envuelvan si es necesario */
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+}
+
+.argumentoInputs input,
+.argumentoInputs select {
+  flex: 1;
+  min-width: 150px;
+  background: var(--box-textoporllenar, #e8e8e8);
+  border-radius: 6px;
+  border: 1px solid var(--bordenegro, rgba(0, 0, 0, 0.2));
+  padding: 10px;
+}
+
+.argumentoContenido select {
+  background: var(--box-textoporllenar, #e8e8e8);
+  border-radius: 6px;
+  border: 1px solid var(--bordenegro, rgba(0, 0, 0, 0.2));
+  padding: 10px;
+  width: 100%;
+}
+
+.botonFuncionAnidada {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap; /* Evitar que el texto se envuelva */
+}
+
+.botonEliminar {
+  background-color: #a61930;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.botonEliminarAnidado {
+  background-color: #a61930;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.nested-function-container {
+  width: 100%;
+  margin-top: 10px;
+  border-left: 3px solid #ddd;
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+.nested-function {
+  width: 100%;
+  margin-top: 5px;
+  padding: 12px;
+  background-color: #f6f6f6;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  box-sizing: border-box;
+}
+
+/* Estilo para la fila anidada completa */
+.fila-anidada {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
   position: relative;
-  overflow: visible;
+}
+
+/* Asegurar que el botón de eliminar esté correctamente alineado */
+.botonEliminarAnidado {
+  align-self: flex-start;
+  margin-top: 10px;
 }

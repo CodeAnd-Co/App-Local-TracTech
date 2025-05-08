@@ -3,39 +3,60 @@
 <head>
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <title>Generador de Fórmulas Complejas Anidadas</title>
-    <link href='../utils/resetStyles.css' rel='stylesheet' />
+    <title>Generador de Fórmulas</title>
+    <link href='../utils/css/resetStyles.css' rel='stylesheet' />
     <link href='../utils/css/moduloFormulas.css' rel='stylesheet' />
-
 </head>
 <body>
-    <h2>Crear Fórmula</h2>
-    <p><br>Nombre de la fórmula</p>
-    <input type='text' id='nombreFormula' placeholder='Nombre de la fórmula' />
+    <div class="formula-container">
+        <div class="formula-header">
+            <h2>Crear Fórmula</h2>
+            <div class="formula-name-input">
+                <label for="nombreFormula">Nombre de la fórmula</label>
+                <input type='text' id='nombreFormula' placeholder='Ingrese un nombre descriptivo' />
+            </div>
+        </div>
 
-    <div id='formula-container'>
-        <div class='bloqueFormula' data-level='0'>
-            <label>Función Principal:
+        <div class="formula-builder-section">
+            <div class="formula-selector">
+                <label for="main-function">Función Principal</label>
                 <select id='main-function' onchange="definirEstructura(this, document.getElementById('function-arguments'))">
                     <option value=''>Seleccionar función</option>
                     <option value='IF'>SI</option>
-                    <!--<option value='COUNTIF'>CONTAR.SI</option>
-                    <option value='COUNTIFS'>CONTAR.SI.CONJUNTO</option>
-                -->
                     <option value='IFERROR'>SI.ERROR</option>
                     <option value='VLOOKUP'>BUSCARV</option>
                     <option value='ARITHMETIC'>Operación Aritmética</option>
                 </select>
-            </label>
-            <div id='function-arguments' class='argumentosContenedor'>
+            </div>
+
+            <div id='formula-container' class="formula-build-area">
+                <div class='bloqueFormula' data-level='0'>
+                    <div id='function-arguments' class='argumentosContenedor'>
+                        <!-- Los argumentos se generarán dinámicamente aquí -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="formula-result-section">
+                <label for="resultado">Fórmula generada:</label>
+                <div class='resultado' id='resultado'></div>
+            </div>
+        </div>
+
+        <div class="formula-actions">
+            <button id='btnGenerar' class="formula-button secondary"> 
+                <span>Generar fórmula</span>
+            </button>
+            <div class='botonesDerecha'>
+                <button id='btnGuardar' class="formula-button primary"> 
+                    <span>Guardar fórmula</span>
+                </button>
+                <button id='btnCancelar' class="formula-button secondary"> 
+                    <span>Cancelar</span>
+                </button>
             </div>
         </div>
     </div>
-    <button id='btnGenerar'> Generar fórmula</button>
-    <p><br>Fórmula generada:</p>
-    <div class='resultado' id='resultado'></div>
-    <button id='btnGuardar'> Guardar fórmula </button>
-    <button id='btnCancelar'> Cancelar</button>
     <script src='../utils/js/crearFormula.js'></script>
 </body>
 </html>
