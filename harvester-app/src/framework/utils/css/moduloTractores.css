@@ -156,6 +156,15 @@ input:focus {
   height: 94px;
   position: relative;
 }
+.caja-rancho-texto {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+}
 .rancho-texto {
   color: #000000;
   text-align: left;
