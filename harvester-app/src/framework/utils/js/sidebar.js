@@ -174,7 +174,6 @@ function actualizarBarraSuperior(seccion) {
   const elementoTituloBarraSuperior = document.getElementById('tituloBarraSuperior');
   const elementoIconoBarraSuperior  = document.getElementById('iconoBarraSuperior');
   const botonRegresar               = document.getElementById('botonRegresar');
-  console.log('Topbar actualizado para:', seccion);
 
   if (!elementoTituloBarraSuperior || !elementoIconoBarraSuperior || !infoBarraSuperior[seccion]) {
     return;
