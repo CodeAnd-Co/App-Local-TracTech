@@ -158,9 +158,9 @@ function aplicarActivoDesdeAlmacenamiento() {
  * @returns {void}
  */
 function actualizarBarraSuperior(seccion) {
-  const elementoTituloBarraSuperior = document.getElementById('topbar-titulo');
-  const elementoIconoBarraSuperior  = document.getElementById('topbar-icono');
-  const botonRegresar               = document.getElementById('btn-regresar');
+  const elementoTituloBarraSuperior = document.getElementById('tituloBarraSuperior');
+  const elementoIconoBarraSuperior  = document.getElementById('iconoBarraSuperior');
+  const botonRegresar               = document.getElementById('botonRegresar');
 
   if (!elementoTituloBarraSuperior || !elementoIconoBarraSuperior || !infoBarraSuperior[seccion]) {
     return;
