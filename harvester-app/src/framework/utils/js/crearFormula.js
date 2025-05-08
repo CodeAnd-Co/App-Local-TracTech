@@ -4,6 +4,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
+if (typeof Swal === 'undefined'){
+    const Swal = require('sweetalert2');
+}
+
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -100,11 +104,21 @@ async function procesarFormula() {
         if (respuesta.ok) {
             window.cargarModulo('formulas');
         } else {
-            alert(respuesta.message || 'Error al guardar la fórmula.');
+            Swal.fire({
+                title: "Error",
+                text: "Hubo un error al guardar la fórmula.",
+                icon: "error",
+                confirmButtonColor: '#1F4281',
+                });
         }
     } catch (error) {
         console.error('Error al conectar con el backend:', error);
-        alert('No se pudo conectar con el servidor.');
+        Swal.fire({
+            title: "Error",
+            text: "Hubo un error en la conexión.",
+            icon: "error",
+            confirmButtonColor: '#1F4281',
+            });
     }
 }
 
