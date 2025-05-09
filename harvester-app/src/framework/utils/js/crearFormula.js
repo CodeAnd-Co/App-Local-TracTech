@@ -96,11 +96,24 @@ async function guardarFormulaTemporal(nombre, formula) {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
+    // Obtener referencia al botón de guardar
+    const btnGuardar = document.getElementById('btnGuardar');
+    
+    // Deshabilitar el botón para evitar múltiples clics
+    btnGuardar.disabled = true;
+    
+    // Almacenar el contenido original del botón
+    const contenidoOriginal = btnGuardar.innerHTML;
+    
+    // Cambiar el texto del botón para indicar que está procesando
+    btnGuardar.innerHTML = '<div>Guardando fórmula...</div>';
+    
     const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     const nombreFormula = document.getElementById('nombreFormula').value;
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
     const formula = cuadroTextoGenerado.split(':')[1].trim();
-    try{
+    
+    try {
         const respuesta = await guardarFormulaTemporal(nombreFormula, formula);
         if (respuesta.ok) {
             window.cargarModulo('formulas');
@@ -110,7 +123,11 @@ async function procesarFormula() {
                 text: 'Hubo un error al guardar la fórmula.',
                 icon: 'error',
                 confirmButtonColor: '#1F4281',
-                });
+            });
+            
+            // Restaurar el botón en caso de error
+            btnGuardar.innerHTML = contenidoOriginal;
+            btnGuardar.disabled = false;
         }
     } catch (error) {
         console.error('Error al conectar con el backend:', error);
@@ -119,7 +136,11 @@ async function procesarFormula() {
             text: 'Hubo un error en la conexión.',
             icon: 'error',
             confirmButtonColor: '#1F4281',
-            });
+        });
+        
+        // Restaurar el botón en caso de error
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
     }
 }
 
