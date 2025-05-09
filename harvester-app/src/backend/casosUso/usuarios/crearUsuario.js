@@ -1,6 +1,38 @@
 // RF39 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF39
 
+const validador = require('validator');
 const { crearUsuario: crearUsuarioAPI } = require('../../domain/usuariosAPI/usuariosAPI');
+
+/**
+ * Sanitiza los datos de entrada del usuario, como nombre, correo y contraseña.
+ *
+ * Utiliza `validador.escape` para proteger contra inyecciones escapando caracteres especiales.
+ *
+ * @function sanitizarEntrada
+ * @param {object} datos - Datos del usuario a sanitizar.
+ * @param {string} datos.nombre - Nombre del usuario.
+ * @param {string} datos.correo - Correo electrónico del usuario.
+ * @param {string} datos.contrasenia - Contraseña del usuario.
+ * @param {number} datos.idRol_FK - ID del rol asignado al usuario.
+ * @returns {object} Objeto con los datos sanitizados.
+ */
+function sanitizarEntrada({ nombre, correo, contrasenia, idRol_FK }) {
+    const nombreSanitizado = validador.escape(nombre);
+    const correoSanitizado = validador.normalizeEmail(correo);
+    const contraseniaSanitizada = validador.escape(contrasenia);
+    return { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRol_FK };
+}
+
+/**
+ * Valida si una dirección de correo electrónico tiene el formato correcto.
+ *
+ * @param {string} correo - Dirección de correo electrónico a validar.
+ * @returns {boolean} `true` si el correo es válido, de lo contrario `false`.
+ */
+function validarCorreo(correo) {
+    const regex = /^[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+    return regex.test(correo);
+}
 
 /**
  * Crea un nuevo usuario a través de una llamada a la API.
@@ -22,13 +54,25 @@ async function crearUsuario({ nombre, correo, contrasenia, idRol_FK }) {
         return { ok: false, mensaje: 'Todos los campos son obligatorios' };
     }
 
-    //const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //if (!correoRegex.test(correo)) {
-    //    return { ok: false, mensaje: 'Correo electrónico no válido' };
-    //}
+    if (!validarCorreo(correo)) {
+        return { ok: false, mensaje: 'Correo electrónico no válido' };
+    }
+
+    // Sanitizar los datos de entrada
+    const { nombreSanitizado, correoSanitizado, contraseniaSanitizada } = sanitizarEntrada({
+        nombre,
+        correo,
+        contrasenia,
+        idRol_FK,
+    });
 
     try {
-        const respuesta = await crearUsuarioAPI({ nombre, correo, contrasenia, idRol_FK });
+        const respuesta = await crearUsuarioAPI({
+            nombre: nombreSanitizado,
+            correo: correoSanitizado,
+            contrasenia: contraseniaSanitizada,
+            idRol_FK,
+        });
         return { ok: true, mensaje: respuesta.mensaje, id: respuesta.id };
     } catch (error) {
         console.error('Error al crear el usuario:', error);
