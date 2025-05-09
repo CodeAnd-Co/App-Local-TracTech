@@ -50,8 +50,7 @@ async function inicializarModuloGestionUsuarios() {
         evento.preventDefault();
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
-    }
-);
+    });
 
     const botonCancelar = document.querySelector('.btn-cancelar');
     botonCancelar.addEventListener('click', evento => {
@@ -301,10 +300,8 @@ async function crearUsuario() {
     const nombre = nombreInput.value.trim();
     const correo = correoInput.value.trim();
     const contrasenia = contraseniaInput.value.trim();
+/* eslint-disable-next-line camelcase */
     const idRol_FK = parseInt(rolInput.value, 10);
-
-    console.log('Datos enviados al backend:');
-    console.log({ nombre, correo, contrasenia, idRol_FK });
 
     if (!nombre || !correo || !contrasenia || isNaN(idRol_FK)) {
         return Swal2.fire({
@@ -315,6 +312,7 @@ async function crearUsuario() {
     }
 
     try {
+/* eslint-disable-next-line camelcase */
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRol_FK });
 
         if (resultado.ok) {

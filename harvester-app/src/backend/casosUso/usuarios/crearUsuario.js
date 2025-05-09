@@ -13,14 +13,16 @@ const { crearUsuario: crearUsuarioAPI } = require('../../domain/usuariosAPI/usua
  * @param {string} datos.nombre - Nombre del usuario.
  * @param {string} datos.correo - Correo electrónico del usuario.
  * @param {string} datos.contrasenia - Contraseña del usuario.
- * @param {number} datos.idRol_FK - ID del rol asignado al usuario.
+ * @param {number} datos.idRolFK - ID del rol asignado al usuario.
  * @returns {object} Objeto con los datos sanitizados.
  */
-function sanitizarEntrada({ nombre, correo, contrasenia, idRol_FK }) {
+ 
+function sanitizarEntrada({ nombre, correo, contrasenia, idRolFK }) {
     const nombreSanitizado = validador.escape(nombre);
     const correoSanitizado = validador.normalizeEmail(correo);
     const contraseniaSanitizada = validador.escape(contrasenia);
-    return { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRol_FK };
+ 
+    return { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRolFK };
 }
 
 /**
@@ -37,7 +39,7 @@ function validarCorreo(correo) {
 /**
  * Crea un nuevo usuario a través de una llamada a la API.
  *
- * Esta función valida que se proporcionen los campos requeridos (nombre, correo, contraseña, idRol_FK).
+ * Esta función valida que se proporcionen los campos requeridos (nombre, correo, contraseña, idRolFK).
  * Si son válidos, realiza una solicitud asíncrona a la API para crear el nuevo usuario.
  *
  * @async
@@ -46,11 +48,13 @@ function validarCorreo(correo) {
  * @param {string} datos.nombre - Nombre del usuario.
  * @param {string} datos.correo - Correo electrónico del usuario.
  * @param {string} datos.contrasenia - Contraseña del usuario.
- * @param {number} datos.idRol_FK - ID del rol asignado al usuario.
+ * @param {number} datos.idRolFK - ID del rol asignado al usuario.
  * @returns {Promise<{ok: boolean, mensaje: string, id?: number}>} Resultado de la operación.
  */
-async function crearUsuario({ nombre, correo, contrasenia, idRol_FK }) {
-    if (!nombre || !correo || !contrasenia || !idRol_FK) {
+     
+async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
+     
+    if (!nombre || !correo || !contrasenia || !idRolFK) {
         return { ok: false, mensaje: 'Todos los campos son obligatorios' };
     }
 
@@ -63,7 +67,8 @@ async function crearUsuario({ nombre, correo, contrasenia, idRol_FK }) {
         nombre,
         correo,
         contrasenia,
-        idRol_FK,
+     
+        idRolFK,
     });
 
     try {
@@ -71,7 +76,8 @@ async function crearUsuario({ nombre, correo, contrasenia, idRol_FK }) {
             nombre: nombreSanitizado,
             correo: correoSanitizado,
             contrasenia: contraseniaSanitizada,
-            idRol_FK,
+
+            idRolFK,
         });
         return { ok: true, mensaje: respuesta.mensaje, id: respuesta.id };
     } catch (error) {

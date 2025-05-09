@@ -70,8 +70,8 @@ function inicializarModuloUsuario() {
       const contenidoOriginal = botonCerrarSesion.innerHTML;
       botonCerrarSesion.innerHTML = '<div class="cerrar-sesi-n">Cerrando sesión...</div>';
 
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Tiempo de espera agotado')), 5000);
+      const timeoutPromise = new Promise((resolver, rechazar) => {
+        setTimeout(() => rechazar(new Error('Tiempo de espera agotado')), 5000);
       });
 
       try {
