@@ -1,22 +1,15 @@
-const {consultarFormulas} = require('../utils/js/consultarFormulas');
+const { renderizarFormulas } = require('../utils/js/consultarFormulas');
 const { inicializarCrearFormula} = require('../utils/js/crearFormula');
 //const { guardarFormula } = require('../utils/js/crearFormula');
 //const { eliminarFormula } = require('../utils/js/eliminarFormula');
 
 async function inicializarModuloFormulas(){
-    console.log('inicializando modulo formulas');
-    console.log('Ruta actual __dirname:', __dirname);
-    console.log('Intentando importar:', require.resolve('../../backend/casosUso/formulas/consultaFormulas'));
-
     localStorage.setItem('seccion-activa', 'formulas');
     const ventanaPrincipal = document.getElementById('ventana-principal');
     if (!ventanaPrincipal) return;
-    console.log(consultarFormulas);
-
 
     try{
-      const formulas = await consultarFormulas();
-      console.log('Formulas:', formulas);
+      const formulas = await renderizarFormulas();
 
     } catch(error){
       
@@ -31,10 +24,6 @@ async function inicializarModuloFormulas(){
         inicializarCrearFormula();
     });
 
-    const idContenedor = 'frameFormulas';
-    
-    // consultarFormulas();
-
     // ELementos que se deben editar: texto-usuario
 
     document.getElementById('crearFormula')
@@ -45,15 +34,7 @@ async function inicializarModuloFormulas(){
     document.getElementById('busqueda-formulas')
         .addEventListener('click', () => console.log('Buscando formula'));
 
-    document.getElementById('btnEditarFormula')
-        .addEventListener('click', () => {
-            console.log('Editando formula');
-            inicializarEditarFormula(idContenedor)});
-    
-    document.getElementById('btnEliminarFormula')
-        .addEventListener('click', () => {
-            console.log('Eliminando formula');
-            eliminarFormula(idContenedor)});
+
 }
 
 

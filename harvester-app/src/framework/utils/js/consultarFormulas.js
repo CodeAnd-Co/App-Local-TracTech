@@ -3,61 +3,77 @@
 const { consultaFormulasCasoUso } = require('../../../backend/casosUso/formulas/consultaFormulas');
 
 async function consultarFormulas() {
-    console.log('Consultando fórmulas...');
-    console.log(localStorage.getItem('token'));
-    console.log(consultaFormulasCasoUso);
-  const respuesta = await consultaFormulasCasoUso();
+    const respuesta = await consultaFormulasCasoUso();
     if (respuesta.error) {
-      throw new Error(respuesta.error);
+        throw new Error(respuesta.error);
     }
     console.log('Respuesta de consulta de fórmulas:', respuesta);
     if (!respuesta.ok) {
-      throw new Error('Error en la respuesta de la API');
+        throw new Error('Error en la respuesta de la API');
     }
-    if (!respuesta.json) {
-      throw new Error('Error al convertir la respuesta a JSON');
-    }
-    console.log('Respuesta JSON:', respuesta.json);
-    return await respuesta.json();
-
+    return respuesta;
 }
-
 
 async function renderizarFormulas() {
     try {
-      const data = await consultarFormulas();
-      const formulas = data.formulas || [];
-      console.log('Formulas:', formulas);
-      const contenedor = document.querySelector('.frame-listado-formulas');
-      // Elimina las fórmulas anteriores (si las hay)
-      document.querySelectorAll('.frame-f-rmulas').forEach(e => e.remove());
+        const respuesta = await consultarFormulas();
+        // Verificar que la respuesta tenga la estructura correcta
+        if (!respuesta.ok || !respuesta.datos) {
+            throw new Error('Formato de respuesta inválido');
+        }
 
-      formulas.forEach(formula => {
-        const div = document.createElement('div');
-        div.className = 'frame-f-rmulas';
-        div.innerHTML = `
-          <div class='nombre-usuario'>
-            <div class='texto-usuario'>${formula.nombre}</div>
-          </div>
-          <div class='nombre-usuario'>
-            <div class='texto-usuario'>${formula.parametros?.join(', ') || ''}</div>
-          </div>
-          <div class='editar'>
-            <img class='editar-icono' src='../utils/iconos/Editar.svg' />
-          </div>
-          <button class='eliminar'>
-            <img class='eliminar-icono' src='../utils/iconos/Basura.svg' />
-          </button>
-        `;
-        contenedor.appendChild(div);
-      });
+        // Obtener el arreglo de fórmulas de la respuesta
+        const formulas = respuesta.datos;
+
+        // Renderizar las fórmulas en el contenedor correspondiente
+        const contenedor = document.getElementById('frame-formulas');
+        contenedor.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevas fórmulas
+
+        formulas.forEach((formula) => {
+            const formulaDiv = document.createElement('div');
+            formulaDiv.innerHTML = `
+    <div id='frameFormulas-${formula.idFormula}'  class='frame-f-rmulas'>
+      <div class='nombre-usuario'>
+        <div class='texto-usuario'>${formula.Nombre}</div>
+      </div>
+      <div class='nombre-usuario'>
+        <div class='texto-usuario'>${formula.Datos}</div>
+      </div>
+      <button class='editar' data-id='${formula.idFormula}'>
+        <img class='editar-icono' src='../utils/iconos/Editar.svg' />
+      </button>
+      <button class='eliminar' data-id='${formula.idFormula}'>
+        <img class='eliminar-icono' src='../utils/iconos/Basura.svg' />
+      </button>
+    </div>
+            `;
+            contenedor.appendChild(formulaDiv);
+        });
+
+        // Agregar event listeners para los botones de editar y eliminar
+        document.querySelectorAll('.editar').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const formulaId = e.currentTarget.getAttribute('data-id');
+                console.log(`Editar fórmula con ID: ${formulaId}`);
+                // Implementar lógica para editar fórmula
+            });
+        });
+
+        document.querySelectorAll('.eliminar').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const formulaId = e.currentTarget.getAttribute('data-id');
+                console.log(`Eliminar fórmula con ID: ${formulaId}`);
+                // Implementar lógica para eliminar fórmula
+            });
+        });
+
     } catch (error) {
-      console.error('Error al mostrar las fórmulas:', error);
+        console.error('Error al consultar las fórmulas:', error);
+        document.getElementById('frame-formulas').innerHTML = `<div class='error-carga'>Error al cargar las fórmulas</div>`;
     }
-  }
+}
 
-  module.exports = {
+module.exports = {
     renderizarFormulas,
-    consultarFormulas
-  };
+};
 

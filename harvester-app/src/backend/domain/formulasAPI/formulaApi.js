@@ -14,8 +14,6 @@ async function guardarFormula(nombre, formula, token) {
 }
 
 async function consultarFormulas(token){
-    console.log(token)
-    console.log('Consultando fórmulas en el API...');
     const respuesta = await fetch('http://localhost:3000/formulas/consultarFormulas', {
         method: 'GET',
         headers: {
