@@ -360,10 +360,10 @@ let rolesCache = [];
  * @returns {Promise<void>}
  */
 async function guardarRoles() {
-    console.log('Cargando roles...'); // Para depuración
+    
     try {
         const roles = await consultarRolesCU(); // Llama a la función de consultarRoles.js
-        console.log('Roles obtenidos:', roles); // Para depuración
+        
 
         if (!roles || roles.length === 0) {
             console.warn('No hay roles disponibles para guardar.');
@@ -395,7 +395,7 @@ function llenarSelectConRoles(selectRol) {
 
     // Agregar los roles al <select>
     rolesCache.forEach(rol => {
-        console.log(`Agregando rol: ID=${rol.idRol}, Nombre=${rol.Nombre}`); // Para depuración
+        
         const option = document.createElement('option');
         option.value = rol.idRol; // Envía el idRol al backend
         option.textContent = rol.Nombre; // Muestra el nombre del rol
