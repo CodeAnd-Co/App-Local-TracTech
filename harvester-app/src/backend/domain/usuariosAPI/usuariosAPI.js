@@ -10,7 +10,7 @@ const token = localStorage.getItem('token');
  * @throws {Error} Si hay un error en la comunicación con el servidor
  */
 async function obtenerUsuarios() {
-    const respuesta = await fetch('http://localhost:3000/usuarios/consultar-usuarios', {
+    const respuesta = await fetch('http://localhost:3000/usuarios/consultarUsuarios', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ async function obtenerUsuarios() {
  * @returns {Promise<{ok: boolean, mensaje?: string}>} Objeto con el estado de la operación y un posible mensaje del servidor.
  */
 async function eliminarUsuario(id) {
-    const respuesta = await fetch(`http://localhost:3000/usuarios/eliminar-usuario/${id}`, {
+    const respuesta = await fetch(`http://localhost:3000/usuarios/eliminarUsuario/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ async function eliminarUsuario(id) {
 async function crearUsuario(datos) {
     const token = localStorage.getItem('token');
 
-    const respuesta = await fetch('http://localhost:3000/usuarios/crear-usuario', {
+    const respuesta = await fetch('http://localhost:3000/usuarios/crearUsuario', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ async function crearUsuario(datos) {
  * @throws {Error} Si hay un error en la comunicación con el servidor
  */
 async function consultarRoles() {
-    const respuesta = await fetch('http://localhost:3000/usuarios/consultar-roles-usuarios', {
+    const respuesta = await fetch('http://localhost:3000/usuarios/consultarRolesUsuarios', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
