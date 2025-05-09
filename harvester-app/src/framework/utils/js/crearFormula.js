@@ -96,7 +96,17 @@ async function guardarFormulaTemporal(nombre, formula) {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
+    const nombreFormula = document.getElementById('nombreFormula').value;
     // Obtener referencia al botón de guardar
+        if(nombreFormula === '') {
+            Swal.fire({
+                title: 'Error',
+                text: 'Verifica que la formula tenga un nombre válido.',
+                icon: 'error',
+                confirmButtonColor: '#1F4281',
+            });
+            return;
+        }
     const btnGuardar = document.getElementById('btnGuardar');
     
     // Deshabilitar el botón para evitar múltiples clics
@@ -109,7 +119,6 @@ async function procesarFormula() {
     btnGuardar.innerHTML = '<div>Guardando fórmula...</div>';
     
     const cuadroTextoGenerado = document.getElementById('resultado').innerText;
-    const nombreFormula = document.getElementById('nombreFormula').value;
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     
