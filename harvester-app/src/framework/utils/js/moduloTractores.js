@@ -1,8 +1,8 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
+// RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
 const { seleccionaDatosAComparar } = require('../../backend/casosUso/excel/seleccionaDatosAComparar');
-let tractoresSeleccionados = [];
-let columnasPorTractor = {};
+let tractoresSeleccionados = {};
 
 /**
  * Inicializa el módulo de tractores configurando los elementos del DOM y 
@@ -121,12 +121,12 @@ function inicializarTractores(datosExcel) {
         caja.src = '../utils/iconos/check_box_outline_blank.svg'; // Imagen del checkbox vacío 
 
         caja.addEventListener('click', () => {
-            const indice = tractoresSeleccionados.indexOf(tractorNombre);
-            if (indice === -1) {
-                tractoresSeleccionados.push(tractorNombre);
-            } else {
-                tractoresSeleccionados.splice(indice, 1);
-            }
+            // Cambiar el estado de selección del tractor
+            const indice = tractoresSeleccionados[tractorNombre] ? tractoresSeleccionados[tractorNombre].seleccionado : false;
+            tractoresSeleccionados[tractorNombre] = {
+                seleccionado: !indice,
+                columnas: tractoresSeleccionados[tractorNombre] ? tractoresSeleccionados[tractorNombre].columnas : []
+            };
             cambiarIconoMarcadoADesmarcado(caja);
             console.log(tractoresSeleccionados);
         })
@@ -210,9 +210,12 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
         return;
     }
 
-    // Asegurar que el objeto para este tractor exista
-    if (!columnasPorTractor[nombreTractor]) {
-        columnasPorTractor[nombreTractor] = [];
+    // Asegurarse de que el objeto para este tractor exista en tractoresSeleccionados
+    if (!tractoresSeleccionados[nombreTractor]) {
+        tractoresSeleccionados[nombreTractor] = {
+            seleccionado: false, // El tractor no está seleccionado por defecto
+            columnas: [] // No tiene columnas seleccionadas inicialmente
+        };
     }
 
     columnas.forEach(nombreColumna => {
@@ -229,31 +232,22 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
         caja.className = 'check-box';
         caja.src = '../utils/iconos/check_box_outline_blank.svg';
 
-        // Verificar si esta columna ya está seleccionada
-        if (columnasPorTractor[nombreTractor].includes(nombreColumna)) {
-            caja.src = '../utils/iconos/check_box.svg'; // Marcado
-        } else {
-            caja.src = '../utils/iconos/check_box_outline_blank.svg'; // No marcado
+        // Verificar si la columna ya está seleccionada
+        if (tractoresSeleccionados[nombreTractor].columnas.includes(nombreColumna)) {
+            caja.src = '../utils/iconos/check_box.svg';
         }
 
+
+        // Evento de click para seleccionar/deseleccionar la columna
+        columnaDiv.addEventListener('click', () => {
+            // Llamar a la función que maneja la selección/deselección de la columna
+            seleccionarColumna(nombreTractor, nombreColumna, caja);
+        });
         
         // Agregar al DOM
         columnaDiv.appendChild(nombreColumnaDiv);
         columnaDiv.appendChild(caja);
         columnasContenedor.appendChild(columnaDiv);
-        columnaDiv.addEventListener('click', () => {
-            const columnasSeleccionadas = columnasPorTractor[nombreTractor]
-            const indice = columnasSeleccionadas.indexOf(nombreColumna);
-            if (indice === -1) {
-                columnasSeleccionadas.push(nombreColumna);
-            } else {
-                columnasSeleccionadas.splice(indice, 1);
-            }
-            caja.src = columnasSeleccionadas.includes(nombreColumna)
-                ? '../utils/iconos/check_box.svg'
-                : '../utils/iconos/check_box_outline_blank.svg';
-            console.log(columnasPorTractor);
-        });
     });
 }
 
@@ -464,6 +458,43 @@ function cambiarSeleccionVisualUnica(contenedor) {
         contenedor.classList.add('seleccionado');
     }
 
+}
+
+/**
+ * Selecciona o deselecciona una columna en el panel de columnas de un tractor.
+ * Esta función actualiza la lista de columnas seleccionadas para el tractor específico,
+ * y cambia el icono del checkbox de acuerdo con el estado de selección de la columna.
+ * 
+ * @function seleccionarColumna
+ * @param {string} nombreTractor - El nombre del tractor cuya columna se va a seleccionar o deseleccionar.
+ * @param {string} nombreColumna - El nombre de la columna que se desea seleccionar o deseleccionar.
+ * @param {HTMLElement} caja - El elemento de imagen (checkbox) que refleja el estado de selección de la columna.
+ * @returns {void}
+ */
+function seleccionarColumna(nombreTractor, nombreColumna, caja) {
+    // Verificamos si el tractor está seleccionado
+    if (!tractoresSeleccionados[nombreTractor]) {
+        tractoresSeleccionados[nombreTractor] = {
+            seleccionado: false, // El tractor no está seleccionado por defecto
+            columnas: [] // No tiene columnas seleccionadas inicialmente
+        };
+    }
+
+    // Verificamos si la columna ya está seleccionada
+    const seleccion = tractoresSeleccionados[nombreTractor];
+    const indice = seleccion.columnas.indexOf(nombreColumna);
+    if (indice === -1) {
+        // Si la columna no está seleccionada, la agregamos
+        seleccion.columnas.push(nombreColumna);
+    } else {
+        // Si la columna ya está seleccionada, la deseleccionamos
+        seleccion.columnas.splice(indice, 1);
+    }
+    // Si hay al menos una columna seleccionada, marcar el tractor como seleccionado
+    seleccion.seleccionado = seleccion.columnas.length > 0;
+    
+    cambiarIconoMarcadoADesmarcado(caja)
+    console.log(tractoresSeleccionados);
 }
 
 // Exportar funciones para uso global
