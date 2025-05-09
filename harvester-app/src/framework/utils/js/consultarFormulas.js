@@ -7,7 +7,6 @@ async function consultarFormulas() {
     if (respuesta.error) {
         throw new Error(respuesta.error);
     }
-    console.log('Respuesta de consulta de fórmulas:', respuesta);
     if (!respuesta.ok) {
         throw new Error('Error en la respuesta de la API');
     }
