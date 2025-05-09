@@ -1,6 +1,8 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
 
-const { seleccionaDatosAComparar } = require('../../../backend/casosUso/excel/seleccionaDatosAComparar')
+const { seleccionaDatosAComparar } = require('../../backend/casosUso/excel/seleccionaDatosAComparar');
+let tractoresSeleccionados = [];
+let columnasPorTractor = {};
 
 /**
  * Inicializa el módulo de tractores configurando los elementos del DOM y 
@@ -8,7 +10,7 @@ const { seleccionaDatosAComparar } = require('../../../backend/casosUso/excel/se
  * 
  * @function inicializarModuloTractores
  * @returns {void}
- */
+*/
 function inicializarModuloTractores() {
     // Actualizar topbar directamente
     if (window.actualizarBarraSuperior) {
@@ -118,6 +120,16 @@ function inicializarTractores(datosExcel) {
         caja.className = 'check-box';
         caja.src = '../utils/iconos/check_box_outline_blank.svg'; // Imagen del checkbox vacío 
 
+        caja.addEventListener('click', () => {
+            const indice = tractoresSeleccionados.indexOf(tractorNombre);
+            if (indice === -1) {
+                tractoresSeleccionados.push(tractorNombre);
+            } else {
+                tractoresSeleccionados.splice(indice, 1);
+            }
+            cambiarIconoMarcadoADesmarcado(caja);
+            console.log(tractoresSeleccionados);
+        })
         
         // Añadir el nombre y el checkbox al div del tractor
         tractorDiv.appendChild(tractorDivTexto);
@@ -168,9 +180,9 @@ function cargarDatosDeExcel() {
  * @returns {void}
  */
 function mostrarColumnasTractor(nombreTractor, datosExcel) {
-    const columnaContenedor = document.getElementById('contenedorColumnas');
     const columnasContenedor = document.querySelector('.columnas-contenido');
     columnasContenedor.innerHTML = '';
+    const columnaContenedor = document.getElementById('contenedorColumnas');
     columnaContenedor.style.display = 'block';
 
     const datosHoja = datosExcel.hojas[nombreTractor];
@@ -186,12 +198,21 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
     // Obtener las columnas del primer objeto
     let columnas = [];
 
-    // Si el primer elemento es un objeto, usamos sus claves
-    if (typeof datosHoja[0] === 'object' && !Array.isArray(datosHoja[0])) {
-        columnas = Object.keys(datosHoja[0]);
-    } else if (Array.isArray(datosHoja[0])) {
-        // Si el primer elemento es un array, usamos sus valores como encabezados
-        columnas = datosHoja[0];
+    if (Array.isArray(datosHoja[0])) {
+        columnas = datosHoja[0]; // Usar los valores como nombres de columna
+    } else if (typeof datosHoja[0] === 'object') {
+        columnas = Object.keys(datosHoja[0]); // Usar las claves
+    } else {
+        const mensaje = document.createElement('div');
+        mensaje.className = 'columna-nombre';
+        mensaje.textContent = 'Formato de datos no reconocido';
+        columnasContenedor.appendChild(mensaje);
+        return;
+    }
+
+    // Asegurar que el objeto para este tractor exista
+    if (!columnasPorTractor[nombreTractor]) {
+        columnasPorTractor[nombreTractor] = [];
     }
 
     columnas.forEach(nombreColumna => {
@@ -208,10 +229,31 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
         caja.className = 'check-box';
         caja.src = '../utils/iconos/check_box_outline_blank.svg';
 
+        // Verificar si esta columna ya está seleccionada
+        if (columnasPorTractor[nombreTractor].includes(nombreColumna)) {
+            caja.src = '../utils/iconos/check_box.svg'; // Marcado
+        } else {
+            caja.src = '../utils/iconos/check_box_outline_blank.svg'; // No marcado
+        }
+
+        
         // Agregar al DOM
         columnaDiv.appendChild(nombreColumnaDiv);
         columnaDiv.appendChild(caja);
         columnasContenedor.appendChild(columnaDiv);
+        columnaDiv.addEventListener('click', () => {
+            const columnasSeleccionadas = columnasPorTractor[nombreTractor]
+            const indice = columnasSeleccionadas.indexOf(nombreColumna);
+            if (indice === -1) {
+                columnasSeleccionadas.push(nombreColumna);
+            } else {
+                columnasSeleccionadas.splice(indice, 1);
+            }
+            caja.src = columnasSeleccionadas.includes(nombreColumna)
+                ? '../utils/iconos/check_box.svg'
+                : '../utils/iconos/check_box_outline_blank.svg';
+            console.log(columnasPorTractor);
+        });
     });
 }
 
@@ -252,8 +294,8 @@ function botonReporte() {
             botonReporte.addEventListener('click', () => {
                 // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                 setTimeout(() => {
-                    const jsonFiltrado = seleccionaDatosAComparar(datosOriginales, tractoresSeleccionados, columnasSeleccionadas);
-                    localStorage.setItem('jsonFiltradoReporte', JSON.stringify(jsonFiltrado));
+                    // const jsonFiltrado = seleccionaDatosAComparar(datosOriginales, tractoresSeleccionados, columnasSeleccionadas);
+                    // localStorage.setItem('jsonFiltradoReporte', JSON.stringify(jsonFiltrado));
 
                     // Cargar el módulo de análisis
                     const ventanaPrincipal = document.getElementById('ventana-principal');
@@ -394,12 +436,16 @@ function aplicarFiltrosCombinados() {
  * @returns {void}
  */
 function cambiarIconoMarcadoADesmarcado(icono) {
+    const rutaBase = '../utils/iconos/';
+    const iconoMarcado = 'check_box.svg';
+    const iconoDesmarcado = 'check_box_outline_blank.svg';
+
+    const nombreArchivo = icono.src.split('/').pop();
+
     // Verificar si el icono actual es el de desmarcado
-    if (icono.src.includes('check_box_outline_blank.svg')) {
-        icono.src = '../utils/iconos/check_box.svg'; // Cambiar a marcado
-    } else {
-        icono.src = '../utils/iconos/check_box_outline_blank.svg'; // Cambiar a desmarcado
-    }
+    icono.src = nombreArchivo === iconoDesmarcado
+        ? rutaBase + iconoMarcado
+        : rutaBase + iconoDesmarcado;
 }
 
 /**
