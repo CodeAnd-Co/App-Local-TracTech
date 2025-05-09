@@ -5,8 +5,10 @@
  * @version 1.0
  * @since 2025-04-28
  */
-
-import {JSPDF} from 'jspdf';
+const { jsPDF : JSPDF } = window.jspdf;
+if (typeof Swal === 'undefined'){
+  const Swal = require('sweetalert2');
+}
 
 /**
  * Inicializa la interfaz de análisis:
@@ -91,14 +93,30 @@ function cargarDatosExcel() {
  * @returns {void}
  */
 function descargarPDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    Swal.fire({
+        title: 'Error al descargar reporte',
+        text: 'Ha courrido un error, contacta a soporte',
+        icon: 'error'
+    });
+    throw new Error('[PDF] jsPDF no cargado');
+  }
+
   const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
   const anchoPagina  = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
   let posicionY      = margen;
 
+  console.log(documentoPDF)
+
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
+    Swal.fire({
+        title: 'Error al descargar reporte',
+        text: 'No se encontró el contenedor de previsualización',
+        icon: 'warning'
+    });
     throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
 
