@@ -26,7 +26,6 @@ async function renderizarFormulas() {
 
         // Renderizar las fórmulas en el contenedor correspondiente
         const contenedor = document.getElementById('frame-formulas');
-        contenedor.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevas fórmulas
 
         formulas.forEach((formula) => {
             const formulaDiv = document.createElement('div');
