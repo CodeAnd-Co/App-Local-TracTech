@@ -1,9 +1,9 @@
-const { consultarFormulas } = require('../../backend/casosUso/formulas/consultaFormulas');
-const { inicializarCrearFormula } = require('../utils/js/crearFormula');
-//const { guardarFormula } = require('../../backend/casosUso/formulas/guardarFormula');
-//const { eliminarFormula } = require('../../backend/casosUso/formulas/eliminarFormula');
+const {consultarFormulas} = require('../utils/js/consultarFormulas');
+const { inicializarCrearFormula} = require('../utils/js/crearFormula');
+//const { guardarFormula } = require('../utils/js/crearFormula');
+//const { eliminarFormula } = require('../utils/js/eliminarFormula');
 
-function inicializarModuloFormulas(){
+async function inicializarModuloFormulas(){
     console.log('inicializando modulo formulas');
     console.log('Ruta actual __dirname:', __dirname);
     console.log('Intentando importar:', require.resolve('../../backend/casosUso/formulas/consultaFormulas'));
@@ -15,7 +15,7 @@ function inicializarModuloFormulas(){
 
 
     try{
-      const formulas = consultarFormulas();
+      const formulas = await consultarFormulas();
       console.log('Formulas:', formulas);
 
     } catch(error){
