@@ -6,6 +6,8 @@
  * @since 2025-04-28
  */
 
+import {JSPDF} from 'jspdf';
+
 /**
  * Inicializa la interfaz de análisis:
  * - Actualiza el estado de los botones del sidebar y topbar.
@@ -89,11 +91,6 @@ function cargarDatosExcel() {
  * @returns {void}
  */
 function descargarPDF() {
-  const { JSPDF } = window.jspdf || {};
-  if (!JSPDF) {
-    throw new Error('[PDF] jsPDF no cargado');
-  }
-
   const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
   const anchoPagina  = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
