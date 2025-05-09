@@ -1,9 +1,10 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
-async function guardarFormula(nombre, formula){
+async function guardarFormula(nombre, formula, token) {
     const respuesta = await fetch('http://localhost:3000/formulas/guardarFormula', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({nombre, formula}),
     });
@@ -12,11 +13,14 @@ async function guardarFormula(nombre, formula){
     return { ok: respuesta.ok, ...datos };
 }
 
-async function consultarFormulas(){
+async function consultarFormulas(token){
+    console.log(token)
+    console.log('Consultando fórmulas en el API...');
     const respuesta = await fetch('http://localhost:3000/formulas/consultarFormulas', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
     });
 
@@ -24,11 +28,12 @@ async function consultarFormulas(){
     return { ok: respuesta.ok, ...datos };
 }
 
-async function eliminarFormula(id){
+async function eliminarFormula(id, token){
     const respuesta = await fetch('http://localhost:3000/formulas/eliminarFormula/', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ id }),
     });

@@ -1,6 +1,6 @@
 // RF76 usuario consulta formulas - http..
 
-const { consultaFormulas} = require('../../domain/formulasAPI/formulaApi');
+const { consultarFormulas } = require('../../domain/formulasAPI/formulaApi');
 
 /**
  * @async
@@ -9,12 +9,22 @@ const { consultaFormulas} = require('../../domain/formulasAPI/formulaApi');
  * @throws {Error} Si no se obtuvo ninguna fórmula.
  */
 function consultaFormulasCasoUso() {
+    console.log('Consultando fórmulas desde el caso de uso...');
+    console.log(localStorage.getItem('token'));
+    token = localStorage.getItem('token');
+    console.log(consultarFormulas);
     try{
-        const respuesta = consultaFormulas();
+        const respuesta = consultarFormulas(token);
         return respuesta;
     } catch(error){
         console.error('Error al consultar las fórmulas:', error);
         throw new Error('No se obtuvo ninguna fórmula');
     }
 }
-window.consultaFormulasCasoUso = consultaFormulasCasoUso; // Para que sea accesible desde el frontend
+
+module.exports = {
+    consultaFormulasCasoUso
+};
+
+
+

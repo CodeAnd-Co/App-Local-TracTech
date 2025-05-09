@@ -1,6 +1,8 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 
+const { guardarFormula } = require('../../../backend/casosUso/formulas/crearFormula');
+
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -96,7 +98,7 @@ async function procesarFormula() {
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     try{
         // console.log('Nombre de la fórmula:', nombreFormula, 'Fórmula:', formula); Quitar el console.log
-        const respuesta = await guardarFormulaTemporal(nombreFormula, formula);
+        const respuesta = await guardarFormula(nombreFormula, formula);
         if (respuesta.ok) {
             window.cargarModulo('formulas');
         } else {
@@ -545,6 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+module.exports ={
+    inicializarCrearFormula
+}
 
-
-window.inicializarCrearFormula = inicializarCrearFormula;

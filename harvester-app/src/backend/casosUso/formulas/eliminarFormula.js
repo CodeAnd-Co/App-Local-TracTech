@@ -11,11 +11,14 @@ const { eliminarFormula: eliminarFormulaAPI } = require('../../domain/formulasAP
  */
 async function eliminarFormula(id) {
     try {
-        const respuesta = await eliminarFormulaAPI(id);
+        const respuesta = await eliminarFormulaAPI(id, localStorage.getItem('token'));
         return respuesta;
     } catch (error) {
         console.error('Error al eliminar la fórmula:', error);
         throw new Error('No se pudo eliminar la fórmula');
     }
 }
-window.eliminarFormula = eliminarFormula; // Para que sea accesible desde el frontend
+
+module.exports = {
+    eliminarFormula
+};

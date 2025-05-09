@@ -38,7 +38,7 @@ function cargarModulo(seccion) {
         } else if (seccion === 'usuario') {
             if (window.inicializarModuloUsuario)    window.inicializarModuloUsuario();
         } else if (seccion ==='formulas'){
-          if (window.inicializarCrearFormula) window.inicializarCrearFormula();
+          if (window.inicializarModuloFormulas) window.inicializarModuloFormulas();
         }
         // Añadir más inicializaciones para otros módulos según sea necesario
       })
