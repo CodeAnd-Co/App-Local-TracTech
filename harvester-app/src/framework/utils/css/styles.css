@@ -208,7 +208,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 140px;
+  width: 293px;
   height: 55px;
   position: relative;
   cursor: pointer;
@@ -298,25 +298,8 @@
   align-self: stretch;
 }
 
-.boton-acceder,
 .boton-acceder * {
   box-sizing: border-box;
-}
-.boton-acceder {
-  background: #1f4281;
-  border-radius: 8px;
-  border-style: solid;
-  border-color: rgba(255, 255, 255, 0.2);
-  border-width: 2px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 140px;
-  height: 55px;
-  position: relative;
 }
 .cerrar {
   color: #ffffff;

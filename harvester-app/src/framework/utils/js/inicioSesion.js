@@ -14,6 +14,15 @@ const Swal = require('sweetalert2');
  * Maneja el evento de clic en el botón de acceso para iniciar sesión.
  */
 async function manejarInicioSesion() {
+  // Deshabilitar botón para evitar múltiples envíos
+  botonAcceder.disabled = true;
+  
+  // Almacenar el contenido original del botón
+  const contenidoOriginal = botonAcceder.innerHTML;
+  
+  // Cambiar el texto del botón para indicar que está procesando
+  botonAcceder.innerHTML = '<div class="acceder">Accediendo...</div>';
+  
   // Obtener valores de los campos de entrada
   const correo = entradaCorreo.value;
   const contrasenia = entradaContrasenia.value;
@@ -25,6 +34,9 @@ async function manejarInicioSesion() {
       text: 'Por favor, completa todos los campos.',
       icon: 'warning'
     });
+    // Restaurar botón en caso de validación fallida
+    botonAcceder.innerHTML = contenidoOriginal;
+    botonAcceder.disabled = false;
     return;
   }
 
@@ -42,6 +54,7 @@ async function manejarInicioSesion() {
 
       // Redirigir al usuario a la página principal
       window.location.href = './frameLayout.html';
+      // No es necesario restaurar el botón aquí ya que se redirige
 
     } else {
       // Mostrar mensaje de error si las credenciales no son válidas
@@ -50,6 +63,10 @@ async function manejarInicioSesion() {
         text: respuesta.mensaje,
         icon: 'warning'
       });
+      
+      // Restaurar el botón en caso de credenciales inválidas
+      botonAcceder.innerHTML = contenidoOriginal;
+      botonAcceder.disabled = false;
     }
   } catch (error) {
     console.error('Error al conectar con el backend:', error);
@@ -59,6 +76,10 @@ async function manejarInicioSesion() {
       text: 'Verifica tu conexión e inténtalo de nuevo.',
       icon: 'error'
     });
+    
+    // Restaurar el botón en caso de error
+    botonAcceder.innerHTML = contenidoOriginal;
+    botonAcceder.disabled = false;
   }
 }
 
