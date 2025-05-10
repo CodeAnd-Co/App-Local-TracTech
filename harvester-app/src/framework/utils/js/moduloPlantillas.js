@@ -106,7 +106,7 @@ async function inicializarModuloPlantillas() {
                             botonEditarVisualizador.addEventListener('click', async () => {
                                 if (menuOpciones) {
                                     const idPlantilla = menuOpciones.getAttribute('dato-id');
-                                    
+                                                                        
                                     const result = await Swal.fire({
                                         title: '¿Estás seguro?',
                                         text: 'No podrás recuperar la plantilla eliminada.',
@@ -117,7 +117,7 @@ async function inicializarModuloPlantillas() {
                                         confirmButtonText: 'Eliminar',
                                         cancelButtonText: 'Cancelar'
                                     });
-                                    
+                                                             
                                     // Si el usuario confirmó la eliminación
                                     if (result.isConfirmed && idPlantilla) {
                                         try {
@@ -196,6 +196,11 @@ async function inicializarModuloPlantillas() {
                     if (menuOpciones) {
                         const idPlantilla = menuOpciones.getAttribute('dato-id');
                         
+                        // Deshabilitar el botón y guardar contenido original
+                        const contenidoOriginal = boton.innerHTML;
+                        boton.disabled = true;
+                        boton.innerHTML = '<img class="trash" src="../utils/iconos/BasuraGris.svg"/>';
+                        
                         const result = await Swal.fire({
                             title: '¿Estás seguro?',
                             text: 'No podrás recuperar la plantilla eliminada.',
@@ -206,6 +211,13 @@ async function inicializarModuloPlantillas() {
                             confirmButtonText: 'Eliminar',
                             cancelButtonText: 'Cancelar'
                         });
+                        
+                        // Si el usuario canceló, restaurar el botón
+                        if (!result.isConfirmed) {
+                            boton.disabled = false;
+                            boton.innerHTML = contenidoOriginal;
+                            return;
+                        }
                         
                         // Si el usuario confirmó la eliminación
                         if (result.isConfirmed && idPlantilla) {
@@ -235,6 +247,9 @@ async function inicializarModuloPlantillas() {
                                         icon: 'error',
                                         confirmButtonColor: '#1F4281',
                                     });
+                                    // Restaurar el botón en caso de error
+                                    boton.disabled = false;
+                                    boton.innerHTML = contenidoOriginal;
                                 }
                             } catch (error) {
                                 console.error('Error al eliminar la plantilla:', error);
@@ -244,6 +259,9 @@ async function inicializarModuloPlantillas() {
                                     icon: 'error',
                                     confirmButtonColor: '#1F4281',
                                 });
+                                // Restaurar el botón en caso de error
+                                boton.disabled = false;
+                                boton.innerHTML = contenidoOriginal;
                             }
                         }
                     }

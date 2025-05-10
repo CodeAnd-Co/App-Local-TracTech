@@ -250,8 +250,8 @@ function mostrarUsuarios(usuarios) {
                 text: 'Esta acción no se puede deshacer.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#1F4281',
+                cancelButtonColor: '#A61930',
                 confirmButtonText: 'Confirmar',
                 cancelButtonText: 'Cancelar'
               }).then(async (resultado) => { // Cambiar el callback a async
