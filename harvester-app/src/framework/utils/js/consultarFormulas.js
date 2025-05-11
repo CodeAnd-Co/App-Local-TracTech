@@ -66,7 +66,6 @@ async function renderizarFormulas() {
         document.querySelectorAll('.eliminar').forEach(btn => {
             btn.addEventListener('click', (evento) => {
                 // eslint-disable-next-line no-unused-vars
-
                 const formulaId = evento.currentTarget.getAttribute('data-id');
                 // Implementar lógica para eliminar fórmula
             });
