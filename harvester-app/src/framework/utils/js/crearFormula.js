@@ -552,7 +552,7 @@ function traducirFuncion(nombre) {
 function popularDropdown(elementoSeleccionado) {
     // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo TODO()
     const columnas = ['Gasolina', 'Kilometraje', 'Fecha', 'Estado', 'Valor'];
-    elementoSeleccionado.innerHTML = "<option value=''>Seleccionar</option>";
+    elementoSeleccionado.innerHTML = '<option value="">Seleccionar</option>';
     columnas.forEach(columna => {
         const opcion = document.createElement('option');
         opcion.value = `[@${columna}]`;
