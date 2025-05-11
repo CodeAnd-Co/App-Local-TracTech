@@ -78,10 +78,6 @@ async function renderizarFormulas() {
     }
 }
 
-window.document.addEventListener('DOMContentLoaded', () => {
-    renderizarFormulas()
-});
-
 module.exports = {
     renderizarFormulas,
 };
