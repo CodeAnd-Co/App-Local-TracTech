@@ -52,6 +52,7 @@ async function renderizarFormulas() {
         // Agregar event listeners para los botones de editar y eliminar
         document.querySelectorAll('.editar').forEach(btn => {
             btn.addEventListener('click', (evento) => {
+                // eslint-disable-next-line no-unused-vars
                 const formulaId = evento.currentTarget.getAttribute('data-id');
                 // Implementar lógica para editar fórmula
             });
@@ -64,6 +65,8 @@ async function renderizarFormulas() {
 
         document.querySelectorAll('.eliminar').forEach(btn => {
             btn.addEventListener('click', (evento) => {
+                // eslint-disable-next-line no-unused-vars
+
                 const formulaId = evento.currentTarget.getAttribute('data-id');
                 // Implementar lógica para eliminar fórmula
             });
