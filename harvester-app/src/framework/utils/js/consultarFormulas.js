@@ -77,6 +77,7 @@ async function renderizarFormulas() {
     }
 }
 
+
 module.exports = {
     renderizarFormulas,
 };
