@@ -35,17 +35,17 @@ const { Usuario, ListaUsuarios } = require('../../backend/data/usuariosModelos/u
 
 /*  3. ───── Tests ──────────────────────────────────────────────────────── */
 describe('obtenerUsuarios (use-case)', () => {
-  let consoleErrorSpy;
+  let espiaDeError;
 
   // Suprime errores en consola durante las pruebas que los provocan
   beforeAll(() => {
-    consoleErrorSpy = jest
+    espiaDeError = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
   });
 
   afterAll(() => {
-    consoleErrorSpy.mockRestore();
+    espiaDeError.mockRestore();
   });
 
   beforeEach(() => jest.clearAllMocks());
