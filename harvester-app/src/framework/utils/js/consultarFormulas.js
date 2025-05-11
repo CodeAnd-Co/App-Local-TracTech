@@ -51,8 +51,8 @@ async function renderizarFormulas() {
 
         // Agregar event listeners para los botones de editar y eliminar
         document.querySelectorAll('.editar').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const formulaId = e.currentTarget.getAttribute('data-id');
+            btn.addEventListener('click', (evento) => {
+                const formulaId = evento.currentTarget.getAttribute('data-id');
                 console.log(`Editar fórmula con ID: ${formulaId}`);
                 // Implementar lógica para editar fórmula
             });
@@ -65,8 +65,8 @@ async function renderizarFormulas() {
             });
 
         document.querySelectorAll('.eliminar').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const formulaId = e.currentTarget.getAttribute('data-id');
+            btn.addEventListener('click', (evento) => {
+                const formulaId = evento.currentTarget.getAttribute('data-id');
                 console.log(`Eliminar fórmula con ID: ${formulaId}`);
                 // Implementar lógica para eliminar fórmula
             });

@@ -1,8 +1,10 @@
 // RF
 
 const { eliminarFormula } = require('../../../backend/casosUso/formulas/eliminarFormula');
-const botonEliminar = document.querySelector('#eliminar');
+//const botonEliminar = document.querySelector('#eliminar');
+/* eslint-disable no-undef */
 
+/* eslint-disable-next-line */
 async function manejarEliminarFormula() {
     const id = document.querySelector('#id').value; // Obtener el ID de la fórmula a eliminar
 

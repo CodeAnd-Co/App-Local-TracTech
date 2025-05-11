@@ -9,8 +9,7 @@ const { consultarFormulas } = require('../../domain/formulasAPI/formulaApi');
  * @throws {Error} Si no se obtuvo ninguna fórmula.
  */
 function consultaFormulasCasoUso() {
-    console.log(localStorage.getItem('token'));
-    token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     try{
         const respuesta = consultarFormulas(token);
         return respuesta;
