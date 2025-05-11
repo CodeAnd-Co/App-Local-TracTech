@@ -337,6 +337,11 @@ async function crearUsuario() {
             rolInput.value = '';
 
             document.getElementById('columna-crear-usuario').style.display = 'none';
+            
+            // Actualizar la vista para mostrar el nuevo usuario en la lista
+            setTimeout(() => {
+                inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
+            }, 500);
         } else {
             Swal2.fire({
                 title: 'Error al crear usuario',
