@@ -9,7 +9,7 @@
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
 async function iniciarSesion(correo, contrasenia) {
-  const respuesta = await fetch('http://localhost:3000/sesion/iniciar-sesion', {
+  const respuesta = await fetch('http://localhost:3000/sesion/iniciarSesion', {
     method: 'POST', // Método HTTP POST para enviar las credenciales
     headers: {
       'Content-Type': 'application/json', // Especificar el tipo de contenido
@@ -31,7 +31,7 @@ async function iniciarSesion(correo, contrasenia) {
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
 async function cerrarSesion(token) {
-  const respuesta = await fetch('http://localhost:3000/sesion/cerrar-sesion', {
+  const respuesta = await fetch('http://localhost:3000/sesion/cerrarSesion', {
     method: 'POST', // Método HTTP POST para cerrar sesión
     headers: {
       'Content-Type': 'application/json', // Especificar el tipo de contenido
