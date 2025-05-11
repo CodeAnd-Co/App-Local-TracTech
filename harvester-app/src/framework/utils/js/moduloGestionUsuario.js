@@ -28,7 +28,6 @@ async function inicializarModuloGestionUsuarios() {
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
     const columnaCrear = document.getElementById('columna-crear-usuario');
-    columnaCrear.style.display = 'none';
 
     try {
         // Cargar usuarios
@@ -46,22 +45,29 @@ async function inicializarModuloGestionUsuarios() {
     }
 
     const botonAgregar = document.querySelector('.primario');
-    botonAgregar.addEventListener('click', evento => {
+    // Eliminar event listeners anteriores y agregar uno nuevo
+    const nuevoBotonAgregar = botonAgregar.cloneNode(true);
+    botonAgregar.parentNode.replaceChild(nuevoBotonAgregar, botonAgregar);
+    nuevoBotonAgregar.addEventListener('click', evento => {
         evento.preventDefault();
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
-    }
-);
+    });
 
     const botonCancelar = document.querySelector('.btn-cancelar');
-    botonCancelar.addEventListener('click', evento => {
+    // Eliminar event listeners anteriores y agregar uno nuevo
+    const nuevoBotonCancelar = botonCancelar.cloneNode(true);
+    botonCancelar.parentNode.replaceChild(nuevoBotonCancelar, botonCancelar);
+    nuevoBotonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
         columnaCrear.style.display = 'none';
     });
 
-    // Asociar el evento al botón btn-guardar
+    // Eliminar event listeners anteriores y agregar uno nuevo al botón guardar
     const botonGuardar = document.querySelector('.btn-guardar');
-    botonGuardar.addEventListener('click', async evento => {
+    const nuevoBotonGuardar = botonGuardar.cloneNode(true);
+    botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
+    nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
         await crearUsuario();
     });
