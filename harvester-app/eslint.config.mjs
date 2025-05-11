@@ -73,4 +73,12 @@ export default [
       globals: globals.browser,
     },
   },
+
+  // Configuración para las pruebas con Jest
+  {
+    files: ['**/*.test.js'],
+    languageOptions: {
+      globals: globals.jest,
+    },
+  },
 ];
