@@ -307,12 +307,12 @@ async function crearUsuario() {
     const nombre = nombreInput.value.trim();
     const correo = correoInput.value.trim();
     const contrasenia = contraseniaInput.value.trim();
-    const idRol_FK = parseInt(rolInput.value, 10);
+    const idRolFK = parseInt(rolInput.value, 10);
 
     console.log('Datos enviados al backend:');
-    console.log({ nombre, correo, contrasenia, idRol_FK });
+    console.log({ nombre, correo, contrasenia, idRolFK });
 
-    if (!nombre || !correo || !contrasenia || isNaN(idRol_FK)) {
+    if (!nombre || !correo || !contrasenia || isNaN(idRolFK)) {
         return Swal2.fire({
             title: 'Datos incompletos',
             text: 'Por favor, completa todos los campos.',
@@ -321,7 +321,7 @@ async function crearUsuario() {
     }
 
     try {
-        const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRol_FK });
+        const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
 
         if (resultado.ok) {
             Swal2.fire({
