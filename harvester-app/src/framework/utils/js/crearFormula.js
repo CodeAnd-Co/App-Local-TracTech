@@ -1,6 +1,13 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+
+if (typeof Swal === 'undefined'){
+    const Swal = require('sweetalert2');
+}
+
 const { guardarFormula } = require('../../../backend/casosUso/formulas/crearFormula');
 /**
  * @function eliminarElemento
@@ -16,7 +23,6 @@ function eliminarElemento(boton) {
 
 function cancelarVista(){
     window.cargarModulo('formulas');
-
 }
 
 /**
@@ -65,6 +71,7 @@ async function guardarFormulaTemporal(nombre, formula) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({nombre, formula}),
     });
@@ -80,8 +87,29 @@ async function guardarFormulaTemporal(nombre, formula) {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
-    const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     const nombreFormula = document.getElementById('nombreFormula').value;
+    // Obtener referencia al botón de guardar
+        if(nombreFormula === '') {
+            Swal.fire({
+                title: 'Error',
+                text: 'Verifica que la formula tenga un nombre válido.',
+                icon: 'error',
+                confirmButtonColor: '#1F4281',
+            });
+            return;
+        }
+    const btnGuardar = document.getElementById('btnGuardar');
+    
+    // Deshabilitar el botón para evitar múltiples clics
+    btnGuardar.disabled = true;
+    
+    // Almacenar el contenido original del botón
+    const contenidoOriginal = btnGuardar.innerHTML;
+    
+    // Cambiar el texto del botón para indicar que está procesando
+    btnGuardar.innerHTML = '<div>Guardando fórmula...</div>';
+    
+    const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     try{
@@ -90,11 +118,29 @@ async function procesarFormula() {
         if (respuesta.ok) {
             window.cargarModulo('formulas');
         } else {
-            alert(respuesta.message || 'Error al guardar la fórmula.');
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al guardar la fórmula.',
+                icon: 'error',
+                confirmButtonColor: '#1F4281',
+            });
+            
+            // Restaurar el botón en caso de error
+            btnGuardar.innerHTML = contenidoOriginal;
+            btnGuardar.disabled = false;
         }
     } catch (error) {
         console.error('Error al conectar con el backend:', error);
-        alert('No se pudo conectar con el servidor.');
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error en la conexión.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        
+        // Restaurar el botón en caso de error
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
     }
 }
 
@@ -160,9 +206,11 @@ function agregarArgumento(etiqueta, nombreClase, contenedor, permitirAnidado = f
             <label>${etiqueta}:</label>
         </div>
         <div class='argumentoContenido'>
-            <input type='text' class='${nombreClase}' placeholder='${etiqueta}'>
-            ${permitirAnidado ? '<button class="botonFuncionAnidada" onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
-            <div class='nested-function-container' style='margin-left: 10px;'></div>
+            <div class='argumentoInputs'>
+                <input type='text' class='${nombreClase}' placeholder='${etiqueta}'>
+                ${permitirAnidado ? '<button class="botonFuncionAnidada" onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
+            </div>
+            <div class='nested-function-container'></div>
         </div>
     `;
     contenedor.appendChild(argumentoDiv);
@@ -186,17 +234,19 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
             <label>${etiqueta}:</label>
         </div>
         <div class='argumentoContenido'>
-            <select class='variable-selector ${nombreClase}-variable'>
-                <option value=''>Seleccionar variable</option>
-            </select>
-            <select class='operator-selector ${nombreClase}-operator'>
-                <option value='='>=</option>
-                <option value='>'>></option>
-                <option value='<'><</option>
-                <option value='>='>>=</option>
-                <option value='<='><=</option>
-            </select>
-            <input type='text' class='${nombreClase}-value' placeholder='Valor'>
+            <div class='argumentoInputs'>
+                <select class='variable-selector ${nombreClase}-variable'>
+                    <option value=''>Seleccionar variable</option>
+                </select>
+                <select class='operator-selector ${nombreClase}-operator'>
+                    <option value='='>=</option>
+                    <option value='>'>></option>
+                    <option value='<'><</option>
+                    <option value='>='>>=</option>
+                    <option value='<='><=</option>
+                </select>
+                <input type='text' class='${nombreClase}-value' placeholder='Valor'>
+            </div>
         </div>
     `;
     contenedor.appendChild(argumentoDiv);
@@ -211,43 +261,62 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
  * @throws {Error} Si el contenedor no se puede encontrar o no es un elemento HTML válido.
  */
 function agregarFuncionAnidada(boton) {
-    const contenedorAnidado = boton.nextElementSibling;
+    // Buscar el contenedor anidado dentro del contenido del argumento
+    const argumentoContenido = boton.closest('.argumentoContenido');
+    const contenedorAnidado = argumentoContenido.querySelector('.nested-function-container');
+    
+    // Crear un contenedor para esta función anidada específica
+    const filaAnidada = document.createElement('div');
+    filaAnidada.classList.add('fila-anidada');
+    
+    // Crear el selector de función anidada
     const seleccionarFuncion = document.createElement('select');
     seleccionarFuncion.classList.add('selectorFuncionAnidada');
     // Agrega un selector de función anidada al contenedor
     seleccionarFuncion.innerHTML = `
         <option value=''>Seleccionar función anidada</option>
         <option value='IF'>SI</option>
-        <!--
-        <option value='COUNTIF'>CONTAR.SI</option>
-        <option value='COUNTIFS'>CONTAR.SI.CONJUNTO</option>
-        -->
         <option value='IFERROR'>SI.ERROR</option>
         <option value='VLOOKUP'>BUSCARV</option>
         <option value='ARITHMETIC'>Operación Aritmética</option>
     `;
+    
+    filaAnidada.appendChild(seleccionarFuncion);
+    contenedorAnidado.appendChild(filaAnidada);
+
+    // Verificar si ya existe un botón de eliminar en esta fila
+    let eliminarBotonAnidado = filaAnidada.querySelector('.botonEliminarAnidado');
+
+    if (!eliminarBotonAnidado) {
+        // Si no existe, crear uno nuevo
+        eliminarBotonAnidado = document.createElement('button');
+        eliminarBotonAnidado.textContent = 'Eliminar función';
+        eliminarBotonAnidado.classList.add('botonEliminarAnidado');
+        eliminarBotonAnidado.onclick = () => {
+            filaAnidada.remove(); // Elimina toda la fila anidada
+        };
+        filaAnidada.appendChild(eliminarBotonAnidado);
+    }
+    
     seleccionarFuncion.onchange = (evento) => {
         const valorSeleccionado = evento.target.value;
         if (valorSeleccionado) {
+            // Buscar si ya existe un div anidado en esta fila y eliminarlo
+            const divAnidadoExistente = filaAnidada.querySelector('.nested-function');
+            if (divAnidadoExistente) {
+                divAnidadoExistente.remove();
+            }
+            
             // Si se selecciona una función, se crea un nuevo contenedor para los argumentos de la función anidada
             const divAnidado = document.createElement('div');
             divAnidado.classList.add('nested-function');
-            contenedorAnidado.appendChild(divAnidado);
+            filaAnidada.appendChild(divAnidado);
+            
             // Se define la estructura de la función anidada
             definirEstructura(evento.target, divAnidado);
-            // Se agrega un botón para eliminar la función anidada
-            const eliminarBotonAnidado = document.createElement('button');
-            eliminarBotonAnidado.textContent = 'Eliminar Anidado';
-            eliminarBotonAnidado.classList.add('botonEliminar');
-            eliminarBotonAnidado.onclick = () => {
-                evento.target.remove();
-                divAnidado.remove();
-                eliminarBotonAnidado.remove(); // borra el botón de eliminar
-            };
-            contenedorAnidado.appendChild(eliminarBotonAnidado);
+            
         }
     };
-    contenedorAnidado.appendChild(seleccionarFuncion);
 }
 
 /**
