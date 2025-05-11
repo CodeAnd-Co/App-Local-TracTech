@@ -2,7 +2,6 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 
 const { guardarFormula } = require('../../../backend/casosUso/formulas/crearFormula');
-
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -20,35 +19,13 @@ function cancelarVista(){
 
 }
 
-btnGuardar.addEventListener('click', async () => {
-    procesarFormula();
-}); 
-
-btnCancelar.addEventListener('click', () => {
-    cancelarVista();
-});
-
-btnGenerar.addEventListener('click', () => {
-    const contenedor = document.getElementById('function-arguments');
-    console.log(contenedor);
-    if (contenedor) {
-        generarFormulaCompleja();
-    } else {
-        console.error('El contenedor de argumentos no se encontró en el DOM.');
-    }
-});
-
-
 /**
  * @function inicializarCrearFormula
  * @description Inicializa el módulo de creación de fórmulas al cargar la página.
  * @returns {void}
  * @throws {Error} Si el botón de creación de fórmulas no se encuentra en el DOM.
  */
-function inicializarCrearFormula() {
-    const botonCrearFormula = document.getElementById('crearFormula');
-    if (botonCrearFormula) {
-        botonCrearFormula.addEventListener('click', async () => {
+async function inicializarCrearFormula() {
             localStorage.setItem('seccion-activa', 'crearFormula');
             const ventanaPrincipal = document.getElementById('ventana-principal');
             if (ventanaPrincipal) {
@@ -56,20 +33,31 @@ function inicializarCrearFormula() {
                     .then(res => res.text())
                     .then(html => {
                         ventanaPrincipal.innerHTML = html;
-                        const script = document.createElement('script');
-                        script.src = '../utils/js/crearFormula.js';
-                        document.body.appendChild(script);
+                        const ejecutable = document.createElement('script');
+                        ejecutable.src = '../utils/js/crearFormula.js';
+                        document.body.appendChild(ejecutable);
+
+                        document.getElementById('btnCancelar').addEventListener('click', () => {
+                            window.cargarModulo('formulas');
+                        });
+                        document.getElementById('btnGuardar').addEventListener('click', async () => {
+                            procesarFormula();
+                        });
+                        document.getElementById('btnGenerar').addEventListener('click', () => {
+                            const contenedor = document.getElementById('function-arguments');
+                            if (contenedor) {
+                                generarFormulaCompleja();
+                            } else {
+                                console.error('El contenedor de argumentos no se encontró en el DOM.');
+                            }
+                        });
                         
 
                     })
                     .catch(err => console.error('Error cargando módulo de creación de fórmulas:', err));
             }
-    });
+    };
 
-    } else {
-        console.error('El botón de creación de fórmulas no se encontró en el DOM.');
-    }
-}
 
 async function guardarFormulaTemporal(nombre, formula) {
     // REFACTORIZAR
@@ -505,11 +493,9 @@ function popularDropdown(elementoSeleccionado) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {    
-    const { guardarFormula} = require('../../backend/casosUso/formulas/crearFormula');
-    const { cargarModulo } = require('./sidebar.js');
-
-    
     const btnGuardar = document.getElementById('btnGuardar');
+    const btnGenerar = document.getElementById('btnGenerar');
+    const btnCancelar = document.getElementById('btnCancelar');
     const formulaContainer = document.getElementById('formula-container');
     
     // Crear la estructura principal de selección de funciones
@@ -532,17 +518,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Configurar eventos para los botones
-    if (btnGuardar) {
         btnGuardar.addEventListener('click', async () => {
             procesarFormula();
     });
-    }
+
+    btnGenerar.addEventListener('click', () => {
+        const contenedor = document.getElementById('function-arguments');
+        console.log(contenedor);
+        if (contenedor) {
+            generarFormulaCompleja();
+        } else {
+            console.error('El contenedor de argumentos no se encontró en el DOM.');
+        }
+    });
+    
+    btnCancelar.addEventListener('click', () => {
+        cancelarVista();
+    });
     // Agregar el evento al selector de función principal
-    const mainFunctionSelect = document.getElementById('main-function');
-    if (mainFunctionSelect) {
-        mainFunctionSelect.addEventListener('change', () => {
+    const seleccionFuncion = document.getElementById('main-function');
+    if (seleccionFuncion) {
+        seleccionFuncion.addEventListener('change', () => {
             const contenedor = document.getElementById('function-arguments');
-            definirEstructura(mainFunctionSelect, contenedor);
+            definirEstructura(seleccionFuncion, contenedor);
         });
     }
 });

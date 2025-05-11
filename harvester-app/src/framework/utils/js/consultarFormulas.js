@@ -1,6 +1,7 @@
 // RF 76 - Consultar fórmulas - http...
 
 const { consultaFormulasCasoUso } = require('../../../backend/casosUso/formulas/consultaFormulas');
+const { inicializarCrearFormula } = require('../../utils/js/crearFormula');
 
 async function consultarFormulas() {
     const respuesta = await consultaFormulasCasoUso();
@@ -30,20 +31,20 @@ async function renderizarFormulas() {
         formulas.forEach((formula) => {
             const formulaDiv = document.createElement('div');
             formulaDiv.innerHTML = `
-    <div id='frameFormulas-${formula.idFormula}'  class='frame-f-rmulas'>
-      <div class='nombre-usuario'>
-        <div class='texto-usuario'>${formula.Nombre}</div>
-      </div>
-      <div class='nombre-usuario'>
-        <div class='texto-usuario'>${formula.Datos}</div>
-      </div>
-      <button class='editar' data-id='${formula.idFormula}'>
-        <img class='editar-icono' src='../utils/iconos/Editar.svg' />
-      </button>
-      <button class='eliminar' data-id='${formula.idFormula}'>
-        <img class='eliminar-icono' src='../utils/iconos/Basura.svg' />
-      </button>
-    </div>
+                <div id='frameFormulas-${formula.idFormula}'  class='frame-f-rmulas'>
+                <div class='nombre-usuario'>
+                    <div class='texto-usuario'>${formula.Nombre}</div>
+                </div>
+                <div class='nombre-usuario'>
+                    <div class='texto-usuario'>${formula.Datos}</div>
+                </div>
+                <button class='editar' data-id='${formula.idFormula}'>
+                    <img class='editar-icono' src='../utils/iconos/Editar.svg' />
+                </button>
+                <button class='eliminar' data-id='${formula.idFormula}'>
+                    <img class='eliminar-icono' src='../utils/iconos/Basura.svg' />
+                </button>
+                </div>
             `;
             contenedor.appendChild(formulaDiv);
         });
@@ -56,6 +57,12 @@ async function renderizarFormulas() {
                 // Implementar lógica para editar fórmula
             });
         });
+
+        document.getElementById('crearFormula')
+            .addEventListener('click', () => {
+                console.log('Creando fórmula');
+                inicializarCrearFormula();
+            });
 
         document.querySelectorAll('.eliminar').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -70,6 +77,10 @@ async function renderizarFormulas() {
         document.getElementById('frame-formulas').innerHTML = `<div class='error-carga'>Error al cargar las fórmulas</div>`;
     }
 }
+
+window.document.addEventListener('DOMContentLoaded', () => {
+    renderizarFormulas()
+});
 
 module.exports = {
     renderizarFormulas,
