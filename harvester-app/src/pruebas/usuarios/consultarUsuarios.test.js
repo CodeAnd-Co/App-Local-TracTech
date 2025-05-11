@@ -26,7 +26,7 @@ jest.mock('../../backend/domain/usuariosAPI/usuariosAPI', () => ({
 
 /*  2. ───── Importaciones ──────────────────────────────────────────────── */
 const {
-  obtenerUsuarios: obtenerUsuariosAPIMock
+  obtenerUsuarios: obtenerUsuariosAPIPrueba
 } = require('../../backend/domain/usuariosAPI/usuariosAPI');
 
 const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios');
@@ -55,14 +55,14 @@ describe('obtenerUsuarios (use-case)', () => {
    * de ListaUsuarios con objetos Usuario correctamente construidos.
    */
   it('devuelve ListaUsuarios con objetos Usuario (camino feliz)', async () => {
-    const respuestaMock = {
+    const respuestaPrueba = {
       ok: true,
       usuarios: [
         { id: 1, nombre: 'Juan', correo: 'juan@example.com' },
         { id: 2, nombre: 'Ana',  correo: 'ana@example.com' }
       ]
     };
-    obtenerUsuariosAPIMock.mockResolvedValue(respuestaMock);
+    obtenerUsuariosAPIPrueba.mockResolvedValue(respuestaPrueba);
 
     const lista = await obtenerUsuarios();
 
@@ -83,7 +83,7 @@ describe('obtenerUsuarios (use-case)', () => {
    * Se espera una ListaUsuarios vacía.
    */
   it('devuelve ListaUsuarios vacía si la API no trae usuarios', async () => {
-    obtenerUsuariosAPIMock.mockResolvedValue({ ok: true, usuarios: [] });
+    obtenerUsuariosAPIPrueba.mockResolvedValue({ ok: true, usuarios: [] });
 
     const lista = await obtenerUsuarios();
 
@@ -96,7 +96,7 @@ describe('obtenerUsuarios (use-case)', () => {
    * El caso de uso debe lanzar una excepción con mensaje descriptivo.
    */
   it('lanza error cuando la API responde ok = false', async () => {
-    obtenerUsuariosAPIMock.mockResolvedValue({ ok: false });
+    obtenerUsuariosAPIPrueba.mockResolvedValue({ ok: false });
 
     await expect(obtenerUsuarios())
       .rejects.toThrow('No se pudo obtener la lista de usuarios');
@@ -107,7 +107,7 @@ describe('obtenerUsuarios (use-case)', () => {
    * El caso de uso debe capturar el error y lanzar una excepción clara.
    */
   it('lanza error cuando la API rechaza la promesa', async () => {
-    obtenerUsuariosAPIMock.mockRejectedValue(new Error('Network error'));
+    obtenerUsuariosAPIPrueba.mockRejectedValue(new Error('Network error'));
 
     await expect(obtenerUsuarios())
       .rejects.toThrow('No se pudo obtener la lista de usuarios');
