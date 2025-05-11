@@ -1,4 +1,7 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
+// RF76 Consultar Fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
+// RF71 Eliminar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF71
+
 async function guardarFormula(nombre, formula, token) {
     const respuesta = await fetch('http://localhost:3000/formulas/guardarFormula', {
         method: 'POST',

@@ -1,4 +1,4 @@
-// RF 76 - Consultar fórmulas - http...
+// RF 76 - Consultar fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 
 const { consultaFormulasCasoUso } = require('../../../backend/casosUso/formulas/consultaFormulas');
 const { inicializarCrearFormula } = require('../../utils/js/crearFormula');
@@ -53,21 +53,18 @@ async function renderizarFormulas() {
         document.querySelectorAll('.editar').forEach(btn => {
             btn.addEventListener('click', (evento) => {
                 const formulaId = evento.currentTarget.getAttribute('data-id');
-                console.log(`Editar fórmula con ID: ${formulaId}`);
                 // Implementar lógica para editar fórmula
             });
         });
 
         document.getElementById('crearFormula')
             .addEventListener('click', () => {
-                console.log('Creando fórmula');
                 inicializarCrearFormula();
             });
 
         document.querySelectorAll('.eliminar').forEach(btn => {
             btn.addEventListener('click', (evento) => {
                 const formulaId = evento.currentTarget.getAttribute('data-id');
-                console.log(`Eliminar fórmula con ID: ${formulaId}`);
                 // Implementar lógica para eliminar fórmula
             });
         });

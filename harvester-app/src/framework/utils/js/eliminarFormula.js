@@ -1,7 +1,6 @@
-// RF
-
+// RF71 Eliminar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF71
 const { eliminarFormula } = require('../../../backend/casosUso/formulas/eliminarFormula');
-//const botonEliminar = document.querySelector('#eliminar');
+
 /* eslint-disable no-undef */
 
 /* eslint-disable-next-line */

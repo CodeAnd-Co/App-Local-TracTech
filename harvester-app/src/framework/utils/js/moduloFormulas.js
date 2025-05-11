@@ -1,6 +1,5 @@
 const { renderizarFormulas } = require('../utils/js/consultarFormulas');
-//const { guardarFormula } = require('../utils/js/crearFormula');
-//const { eliminarFormula } = require('../utils/js/eliminarFormula');
+
 
 async function inicializarModuloFormulas(){
 
@@ -10,7 +9,6 @@ async function inicializarModuloFormulas(){
 
     try{
       await renderizarFormulas();
-      console.log('Formulas renderizadas');
 
     } catch(error){
       
