@@ -309,8 +309,6 @@ async function crearUsuario() {
     const contrasenia = contraseniaInput.value.trim();
     const idRolFK = parseInt(rolInput.value, 10);
 
-    console.log('Datos enviados al backend:');
-    console.log({ nombre, correo, contrasenia, idRolFK });
 
     if (!nombre || !correo || !contrasenia || isNaN(idRolFK)) {
         return Swal2.fire({
