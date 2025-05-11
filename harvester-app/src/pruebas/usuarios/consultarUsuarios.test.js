@@ -21,7 +21,7 @@
 
 
 
-/*  2. ───── Importaciones ──────────────────────────────────────────────── */
+/*  1. ───── Importaciones ──────────────────────────────────────────────── */
 const {
   obtenerUsuarios: obtenerUsuariosAPIPrueba
 } = require('../../backend/domain/usuariosAPI/usuariosAPI');
@@ -30,24 +30,24 @@ const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUs
 
 const { Usuario, ListaUsuarios } = require('../../backend/data/usuariosModelos/usuarios');
 
-/*  1. ───── Mock del módulo que llama al fetch ──────────────────────────── */
+/*  2. ───── Mock del módulo que llama al fetch ──────────────────────────── */
 jest.mock('../../backend/domain/usuariosAPI/usuariosAPI', () => ({
   obtenerUsuarios: jest.fn()
 }));
 
 /*  3. ───── Tests ──────────────────────────────────────────────────────── */
 describe('obtenerUsuarios (use-case)', () => {
-  let espiaDeError;
+  let monitorDeError;
 
   // Suprime errores en consola durante las pruebas que los provocan
   beforeAll(() => {
-    espiaDeError = jest
+    monitorDeError = jest
       .spyOn(console, 'error')
       .mockImplementation(() => {});
   });
 
   afterAll(() => {
-    espiaDeError.mockRestore();
+    monitorDeError.mockRestore();
   });
 
   beforeEach(() => jest.clearAllMocks());
