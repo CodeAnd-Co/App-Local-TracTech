@@ -19,10 +19,7 @@
  * @see clase {@link ../../backend/data/usuariosModelos/usuarios~ListaUsuarios}
  */
 
-/*  1. ───── Mock del módulo que llama al fetch ──────────────────────────── */
-jest.mock('../../backend/domain/usuariosAPI/usuariosAPI', () => ({
-  obtenerUsuarios: jest.fn()
-}));
+
 
 /*  2. ───── Importaciones ──────────────────────────────────────────────── */
 const {
@@ -32,6 +29,11 @@ const {
 const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios');
 
 const { Usuario, ListaUsuarios } = require('../../backend/data/usuariosModelos/usuarios');
+
+/*  1. ───── Mock del módulo que llama al fetch ──────────────────────────── */
+jest.mock('../../backend/domain/usuariosAPI/usuariosAPI', () => ({
+  obtenerUsuarios: jest.fn()
+}));
 
 /*  3. ───── Tests ──────────────────────────────────────────────────────── */
 describe('obtenerUsuarios (use-case)', () => {
