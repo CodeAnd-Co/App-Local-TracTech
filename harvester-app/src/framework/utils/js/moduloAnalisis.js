@@ -16,6 +16,7 @@
  * @memberof module:moduloAnalisis
  * @returns {void}
  */
+/* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
   // IDs de los contenedores principales
   const idContenedor                 = 'contenedorElementos';
@@ -34,9 +35,7 @@ function inicializarModuloAnalisis() {
 
   // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
-    /* eslint-disable no-unused-vars */
     agregarTexto(idContenedor, idContenedorPrevisualizacion);
-    /* eslint-disable no-unused-vars */
     agregarGrafica(idContenedor, idContenedorPrevisualizacion);
   }
 
@@ -142,10 +141,8 @@ function inicializarModuloAnalisis() {
       }
     }).then(resultado => {
       if (resultado.isConfirmed) {
-        /* eslint-disable no-unused-vars */
         agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
       } else if (resultado.isDenied) {
-        /* eslint-disable no-unused-vars */
         agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
       }
       // Si canceló, no hace nada
@@ -222,7 +219,7 @@ function descargarPDF() {
   }
 
   // Configuración básica del documento
-  /* eslint-disable no-unused-vars */
+  /* eslint-disable new-cap */
   const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
   const anchoPagina  = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
@@ -288,9 +285,7 @@ function descargarPDF() {
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel          = cargarDatosExcel;
 window.descargarPDF              = descargarPDF;
-/* eslint-disable no-unused-vars */
 window.agregarTexto              = agregarTexto;
-/* eslint-disable no-unused-vars */
 window.agregarGrafica            = agregarGrafica;
 
 // En algunos navegadores, volver a inicializar tras un breve retardo si ya cargó el DOM
