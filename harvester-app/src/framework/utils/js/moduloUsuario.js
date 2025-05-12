@@ -26,38 +26,41 @@ let moduloGestionDeUsuariosIniciado = false;
  */
 function inicializarModuloUsuario() {
   actualizarNombreUsuario();
-  const botonGestion = document.querySelector('#botonGestion');
-  if (botonGestion) {
-    botonGestion.addEventListener('click', async () => {
-      localStorage.setItem('seccion-activa', 'gestionUsuarios');
-      const ventanaPrincipal = document.getElementById('ventana-principal');
-      if (!ventanaPrincipal) return;
+  if (verificarPermisos(PERMISOS.ADMIN)){
+    const botonGestion = document.querySelector('#botonGestion');
+    botonGestion.style.display = 'flex';
+    if (botonGestion) {
+      botonGestion.addEventListener('click', async () => {
+        localStorage.setItem('seccion-activa', 'gestionUsuarios');
+        const ventanaPrincipal = document.getElementById('ventana-principal');
+        if (!ventanaPrincipal) return;
 
-      try {
-        // Carga el HTML del módulo de gestión de usuarios
-        const html = await fetch('../vistas/moduloGestionUsuarios.html')
-        .then(response => response.text());
-        ventanaPrincipal.innerHTML = html;
+        try {
+          // Carga el HTML del módulo de gestión de usuarios
+          const html = await fetch('../vistas/moduloGestionUsuarios.html')
+          .then(response => response.text());
+          ventanaPrincipal.innerHTML = html;
 
-        // Añade el script de gestión de usuarios al HTML la primera vez
-        if (!moduloGestionDeUsuariosIniciado) {
-          moduloGestionDeUsuariosIniciado = true;
+          // Añade el script de gestión de usuarios al HTML la primera vez
+          if (!moduloGestionDeUsuariosIniciado) {
+            moduloGestionDeUsuariosIniciado = true;
 
-          const cargadorGestionUsuarios = document.createElement('script');
-          cargadorGestionUsuarios.src = '../utils/js/moduloGestionUsuario.js';
-          document.body.appendChild(cargadorGestionUsuarios);
+            const cargadorGestionUsuarios = document.createElement('script');
+            cargadorGestionUsuarios.src = '../utils/js/moduloGestionUsuario.js';
+            document.body.appendChild(cargadorGestionUsuarios);
 
-          cargadorGestionUsuarios.onload = () => {
+            cargadorGestionUsuarios.onload = () => {
+              window.inicializarModuloGestionUsuarios?.();
+            };
+          } else {
             window.inicializarModuloGestionUsuarios?.();
-          };
-        } else {
-          window.inicializarModuloGestionUsuarios?.();
-        }
+          }
 
-      } catch (error) {
-        console.error('Error cargando módulo de gestión de usuarios:', error);
-      }
-    });
+        } catch (error) {
+          console.error('Error cargando módulo de gestión de usuarios:', error);
+        }
+      });
+    }
   } else {
     console.warn('No se encontró el botón #botonGestion en el DOM.');
   }
