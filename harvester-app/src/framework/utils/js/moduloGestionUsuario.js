@@ -13,6 +13,12 @@ const { consultarRoles: consultarRolesCU } = require('../../backend/casosUso/usu
 const Swal2 = require('sweetalert2');
 
 const usuariosPorPagina = 6;
+const modoFormulario = Object.freeze({
+    CREAR: 'crear',
+    EDITAR: 'editar',
+});
+let modoActual = modoFormulario.CREAR;
+let idUsuarioAEditar = null;
 let paginaActual = 1;
 let listaUsuarios = [];
 let usuariosFiltrados = [];
@@ -254,7 +260,7 @@ function mostrarUsuarios(usuarios) {
             <div class='nombre-usuario'>
                 <div class='texto-usuario'>${nombre}</div>
             </div>
-                <button class='boton-editar'>
+                <button class='boton-editar' data-id='${id}'>
                   <img src='../utils/iconos/Editar2.svg' alt='Editar'/>
                 </button>
                 <button class='boton-eliminar' data-id='${id}'>
@@ -265,8 +271,8 @@ function mostrarUsuarios(usuarios) {
     }
     listaUsuariosElemento.appendChild(fragmento);
 
-    // Añadir eventos a los botones de modificar
-    escucharEventoBotonEditar()
+    // TODO: Añadir eventos a los botones de editar
+    escucharEventoBotonesEditar(listaUsuariosElemento);
 
     // Añadir eventos a los botones de eliminar
     const botonesEliminar = listaUsuariosElemento.querySelectorAll('.boton-eliminar');
@@ -304,93 +310,42 @@ function mostrarUsuarios(usuarios) {
  * @param {void}
  * @returns {void}
  */
-function escucharEventoBotonEditar() {
-    const botonModificar = listaUsuariosElemento.querySelectorAll('.boton-editar');
-    botonModificar.forEach((boton, indice) => {
+function escucharEventoBotonesEditar(listaDeUsuarios) {
+    listaDeUsuarios.querySelectorAll('.boton-editar').forEach(boton => {
         boton.addEventListener('click', evento => {
             evento.preventDefault();
-            const idUsuario = usuariosFiltrados[(paginaActual - 1) * usuariosPorPagina + indice].id;
-            editarUsuario(idUsuario);
+            modoEditar(boton.dataset.id);
         });
     });
 }
 
 /**
- * Carga en el formulario los datos del usuario seleccionado y prepara el evento de modificación.
+ * Cambia el modo del formulario a "Editar" y precarga los datos del usuario seleccionado.
  *
- * @function editarUsuario
- * @param {number} idUsuario - ID del usuario a modificar
- * @returns {void}
+ * @function modoEditar
+ * @param {number} idUsuario - El identificador único del usuario que se desea editar.
+ * @throws {Error} Si el usuario con el ID proporcionado no se encuentra en la lista de usuarios.
  */
-function editarUsuario(idUsuario) {
-    const columnaCrearModificar = document.getElementById('columna-crear-modificar-usuario');
-    columnaCrearModificar.style.display = 'block';
+function modoEditar(idUsuario) {
+    // Actualizar estados globales
+    modoActual = modoFormulario.EDITAR;
+    idUsuarioAEditar = idUsuario;
 
-    // Cambiar título del formulario
+    // Cambiar texto del formulario
     document.querySelector('.crear-modificar-usuario').textContent = 'Modificar usuario';
+    document.querySelector('.btn-guardar').textContent = 'Modificar';
+    document.getElementById('columna-crear-modificar-usuario').style.display = 'block';
 
-    // Obtener el usuario desde la lista actual
+    // Precargar los datos del usuario
     const usuario = listaUsuarios.find(usuario => usuario.id === idUsuario);
     if (!usuario) {
-        console.error('Usuario no encontrado'); //TODO: Añadir un mensaje de error al usuario
+        console.error('Usuario no encontrado');
         return;
     }
-
-    // Precargar campos
     document.getElementById('username').value = usuario.nombre;
     document.getElementById('email').value = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
-    // document.getElementById('role').value = usuario.rol; // Si tuvieras esta propiedad
-
-    // Eliminar listeners anteriores del formulario
-    const formulario = document.querySelector('.modificacion');
-    const nuevoFormulario = formulario.cloneNode(true);
-    formulario.parentNode.replaceChild(nuevoFormulario, formulario);
-
-    // Botón cancelar
-    nuevoFormulario.querySelector('.btn-cancelar').addEventListener('click', evento => {
-        evento.preventDefault();
-        columnaCrearModificar.style.display = 'none';
-        nuevoFormulario.reset();
-    });
-
-    // Botón guardar
-    nuevoFormulario.addEventListener('submit', async evento => {
-        evento.preventDefault();
-
-        const nombre = document.getElementById('username').value.trim();
-        const correo = document.getElementById('email').value.trim();
-        const contrasenia = document.getElementById('password').value.trim();
-        // const rol = document.getElementById('role').value;
-
-        if (!nombre || !correo || !contrasenia) {
-            return Swal2.fire({
-                title: 'Campos incompletos',
-                text: 'Por favor completa todos los campos.',
-                icon: 'warning'
-            });
-        }
-
-        const respuesta = await modificarUsuario(idUsuario, nombre, correo, contrasenia);
-
-        if (!respuesta.ok) {
-            return Swal2.fire({
-                title: 'Error',
-                text: respuesta.mensaje || 'No se pudo modificar el usuario.',
-                icon: 'error'
-            });
-        }
-
-        Swal2.fire({
-            title: 'Modificado',
-            text: 'El usuario fue actualizado correctamente.',
-            icon: 'success'
-        });
-
-        columnaCrearModificar.style.display = 'none';
-        nuevoFormulario.reset();
-        inicializarModuloGestionUsuarios();
-    });
+    // document.getElementById('rol').value = usuario.rol; // TODO: Añadir rol en cuanto modifique la Consulta de usuarios para obtenerlos
 }
 
 /**
