@@ -139,6 +139,7 @@ input:focus {
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+  cursor: pointer;
 }
 .rancho {
   background: #ffffff;
@@ -155,6 +156,7 @@ input:focus {
   flex-shrink: 0;
   height: 94px;
   position: relative;
+  cursor: pointer;
 }
 .rancho.seleccionado {
   background-color: #bcbcbc; /* Azul claro, por ejemplo */
@@ -425,6 +427,7 @@ input:focus {
   position: relative;
   transform-origin: 0 0;
   transform: rotate(0deg) scale(1, 1);
+  cursor: pointer;
 }
 .generar-reporte2 {
   color: #ffffff;
