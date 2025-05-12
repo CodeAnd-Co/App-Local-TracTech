@@ -3,6 +3,7 @@
 // RF43 Administrador elimina usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF43
 // RF41 Administrador consulta usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41 
 
+const { modificarUsuario } = require('../../../backend/casosUso/usuarios/modificarUsuario.js');
 const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
 const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
 const Swal2 = require('sweetalert2');
@@ -24,7 +25,7 @@ let terminoBusqueda = '';
 async function inicializarModuloGestionUsuarios() {
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
-    const columnaCrear = document.getElementById('columna-crear-usuario');
+    const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
     columnaCrear.style.display = 'none';
 
     try {
@@ -66,6 +67,7 @@ async function inicializarModuloGestionUsuarios() {
         }
     });
 }
+
 function filtrarUsuarios() {
     if (terminoBusqueda === '') {
         usuariosFiltrados = [...listaUsuarios];
@@ -285,7 +287,7 @@ function escucharEventoBotonEditar() {
         boton.addEventListener('click', evento => {
             evento.preventDefault();
             const idUsuario = usuariosFiltrados[(paginaActual - 1) * usuariosPorPagina + indice].id;
-            modificarUsuario(idUsuario);
+            editarUsuario(idUsuario);
         });
     });
 }
@@ -293,11 +295,11 @@ function escucharEventoBotonEditar() {
 /**
  * Carga en el formulario los datos del usuario seleccionado y prepara el evento de modificación.
  *
- * @function modificarUsuario
+ * @function editarUsuario
  * @param {number} idUsuario - ID del usuario a modificar
  * @returns {void}
  */
-function modificarUsuario(idUsuario) {
+function editarUsuario(idUsuario) {
     const columnaCrearModificar = document.getElementById('columna-crear-modificar-usuario');
     columnaCrearModificar.style.display = 'block';
 
@@ -346,8 +348,7 @@ function modificarUsuario(idUsuario) {
             });
         }
 
-        const { modificarUsuario: modificarUsuarioCU } = require('../../backend/casosUso/usuarios/modificarUsuario');
-        const respuesta = await modificarUsuarioCU(idUsuario, nombre, correo, contrasenia);
+        const respuesta = await modificarUsuario(idUsuario, nombre, correo, contrasenia);
 
         if (!respuesta.ok) {
             return Swal2.fire({
