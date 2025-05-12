@@ -30,7 +30,7 @@ function inicializarModuloTractores() {
     
     busquedaTractores();
     botonesFiltrosTractores()
-    botonReporte();
+    botonReporte(datosExcel);
 }
 
 /**
@@ -279,17 +279,22 @@ function manejarClickTractor(tractorNombre, datosExcel) {
  * Configura el evento click para navegar al módulo de análisis
  * 
  * @function botonReporte
+ * @param {Object} datosExcel - Los datos del excel
  * @returns {void}
  */
-function botonReporte() {
+function botonReporte(datosExcel) {
     setTimeout(() => {
         const botonReporte = document.querySelector('.primario');
         if (botonReporte) {
             botonReporte.addEventListener('click', () => {
                 // Esperar un momento para que se procesen los datos antes de cambiar de módulo
                 setTimeout(() => {
-                    // const jsonFiltrado = seleccionaDatosAComparar(datosOriginales, tractoresSeleccionados, columnasSeleccionadas);
-                    // localStorage.setItem('jsonFiltradoReporte', JSON.stringify(jsonFiltrado));
+                    console.log(datosExcel); // Verifica si contiene los datos esperados
+                    console.log(tractoresSeleccionados);
+                    const jsonFiltrado = seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
+                    // Ahora, podemos acceder al JSON filtrado desde localStorage en el módulo de análisis
+                    const datosDesdeStorage = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
+                    console.log('Datos filtrados listos para el análisis:', datosDesdeStorage);
 
                     // Cargar el módulo de análisis
                     const ventanaPrincipal = document.getElementById('ventana-principal');
@@ -492,7 +497,7 @@ function seleccionarColumna(nombreTractor, nombreColumna, caja) {
     }
     // Si hay al menos una columna seleccionada, marcar el tractor como seleccionado
     seleccion.seleccionado = seleccion.columnas.length > 0;
-    
+
     cambiarIconoMarcadoADesmarcado(caja)
     console.log(tractoresSeleccionados);
 }
