@@ -83,6 +83,7 @@ function inicializarModuloUsuario() {
 
         if (respuesta.ok) {
           localStorage.removeItem('token');
+          localStorage.removeItem('nombreUsuario');
           window.location.href = './inicioSesion.html';
         } else {
           throw new Error('La respuesta del servidor no fue exitosa');
