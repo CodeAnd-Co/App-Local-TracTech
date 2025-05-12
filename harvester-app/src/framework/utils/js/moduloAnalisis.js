@@ -111,8 +111,6 @@ function descargarPDF() {
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
   let posicionY      = margen;
 
-  console.log(documentoPDF)
-
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
     Swal.fire({
