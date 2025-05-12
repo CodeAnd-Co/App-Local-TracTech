@@ -3,6 +3,7 @@
 const { consultaFormulasCasoUso } = require('../../../backend/casosUso/formulas/consultaFormulas');
 const { inicializarCrearFormula } = require('../../utils/js/crearFormula');
 const { manejarEliminarFormula } = require('../../utils/js/eliminarFormula');
+/* eslint-disable no-undef */
 
 async function consultarFormulas() {
     const respuesta = await consultaFormulasCasoUso();
@@ -36,8 +37,7 @@ async function eliminarFormula(id) {
                 icon: 'error'
             });
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error al eliminar la fórmula:', error);
         Swal.fire({
             title: 'Error de conexión',
@@ -99,7 +99,7 @@ async function renderizarFormulas() {
 
         document.querySelectorAll('.eliminar').forEach(btn => {
             btn.addEventListener('click', (evento) => {
-                // eslint-disable-next-line no-unused-vars
+                 
                 const formulaId = evento.currentTarget.getAttribute('data-id');
                 console.log('Eliminar fórmula con ID:', formulaId);
                 try {

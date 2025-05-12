@@ -3,7 +3,7 @@ const { eliminarFormula } = require('../../../backend/casosUso/formulas/eliminar
 
 /* eslint-disable no-undef */
 
-/* eslint-disable-next-line */
+ 
 async function manejarEliminarFormula(id) {
     if (!id) {
         Swal.fire({
