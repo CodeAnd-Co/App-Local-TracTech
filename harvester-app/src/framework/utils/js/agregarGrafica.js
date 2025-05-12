@@ -215,7 +215,7 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
  * @returns {HTMLElement} Gráfica encontrada.
  */
 function encontrarGrafica(id) {
-  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll(".previsualizacion-grafica"));
+  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
   return graficasExistentes.filter(grafica => grafica.id == id)[0];
 }
 
