@@ -89,12 +89,12 @@ function cargarDatosExcel() {
  * @returns {void}
  */
 function descargarPDF() {
-  const { jsPDF } = window.jspdf || {};
-  if (!jsPDF) {
+  const { JSPDF } = window.jspdf || {};
+  if (!JSPDF) {
     throw new Error('[PDF] jsPDF no cargado');
   }
 
-  const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
   const anchoPagina  = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;

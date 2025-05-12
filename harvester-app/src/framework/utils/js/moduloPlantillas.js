@@ -1,14 +1,19 @@
 // RF 23: Usuario consulta plantillas de reporte. - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF23
 // RF 21: Usuario elimina plantilla de reporte. - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF21
 
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+
 /**
  * Importa la función `plantillas` desde la capa de dominio para obtener las plantillas disponibles.
  * @module plantillasAPI
  */
-
 const { plantillas } = require('../../backend/domain/plantillasAPI/plantillasAPI.js');
 const { eliminarPlantillas } = require('../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js');
 const { seleccionarPlantillas } = require('../../backend/domain/plantillasAPI/seleccionarPlantillaAPI.js');
+if (typeof Swal === 'undefined'){
+    const Swal = require('sweetalert2');
+}
 
 /**
  * Inicializa el módulo de plantillas, encargándose de:
@@ -20,55 +25,7 @@ const { seleccionarPlantillas } = require('../../backend/domain/plantillasAPI/se
  * @function inicializarModuloPlantillas
  * @returns {Promise<void>}
  */
-async function inicializarModuloPlantillas () {
-    /** @type {HTMLElement|null} Botón para cancelar el diálogo de eliminación */
-    const cancelarDialog = document.querySelector('.cancelar');
-    
-    cancelarDialog?.addEventListener('click', () => {
-        const modalBorrar = document.querySelector('.modal-borrar');
-        modalBorrar?.close();
-    });
-
-    /** @type {HTMLElement|null} Botón para confirmar la eliminación de plantilla */
-    const eliminarDialog = document.querySelector('.eliminar');
-
-    eliminarDialog?.addEventListener('click', async () => {
-        const modalBorrar = document.querySelector('.modal-borrar');
-        if(modalBorrar?.getAttribute('dato-id')) {
-            try {
-                /** @type {string|null} ID de la plantilla a eliminar */
-                const idPlantilla = modalBorrar.getAttribute('dato-id');
-                
-                const respuesta = await eliminarPlantillas(idPlantilla);
-
-                if (respuesta.ok){
-                    // Eliminar del DOM la tarjeta correspondiente
-                    const plantillaHTML = document.querySelector(`#menuOpciones[dato-id='${idPlantilla}']`)?.closest('.plantilla');
-                    if (plantillaHTML) {
-                        plantillaHTML.remove();
-                        modalBorrar?.close();
-                    }
-
-                    // Verificar si ya no quedan plantillas visibles
-                    const todasPlantillas = document.querySelectorAll('.plantilla');
-                    if(todasPlantillas.length <= 0){
-                        /** @type {HTMLElement|null} Contenedor de plantillas */
-                        const contenedor = document.getElementById('contenedorId');
-                        const tarjetaTexto = document.createElement('div');
-                        tarjetaTexto.innerHTML = `<div class='error-sin-plantillas'>No se Encontraron Plantillas</div>`;
-                        contenedor?.appendChild(tarjetaTexto);
-                    }
-                } else {
-                    alert('No se pudo eliminar la Plantilla Respuesta err');
-                }
-            } catch (error) {
-                alert('No se pudo eliminar la Plantilla Catch');
-            }
-        } else {
-            alert('La Plantilla no se pudo eliminar: No contiene ID');
-        }
-    });
-
+async function inicializarModuloPlantillas() {
     try {
         /** @type {HTMLElement|null} Contenedor de plantillas */
         const contenedor = document.getElementById('contenedorId');
@@ -123,10 +80,10 @@ async function inicializarModuloPlantillas () {
                               modal.addEventListener('click', (event) => {
                                 const rect = modal.getBoundingClientRect();
                                 const clickedInDialog = (
-                                  event.clientX >= rect.left &&
-                                  event.clientX <= rect.right &&
-                                  event.clientY >= rect.top &&
-                                  event.clientY <= rect.bottom
+                                  event.clientX >= rect.left
+                                  && event.clientX <= rect.right
+                                  && event.clientY >= rect.top
+                                  && event.clientY <= rect.bottom
                                 );
                           
                                 // Si el clic fue fuera del área visible del <dialog>, ciérralo
@@ -142,36 +99,79 @@ async function inicializarModuloPlantillas () {
 
                             /** @type {HTMLElement|null} */
                             const scroll = document.getElementById('Scroll');
-                            scroll.innerHTML  = respuesta.plantilla.Datos;
+                            scroll.innerHTML = respuesta.plantilla.Datos;
 
                             /** @type {HTMLElement|null} Botón para eliminar desde visualizador */
-                            const boton_editar_Visualizador = document.getElementById('boton_eliminar_Visualizador');
-                            boton_editar_Visualizador.addEventListener('click', async () => {
-                                const modalBorrar = document.querySelector('.modal-borrar');
-                                if (modalBorrar && menuOpciones) {
-                                    modalBorrar.showModal();
-                                    modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
+                            const botonEditarVisualizador = document.getElementById('boton_eliminar_Visualizador');
+                            botonEditarVisualizador.addEventListener('click', async () => {
+                                if (menuOpciones) {
+                                    const idPlantilla = menuOpciones.getAttribute('dato-id');
+                                    
+                                    const result = await Swal.fire({
+                                        title: '¿Estás seguro?',
+                                        text: 'No podrás recuperar la plantilla eliminada.',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#1F4281',
+                                        cancelButtonColor: '#A61930',
+                                        confirmButtonText: 'Eliminar',
+                                        cancelButtonText: 'Cancelar'
+                                    });
+                                    
+                                    // Si el usuario confirmó la eliminación
+                                    if (result.isConfirmed && idPlantilla) {
+                                        try {
+                                            const respuesta = await eliminarPlantillas(idPlantilla);
+                                            
+                                            if (respuesta.ok){
+                                                // Cerrar el modal de visualización
+                                                const modalVizualizador = document.getElementById('modalVizualizador');
+                                                modalVizualizador?.close();
+                                                
+                                                // Eliminar del DOM la tarjeta correspondiente
+                                                const plantillaHTML = document.querySelector(`#menuOpciones[dato-id='${idPlantilla}']`)?.closest('.plantilla');
+                                                if (plantillaHTML) {
+                                                    plantillaHTML.remove();
+                                                }
 
-                                     // Asegúrate de que el modal está abierto para que detecte eventos
-                                    modalBorrar.addEventListener('click', (event) => {
-                                    const rect = modalBorrar.getBoundingClientRect();
-                                    const clickedInDialog = (
-                                    event.clientX >= rect.left &&
-                                    event.clientX <= rect.right &&
-                                    event.clientY >= rect.top &&
-                                    event.clientY <= rect.bottom
-                                    );
-                            
-                                    // Si el clic fue fuera del área visible del <dialog>, ciérralo
-                                    if (!clickedInDialog) {
-                                        modalBorrar.close();
+                                                // Verificar si ya no quedan plantillas visibles
+                                                const todasPlantillas = document.querySelectorAll('.plantilla');
+                                                if(todasPlantillas.length <= 0){
+                                                    /** @type {HTMLElement|null} Contenedor de plantillas */
+                                                    const contenedor = document.getElementById('contenedorId');
+                                                    const tarjetaTexto = document.createElement('div');
+                                                    tarjetaTexto.innerHTML = `<div class='error-sin-plantillas'>No se Encontraron Plantillas</div>`;
+                                                    contenedor?.appendChild(tarjetaTexto);
+                                                }
+                                            } else {
+                                                Swal.fire({
+                                                    title: 'Error',
+                                                    text: 'Hubo un error al eliminar la platilla.',
+                                                    icon: 'error',
+                                                    confirmButtonColor: '#1F4281',
+                                                });
+                                            }
+                                        } catch (error) {
+                                            console.error('Error al eliminar la plantilla:', error);
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: 'Hubo un error al eliminar la platilla.',
+                                                icon: 'error',
+                                                confirmButtonColor: '#1F4281',
+                                            });
+                                        }
                                     }
-                                });
                                 }
                             });
                         }
                     } catch (error) {
-                        alert(`No se pudo conectar con el servidor, error: ${error}`);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Hubo un error de conexión.',
+                            icon: 'error',
+                            confirmButtonColor: '#1F4281',
+                            });
+                        console.error(`No se pudo conectar con el servidor, error: ${error}`);
                     }
                 });
             });
@@ -192,26 +192,60 @@ async function inicializarModuloPlantillas () {
             botonesEliminarCoinciden.forEach(boton => {
                 boton.addEventListener('click', async () => {
                     const menuOpciones = boton.closest('#menuOpciones');
-                    const modalBorrar = document.querySelector('.modal-borrar');
+                    
+                    if (menuOpciones) {
+                        const idPlantilla = menuOpciones.getAttribute('dato-id');
+                        
+                        const result = await Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: 'No podrás recuperar la plantilla eliminada.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#1F4281',
+                            cancelButtonColor: '#A61930',
+                            confirmButtonText: 'Eliminar',
+                            cancelButtonText: 'Cancelar'
+                        });
+                        
+                        // Si el usuario confirmó la eliminación
+                        if (result.isConfirmed && idPlantilla) {
+                            try {
+                                const respuesta = await eliminarPlantillas(idPlantilla);
 
-                    if (modalBorrar && menuOpciones) {
-                        modalBorrar.showModal();
-                        modalBorrar.setAttribute('dato-id', menuOpciones.getAttribute('dato-id'));
-                        // Asegúrate de que el modal está abierto para que detecte eventos
-                        modalBorrar.addEventListener('click', (event) => {
-                        const rect = modalBorrar.getBoundingClientRect();
-                        const clickedInDialog = (
-                        event.clientX >= rect.left &&
-                        event.clientX <= rect.right &&
-                        event.clientY >= rect.top &&
-                        event.clientY <= rect.bottom
-                        );
-                
-                        // Si el clic fue fuera del área visible del <dialog>, ciérralo
-                        if (!clickedInDialog) {
-                            modalBorrar.close();
+                                if (respuesta.ok){
+                                    // Eliminar del DOM la tarjeta correspondiente
+                                    const plantillaHTML = document.querySelector(`#menuOpciones[dato-id='${idPlantilla}']`)?.closest('.plantilla');
+                                    if (plantillaHTML) {
+                                        plantillaHTML.remove();
+                                    }
+
+                                    // Verificar si ya no quedan plantillas visibles
+                                    const todasPlantillas = document.querySelectorAll('.plantilla');
+                                    if(todasPlantillas.length <= 0){
+                                        /** @type {HTMLElement|null} Contenedor de plantillas */
+                                        const contenedor = document.getElementById('contenedorId');
+                                        const tarjetaTexto = document.createElement('div');
+                                        tarjetaTexto.innerHTML = `<div class='error-sin-plantillas'>No se Encontraron Plantillas</div>`;
+                                        contenedor?.appendChild(tarjetaTexto);
+                                    }
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'Hubo un error al eliminar la platilla.',
+                                        icon: 'error',
+                                        confirmButtonColor: '#1F4281',
+                                    });
+                                }
+                            } catch (error) {
+                                console.error('Error al eliminar la plantilla:', error);
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Hubo un error al eliminar la platilla.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#1F4281',
+                                });
                             }
-                        })
+                        }
                     }
                 });
             });
@@ -222,7 +256,13 @@ async function inicializarModuloPlantillas () {
             contenedor?.appendChild(tarjetaTexto);
         }
     } catch (error) {
-        alert('No se pudo conectar con el servidor.');
+        console.error('Error al cargar las plantillas:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error de conexión.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
     }
 }
 

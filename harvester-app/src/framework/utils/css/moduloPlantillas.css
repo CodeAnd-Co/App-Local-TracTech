@@ -35,7 +35,6 @@
   justify-content: flex-end;
   flex-shrink: 0;
   position: relative;
-  
   border: none;
   background: transparent;
   border-radius: 8px;
@@ -47,7 +46,6 @@
 }
 
 .more-horizontal {
-
   display: flex;
   align-items: center;
   gap: 10px;
@@ -60,8 +58,6 @@
   color: #969696;
   width: 100%;
   transition: background 0.2s;
-
-
   flex-shrink: 0;
   width: 38px;
   height: 38px;
@@ -474,6 +470,7 @@ button {
   border: none;
   background: transparent;
   border-radius: 8px;
+  cursor: pointer;
 }
 button:hover{
   background: rgba(0, 0, 0, 0.25);

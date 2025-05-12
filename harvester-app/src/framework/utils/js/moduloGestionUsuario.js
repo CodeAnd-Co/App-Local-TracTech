@@ -2,10 +2,14 @@
 // RF41 Administrador modifica usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41
 // RF43 Administrador elimina usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF43
 // RF41 Administrador consulta usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41 
+// RF39 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF39
 
-const { modificarUsuario } = require('../../../backend/casosUso/usuarios/modificarUsuario.js');
+const { modificarUsuario } = require('../../backend/casosUso/usuarios/modificarUsuario.js');
+const { crearUsuario: crearUsuarioCU } = require('../../backend/casosUso/usuarios/crearUsuario');
 const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
 const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
+const { consultarRoles: consultarRolesCU } = require('../../backend/casosUso/usuarios/consultarRoles.js');
+
 const Swal2 = require('sweetalert2');
 
 const usuariosPorPagina = 6;
@@ -26,13 +30,16 @@ async function inicializarModuloGestionUsuarios() {
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
     const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
-    columnaCrear.style.display = 'none';
 
     try {
+        // Cargar usuarios
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
+
+        // Cargar roles
+        
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
         document.getElementById('lista-usuarios').innerHTML
@@ -40,15 +47,31 @@ async function inicializarModuloGestionUsuarios() {
     }
 
     const botonAgregar = document.querySelector('.primario');
-    botonAgregar.addEventListener('click', evento => {
+    // Eliminar event listeners anteriores y agregar uno nuevo
+    const nuevoBotonAgregar = botonAgregar.cloneNode(true);
+    botonAgregar.parentNode.replaceChild(nuevoBotonAgregar, botonAgregar);
+    nuevoBotonAgregar.addEventListener('click', evento => {
         evento.preventDefault();
         columnaCrear.style.display = 'block';
+        cargarRoles(); // Cargar roles al abrir el formulario
     });
 
     const botonCancelar = document.querySelector('.btn-cancelar');
-    botonCancelar.addEventListener('click', evento => {
+    // Eliminar event listeners anteriores y agregar uno nuevo
+    const nuevoBotonCancelar = botonCancelar.cloneNode(true);
+    botonCancelar.parentNode.replaceChild(nuevoBotonCancelar, botonCancelar);
+    nuevoBotonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
         columnaCrear.style.display = 'none';
+    });
+
+    // Eliminar event listeners anteriores y agregar uno nuevo al botón guardar
+    const botonGuardar = document.querySelector('.btn-guardar');
+    const nuevoBotonGuardar = botonGuardar.cloneNode(true);
+    botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
+    nuevoBotonGuardar.addEventListener('click', async evento => {
+        evento.preventDefault();
+        await crearUsuario();
     });
 
     // Configurar el campo de búsqueda
@@ -370,7 +393,145 @@ function editarUsuario(idUsuario) {
     });
 }
 
+/**
+ * Crea un nuevo usuario en el sistema.
+ * Captura los datos del formulario, valida los campos, 
+ * realiza la petición al backend mediante crearUsuarioAPI y muestra retroalimentación.
+ * @async
+ * @function crearUsuario
+ * @returns {Promise<void>}
+ */
+async function crearUsuario() {
+    const nombreInput = document.getElementById('username');
+    const correoInput = document.getElementById('email');
+    const contraseniaInput = document.getElementById('password');
+    const rolInput = document.getElementById('rol');
 
+    const nombre = nombreInput.value.trim();
+    const correo = correoInput.value.trim();
+    const contrasenia = contraseniaInput.value.trim();
+    const idRolFK = parseInt(rolInput.value, 10);
+
+
+    if (!nombre || !correo || !contrasenia || isNaN(idRolFK)) {
+        return Swal2.fire({
+            title: 'Datos incompletos',
+            text: 'Por favor, completa todos los campos.',
+            icon: 'warning',
+        });
+    }
+
+    try {
+        const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
+
+        if (resultado.ok) {
+            Swal2.fire({
+                title: 'Usuario creado',
+                text: resultado.mensaje || 'El usuario fue registrado correctamente.',
+                icon: 'success',
+            });
+
+            // Limpiar los campos del formulario
+            nombreInput.value = '';
+            correoInput.value = '';
+            contraseniaInput.value = '';
+            rolInput.value = '';
+
+            document.getElementById('columna-crear-usuario').style.display = 'none';
+            
+            // Actualizar la vista para mostrar el nuevo usuario en la lista
+            setTimeout(() => {
+                inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
+            }, 500);
+        } else {
+            Swal2.fire({
+                title: 'Error al crear usuario',
+                text: resultado.mensaje || 'No se pudo registrar el usuario.',
+                icon: 'error',
+            });
+        }
+    } catch (error) {
+        console.error('Error al crear usuario:', error);
+        Swal2.fire({
+            title: 'Error de red',
+            text: 'Hubo un problema al conectar con el servidor.',
+            icon: 'error',
+        });
+    }
+}
+
+
+
+// Variable global para almacenar los roles
+let rolesCache = [];
+
+/**
+ * Carga los roles desde el backend y los guarda en la variable global `rolesCache`.
+ * @async
+ * @function guardarRoles
+ * @returns {Promise<void>}
+ */
+async function guardarRoles() {
+    
+    try {
+        const roles = await consultarRolesCU(); // Llama a la función de consultarRoles.js
+        
+
+        if (!roles || roles.length === 0) {
+            console.warn('No hay roles disponibles para guardar.');
+            rolesCache = []; // Vacía la caché si no hay roles
+            return;
+        }
+
+        rolesCache = roles; // Guarda los roles en la variable global
+    } catch (error) {
+        console.error('Error al cargar y guardar los roles:', error);
+        rolesCache = []; // Vacía la caché en caso de error
+    }
+}
+
+/**
+ * Llena el elemento <select> con los roles almacenados en `rolesCache`.
+ * @function llenarSelectConRoles
+ * @param {HTMLElement} selectRol - El elemento <select> a llenar
+ * @returns {void}
+ */
+function llenarSelectConRoles(selectRol) {
+    if (!rolesCache || rolesCache.length === 0) {
+        selectRol.innerHTML = '<option value="">No hay roles disponibles</option>';
+        return;
+    }
+
+    // Limpiar el contenido previo del <select>
+    selectRol.innerHTML = '<option value="">Selecciona un rol</option>';
+
+    // Agregar los roles al <select>
+    rolesCache.forEach(rol => {
+        
+        const option = document.createElement('option');
+        option.value = rol.idRol; // Envía el idRol al backend
+        option.textContent = rol.Nombre; // Muestra el nombre del rol
+        selectRol.appendChild(option);
+    });
+}
+
+
+function cargarRoles() {
+    const selectRol = document.querySelector('#rol'); // Busca el <select> con id="rol"
+    if (selectRol) {
+        // Cargar y guardar los roles al iniciar
+        guardarRoles().then(() => {
+            // Llenar el <select> con los roles guardados
+            llenarSelectConRoles(selectRol);
+        });
+
+        // También puedes agregar un evento para recargar los roles si es necesario
+        selectRol.addEventListener('focus', () => llenarSelectConRoles(selectRol));
+    } else {
+        console.error('No se encontró el elemento <select> con id="rol".');
+    }
+    return
+}
 
 
 // Expone la función de inicialización al objeto window

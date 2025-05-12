@@ -13,14 +13,15 @@ const { guardarFormula: guardarFormulaAPI} = require('../../domain/formulasAPI/f
  * @returns {Promise<Object>} Respuesta del servidor.
  * @throws {Error} Si no se pudo guardar la fórmula.
  */
-const guardarFormula= async function (nombre, formula){
+async function guardarFormula (nombre, formula){
     try{
-        const respuesta = await guardarFormulaAPI(nombre, formula);
+        const respuesta = await guardarFormulaAPI(nombre, formula, localStorage.getItem('token'));
         return respuesta;
     } catch(error){
         console.error('Error al guardar la fórmula:', error);
         throw new Error('No se pudo guardar la fórmula');
     }
 }
-
-window.guardarFormula = guardarFormula; // Para que sea accesible desde el frontend
+module.exports = {
+    guardarFormula
+};
