@@ -101,7 +101,6 @@ async function renderizarFormulas() {
             btn.addEventListener('click', (evento) => {
                  
                 const formulaId = evento.currentTarget.getAttribute('data-id');
-                console.log('Eliminar fórmula con ID:', formulaId);
                 try {
                     Swal.fire({
                         title: '¿Estás seguro?',
@@ -109,7 +108,10 @@ async function renderizarFormulas() {
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar'
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#1F4281',
+                        cancelButtonColor: '#A61930'
+                        
                     }).then((resultado) => {
                         if (resultado.isConfirmed) {
                             eliminarFormula(formulaId);
