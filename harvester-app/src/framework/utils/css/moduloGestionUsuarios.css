@@ -1,7 +1,7 @@
 /* === Layout de dos columnas === */
 .container {
   display: flex;         /* activa Flexbox */
-  gap: 16px;             /* espacio entre columnas */
+  gap: 130px;             /* espacio entre columnas */
 }
 
 /* Ajuste de anchos: puedes cambiar 2/1 por la proporción que necesites */
@@ -15,7 +15,7 @@
 
 .columna-crear-usuario {
   flex: 1;
-  display: block;        /* antes estaba “none”: ahora siempre visible */
+  display: none;
 }
 
 
@@ -163,11 +163,13 @@
   background: #fff;
   border: 1px solid #000;
   border-radius: 10px;
-  padding: 1.75rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.125rem;
-  height: 100%;
+  width: 600px; /* Ancho fijo */
+  height: 100%; /* Alto fijo */
+  margin: 0 auto; /* Centra el contenedor horizontalmente */
 }
 
 .pop-out .crear-usuario {
@@ -179,7 +181,7 @@
 .pop-out form.modificacion {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 2.5rem;
 }
 
 .pop-out .campo {

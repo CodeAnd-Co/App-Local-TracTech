@@ -252,6 +252,7 @@
   line-height: 100%;
   font-weight: 400;
   text-decoration: underline;
+  cursor: pointer;
 }
 .no-tienes-cuenta-cont-ctanos-span3 {
   color: #ffffff;

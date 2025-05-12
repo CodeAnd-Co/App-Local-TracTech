@@ -8,6 +8,7 @@ if (typeof Swal === 'undefined'){
     const Swal = require('sweetalert2');
 }
 
+const { guardarFormula } = require('../../../backend/casosUso/formulas/crearFormula');
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -24,35 +25,13 @@ function cancelarVista(){
     window.cargarModulo('formulas');
 }
 
-
-btnGuardar.addEventListener('click', async () => {
-    procesarFormula();
-}); 
-
-btnCancelar.addEventListener('click', () => {
-    cancelarVista();
-});
-
-btnGenerar.addEventListener('click', () => {
-    const contenedor = document.getElementById('function-arguments');
-    if (contenedor) {
-        generarFormulaCompleja();
-    } else {
-        console.error('El contenedor de argumentos no se encontró en el DOM.');
-    }
-});
-
-
 /**
  * @function inicializarCrearFormula
  * @description Inicializa el módulo de creación de fórmulas al cargar la página.
  * @returns {void}
  * @throws {Error} Si el botón de creación de fórmulas no se encuentra en el DOM.
  */
-function inicializarCrearFormula() {
-    const botonCrearFormula = document.getElementById('crearFormula');
-    if (botonCrearFormula) {
-        botonCrearFormula.addEventListener('click', async () => {
+async function inicializarCrearFormula() {
             localStorage.setItem('seccion-activa', 'crearFormula');
             const ventanaPrincipal = document.getElementById('ventana-principal');
             if (ventanaPrincipal) {
@@ -60,19 +39,31 @@ function inicializarCrearFormula() {
                     .then(res => res.text())
                     .then(html => {
                         ventanaPrincipal.innerHTML = html;
-                        const script = document.createElement('script');
-                        script.src = '../utils/js/crearFormula.js';
-                        document.body.appendChild(script);
+                        const ejecutable = document.createElement('script');
+                        ejecutable.src = '../utils/js/crearFormula.js';
+                        document.body.appendChild(ejecutable);
+
+                        document.getElementById('btnCancelar').addEventListener('click', () => {
+                            window.cargarModulo('formulas');
+                        });
+                        document.getElementById('btnGuardar').addEventListener('click', async () => {
+                            procesarFormula();
+                        });
+                        document.getElementById('btnGenerar').addEventListener('click', () => {
+                            const contenedor = document.getElementById('function-arguments');
+                            if (contenedor) {
+                                generarFormulaCompleja();
+                            } else {
+                                console.error('El contenedor de argumentos no se encontró en el DOM.');
+                            }
+                        });
                         
+
                     })
                     .catch(err => console.error('Error cargando módulo de creación de fórmulas:', err));
             }
-    });
+    };
 
-    } else {
-        console.error('El botón de creación de fórmulas no se encontró en el DOM.');
-    }
-}
 
 async function guardarFormulaTemporal(nombre, formula) {
     // REFACTORIZAR
@@ -80,6 +71,7 @@ async function guardarFormulaTemporal(nombre, formula) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            authorization: `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({nombre, formula}),
     });
@@ -95,12 +87,33 @@ async function guardarFormulaTemporal(nombre, formula) {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
-    const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     const nombreFormula = document.getElementById('nombreFormula').value;
+    // Obtener referencia al botón de guardar
+        if(nombreFormula === '') {
+            Swal.fire({
+                title: 'Error',
+                text: 'Verifica que la formula tenga un nombre válido.',
+                icon: 'error',
+                confirmButtonColor: '#1F4281',
+            });
+            return;
+        }
+    const btnGuardar = document.getElementById('btnGuardar');
+    
+    // Deshabilitar el botón para evitar múltiples clics
+    btnGuardar.disabled = true;
+    
+    // Almacenar el contenido original del botón
+    const contenidoOriginal = btnGuardar.innerHTML;
+    
+    // Cambiar el texto del botón para indicar que está procesando
+    btnGuardar.innerHTML = '<div>Guardando fórmula...</div>';
+    
+    const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     try{
-        const respuesta = await guardarFormulaTemporal(nombreFormula, formula);
+        const respuesta = await guardarFormula(nombreFormula, formula);
         if (respuesta.ok) {
             window.cargarModulo('formulas');
         } else {
@@ -109,7 +122,11 @@ async function procesarFormula() {
                 text: 'Hubo un error al guardar la fórmula.',
                 icon: 'error',
                 confirmButtonColor: '#1F4281',
-                });
+            });
+            
+            // Restaurar el botón en caso de error
+            btnGuardar.innerHTML = contenidoOriginal;
+            btnGuardar.disabled = false;
         }
     } catch (error) {
         console.error('Error al conectar con el backend:', error);
@@ -118,7 +135,11 @@ async function procesarFormula() {
             text: 'Hubo un error en la conexión.',
             icon: 'error',
             confirmButtonColor: '#1F4281',
-            });
+        });
+        
+        // Restaurar el botón en caso de error
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
     }
 }
 
@@ -530,7 +551,7 @@ function traducirFuncion(nombre) {
 function popularDropdown(elementoSeleccionado) {
     // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo TODO()
     const columnas = ['Gasolina', 'Kilometraje', 'Fecha', 'Estado', 'Valor'];
-    elementoSeleccionado.innerHTML = "<option value=''>Seleccionar</option>";
+    elementoSeleccionado.innerHTML = '<option value="">Seleccionar</option>';
     columnas.forEach(columna => {
         const opcion = document.createElement('option');
         opcion.value = `[@${columna}]`;
@@ -539,12 +560,10 @@ function popularDropdown(elementoSeleccionado) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const { guardarFormula} = require('../../backend/casosUso/formulas/crearFormula');
-    const { cargarModulo } = require('./sidebar.js');
-
-    
+document.addEventListener('DOMContentLoaded', () => {    
     const btnGuardar = document.getElementById('btnGuardar');
+    const btnGenerar = document.getElementById('btnGenerar');
+    const btnCancelar = document.getElementById('btnCancelar');
     const formulaContainer = document.getElementById('formula-container');
     
     // Crear la estructura principal de selección de funciones
@@ -567,21 +586,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Configurar eventos para los botones
-    if (btnGuardar) {
         btnGuardar.addEventListener('click', async () => {
             procesarFormula();
     });
-    }
+
+    btnGenerar.addEventListener('click', () => {
+        const contenedor = document.getElementById('function-arguments');
+        if (contenedor) {
+            generarFormulaCompleja();
+        } else {
+            console.error('El contenedor de argumentos no se encontró en el DOM.');
+        }
+    });
+    
+    btnCancelar.addEventListener('click', () => {
+        cancelarVista();
+    });
     // Agregar el evento al selector de función principal
-    const mainFunctionSelect = document.getElementById('main-function');
-    if (mainFunctionSelect) {
-        mainFunctionSelect.addEventListener('change', () => {
+    const seleccionFuncion = document.getElementById('main-function');
+    if (seleccionFuncion) {
+        seleccionFuncion.addEventListener('change', () => {
             const contenedor = document.getElementById('function-arguments');
-            definirEstructura(mainFunctionSelect, contenedor);
+            definirEstructura(seleccionFuncion, contenedor);
         });
     }
 });
 
+module.exports ={
+    inicializarCrearFormula
+}
 
-
-window.inicializarCrearFormula = inicializarCrearFormula;
