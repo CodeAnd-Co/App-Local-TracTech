@@ -92,7 +92,11 @@ async function inicializarModuloGestionUsuarios() {
     botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
-        await crearUsuario();
+        if (modoActual === modoFormulario.CREAR) {
+            await crearUsuario();
+        } else if (modoActual === modoFormulario.EDITAR) {
+            await editarUsuario();
+        }
     });
 
     // Configurar el campo de búsqueda
@@ -286,7 +290,7 @@ function mostrarUsuarios(usuarios) {
     }
     listaUsuariosElemento.appendChild(fragmento);
 
-    // TODO: Añadir eventos a los botones de editar
+    // Añadir eventos a los botones de editar
     escucharEventoBotonesEditar(listaUsuariosElemento);
 
     // Añadir eventos a los botones de eliminar
@@ -352,7 +356,6 @@ function modoEditar(idUsuario) {
     document.getElementById('columna-crear-modificar-usuario').style.display = 'block';
 
     // Precargar los datos del usuario
-    console.log(listaUsuarios);
     const usuario = listaUsuarios.find(usuario => usuario.id === idUsuarioAEditar);
     if (!usuario) {
         console.error('Usuario no encontrado');
@@ -362,6 +365,59 @@ function modoEditar(idUsuario) {
     document.getElementById('email').value = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
     // document.getElementById('rol').value = usuario.rol; // TODO: Añadir rol en cuanto modifique la Consulta de usuarios para obtenerlos
+}
+
+/**
+ * Envía los datos modificados del usuario al backend y actualiza la vista.
+ * Al finalizar—tanto si tuvo éxito como si no—resetea el formulario y el estado
+ * de edición para volver al modo de creación de usuario.
+ *
+ * @async
+ * @function editarUsuario
+ * @returns {Promise<void>}
+ */
+async function editarUsuario() {
+    const nombreIngresado = document.getElementById('username').value.trim();
+    const correoIngresado = document.getElementById('email').value.trim();
+    const contraseniaIngresada = document.getElementById('password').value.trim();
+    // const rolIngresado = document.getElementById('rol').value.trim();
+
+    try {
+        const resultado = await modificarUsuario(idUsuarioAEditar, nombreIngresado, correoIngresado, contraseniaIngresada);
+        if (resultado.ok) {
+            Swal2.fire({
+                title: 'Usuario modificado',
+                text: resultado.mensaje || 'El usuario fue modificado correctamente.',
+                icon: 'success',
+            });
+
+            // Limpiar los campos del formulario
+            document.getElementById('username').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('rol').value = '';
+
+            // Recargar la lista de usuarios
+            setTimeout(() => {
+                inicializarModuloGestionUsuarios();
+            }, 500);
+        } else {
+            Swal2.fire({
+                title: 'Error al modificar usuario',
+                text: resultado.mensaje || 'No se pudo modificar el usuario.',
+                icon: 'error',
+            });
+        }
+    } catch (error) {
+        Swal2.fire({
+            title: 'Error de red',
+            text: 'Hubo un problema al conectar con el servidor.',
+            icon: 'error',
+        });
+    }
+
+    modoActual = modoFormulario.CREAR;
+    idUsuarioAEditar = null;
 }
 
 /**
