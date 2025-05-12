@@ -58,6 +58,21 @@ async function inicializarModuloGestionUsuarios() {
     botonAgregar.parentNode.replaceChild(nuevoBotonAgregar, botonAgregar);
     nuevoBotonAgregar.addEventListener('click', evento => {
         evento.preventDefault();
+
+        // Actualizar estados globales
+        modoActual = modoFormulario.CREAR;
+        idUsuarioAEditar = null;
+
+        // Cambiar texto del formulario
+        document.querySelector('.crear-modificar-usuario').textContent = 'Crear usuario';
+        document.querySelector('.btn-guardar').textContent = 'Guardar';
+
+        // Limpiar los campos del formulario
+        document.getElementById('username').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('rol').value = '';
+
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
     });
