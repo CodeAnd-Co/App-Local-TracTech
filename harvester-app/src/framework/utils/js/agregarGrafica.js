@@ -4,25 +4,28 @@ const { Chart } = require('chart.js/auto');
 
 /**
  * Agrega una nueva tarjeta de gráfica y su previsualización.
- * @param {string} contenedorId - ID del contenedor donde se agregará la tarjeta de gráfica.
- * @param {string} previsualizacionId - ID del contenedor de previsualización de la gráfica.
+ *
+ * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
+ * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
+ * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
  */
-function agregarGrafica(contenedorId, previsualizacionId) {
-  const contenedor = document.getElementById(contenedorId);
+function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
+  const contenedor       = document.getElementById(contenedorId);
   const previsualizacion = document.getElementById(previsualizacionId);
 
-  //Crear tarjeta
+  // Crear tarjeta de edición
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
-  //Calcular ID único
+  // Calcular ID único
   const tarjetasExistentes = contenedor.querySelectorAll('.tarjeta-grafica');
   const nuevaId = tarjetasExistentes.length
     ? parseInt(tarjetasExistentes[tarjetasExistentes.length - 1].id, 10) + 1
     : 1;
   tarjetaGrafica.id = nuevaId;
 
-  //Inyectar HTML base: nombre, selector tipo (igual a agregarTexto.js), botones
+  // Inyectar HTML base
   tarjetaGrafica.innerHTML = `
     <input class="titulo-grafica" placeholder="Nombre de la gráfica" />
     <div class="titulo-texto">
@@ -47,7 +50,7 @@ function agregarGrafica(contenedorId, previsualizacionId) {
     </div>
   `;
 
-  //Datos disponibles
+  // Datos disponibles para fórmulas
   let columnas = [];
   if (window.datosExcelGlobal) {
     window.datosGrafica = window.datosExcelGlobal.hojas[
@@ -56,63 +59,81 @@ function agregarGrafica(contenedorId, previsualizacionId) {
     columnas = window.datosGrafica[0].slice(3);
   }
 
-  //Botón Fórmulas
+  // Botón “Fórmulas”
   tarjetaGrafica
     .querySelector('.boton-formulas')
     .addEventListener('click', () =>
       crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
 
-  //Área de previsualización
+  // Contenedor de previsualización
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
   graficaDiv.id = nuevaId;
-
   const canvasGrafica = document.createElement('canvas');
+  graficaDiv.appendChild(canvasGrafica);
+
+  // Inicializar Chart.js
   const contexto = canvasGrafica.getContext('2d');
-  graficaDiv.appendChild(canvasGrafica);
+  const grafico  = crearGrafica(contexto, 'line');
+  grafico.options.plugins.title.text = '';
+  grafico.update();
 
-  //Iniciar Chart.js
-  const grafico = crearGrafica(contexto, 'line');
-
-  graficaDiv.appendChild(canvasGrafica);
-
-  //Cambiar título dinámicamente
+  // Listener para título dinámico
   tarjetaGrafica
     .querySelector('.titulo-grafica')
     .addEventListener('input', function () {
-      const contexto = encontrarGrafica(nuevaId).children[0].getContext('2d');
-      const graficaEncontrada = Chart.getChart(contexto);
-
-      graficaEncontrada.options.plugins.title.text = this.value;
-      graficaEncontrada.update();
+      const ctx = encontrarGrafica(nuevaId).querySelector('canvas').getContext('2d');
+      const chart = Chart.getChart(ctx);
+      chart.options.plugins.title.text = this.value;
+      chart.update();
     });
 
-  //Selector de tipo de gráfica
-  const selectorTipoGrafica = tarjetaGrafica.querySelector('.tipo-grafica');
-  selectorTipoGrafica.value = grafico.config.type;
-  selectorTipoGrafica.addEventListener('change', () => {
-    const contexto = encontrarGrafica(nuevaId).children[0].getContext('2d');
-
-    Chart.getChart(contexto).destroy();
-
-    const nuevaGrafica = crearGrafica(contexto, selectorTipoGrafica.value);
-    nuevaGrafica.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
-    nuevaGrafica.update();
+  // Selector de tipo de gráfica
+  const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
+  selectorTipo.value = grafico.config.type;
+  selectorTipo.addEventListener('change', () => {
+    const ctx = encontrarGrafica(nuevaId).querySelector('canvas').getContext('2d');
+    Chart.getChart(ctx).destroy();
+    const nueva = crearGrafica(ctx, selectorTipo.value);
+    nueva.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
+    nueva.update();
   });
 
-  //Eliminar gráfica
+  // Botón “Eliminar”
   tarjetaGrafica
     .querySelector('.eliminar')
     .addEventListener('click', () => {
       tarjetaGrafica.remove();
-      const graficaEliminada = encontrarGrafica(nuevaId); // función original :contentReference[oaicite:2]{index=2}&#8203;:contentReference[oaicite:3]{index=3}
-      if (graficaEliminada) graficaEliminada.remove();
+      const eliminado = encontrarGrafica(nuevaId);
+      if (eliminado) eliminado.remove();
       eliminarCuadroFormulas();
     });
 
-  // 11) Añadir al DOM
-  contenedor.appendChild(tarjetaGrafica);
-  previsualizacion.appendChild(graficaDiv);
+  // -----------------------------------------
+  // 11) Añadir al DOM con inserción “antes/después”
+  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
+    // En el contenedor de edición
+    if (posicion === 'antes') {
+      contenedor.insertBefore(tarjetaGrafica, tarjetaRef);
+    } else {
+      contenedor.insertBefore(tarjetaGrafica, tarjetaRef.nextSibling);
+    }
+    // En la previsualización
+    const vistaRef = previsualizacion.querySelector(`#${tarjetaRef.id}`);
+    if (vistaRef) {
+      if (posicion === 'antes') {
+        previsualizacion.insertBefore(graficaDiv, vistaRef);
+      } else {
+        previsualizacion.insertBefore(graficaDiv, vistaRef.nextSibling);
+      }
+    } else {
+      previsualizacion.appendChild(graficaDiv);
+    }
+  } else {
+    // Sin referencia: comportamiento original
+    contenedor.appendChild(tarjetaGrafica);
+    previsualizacion.appendChild(graficaDiv);
+  }
 }
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
