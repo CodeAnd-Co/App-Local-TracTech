@@ -64,7 +64,12 @@ function agregarTexto(idContenedor, idContenedorVistaPrevia) {
    * @private
    */
   function actualizarVistaPrevia() {
-    vistaPrevia.textContent = areaTexto.value;
+    vistaPrevia.innerHTML = '';
+    const texto = areaTexto.value.split('\n');
+    texto.forEach((linea) => { 
+      vistaPrevia.innerHTML += `<p>${linea}</p>`;
+    })
+    
     vistaPrevia.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
     vistaPrevia.classList.add(`preview-${selectorTipoTexto.value}`);
   }
