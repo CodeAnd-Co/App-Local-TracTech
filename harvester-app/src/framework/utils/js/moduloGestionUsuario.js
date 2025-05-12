@@ -344,7 +344,7 @@ function escucharEventoBotonesEditar(listaDeUsuarios) {
 function modoEditar(idUsuario) {
     // Actualizar estados globales
     modoActual = modoFormulario.EDITAR;
-    idUsuarioAEditar = idUsuario;
+    idUsuarioAEditar = Number(idUsuario);
 
     // Cambiar texto del formulario
     document.querySelector('.crear-modificar-usuario').textContent = 'Modificar usuario';
@@ -352,7 +352,8 @@ function modoEditar(idUsuario) {
     document.getElementById('columna-crear-modificar-usuario').style.display = 'block';
 
     // Precargar los datos del usuario
-    const usuario = listaUsuarios.find(usuario => usuario.id === idUsuario);
+    console.log(listaUsuarios);
+    const usuario = listaUsuarios.find(usuario => usuario.id === idUsuarioAEditar);
     if (!usuario) {
         console.error('Usuario no encontrado');
         return;
