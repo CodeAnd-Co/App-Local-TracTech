@@ -123,6 +123,7 @@
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 .cerrar-sesi-n {
   color: #ffffff;
