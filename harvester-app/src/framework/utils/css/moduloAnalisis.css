@@ -97,18 +97,8 @@ body,
   overflow: auto;
   align-items: center;
 }
-.previsualizacion-gr-fica {
-  color: #000000;
-  text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 52px;
-  line-height: 100%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-}
 .previsualizacion-grafica {
-  background: #9e9e9e;
+  background: #E0E0E0;
   border-radius: 8px;
   display: flex;
   flex-direction: row;
@@ -116,9 +106,10 @@ body,
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 750px;
-  height: 396px;
+  width: 645px;
   position: relative;
+  height: 340px;
+  padding: 10px 10px;
 }
 .bar-chart {
   flex-shrink: 0;

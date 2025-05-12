@@ -162,20 +162,24 @@ function descargarPDF() {
       })
 
     } else if (elemento.classList.contains('previsualizacion-grafica')) {
+
       const lienzo = elemento.querySelector('canvas');
       if (!lienzo) return;
 
       const imagen     = lienzo.toDataURL('image/png');
       const proporcion = lienzo.height / lienzo.width;
       const altoImagen = anchoPagina * proporcion;
+      const espaciado  = 15;
 
       if (posicionY + altoImagen > altoPagina + margen) {
         documentoPDF.addPage();
         posicionY = margen;
       }
 
-      documentoPDF.addImage(imagen, 'PNG', margen, posicionY, anchoPagina, altoImagen);
-      posicionY += altoImagen + 12;
+      documentoPDF.setFillColor(224, 224, 224);
+      documentoPDF.roundedRect(margen - 2, posicionY, 520, 265 + espaciado, 6, 6, 'F');
+      documentoPDF.addImage(imagen, 'PNG', margen, posicionY + espaciado, anchoPagina, altoImagen);
+      posicionY += 265 + espaciado + 35;
     }
   });
 
