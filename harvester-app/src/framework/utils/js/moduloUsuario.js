@@ -25,6 +25,7 @@ let moduloGestionDeUsuariosIniciado = false;
  * @returns {void}
  */
 function inicializarModuloUsuario() {
+  actualizarNombreUsuario();
   const botonGestion = document.querySelector('#botonGestion');
   if (botonGestion) {
     botonGestion.addEventListener('click', async () => {
@@ -99,6 +100,28 @@ function inicializarModuloUsuario() {
     });
   } else {
     console.warn('No se encontró el botón .boton-cerrar-sesion en el DOM.');
+  }
+}
+
+/**
+ * Actualiza el texto del div 'texto-usuario' con el nombre del usuario
+ * que está almacenado en localStorage bajo la clave 'nombreUsuario'
+ * 
+ * @function actualizarNombreUsuario
+ * @returns {void}
+ */
+function actualizarNombreUsuario() {
+  const elementoTextoUsuario = document.querySelector('.texto-usuario');
+  if (elementoTextoUsuario) {
+    const nombreUsuario = localStorage.getItem('nombreUsuario');
+    if (nombreUsuario) {
+      elementoTextoUsuario.textContent = nombreUsuario;
+    } else {
+      // Si no hay nombre de usuario, mantener el valor predeterminado o mostrar un mensaje alternativo
+      console.warn('No se encontró el nombre de usuario en localStorage');
+    }
+  } else {
+    console.warn('No se encontró el elemento .texto-usuario en el DOM');
   }
 }
 
