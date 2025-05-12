@@ -2,6 +2,7 @@
 
 const { consultaFormulasCasoUso } = require('../../../backend/casosUso/formulas/consultaFormulas');
 const { inicializarCrearFormula } = require('../../utils/js/crearFormula');
+const { manejarEliminarFormula } = require('../../utils/js/eliminarFormula');
 
 async function consultarFormulas() {
     const respuesta = await consultaFormulasCasoUso();
@@ -13,6 +14,39 @@ async function consultarFormulas() {
     }
     return respuesta;
 }
+
+async function eliminarFormula(id) {
+    try {
+        const respuesta = await manejarEliminarFormula(id);
+        if (respuesta.ok) {
+            // Actualizar la interfaz después de eliminar la fórmula
+            const formulaDiv = document.getElementById(`frameFormulas-${id}`);
+            if (formulaDiv) {
+                formulaDiv.remove();
+            }
+            Swal.fire({
+                title: 'Fórmula eliminada',
+                text: 'La fórmula ha sido eliminada exitosamente.',
+                icon: 'success'
+            });
+        } else {
+            Swal.fire({
+                title: 'Error de conexión',
+                text: respuesta.mensaje,
+                icon: 'error'
+            });
+        }
+    }
+    catch (error) {
+        console.error('Error al eliminar la fórmula:', error);
+        Swal.fire({
+            title: 'Error de conexión',
+            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            icon: 'error'
+        });
+    }
+}
+
 
 async function renderizarFormulas() {
     try {
@@ -67,7 +101,29 @@ async function renderizarFormulas() {
             btn.addEventListener('click', (evento) => {
                 // eslint-disable-next-line no-unused-vars
                 const formulaId = evento.currentTarget.getAttribute('data-id');
-                // Implementar lógica para eliminar fórmula
+                console.log('Eliminar fórmula con ID:', formulaId);
+                try {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: 'Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((resultado) => {
+                        if (resultado.isConfirmed) {
+                            eliminarFormula(formulaId);
+                            window.cargarModulo('formulas');
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error al eliminar la fórmula:', error);
+                    Swal.fire({
+                        title: 'Error de conexión',
+                        text: 'Verifica tu conexión e inténtalo de nuevo.',
+                        icon: 'error'
+                    });
+                }
             });
         });
 
