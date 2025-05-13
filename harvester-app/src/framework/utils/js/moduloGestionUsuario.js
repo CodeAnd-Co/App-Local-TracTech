@@ -364,7 +364,7 @@ function modoEditar(idUsuario) {
     document.getElementById('username').value = usuario.nombre;
     document.getElementById('email').value = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
-    // document.getElementById('rol').value = usuario.rol; // TODO: Añadir rol en cuanto modifique la Consulta de usuarios para obtenerlos
+    document.getElementById('rol').value = usuario.rol;
 }
 
 /**
@@ -380,7 +380,7 @@ async function editarUsuario() {
     const nombreIngresado = document.getElementById('username').value.trim();
     const correoIngresado = document.getElementById('email').value.trim();
     const contraseniaIngresada = document.getElementById('password').value.trim();
-    // const rolIngresado = document.getElementById('rol').value.trim();
+    const rolIngresado = document.getElementById('rol').value.trim();
 
     try {
         const resultado = await modificarUsuario(idUsuarioAEditar, nombreIngresado, correoIngresado, contraseniaIngresada);
