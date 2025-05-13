@@ -102,8 +102,15 @@ function agregarTexto(
     }
 
     // Determinar la vista de referencia y hacer la misma inserción
-    const idRef       = tarjetaRef.id;
-    const vistaRef    = contenedorPrevia.querySelector(`#preview-texto-${idRef}`);
+    const idRef = tarjetaRef.id;
+    let vistaRef;
+    
+    if (tarjetaRef.classList.contains('tarjeta-texto')) {
+      vistaRef = contenedorPrevia.querySelector(`#preview-texto-${idRef}`);
+    } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
+      vistaRef = contenedorPrevia.querySelector(`.previsualizacion-grafica[id="${idRef}"]`);
+    }
+    
     if (vistaRef) {
       if (posicion === 'antes') {
         contenedorPrevia.insertBefore(vistaPrevia, vistaRef);
