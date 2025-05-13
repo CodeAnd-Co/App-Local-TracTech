@@ -64,24 +64,24 @@ function agregarTexto(
   tarjetaTexto.classList.add('tarjeta-texto');
   tarjetaTexto.id = `${nuevoId}`;
   tarjetaTexto.innerHTML = `
-    <div class="titulo-texto">
-      <select class="tipo-texto">
-        <option value="titulo">Título</option>
-        <option value="subtitulo">Subtítulo</option>
-        <option value="contenido">Contenido</option>
+    <div class='titulo-texto'>
+      <select class='tipo-texto'>
+        <option value='titulo'>Título</option>
+        <option value='subtitulo'>Subtítulo</option>
+        <option value='contenido'>Contenido</option>
       </select>
-      <img class="type" src="../utils/iconos/Texto.svg" alt="Icono Texto" />
+      <img class='type' src='../utils/iconos/Texto.svg' alt='Icono Texto' />
     </div>
-    <textarea class="area-escritura" placeholder="Escribe aquí tu contenido..."></textarea>
-    <div class="botones-editar-eliminar">
-      <div class="eliminar">
-        <img class="eliminar-icono" src="../utils/iconos/Basura.svg" alt="Eliminar" />
-        <div class="texto-eliminar">Eliminar</div>
+    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...'></textarea>
+    <div class='botones-editar-eliminar'>
+      <div class='eliminar'>
+        <img class='eliminar-icono' src='../utils/iconos/Basura.svg' alt='Eliminar' />
+        <div class='texto-eliminar'>Eliminar</div>
       </div>
-      <div class="divisor"></div>
-      <div class="alinear">
-        <div class="icono-align align-left"><span></span><span></span><span></span></div>
-        <div class="texto-editar">Alinear</div>
+      <div class='divisor'></div>
+      <div class='alinear'>
+        <div class='icono-align align-left'><span></span><span></span><span></span></div>
+        <div class='texto-editar'>Alinear</div>
       </div>
     </div>
   `;
