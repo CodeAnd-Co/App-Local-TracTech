@@ -72,7 +72,7 @@ function agregarTexto(
       </select>
       <img class='type' src='../utils/iconos/Texto.svg' alt='Icono Texto' />
     </div>
-    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength="500"></textarea>
+    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='500'></textarea>
     <style>
       .contador-caracteres {
         font-size: 12px;
@@ -117,7 +117,7 @@ function agregarTexto(
     if (tarjetaRef.classList.contains('tarjeta-texto')) {
       vistaRef = contenedorPrevia.querySelector(`#preview-texto-${idRef}`);
     } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      vistaRef = contenedorPrevia.querySelector(`.previsualizacion-grafica[id="${idRef}"]`);
+      vistaRef = contenedorPrevia.querySelector(`.previsualizacion-grafica[id='${idRef}']`);
     }
     
     if (vistaRef) {

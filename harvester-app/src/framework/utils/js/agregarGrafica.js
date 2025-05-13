@@ -30,25 +30,25 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   // Inyectar HTML base
   tarjetaGrafica.innerHTML = `
-    <input class="titulo-grafica" placeholder="Nombre de la gráfica" />
-    <div class="titulo-texto">
-      <select class="tipo-texto tipo-grafica">
-        <option value="line">Línea</option>
-        <option value="bar">Barras</option>
-        <option value="pie">Pastel</option>
-        <option value="doughnut">Dona</option>
-        <option value="radar">Radar</option>
-        <option value="polarArea">Polar</option>
+    <input class='titulo-grafica' placeholder='Nombre de la gráfica' />
+    <div class='titulo-texto'>
+      <select class='tipo-texto tipo-grafica'>
+        <option value='line'>Línea</option>
+        <option value='bar'>Barras</option>
+        <option value='pie'>Pastel</option>
+        <option value='doughnut'>Dona</option>
+        <option value='radar'>Radar</option>
+        <option value='polarArea'>Polar</option>
       </select>
-      <img class="type" src="../utils/iconos/GraficaBarras.svg" alt="Icono Gráfica" />
+      <img class='type' src='../utils/iconos/GraficaBarras.svg' alt='Icono Gráfica' />
     </div>
-    <div class="boton-formulas">
-      <div class="formulas">Fórmulas</div>
+    <div class='boton-formulas'>
+      <div class='formulas'>Fórmulas</div>
     </div>
-    <div class="botones-eliminar" style="display: flex; justify-content: flex-end;">
-      <div class="eliminar">
-        <img class="eliminar-icono" src="../utils/iconos/Basura.svg" />
-        <div class="texto-eliminar">Eliminar</div>
+    <div class='botones-eliminar' style='display: flex; justify-content: flex-end;'>
+      <div class='eliminar'>
+        <img class='eliminar-icono' src='../utils/iconos/Basura.svg' />
+        <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>
   `;
@@ -62,7 +62,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     columnas = window.datosGrafica[0].slice(3);
   }
 
-  // Botón "Fórmulas"
+  // Botón 'Fórmulas'
   tarjetaGrafica
     .querySelector('.boton-formulas')
     .addEventListener('click', () =>
@@ -113,7 +113,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     }
   });
 
-  // Botón "Eliminar"
+  // Botón 'Eliminar'
   tarjetaGrafica
     .querySelector('.eliminar')
     .addEventListener('click', () => {
@@ -124,7 +124,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     });
 
   // -----------------------------------------
-  // Añadir al DOM con inserción "antes/después"
+  // Añadir al DOM con inserción 'antes/después'
   if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
     // En el contenedor de edición
     if (posicion === 'antes') {
@@ -142,7 +142,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     if (tarjetaRef.classList.contains('tarjeta-texto')) {
       vistaRef = previsualizacion.querySelector(`#preview-texto-${idRef}`);
     } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      vistaRef = previsualizacion.querySelector(`.previsualizacion-grafica[id="${idRef}"]`);
+      vistaRef = previsualizacion.querySelector(`.previsualizacion-grafica[id='${idRef}']`);
     }
     
     if (vistaRef) {
@@ -174,35 +174,35 @@ function crearCuadroFormulas(columnas) {
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
 
-  cuadroFormulas.innerHTML = `<div class="titulo-formulas">
-              <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" />
-              <p class="texto">Fórmulas</p>
+  cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
+              <img class='flecha-atras' src='../utils/iconos/FlechaAtras.svg' />
+              <p class='texto'>Fórmulas</p>
           </div>
-          <div class="seccion-formulas">
-              <div class="opciones-seccion">
+          <div class='seccion-formulas'>
+              <div class='opciones-seccion'>
                   <p>Parámetros</p>
-                  <div class="opciones-carta">
+                  <div class='opciones-carta'>
                   </div>
               </div>
-              <div class="opciones-seccion">
-                  <div class="titulo-aplicar-formulas">
+              <div class='opciones-seccion'>
+                  <div class='titulo-aplicar-formulas'>
                       <p>Aplicar Fórmula</p>
-                      <img class="circulo-ayuda" src="../utils/iconos/circulo-ayuda.svg" />
+                      <img class='circulo-ayuda' src='../utils/iconos/circulo-ayuda.svg' />
                   </div>
-                  <div class="opciones-carta">
-                      <input class="search-section" placeholder="Encuentra una fórmula">
-                      <div class="contenedor-busqueda">
-                          <div class="formula">
+                  <div class='opciones-carta'>
+                      <input class='search-section' placeholder='Encuentra una fórmula'>
+                      <div class='contenedor-busqueda'>
+                          <div class='formula'>
                               f(y): y + k
                           </div>
-                          <div class="formula">
+                          <div class='formula'>
                               f(y): 2x
                           </div>
-                          <div class="formula">
+                          <div class='formula'>
                               f(y): y + k
                           </div>
                       </div>
-                      <div class="boton-agregar">
+                      <div class='boton-agregar'>
                           <div >Aplicar Fórmula</div>
                       </div>
                   </div>
@@ -267,7 +267,7 @@ function encontrarGrafica(id) {
     return null;
   }
   
-  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll(".previsualizacion-grafica"));
+  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
   return graficasExistentes.find(grafica => grafica.id == id) || null;
 }
 
