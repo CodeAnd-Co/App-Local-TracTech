@@ -129,6 +129,7 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+  cursor: pointer;
 }
 .texto-cargar {
   color: var(--blanco, #ffffff);
@@ -164,6 +165,7 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+  cursor: pointer;
 }
 .texto-avanzar {
   color: var(--blanco, #ffffff);

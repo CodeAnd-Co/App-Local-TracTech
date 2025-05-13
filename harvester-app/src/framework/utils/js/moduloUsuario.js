@@ -25,38 +25,42 @@ let moduloGestionDeUsuariosIniciado = false;
  * @returns {void}
  */
 function inicializarModuloUsuario() {
-  const botonGestion = document.querySelector('#botonGestion');
-  if (botonGestion) {
-    botonGestion.addEventListener('click', async () => {
-      localStorage.setItem('seccion-activa', 'gestionUsuarios');
-      const ventanaPrincipal = document.getElementById('ventana-principal');
-      if (!ventanaPrincipal) return;
+  actualizarNombreUsuario();
+  if (verificarPermisos(PERMISOS.ADMIN)){
+    const botonGestion = document.querySelector('#botonGestion');
+    botonGestion.style.display = 'flex';
+    if (botonGestion) {
+      botonGestion.addEventListener('click', async () => {
+        localStorage.setItem('seccion-activa', 'gestionUsuarios');
+        const ventanaPrincipal = document.getElementById('ventana-principal');
+        if (!ventanaPrincipal) return;
 
-      try {
-        // Carga el HTML del módulo de gestión de usuarios
-        const html = await fetch('../vistas/moduloGestionUsuarios.html')
-        .then(response => response.text());
-        ventanaPrincipal.innerHTML = html;
+        try {
+          // Carga el HTML del módulo de gestión de usuarios
+          const html = await fetch('../vistas/moduloGestionUsuarios.html')
+          .then(response => response.text());
+          ventanaPrincipal.innerHTML = html;
 
-        // Añade el script de gestión de usuarios al HTML la primera vez
-        if (!moduloGestionDeUsuariosIniciado) {
-          moduloGestionDeUsuariosIniciado = true;
+          // Añade el script de gestión de usuarios al HTML la primera vez
+          if (!moduloGestionDeUsuariosIniciado) {
+            moduloGestionDeUsuariosIniciado = true;
 
-          const cargadorGestionUsuarios = document.createElement('script');
-          cargadorGestionUsuarios.src = '../utils/js/moduloGestionUsuario.js';
-          document.body.appendChild(cargadorGestionUsuarios);
+            const cargadorGestionUsuarios = document.createElement('script');
+            cargadorGestionUsuarios.src = '../utils/js/moduloGestionUsuario.js';
+            document.body.appendChild(cargadorGestionUsuarios);
 
-          cargadorGestionUsuarios.onload = () => {
+            cargadorGestionUsuarios.onload = () => {
+              window.inicializarModuloGestionUsuarios?.();
+            };
+          } else {
             window.inicializarModuloGestionUsuarios?.();
-          };
-        } else {
-          window.inicializarModuloGestionUsuarios?.();
-        }
+          }
 
-      } catch (error) {
-        console.error('Error cargando módulo de gestión de usuarios:', error);
-      }
-    });
+        } catch (error) {
+          console.error('Error cargando módulo de gestión de usuarios:', error);
+        }
+      });
+    }
   } else {
     console.warn('No se encontró el botón #botonGestion en el DOM.');
   }
@@ -79,6 +83,7 @@ function inicializarModuloUsuario() {
 
         if (respuesta.ok) {
           localStorage.removeItem('token');
+          localStorage.removeItem('nombreUsuario');
           window.location.href = './inicioSesion.html';
         } else {
           throw new Error('La respuesta del servidor no fue exitosa');
@@ -99,6 +104,28 @@ function inicializarModuloUsuario() {
     });
   } else {
     console.warn('No se encontró el botón .boton-cerrar-sesion en el DOM.');
+  }
+}
+
+/**
+ * Actualiza el texto del div 'texto-usuario' con el nombre del usuario
+ * que está almacenado en localStorage bajo la clave 'nombreUsuario'
+ * 
+ * @function actualizarNombreUsuario
+ * @returns {void}
+ */
+function actualizarNombreUsuario() {
+  const elementoTextoUsuario = document.querySelector('.texto-usuario');
+  if (elementoTextoUsuario) {
+    const nombreUsuario = localStorage.getItem('nombreUsuario');
+    if (nombreUsuario) {
+      elementoTextoUsuario.textContent = nombreUsuario;
+    } else {
+      // Si no hay nombre de usuario, mantener el valor predeterminado o mostrar un mensaje alternativo
+      console.warn('No se encontró el nombre de usuario en localStorage');
+    }
+  } else {
+    console.warn('No se encontró el elemento .texto-usuario en el DOM');
   }
 }
 

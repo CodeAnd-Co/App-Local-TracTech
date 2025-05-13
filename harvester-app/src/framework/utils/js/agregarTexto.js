@@ -4,8 +4,8 @@
  * @description Proporciona la funcionalidad para añadir tarjetas de texto editables
  *              y sus previsualizaciones en el módulo de análisis, con opción de
  *              insertar antes o después de una tarjeta existente.
- * @version 1.1
- * @date 2025-05-06
+ * @version 1.2
+ * @date 2025-05-13
  */
 
 /**
@@ -72,7 +72,16 @@ function agregarTexto(
       </select>
       <img class='type' src='../utils/iconos/Texto.svg' alt='Icono Texto' />
     </div>
-    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...'></textarea>
+    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength="500"></textarea>
+    <style>
+      .contador-caracteres {
+        font-size: 12px;
+        text-align: right;
+        color: #7f8c8d;
+        margin: 4px 0;
+        padding-right: 4px;
+      }
+    </style>
     <div class='botones-editar-eliminar'>
       <div class='eliminar'>
         <img class='eliminar-icono' src='../utils/iconos/Basura.svg' alt='Eliminar' />
@@ -141,8 +150,23 @@ function agregarTexto(
     vistaPrevia.innerHTML = '';
     const texto = areaEscritura.value.split('\n');
     texto.forEach((linea) => { 
-      vistaPrevia.innerHTML += `<p>${linea}</p>`;
+      const parrafo = document.createElement('p');
+      parrafo.textContent = linea;
+      
+      // Aplicar estilos directamente al párrafo para garantizar el ajuste de texto
+      parrafo.style.maxWidth = '100%';
+      parrafo.style.wordWrap = 'break-word';
+      parrafo.style.overflowWrap = 'break-word';
+      parrafo.style.whiteSpace = 'normal';
+      
+      vistaPrevia.appendChild(parrafo);
     })
+    
+    // Aplicar estilos directamente al contenedor
+    vistaPrevia.style.maxWidth = '100%';
+    vistaPrevia.style.wordWrap = 'break-word';
+    vistaPrevia.style.overflowWrap = 'break-word';
+    vistaPrevia.style.whiteSpace = 'normal';
     
     vistaPrevia.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
     vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
@@ -150,7 +174,32 @@ function agregarTexto(
 
   // 6) Listeners de interacción
   selectorTipo.addEventListener('change', actualizarVistaPrevia);
-  areaEscritura.addEventListener('input',  actualizarVistaPrevia);
+  areaEscritura.addEventListener('input', () => {
+    actualizarVistaPrevia();
+    
+    // Mostrar contador de caracteres restantes
+    const caracteresUsados = areaEscritura.value.length;
+    const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
+    const caracteresRestantes = limite - caracteresUsados;
+    
+    // Verificar si ya existe un contador
+    let contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
+    if (!contadorCaracteres) {
+      contadorCaracteres = document.createElement('div');
+      contadorCaracteres.className = 'contador-caracteres';
+      tarjetaTexto.insertBefore(contadorCaracteres, tarjetaTexto.querySelector('.botones-editar-eliminar'));
+    }
+    
+    // Actualizar el texto del contador
+    contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
+    
+    // Cambiar color si queda poco espacio
+    if (caracteresRestantes < 50) {
+      contadorCaracteres.style.color = '#e74c3c';
+    } else {
+      contadorCaracteres.style.color = '#7f8c8d';
+    }
+  });
 
   botonAlinear.addEventListener('click', () => {
     const alineaciones = ['left', 'center', 'justify', 'right'];

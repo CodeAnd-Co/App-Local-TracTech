@@ -234,7 +234,6 @@ function descargarPDF() {
   const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
   const anchoPagina = documentoPDF.internal.pageSize.getWidth() - margen * 2;
-  console.log(anchoPagina, documentoPDF.internal.pageSize.getWidth())
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
   let posicionY      = margen;
 
@@ -252,9 +251,6 @@ function descargarPDF() {
   // Recorrer cada elemento y añadirlo al PDF según su tipo
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
-      console.log(elemento.children)
-      console.log(elemento.classList)
-
       let tamanoFuente = 12;
       let estiloFuente = 'normal';
       let espaciado     = 11;
@@ -265,15 +261,7 @@ function descargarPDF() {
       documentoPDF.setFont(undefined, estiloFuente);
 
       Array.from(elemento.children).forEach((elementoSecundario) => {
-        
-        let texto = undefined;
-        console.log(!texto)
-        if (elementoSecundario.nodeName === 'BR') {
-          texto = '\n';
-        } else if (elementoSecundario.nodeName === 'P') {
-          texto = elementoSecundario.textContent
-        }
-        
+        const texto = elementoSecundario.textContent;
         if (!texto) return;
 
         const lineas = documentoPDF.splitTextToSize(texto, anchoPagina);
@@ -286,25 +274,30 @@ function descargarPDF() {
         documentoPDF.text(lineas, margen, posicionY);
         
         posicionY += lineas.length * tamanoFuente + espaciado + 12;
-
       })
 
     } else if (elemento.classList.contains('previsualizacion-grafica')) {
-      // Gráfica: convertir canvas a imagen y escalar manteniendo proporción
-      const lienzo     = elemento.querySelector('canvas');
+
+      const lienzo = elemento.querySelector('canvas');
       if (!lienzo) return;
 
       const imagen     = lienzo.toDataURL('image/png');
       const proporcion = lienzo.height / lienzo.width;
       const altoImagen = anchoPagina * proporcion;
+      const espaciado = 15;
+      const anchoFondo = 520;
+      const altoFondo = 265 + espaciado;
+      const radioFondo = 6;
 
       if (posicionY + altoImagen > altoPagina + margen) {
         documentoPDF.addPage();
         posicionY = margen;
       }
 
-      documentoPDF.addImage(imagen, 'PNG', margen, posicionY, anchoPagina, altoImagen);
-      posicionY += altoImagen + 12;
+      documentoPDF.setFillColor(224, 224, 224);
+      documentoPDF.roundedRect(margen - 2, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
+      documentoPDF.addImage(imagen, 'PNG', margen, posicionY + espaciado, anchoPagina, altoImagen);
+      posicionY += altoFondo + 35;
     }
   });
 

@@ -353,9 +353,9 @@ function crearGrafica(contexto, tipo, color) {
       },
       scales: {
         /* eslint-disable id-length */
-        x: { ticks: { color: '#fff' }, grid: { color: '#fff' } },
+        x: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } },
         /* eslint-disable id-length */
-        y: { ticks: { color: '#fff' }, grid: { color: '#fff' } }
+        y: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } }
          
       }
     }
