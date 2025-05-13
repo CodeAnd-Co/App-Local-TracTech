@@ -89,6 +89,13 @@ function inicializarBarraLateral() {
   const barraLateralExpandida = document.getElementById('barraLateralExpandida');
   const barraLateralColapsada = document.getElementById('barraLateralColapsada');
 
+  // Actualizar el nombre del usuario en la barra lateral
+  const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Nombre Usuario';
+  const elementosNombreUsuario = document.querySelectorAll('.sidebar-inferior .boton-sidebar[data-seccion="usuario"] span');
+  elementosNombreUsuario.forEach(elemento => {
+    elemento.textContent = nombreUsuario;
+  });
+
   if (botonColapsar && botonExpandir && barraLateralExpandida && barraLateralColapsada) {
     botonColapsar.addEventListener('click', () => {
       barraLateralExpandida.style.display = 'none';

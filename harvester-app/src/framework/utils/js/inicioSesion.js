@@ -39,7 +39,8 @@ async function manejarInicioSesion() {
       const resultado = await verificarPermisos(respuesta.token);
       const listaPermisos = resultado.permisos || [];
       localStorage.setItem('permisos', JSON.stringify(listaPermisos));
-
+      const usuario = resultado.usuario;
+      localStorage.setItem('nombreUsuario', usuario);
       // Redirigir al usuario a la página principal
       window.location.href = './frameLayout.html';
 

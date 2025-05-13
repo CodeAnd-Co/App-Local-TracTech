@@ -12,7 +12,7 @@ body,
 .frame-analisis,
 .frame-analisis * {
   box-sizing: border-box;
-  font-family: var(--font-base, "Inter", sans-serif) !important;
+  font-family: var(--font-base, 'Inter', sans-serif) !important;
 }
 .frame-analisis {
   height: 90vh;
@@ -49,7 +49,7 @@ body,
 .boton-agregar {
   background-color: #a61930;
   color: #ffffff;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 16px;
   padding: 10px 20px;
   border: none;
@@ -97,18 +97,8 @@ body,
   overflow: auto;
   align-items: center;
 }
-.previsualizacion-gr-fica {
-  color: #000000;
-  text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 52px;
-  line-height: 100%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-}
 .previsualizacion-grafica {
-  background: #9e9e9e;
+  background: #E0E0E0;
   border-radius: 8px;
   display: flex;
   flex-direction: row;
@@ -116,9 +106,10 @@ body,
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 750px;
-  height: 396px;
+  width: 645px;
   position: relative;
+  height: 340px;
+  padding: 10px 10px;
 }
 .bar-chart {
   flex-shrink: 0;
@@ -154,7 +145,7 @@ body,
   position: relative;
   color: var(--negro, #000000);
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -171,7 +162,7 @@ body,
 }
 .titulo-grafica::placeholder {
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -184,7 +175,7 @@ body,
 .nombre-del-texto {
   color: var(--negro, #000000);
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -211,7 +202,7 @@ body,
   flex-shrink: 0;
   position: relative;
   color: #ffffff;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -265,7 +256,7 @@ body,
 .texto-eliminar {
   color: var(--blanco, #ffffff);
   text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 112%;
   letter-spacing: -0.02em;
@@ -291,7 +282,7 @@ body,
   resize: none;
   padding: 12px;
   font-size: 16px;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   border-radius: 8px;
   border: 1px solid #ccc;
   resize: vertical;
@@ -313,7 +304,7 @@ body,
   background-color: transparent;
   border: none;
   padding: 8px 32px 8px 12px;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   color: #000;
   border-radius: 8px;
@@ -323,7 +314,7 @@ body,
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 .titulo-texto::after {
-  content: "";
+  content: '';
   position: absolute;
   right: 20px;
   top: 50%;
@@ -401,41 +392,42 @@ body,
   transform: translateX(2px);
 }
 .previsualizacion-texto {
+  font-family: 'SegoeUi-Regular', sans-serif;
   background: transparent !important;
   border-radius: none !important;
   padding: 6px;
-  margin-bottom: var(--spacing-md);
   width:100% ; 
   box-sizing: border-box;
   height: auto;
   width: auto;
   max-width: 100%;
   max-height: 100%;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  word-break: break-all;
 }
+
 .preview-titulo {
   font-size: 24px;
   font-weight: 700;
+}
+
+.preview-titulo > p {
+  margin-bottom: 22px;
 }
 .preview-subtitulo {
   font-size: 20px;
   font-weight: 700;
 }
+
+.preview-subtitulo > p {
+  margin-bottom: 19px;
+}
 .preview-contenido {
   font-size: 16px;
   font-weight: 400;
 }
-.previsualizacion-texto {
-  font-family: "SegoeUi-Regular", sans-serif;
+.preview-contenido > p {
+  margin-bottom: 15px;
 }
-.previsualizacion-texto {
-  white-space: pre-wrap;       
-  word-wrap: break-word;      
-  overflow-wrap: break-word;   
-}
+
 .seccion-previsualizacion-grafica {
   flex: 1;            /* crece para llenar */
   height: 100%;       /* completa el alto de .frame-analisis */
@@ -462,6 +454,7 @@ body,
   text-align: center;
 }
 .contenedor-elementos-previsualizacion {
+  width: 645px;
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-md);
@@ -514,7 +507,7 @@ body,
 }
 .alinear .texto-editar {
   color: var(--blanco, #ffffff);
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 112%;
   letter-spacing: -0.02em;
@@ -592,7 +585,7 @@ body,
 .titulo-formulas > p {
   color: #000000;
   text-align: left;
-  font-family: "Inter-Regular", sans-serif;
+  font-family: 'Inter-Regular', sans-serif;
   font-size: 24px;
   line-height: 100%;
   font-weight: 400;
@@ -638,7 +631,7 @@ body,
 .opciones-seccion > p{
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 32px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -674,7 +667,7 @@ body,
 .opcion-letra {
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -697,7 +690,7 @@ body,
 .opcion-texto {
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -730,7 +723,7 @@ body,
 .titulo-aplicar-formulas > p{
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 32px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -767,7 +760,7 @@ body,
   position: relative;
   color: var(--negro, #000000);
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -799,7 +792,7 @@ body,
   position: relative;
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;

@@ -6,6 +6,13 @@
  * @since 2025-04-28
  */
 
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+const { jsPDF: JSPDF } = window.jspdf;
+if (typeof Swal === 'undefined'){
+  const Swal = require('sweetalert2');
+}
+
 /**
  * Inicializa la interfaz de análisis:
  * - Actualiza el estado de los botones del sidebar y topbar.
@@ -89,59 +96,80 @@ function cargarDatosExcel() {
  * @returns {void}
  */
 function descargarPDF() {
-  const { JSPDF } = window.jspdf || {};
-  if (!JSPDF) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    Swal.fire({
+        title: 'Error al descargar reporte',
+        text: 'Ha courrido un error, contacta a soporte',
+        icon: 'error'
+    });
     throw new Error('[PDF] jsPDF no cargado');
   }
 
   const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
-  const anchoPagina  = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
+  const anchoPagina = documentoPDF.internal.pageSize.getWidth() - margen * 2;
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
   let posicionY      = margen;
 
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
+    Swal.fire({
+        title: 'Error al descargar reporte',
+        text: 'No se encontró el contenedor de previsualización',
+        icon: 'warning'
+    });
     throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
 
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
-      const texto = elemento.textContent.trim();
-      if (!texto) return;
-
       let tamanoFuente = 12;
       let estiloFuente = 'normal';
-      if (elemento.classList.contains('preview-titulo'))    { tamanoFuente = 24; estiloFuente = 'bold'; }
-      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 18; estiloFuente = 'bold'; }
+      let espaciado     = 11;
+      if (elemento.classList.contains('preview-titulo'))    { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 14; }
+      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 16; }
 
       documentoPDF.setFontSize(tamanoFuente);
       documentoPDF.setFont(undefined, estiloFuente);
-      const lineas = documentoPDF.splitTextToSize(texto, anchoPagina);
 
-      if (posicionY + lineas.length * tamanoFuente > altoPagina + margen) {
-        documentoPDF.addPage();
-        posicionY = margen;
-      }
+      Array.from(elemento.children).forEach((elementoSecundario) => {
+        const texto = elementoSecundario.textContent;
+        if (!texto) return;
 
-      documentoPDF.text(lineas, margen, posicionY);
-      posicionY += lineas.length * tamanoFuente + 12;
+        const lineas = documentoPDF.splitTextToSize(texto, anchoPagina);
+
+        if (posicionY + lineas.length * tamanoFuente + espaciado > altoPagina + margen) {
+          documentoPDF.addPage();
+          posicionY = margen;
+        }
+
+        documentoPDF.text(lineas, margen, posicionY);
+        
+        posicionY += lineas.length * tamanoFuente + espaciado + 12;
+      })
 
     } else if (elemento.classList.contains('previsualizacion-grafica')) {
+
       const lienzo = elemento.querySelector('canvas');
       if (!lienzo) return;
 
       const imagen     = lienzo.toDataURL('image/png');
       const proporcion = lienzo.height / lienzo.width;
       const altoImagen = anchoPagina * proporcion;
+      const espaciado = 15;
+      const anchoFondo = 520;
+      const altoFondo = 265 + espaciado;
+      const radioFondo = 6;
 
       if (posicionY + altoImagen > altoPagina + margen) {
         documentoPDF.addPage();
         posicionY = margen;
       }
 
-      documentoPDF.addImage(imagen, 'PNG', margen, posicionY, anchoPagina, altoImagen);
-      posicionY += altoImagen + 12;
+      documentoPDF.setFillColor(224, 224, 224);
+      documentoPDF.roundedRect(margen - 2, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
+      documentoPDF.addImage(imagen, 'PNG', margen, posicionY + espaciado, anchoPagina, altoImagen);
+      posicionY += altoFondo + 35;
     }
   });
 
