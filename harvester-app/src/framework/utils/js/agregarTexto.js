@@ -35,8 +35,8 @@ function agregarTexto(
     const divisor       = tarjeta.querySelector('.divisor');
     const contenedorBotones = tarjeta.querySelector('.botones-editar-eliminar');
 
-    const soloUnaTexto   = tarjetasTexto.length == 1;
-    const soloUnaGrafica = tarjetasGrafica.length == 1;
+    const soloUnaGrafica = tarjetasGrafica.length <= 1;
+    const soloUnaTexto   = tarjetasTexto.length <= 1;
 
     if (soloUnaTexto && soloUnaGrafica) {
       if (botonEliminar) botonEliminar.style.display = 'none';
