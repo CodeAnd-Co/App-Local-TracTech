@@ -25,6 +25,33 @@ function agregarTexto(
 ) {
   const contenedor        = document.getElementById(idContenedor);
   const contenedorPrevia  = document.getElementById(idContenedorVistaPrevia);
+  const observer = new MutationObserver(() => {
+  const tarjetasTexto    = contenedor.querySelectorAll('.tarjeta-texto');
+  const tarjetasGrafica  = contenedor.querySelectorAll('.tarjeta-grafica'); // Asegúrate de usar esta clase en tus gráficas
+  const tarjetasTotales  = [...tarjetasTexto, ...tarjetasGrafica];
+
+  tarjetasTotales.forEach(tarjeta => {
+    const botonEliminar = tarjeta.querySelector('.eliminar');
+    const divisor       = tarjeta.querySelector('.divisor');
+    const contenedorBotones = tarjeta.querySelector('.botones-editar-eliminar');
+
+    const soloUnaTexto   = tarjetasTexto.length == 1;
+    const soloUnaGrafica = tarjetasGrafica.length == 1;
+
+    if (soloUnaTexto && soloUnaGrafica) {
+      if (botonEliminar) botonEliminar.style.display = 'none';
+      if (divisor) divisor.style.display = 'none';
+      if (contenedorBotones) contenedorBotones.style.justifyContent = 'center';
+    } else {
+      if (botonEliminar) botonEliminar.style.display = 'flex';
+      if (divisor) divisor.style.display = 'block';
+      if (contenedorBotones) contenedorBotones.style.justifyContent = 'space-between';
+    }
+  });
+});
+
+  observer.observe(contenedor, { childList: true, subtree: true });
+
 
   // 1) Calcular nuevo ID de tarjeta
   const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
