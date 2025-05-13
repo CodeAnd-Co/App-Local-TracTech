@@ -76,7 +76,7 @@ async function renderizarFormulas() {
                     <img class='editar-icono' src='../utils/iconos/Editar.svg' />
                 </button>
                 <button class='eliminar' data-id='${formula.idFormula}'>
-                    <img class='eliminar-icono' src='../utils/iconos/Basura.svg' />
+                    <img class='eliminar-icono' src='../utils/iconos/BasuraBlanca.svg' />
                 </button>
                 </div>
             `;
