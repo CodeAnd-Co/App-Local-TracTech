@@ -44,10 +44,10 @@ body, html {
   flex: 1;
   overflow-y: auto;
   padding: 30px;
+  padding-top: 60px;
   display: flex;
   flex-direction: column;
   gap: 25px;
-  justify-content: center;
   align-items: center;         /* Centra horizontalmente */
 }
 
