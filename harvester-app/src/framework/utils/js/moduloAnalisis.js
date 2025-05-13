@@ -155,7 +155,14 @@ function descargarPDF() {
 
       const imagen     = lienzo.toDataURL('image/png');
       const proporcion = lienzo.height / lienzo.width;
-      const altoImagen = anchoPagina * proporcion;
+      let anchoImagen = anchoPagina;
+      let altoImagen = anchoPagina * proporcion;
+      let desplazamiento = 0;
+      if (proporcion == 1) {
+        anchoImagen /= 2
+        altoImagen /= 2;
+        desplazamiento = anchoImagen / 2
+      }
       const espaciado = 15;
       const anchoFondo = 520;
       const altoFondo = 265 + espaciado;
@@ -168,7 +175,7 @@ function descargarPDF() {
 
       documentoPDF.setFillColor(224, 224, 224);
       documentoPDF.roundedRect(margen - 2, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
-      documentoPDF.addImage(imagen, 'PNG', margen, posicionY + espaciado, anchoPagina, altoImagen);
+      documentoPDF.addImage(imagen, 'PNG', margen + desplazamiento, posicionY + espaciado, anchoImagen, altoImagen);
       posicionY += altoFondo + 35;
     }
   });
