@@ -3,10 +3,8 @@ const { eliminarFormula } = require('../../../backend/casosUso/formulas/eliminar
 
 /* eslint-disable no-undef */
 
-/* eslint-disable-next-line */
-async function manejarEliminarFormula() {
-    const id = document.querySelector('#id').value; // Obtener el ID de la fórmula a eliminar
-
+ 
+async function manejarEliminarFormula(id) {
     if (!id) {
         Swal.fire({
             title: 'Campo faltante',
@@ -25,6 +23,7 @@ async function manejarEliminarFormula() {
                 text: 'La fórmula ha sido eliminada exitosamente.',
                 icon: 'success'
             });
+            return respuesta;
         } else {
             Swal.fire({
                 title: 'Error',
@@ -41,3 +40,7 @@ async function manejarEliminarFormula() {
         });
     }
 }
+
+module.exports = {
+    manejarEliminarFormula
+};
