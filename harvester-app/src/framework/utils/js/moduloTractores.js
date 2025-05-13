@@ -1,8 +1,8 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
 // RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
-const { seleccionaDatosAComparar } = require('../../backend/casosUso/excel/seleccionaDatosAComparar');
 let tractoresSeleccionados = {};
+const { seleccionaDatosAComparar } = require('../../backend/casosUso/excel/seleccionaDatosAComparar.js');
 
 /**
  * Inicializa el módulo de tractores configurando los elementos del DOM y 
