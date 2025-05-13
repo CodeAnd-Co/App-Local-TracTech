@@ -7,7 +7,6 @@
  */
 
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 const { jsPDF: JSPDF } = window.jspdf;
 if (typeof Swal === 'undefined'){
   const Swal = require('sweetalert2');
