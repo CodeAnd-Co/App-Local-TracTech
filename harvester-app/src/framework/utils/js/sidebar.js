@@ -15,21 +15,31 @@ function cargarModulo(seccion) {
     formulas:        '../vistas/moduloFormulas.html',
     envios:          '../vistas/moduloEnvios.html',
     usuario:         '../vistas/moduloUsuario.html',
-    gestionUsuarios: '../vistas/moduloGestionUsuarios.html'
+    gestionUsuarios: '../vistas/moduloGestionUsuarios.html',
+    tractores:  '../vistas/moduloTractores.html'
   };
 
   const contenedorVentanaPrincipal = document.querySelector('.ventana-principal');
 
   if (contenedorVentanaPrincipal && rutasModulo[seccion]) {
+    // Guardar la vista actual una la pila antes de cambiar
+    const pila = JSON.parse(localStorage.getItem('vistaPila') || '[]');
+    const vistaActual = localStorage.getItem('seccion-activa');
+    if (vistaActual) {
+      // Agregar la vista actual en la pila y guardarla en localStorage
+      pila.push(vistaActual);
+      localStorage.setItem('vistaPila', JSON.stringify(pila));
+    }
     fetch(rutasModulo[seccion])
       .then(respuesta => respuesta.text())
       .then(html => {
         contenedorVentanaPrincipal.innerHTML = html;
+        actualizarBarraSuperior(seccion);
         
         // Inicializar el módulo según la sección
         if (seccion === 'inicio') {
           if (window.botonCargar)    window.botonCargar();
-          if (window.botonAnalisis)  window.botonAnalisis();
+          if (window.botonTractores)  window.botonTractores();
           if (window.botonBorrar)    window.botonBorrar();
         } else if (seccion === 'analisis') {
             if (window.cargarDatosExcel)           window.cargarDatosExcel();
@@ -39,9 +49,11 @@ function cargarModulo(seccion) {
         } else if (seccion === 'usuario') {
             if (window.inicializarModuloUsuario)    window.inicializarModuloUsuario();
         } else if (seccion ==='formulas'){
-          if (window.inicializarCrearFormula) window.inicializarCrearFormula();
-        }
+          if (window.inicializarModuloFormulas) window.inicializarModuloFormulas();
+        } else if (seccion === 'tractores') {
+          if (window.inicializarModuloTractores) window.inicializarModuloTractores();
         // Añadir más inicializaciones para otros módulos según sea necesario
+        }
       })
       .catch(error => {
         console.error('Error al cargar el módulo:', error);
@@ -61,7 +73,8 @@ const infoBarraSuperior = {
   formulas:        { titulo: 'Fórmulas',   icono: '../utils/iconos/Funcion.svg' },
   envios:          { titulo: 'Envíos',     icono: '../utils/iconos/Correo.svg' },
   usuario:         { titulo: 'Usuario',    icono: '../utils/iconos/Usuario.svg' },
-  gestionUsuarios: { titulo: 'Usuario',    icono: '../utils/iconos/Usuario.svg' }
+  gestionUsuarios: { titulo: 'Usuario',    icono: '../utils/iconos/Usuario.svg' },
+  tractores:   { titulo: 'Tractores',    icono: '../utils/iconos/GraficaBarras.svg' }
 };
 
 /**
@@ -158,9 +171,9 @@ function aplicarActivoDesdeAlmacenamiento() {
  * @returns {void}
  */
 function actualizarBarraSuperior(seccion) {
-  const elementoTituloBarraSuperior = document.getElementById('topbar-titulo');
-  const elementoIconoBarraSuperior  = document.getElementById('topbar-icono');
-  const botonRegresar               = document.getElementById('btn-regresar');
+  const elementoTituloBarraSuperior = document.getElementById('tituloBarraSuperior');
+  const elementoIconoBarraSuperior  = document.getElementById('iconoBarraSuperior');
+  const botonRegresar               = document.getElementById('botonRegresar');
 
   if (!elementoTituloBarraSuperior || !elementoIconoBarraSuperior || !infoBarraSuperior[seccion]) {
     return;
@@ -178,6 +191,16 @@ function actualizarBarraSuperior(seccion) {
   } else {
     botonRegresar.style.display                  = 'flex';
     elementoTituloBarraSuperior.style.marginLeft = '10px';
+    botonRegresar.onclick = () => {
+      const pila = JSON.parse(localStorage.getItem('vistaPila') || '[]');
+      if (pila.length > 0) {
+        // Sacar la última vista, guardar la pila actualizada y estableces la vista anterior como activa
+        const vistaAnterior = pila.pop();
+        localStorage.setItem('vistaPila', JSON.stringify(pila));
+        localStorage.setItem('seccion-activa', vistaAnterior);
+        cargarModulo(vistaAnterior);
+      }
+    };    
   }
 }
 

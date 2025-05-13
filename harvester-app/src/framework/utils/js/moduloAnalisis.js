@@ -5,6 +5,14 @@
  * @version 1.0
  * @since 2025-04-28
  */
+
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+const { jsPDF: JSPDF } = window.jspdf;
+if (typeof Swal === 'undefined'){
+  const Swal = require('sweetalert2');
+}
+
 /**
  * Inicializa la interfaz de análisis:
  * - Oculta los botones globales.
@@ -212,9 +220,12 @@ function cargarDatosExcel() {
  * @throws {Error} Si jsPDF no está cargado o falla la extracción de previsualización.
  */
 function descargarPDF() {
-  // Obtener constructor de jsPDF
-  const { jsPDF } = window.jspdf || {};
-  if (!jsPDF) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    Swal.fire({
+        title: 'Error al descargar reporte',
+        text: 'Ha courrido un error, contacta a soporte',
+        icon: 'error'
+    });
     throw new Error('[PDF] jsPDF no cargado');
   }
 
@@ -222,41 +233,61 @@ function descargarPDF() {
   /* eslint-disable new-cap */
   const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
-  const anchoPagina  = documentoPDF.internal.pageSize.getWidth()  - margen * 2;
+  const anchoPagina = documentoPDF.internal.pageSize.getWidth() - margen * 2;
+  console.log(anchoPagina, documentoPDF.internal.pageSize.getWidth())
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
   let posicionY      = margen;
 
   // Obtener contenedor de previsualización de texto y gráficas
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
+    Swal.fire({
+        title: 'Error al descargar reporte',
+        text: 'No se encontró el contenedor de previsualización',
+        icon: 'warning'
+    });
     throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
 
   // Recorrer cada elemento y añadirlo al PDF según su tipo
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
-      // Texto: ajustar tamaño de fuente y dividir en líneas
-      const texto = elemento.textContent.trim();
-      if (!texto) return;
+      console.log(elemento.children)
+      console.log(elemento.classList)
 
       let tamanoFuente = 12;
       let estiloFuente = 'normal';
-      if (elemento.classList.contains('preview-titulo'))    { tamanoFuente = 24; estiloFuente = 'bold'; }
-      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 18; estiloFuente = 'bold'; }
+      let espaciado     = 11;
+      if (elemento.classList.contains('preview-titulo'))    { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 14; }
+      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 16; }
 
       documentoPDF.setFontSize(tamanoFuente);
       documentoPDF.setFont(undefined, estiloFuente);
-      const lineas = documentoPDF.splitTextToSize(texto, anchoPagina);
 
-      // Nueva página si se excede el alto disponible
-      if (posicionY + lineas.length * tamanoFuente > altoPagina + margen) {
-        documentoPDF.addPage();
-        posicionY = margen;
-      }
+      Array.from(elemento.children).forEach((elementoSecundario) => {
+        
+        let texto = undefined;
+        console.log(!texto)
+        if (elementoSecundario.nodeName === 'BR') {
+          texto = '\n';
+        } else if (elementoSecundario.nodeName === 'P') {
+          texto = elementoSecundario.textContent
+        }
+        
+        if (!texto) return;
 
-      // Añadir texto al documento
-      documentoPDF.text(lineas, margen, posicionY);
-      posicionY += lineas.length * tamanoFuente + 12;
+        const lineas = documentoPDF.splitTextToSize(texto, anchoPagina);
+
+        if (posicionY + lineas.length * tamanoFuente + espaciado > altoPagina + margen) {
+          documentoPDF.addPage();
+          posicionY = margen;
+        }
+
+        documentoPDF.text(lineas, margen, posicionY);
+        
+        posicionY += lineas.length * tamanoFuente + espaciado + 12;
+
+      })
 
     } else if (elemento.classList.contains('previsualizacion-grafica')) {
       // Gráfica: convertir canvas a imagen y escalar manteniendo proporción

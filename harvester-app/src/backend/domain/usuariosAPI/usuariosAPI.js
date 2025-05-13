@@ -10,7 +10,7 @@ const token = localStorage.getItem('token');
  * @throws {Error} Si hay un error en la comunicación con el servidor
  */
 async function obtenerUsuarios() {
-    const respuesta = await fetch('http://localhost:3000/usuarios/consultar-usuarios', {
+    const respuesta = await fetch('http://localhost:3000/usuarios/consultarUsuarios', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -35,8 +35,59 @@ async function obtenerUsuarios() {
  * @returns {Promise<{ok: boolean, mensaje?: string}>} Objeto con el estado de la operación y un posible mensaje del servidor.
  */
 async function eliminarUsuario(id) {
-    const respuesta = await fetch(`http://localhost:3000/usuarios/eliminar-usuario/${id}`, {
+    const respuesta = await fetch(`http://localhost:3000/usuarios/eliminarUsuario/${id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    
+    const datos = await respuesta.json();
+
+    return { ok: respuesta.ok, ...datos };
+}
+
+/**
+ * Crea un nuevo usuario enviando una solicitud POST al backend.
+ *
+ * Esta función es utilizada por el administrador para registrar usuarios nuevos en el sistema.
+ * Envia los datos al endpoint correspondiente, incluyendo autenticación con token.
+ *
+ * @async
+ * @function crearUsuarioAPI
+ * @param {object} datos - Objeto con los datos del usuario a crear.
+ * @param {string} datos.nombre - Nombre del nuevo usuario.
+ * @param {string} datos.correo - Correo electrónico del nuevo usuario.
+ * @param {string} datos.contrasenia - Contraseña del nuevo usuario.
+ * @param {number} datos.idRol_FK - ID del rol asignado al usuario.
+ * @returns {Promise<{ok: boolean, mensaje: string, id?: number}>} Resultado de la operación.
+ */
+async function crearUsuario(datos) {
+    const token = localStorage.getItem('token');
+
+    const respuesta = await fetch('http://localhost:3000/usuarios/crearUsuario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(datos),
+    });
+
+    const resultado = await respuesta.json();
+    return { ok: respuesta.ok, ...resultado };
+}
+
+/**
+ * Obtiene los roles disponibles para agregar a los nuevos usuarios
+ * @async
+ * @returns {Promise<Object>} Objeto con la propiedad 'ok' que indica si la petición fue exitosa y los datos de usuarios
+ * @throws {Error} Si hay un error en la comunicación con el servidor
+ */
+async function consultarRoles() {
+    const respuesta = await fetch('http://localhost:3000/usuarios/consultarRolesUsuarios', {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -51,4 +102,6 @@ async function eliminarUsuario(id) {
 module.exports = {
     obtenerUsuarios,
     eliminarUsuario,
+    crearUsuario,
+    consultarRoles
 };
