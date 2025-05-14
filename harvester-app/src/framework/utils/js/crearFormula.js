@@ -74,10 +74,10 @@ async function procesarFormula() {
     const nombreFormula = document.getElementById('nombreFormula').value;
     const formulasGuardadas = localStorage.getItem('nombresFormulas');
  
-    if (nombreFormula === '') {
+    if (nombreFormula === '' || nombreFormula.length >= 30) {
         Swal.fire({
             title: 'Error',
-            text: 'Verifica que la formula tenga un nombre válido.',
+            text: 'Verifica que la formula tenga un nombre válido y menor de 30 caracteres.',
             icon: 'error',
             confirmButtonColor: '#1F4281',
         });
@@ -131,6 +131,17 @@ async function procesarFormula() {
         btnGuardar.disabled = false;
         return;
         
+    }
+    if (cuadroTextoGenerado.length >= 512) {
+        Swal.fire({
+            title: 'Error',
+            text: 'La fórmula excede los 512 caracteres, no puede ser guardada.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
+        return;
     }
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     try{
