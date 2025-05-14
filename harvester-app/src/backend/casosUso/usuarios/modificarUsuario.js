@@ -14,9 +14,9 @@ const { modificarUsuario: modificarUsuarioAPI } = require('../../domain/usuarios
  * @returns {Promise<{ok: boolean, mensaje?: string}>}
  */
 
-async function modificarUsuario(idUsuario, nombre, correo, contrasenia) {
+async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
     try {
-        const respuesta = await modificarUsuarioAPI(idUsuario, nombre, correo, contrasenia);
+        const respuesta = await modificarUsuarioAPI(idUsuario, nombre, correo, contrasenia, idRol);
 
         if (!respuesta.ok) {
             throw new Error('Error al modificar el usuario');

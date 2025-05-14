@@ -334,6 +334,7 @@ function escucharEventoBotonesEditar(listaDeUsuarios) {
         boton.addEventListener('click', evento => {
             evento.preventDefault();
             modoEditar(boton.dataset.id);
+            cargarRoles();
         });
     });
 }
@@ -382,8 +383,12 @@ async function editarUsuario() {
     const contraseniaIngresada = document.getElementById('password').value.trim();
     const rolIngresado = document.getElementById('rol').value.trim();
 
+    const idRol = parseInt(rolIngresado.value, 10);
+
+    // TODO: Añadir validación de que campos se modificaron y cuales no
+
     try {
-        const resultado = await modificarUsuario(idUsuarioAEditar, nombreIngresado, correoIngresado, contraseniaIngresada);
+        const resultado = await modificarUsuario(idUsuarioAEditar, nombreIngresado, correoIngresado, contraseniaIngresada, idRol);
         if (resultado.ok) {
             Swal2.fire({
                 title: 'Usuario modificado',

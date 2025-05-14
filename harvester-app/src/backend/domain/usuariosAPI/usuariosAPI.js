@@ -40,7 +40,7 @@ async function obtenerUsuarios() {
  *
  * @throws {Error} Si ocurre un problema de red o el servidor no responde.
  */
-async function modificarUsuario(idUsuario, nombre, correo, contrasenia) {
+async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
     try {
         const respuesta = await fetch('http://localhost:3000/usuarios/modificarUsuario', {
             method: 'PUT',
@@ -48,7 +48,7 @@ async function modificarUsuario(idUsuario, nombre, correo, contrasenia) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify({ idUsuario, nombre, correo, contrasenia }),
+            body: JSON.stringify({ idUsuario, nombre, correo, contrasenia, idRol }),
         });
         
         const datos = await respuesta.json();
