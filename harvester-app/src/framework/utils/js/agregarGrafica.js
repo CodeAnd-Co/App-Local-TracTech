@@ -303,7 +303,7 @@ function crearGrafica(contexto, tipo, color) {
         },
         datalabels: {
           display: () => {
-            if (['line', 'radar', 'polar'].includes(tipo)) {
+            if (['line', 'radar', 'polarArea'].includes(tipo)) {
               return false;
             } else {
               return true;
@@ -331,7 +331,6 @@ function crearGrafica(contexto, tipo, color) {
             } else {
               return value;
             }
-            
           },
         }
       },
