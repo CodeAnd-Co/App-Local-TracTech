@@ -71,7 +71,8 @@ async function inicializarCrearFormula() {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
-    const nombreFormula = document.getElementById('nombreFormula').value;
+    const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
+    const nombreFormula = nombreFormulaSinProcesar.trim();
     const formulasGuardadas = localStorage.getItem('nombresFormulas');
  
     if (nombreFormula === '' || nombreFormula.length >= 30) {
@@ -144,6 +145,7 @@ async function procesarFormula() {
         return;
     }
     const formula = cuadroTextoGenerado.split(':')[1].trim();
+    
     try{
         const respuesta = await guardarFormula(nombreFormula, formula);
         if (respuesta.ok) {
