@@ -79,6 +79,8 @@ function inicializarModuloUsuario() {
 
         if (respuesta.ok) {
           localStorage.removeItem('token');
+          localStorage.removeItem('permisos');
+          localStorage.removeItem('csrf');  
           window.location.href = './inicioSesion.html';
         } else {
           throw new Error('La respuesta del servidor no fue exitosa');

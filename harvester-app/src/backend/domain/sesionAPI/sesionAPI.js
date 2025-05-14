@@ -30,12 +30,13 @@ async function iniciarSesion(correo, contrasenia) {
  * @param {string} token - Token de autenticación del usuario
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
-async function cerrarSesion(token) {
+async function cerrarSesion(token, tokenCSRF) {
   const respuesta = await fetch('http://localhost:3000/sesion/cerrarSesion', {
     method: 'POST', // Método HTTP POST para cerrar sesión
     headers: {
       'Content-Type': 'application/json', // Especificar el tipo de contenido
       Authorization: `Bearer ${token}`, // Incluir el token en el encabezado Authorization  
+      'X-CSRF-Token': tokenCSRF, // Incluir el token CSRF en el encabezado
     },
   });
 

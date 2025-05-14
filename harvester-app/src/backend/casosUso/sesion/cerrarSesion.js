@@ -15,9 +15,10 @@ async function cerrarSesion() {
             console.error('No hay sesión activa.');
             return;
         }
-
+        const tokenCSRF = localStorage.getItem('csrf');
+        console.log('Token CSRF:', tokenCSRF);
         // Llamar a la API para cerrar sesión enviando el token
-        const respuesta = await cerrarSesionAPI(token);
+        const respuesta = await cerrarSesionAPI(token, tokenCSRF);
         return respuesta;
     } catch (error) {
         // Capturar y mostrar errores en consola

@@ -24,6 +24,9 @@ async function verificarToken(token) {
       const datos = await respuesta.json();
       localStorage.setItem("permisos", datos.permisos); // Guardar los permisos en el localStorage
 
+      console.log('csrfnuevo', datos.tokenCSRF);
+      localStorage.setItem('csrf', datos.tokenCSRF); // Guardar el token CSRF en el localStorage
+
       // Retornar true si la respuesta fue exitosa y el servidor confirmó la validez
       return respuesta.ok;
   } catch (error) {

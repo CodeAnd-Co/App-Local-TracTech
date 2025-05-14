@@ -40,6 +40,9 @@ async function manejarInicioSesion() {
       const listaPermisos = resultado.permisos || [];
       localStorage.setItem('permisos', JSON.stringify(listaPermisos));
 
+      console.log('iniciosesion', respuesta.tokenCSRF);
+      localStorage.setItem('csrf', respuesta.tokenCSRF);
+
       // Redirigir al usuario a la página principal
       window.location.href = './frameLayout.html';
 
