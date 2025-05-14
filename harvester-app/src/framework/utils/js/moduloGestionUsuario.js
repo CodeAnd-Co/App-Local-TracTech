@@ -69,7 +69,11 @@ async function inicializarModuloGestionUsuarios() {
     botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
+        // Deshabilitar el botón para evitar múltiples envíos
+        nuevoBotonGuardar.disabled = true;
         await crearUsuario();
+        // Volver a habilitar el botón después de que termine el proceso
+        nuevoBotonGuardar.disabled = false;
     });
 
     // Configurar el campo de búsqueda
@@ -309,7 +313,6 @@ async function crearUsuario() {
     const contrasenia = contraseniaInput.value.trim();
     const idRolFK = parseInt(rolInput.value, 10);
 
-
     if (!nombre || !correo || !contrasenia || isNaN(idRolFK)) {
         return Swal2.fire({
             title: 'Datos incompletos',
@@ -318,8 +321,58 @@ async function crearUsuario() {
         });
     }
 
+    if (nombre.length > 55) {
+        await Swal2.fire({
+            title: 'Nombre demasiado largo',
+            text: 'El nombre no puede tener más de 55 caracteres.',
+            icon: 'error',
+        });
+        return;
+    }
+
+    if (correo.length > 55) {
+        await Swal2.fire({ 
+            title: 'Correo demasiado largo',
+            text: 'El correo no puede tener más de 55 caracteres.',
+            icon: 'error',
+        });
+        return
+
+    }
+
+    if (contrasenia.length < 5) {
+        await Swal2.fire({
+            title: 'Contraseña demasiado corta',
+            text: 'La contraseña debe de tener más de 5 caracteres.',
+            icon: 'error',
+        });
+        return
+    }
+
+    if (contrasenia.length > 55) {
+        await Swal2.fire({
+            title: 'Contraseña demasiado larga',
+            text: 'La contraseña no puede tener más de 55 caracteres.',
+            icon: 'error',
+        });
+        return
+    }
+    
+
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
+        console.log('Error de correo duplicado detectado:', resultado); // <-- Aquí el console.log
+
+        // Detectar error de correo duplicado
+        if (resultado.code === 'ER_DUP_ENTRY' || (resultado.mensaje && resultado.mensaje.includes('Duplicate entry'))) {
+            console.log('Error de correo duplicado detectado:', resultado); // <-- Aquí el console.log
+            await Swal2.fire({
+                title: 'Correo ya registrado',
+                text: 'El correo ingresado ya está en uso. Por favor, usa otro correo.',
+                icon: 'error',
+            });
+            return;
+        }
 
         if (resultado.ok) {
             Swal2.fire({
@@ -341,6 +394,7 @@ async function crearUsuario() {
                 inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
             }, 500);
         } else {
+            console.log('Error al crear usuario:', resultado); // <-- Aquí el console.log para otros errores
             Swal2.fire({
                 title: 'Error al crear usuario',
                 text: resultado.mensaje || 'No se pudo registrar el usuario.',
