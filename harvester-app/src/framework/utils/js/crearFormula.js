@@ -64,22 +64,6 @@ async function inicializarCrearFormula() {
             }
     };
 
-
-async function guardarFormulaTemporal(nombre, formula) {
-    // REFACTORIZAR
-    const respuesta = await fetch('http://localhost:3000/formulas/guardarFormula', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({nombre, formula}),
-    });
-
-    const datos = await respuesta.json();
-    return { ok: respuesta.ok, ...datos };
-}
-
 /**
  * @function procesarFormula
  * @description Guarda la fórmula generada en el backend.
@@ -88,18 +72,31 @@ async function guardarFormulaTemporal(nombre, formula) {
  */
 async function procesarFormula() {
     const nombreFormula = document.getElementById('nombreFormula').value;
-    // Obtener referencia al botón de guardar
-        if(nombreFormula === '') {
+    const formulasGuardadas = localStorage.getItem('nombresFormulas');
+ 
+    if (nombreFormula === '') {
+        Swal.fire({
+            title: 'Error',
+            text: 'Verifica que la formula tenga un nombre válido.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        return;
+    }
+    if (formulasGuardadas) {
+        const nombresFormulas = JSON.parse(formulasGuardadas);
+        if (nombresFormulas.includes(nombreFormula)) {
             Swal.fire({
                 title: 'Error',
-                text: 'Verifica que la formula tenga un nombre válido.',
+                text: 'Ya existe una fórmula con ese nombre.',
                 icon: 'error',
                 confirmButtonColor: '#1F4281',
             });
             return;
         }
-    const btnGuardar = document.getElementById('btnGuardar');
-    
+    }
+    // Obtener referencia al botón de guardar
+    const btnGuardar = document.getElementById('btnGuardar');    
     // Deshabilitar el botón para evitar múltiples clics
     btnGuardar.disabled = true;
     
@@ -111,6 +108,30 @@ async function procesarFormula() {
     
     const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
+    if (cuadroTextoGenerado === '') {
+        Swal.fire({
+            title: 'Error',
+            text: 'Verifica que la fórmula ha sido generada.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        // Restaurar el botón en caso de error
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
+        return;
+    } else if (cuadroTextoGenerado === 'Por favor, selecciona una función principal.') {
+        Swal.fire({
+            title: 'Error',
+            text: 'Verifica que la fórmula esté completa.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        // Restaurar el botón en caso de error
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
+        return;
+        
+    }
     const formula = cuadroTextoGenerado.split(':')[1].trim();
     try{
         const respuesta = await guardarFormula(nombreFormula, formula);
@@ -550,7 +571,16 @@ function traducirFuncion(nombre) {
 */
 function popularDropdown(elementoSeleccionado) {
     // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo TODO()
-    const columnas = ['Gasolina', 'Kilometraje', 'Fecha', 'Estado', 'Valor'];
+    const columnas = localStorage.getItem('columnas') ? JSON.parse(localStorage.getItem('columnas')) : [];
+    if (!Array.isArray(columnas)) {
+        Swal.fire({
+            title: 'Error',
+            text: 'El archivo seleccionado no tiene parámetros.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        return;
+    }
     elementoSeleccionado.innerHTML = '<option value="">Seleccionar</option>';
     columnas.forEach(columna => {
         const opcion = document.createElement('option');
