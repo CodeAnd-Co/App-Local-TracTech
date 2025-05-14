@@ -582,7 +582,16 @@ function traducirFuncion(nombre) {
 */
 function popularDropdown(elementoSeleccionado) {
     // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo TODO()
-    const columnas = localStorage.getItem('columnas') ? JSON.parse(localStorage.getItem('columnas')) : [];
+    let columnas = localStorage.getItem('columnas') ? JSON.parse(localStorage.getItem('columnas')) : [];
+    const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
+    if (nombreArchivo === null || nombreArchivo === undefined) {
+        columnas = [];
+        columnas.push('No hay archivo cargado');
+        elementoSeleccionado.innerHTML = '<option value="">No hay un archivo cargado</option>';
+        document.getElementById('btnGuardar').disabled = true;
+        document.getElementById('btnGenerar').disabled = true;
+        return;
+    }
     if (!Array.isArray(columnas)) {
         Swal.fire({
             title: 'Error',
