@@ -58,6 +58,10 @@ async function renderizarFormulas() {
 
         // Obtener el arreglo de fórmulas de la respuesta
         const formulas = respuesta.datos;
+        // Conseguir el nombre de todas las fórmulas
+        const nombresFormulas = formulas.map((formula) => formula.Nombre);
+        localStorage.setItem('nombresFormulas', JSON.stringify(nombresFormulas));
+
 
         // Renderizar las fórmulas en el contenedor correspondiente
         const contenedor = document.getElementById('frame-formulas');

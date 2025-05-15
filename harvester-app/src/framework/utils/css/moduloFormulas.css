@@ -403,6 +403,7 @@
   min-height: 60px;
   white-space: pre-wrap;
   font-family: monospace;
+  overflow-x: scroll;
 }
 
 .formula-actions {
