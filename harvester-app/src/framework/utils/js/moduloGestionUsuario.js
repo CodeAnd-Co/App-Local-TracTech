@@ -385,25 +385,25 @@ async function editarUsuario() {
     const correoIngresado = document.getElementById('email').value.trim();
     const contraseniaIngresada = document.getElementById('password').value.trim();
     const rolIngresado = document.getElementById('rol').value.trim();
-    const idRol = parseInt(rolIngresado.value, 10);
 
-
-    // TODO: Guardar el usuario a editar para extraer fácilmente sus valores y cambiar esto después
     const usuario = listaUsuarios.find(usuario => usuario.id === usuarioAEditar.id);
     if (!usuario) {
         console.error('Usuario no encontrado');
         return;
     }
 
-    const camposSinModificar = !nombreIngresado && !correoIngresado && !contraseniaIngresada && (!idRol || idRol === usuario.rol);
-    
-    if (camposSinModificar) {
-        Swal2.fire({
-            title: 'Error',
-            text: 'Debes modificar un campo mínimo del usuario.',
-            icon: 'warning',
+    // Flags de “campo modificado”
+    const cambioNombre    = nombreIngresado && nombreIngresado !== usuario.nombre;
+    const cambioCorreo    = correoIngresado && correoIngresado !== usuario.correo;
+    const cambioPass      = contraseniaIngresada !== '';
+    const cambioRol       = rolIngresado && Number(rolIngresado) !== rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol;
+
+    if (!(cambioNombre || cambioCorreo || cambioPass || cambioRol)) {
+        return Swal2.fire({
+        title: 'Error',
+        text: 'Debes modificar al menos un campo del usuario.',
+        icon: 'warning',
         });
-        return;
     }
 
     // Verificar si el correo ya existe para otro usuario
@@ -423,7 +423,7 @@ async function editarUsuario() {
     // TODO: Añadir validación de que campos se modificaron y cuales no
 
     try {
-        const resultado = await modificarUsuario(usuarioAEditar.id, nombreIngresado, correoIngresado, contraseniaIngresada, idRol);
+        const resultado = await modificarUsuario(usuarioAEditar.id, nombreIngresado, correoIngresado, contraseniaIngresada, rolIngresado);
         if (resultado.ok) {
             Swal2.fire({
                 title: 'Usuario modificado',
@@ -561,7 +561,6 @@ async function guardarRoles() {
  * @returns {void}
  */
 function llenarSelectConRoles(selectRol) {
-    // TODO: Guardar el usuario a editar para extraer fácilmente sus valores y cambiar esto después
     const usuario = listaUsuarios.find(usuario => usuario.id === usuarioAEditar.id);
     if (!usuario) {
         console.error('Usuario no encontrado');
@@ -603,9 +602,6 @@ function cargarRoles() {
             // Llenar el <select> con los roles guardados
             llenarSelectConRoles(selectRol);
         });
-
-        // Recarga los roles si es necesario
-        selectRol.addEventListener('focus', () => llenarSelectConRoles(selectRol));
     } else {
         console.error('No se encontró el elemento <select> con id="rol".');
     }
