@@ -227,8 +227,7 @@ function descargarPDF() {
   }
 
   // Configuración básica del documento
-  /* eslint-disable new-cap */
-  const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
   const anchoPagina = documentoPDF.internal.pageSize.getWidth() - margen * 2;
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
