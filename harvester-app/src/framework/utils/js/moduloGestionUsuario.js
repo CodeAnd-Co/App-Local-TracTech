@@ -75,7 +75,7 @@ async function inicializarModuloGestionUsuarios() {
         // Volver a habilitar el botón después de que termine el proceso
         nuevoBotonGuardar.disabled = false;
 
-        
+
     });
 
     // Configurar el campo de búsqueda
@@ -323,7 +323,7 @@ async function crearUsuario() {
         });
     }
 
-    if (listaCorreos.some(c => c && c.toLowerCase() === correo.toLowerCase())) {
+    if (listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correo.toLowerCase())) {
         await Swal2.fire({
             title: 'Correo ya registrado',
             text: 'El correo ingresado ya existe. Por favor, usa otro correo.',
@@ -372,8 +372,6 @@ async function crearUsuario() {
 
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
-        console.log('Error de correo duplicado detectado:', resultado); // <-- Aquí el console.log
-
         if (resultado.ok) {
             Swal2.fire({
                 title: 'Usuario creado',
@@ -394,7 +392,6 @@ async function crearUsuario() {
                 inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
             }, 500);
         } else {
-            console.log('Error al crear usuario:', resultado); // <-- Aquí el console.log para otros errores
             Swal2.fire({
                 title: 'Error al crear usuario',
                 text: resultado.mensaje || 'No se pudo registrar el usuario.',
