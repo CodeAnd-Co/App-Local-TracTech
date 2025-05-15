@@ -558,13 +558,28 @@ async function guardarRoles() {
  * @returns {void}
  */
 function llenarSelectConRoles(selectRol) {
+    // TODO: Guardar el usuario a editar para extraer fácilmente sus valores y cambiar esto después
+    const usuario = listaUsuarios.find(usuario => usuario.id === idUsuarioAEditar);
+    if (!usuario) {
+        console.error('Usuario no encontrado');
+        return;
+    }
+
+    const defaultIdRol = usuario.rol; // ID del rol por defecto
+    
     if (!rolesCache || rolesCache.length === 0) {
         selectRol.innerHTML = '<option value="">No hay roles disponibles</option>';
         return;
     }
 
+
+
     // Limpiar el contenido previo del <select>
-    selectRol.innerHTML = '<option value="">Selecciona un rol</option>';
+    selectRol.innerHTML = `
+        <option value="" disabled ${defaultIdRol===null ? 'selected' : ''}>
+        Selecciona rol
+        </option>
+    `;
 
     // Agregar los roles al <select>
     rolesCache.forEach(rol => {
