@@ -4,6 +4,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
+const { URL_BASE } = require('./constantes.js');
+
 if (typeof Swal === 'undefined'){
     const Swal = require('sweetalert2');
 }
@@ -67,7 +69,7 @@ async function inicializarCrearFormula() {
 
 async function guardarFormulaTemporal(nombre, formula) {
     // REFACTORIZAR
-    const respuesta = await fetch('http://localhost:3000/formulas/guardarFormula', {
+    const respuesta = await fetch(`${URL_BASE}/formulas/guardarFormula`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

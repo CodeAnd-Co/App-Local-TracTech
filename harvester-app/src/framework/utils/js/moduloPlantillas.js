@@ -182,7 +182,6 @@ async function inicializarModuloPlantillas() {
             botonesModificarCoinciden.forEach(boton => {
                 boton.addEventListener('click', () => {
                     const menuOpciones = boton.closest('#menuOpciones');
-                    alert(menuOpciones.getAttribute('dato-id'));
                 });
             });
 
