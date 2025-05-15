@@ -53,6 +53,7 @@ app.on('window-all-closed', () => {
   }
 });
 
+// Manejar la apertura del diálogo de selección de archivos cuando se descarga un pdf
 ipcMain.on("guardar-pdf", async (event, buffer) => {
   const { canceled, filePath } = await dialog.showSaveDialog({
     title: "Guardar PDF",

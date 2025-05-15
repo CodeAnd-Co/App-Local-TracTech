@@ -7,7 +7,6 @@
  */
 
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 const { jsPDF: JSPDF } = window.jspdf;
 if (typeof Swal === 'undefined'){
   const Swal = require('sweetalert2');
@@ -16,36 +15,33 @@ const { ipcRenderer } = require('electron');
 
 /**
  * Inicializa la interfaz de análisis:
- * - Actualiza el estado de los botones del sidebar y topbar.
- * - Configura los listeners para los botones de agregar texto, agregar gráfica y descargar PDF.
- * - Carga los datos de Excel desde localStorage.
+ * - Oculta los botones globales.
+ * - Configura el listener de descarga de PDF.
+ * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío.
+ * - Configura delegación de eventos para mostrar/ocultar botones flotantes en tarjetas.
  *
  * @function inicializarModuloAnalisis
  * @memberof module:moduloAnalisis
  * @returns {void}
  */
+/* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
-  // Actualizar visualmente el sidebar sin modificar localStorage
-  const botonesSidebar = document.querySelectorAll('.boton-sidebar');
-  botonesSidebar.forEach(boton => boton.classList.remove('activo'));
+  // IDs de los contenedores principales
+  const idContenedor                 = 'contenedorElementos';
+  const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
-  const botonesAnalisis = document.querySelectorAll('.boton-sidebar[data-seccion="analisis"]');
-  botonesAnalisis.forEach(boton => boton.classList.add('activo'));
+  // Obtener referencia al contenedor donde se añaden las tarjetas
+  const contenedor = document.getElementById(idContenedor);
 
-  // Actualizar el topbar si está disponible
-  if (window.actualizarTopbar) {
-    window.actualizarTopbar('analisis');
-  }
-
-  // IDs de contenedores
-  const idContenedor       = 'contenedorElementos';
-  const idPrevisualizacion = 'contenedor-elementos-previsualizacion';
+  // 1) Ocultar botones globales de agregar texto y gráfica
+  document.getElementById('agregarTexto').style.display   = 'none';
+  document.getElementById('agregarGrafica').style.display = 'none';
 
   // Configurar listeners de botones
   document.getElementById('agregarTexto')
-          .addEventListener('click', () => window.agregarTexto(idContenedor, idPrevisualizacion));
+          .addEventListener('click', () => window.agregarTexto(idContenedor, idContenedorPrevisualizacion));
   document.getElementById('agregarGrafica')
-          .addEventListener('click', () => window.agregarGrafica(idContenedor, idPrevisualizacion));
+          .addEventListener('click', () => window.agregarGrafica(idContenedor, idContenedorPrevisualizacion));
   
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
@@ -64,49 +60,162 @@ function inicializarModuloAnalisis() {
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
     });
-
-    // try {
-    //   descargarPDF().then((resultado) => { 
-    //     botonPDF.disabled = false;
-    //     contenedorTexto.textContent = 'Completado';
-    //     setTimeout(() => {
-    //       contenedorTexto.textContent = anterior;
-    //     }, 2000);
-    //   })
-    // } catch (error) { 
-    //   botonPDF.disabled = false;
-    //   contenedorTexto.textContent = 'Error';
-    // }
-
-    
-    // setTimeout(() => {
-      
-    // }
-    // , 5000);
   });
 
-  // Cargar los datos del Excel
-  const datosExcel = cargarDatosExcel();
-  if (!datosExcel) {
-    console.warn('No hay datos disponibles para análisis');
+  // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
+  if (contenedor.children.length === 0) {
+    agregarTexto(idContenedor, idContenedorPrevisualizacion);
+    agregarGrafica(idContenedor, idContenedorPrevisualizacion);
   }
+
+  // 4) Delegación de eventos en el contenedor para tarjetas: mostrar/ocultar botones flotantes
+  contenedor.addEventListener('mouseenter', alEntrarTarjeta, true);
+  contenedor.addEventListener('mouseleave', alSalirTarjeta, true);
+
+  /**
+   * Muestra los botones “+” al entrar el ratón sobre una tarjeta de texto o gráfica.
+   *
+   * @param {MouseEvent} evento
+   * @returns {void}
+   */
+  function alEntrarTarjeta(evento) {
+    const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
+    if (tarjeta) mostrarBotonesAgregar(tarjeta);
+  }
+
+  /**
+   * Oculta los botones “+” al salir el ratón de una tarjeta.
+   *
+   * @param {MouseEvent} evento
+   * @returns {void}
+   */
+  function alSalirTarjeta(evento) {
+    const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
+    if (tarjeta) ocultarBotonesAgregar(tarjeta);
+      cerrarMenuAgregar(tarjeta);
+
+  }
+  /**
+   * Crea y añade dos botones flotantes “+” en la tarjeta (arriba y abajo).
+   *
+   * @param {Element} tarjeta – La tarjeta destino.
+   * @function mostrarBotonesAgregar
+   * @memberof module:moduloAnalisis
+   * @returns {void}
+   */
+  function mostrarBotonesAgregar(tarjeta) {
+    if (tarjeta.querySelector('.btn-agregar-flotante')) return;
+    tarjeta.classList.add('tarjeta-con-posicion');
+
+    ['antes', 'despues'].forEach(ubicacion => {
+      const botonFlotante = document.createElement('button');
+      botonFlotante.classList.add(
+        'btn-agregar-flotante',
+        ubicacion === 'antes'
+          ? 'btn-agregar-superior'
+          : 'btn-agregar-inferior'
+      );
+      botonFlotante.textContent       = '+';
+      botonFlotante.dataset.ubicacion = ubicacion;
+      botonFlotante.addEventListener('click', evento => {
+        evento.stopPropagation();
+        abrirMenuAgregar(tarjeta, ubicacion);
+      });
+      tarjeta.appendChild(botonFlotante);
+    });
+  }
+
+  /**
+   * Elimina los botones flotantes “+” de la tarjeta dada.
+   *
+   * @param {Element} tarjeta – La tarjeta destino.
+   * @function ocultarBotonesAgregar
+   * @memberof module:moduloAnalisis
+   * @returns {void}
+   */
+  function ocultarBotonesAgregar(tarjeta) {
+    tarjeta.querySelectorAll('.btn-agregar-flotante')
+           .forEach(boton => boton.remove());
+  }
+
+  /**
+   * Abre un modal de SweetAlert2 con opciones para insertar una tarjeta de texto o de gráfica.
+   *
+   * @param {Element} tarjeta    – La tarjeta donde se hizo clic.
+   * @param {'antes'|'despues'} ubicacion – Posición donde insertar la nueva tarjeta.
+   * @function abrirMenuAgregar
+   * @memberof module:moduloAnalisis
+   * @returns {void}
+   */
+  function abrirMenuAgregar(tarjeta, ubicacion) {
+    Swal.fire({
+      title: 'Agregar',
+      width: '180px',
+      padding: '0.5rem',
+      showCancelButton: true,
+      showDenyButton:   true,
+      confirmButtonText:
+        '<img src="../utils/iconos/Texto.svg" class="icono-agregar"/> Texto',
+      denyButtonText:
+        '<img src="../utils/iconos/GraficaBarras.svg" class="icono-agregar"/> Gráfica',
+      cancelButtonText: '✕',
+      target:           tarjeta,
+      buttonsStyling:   false,
+      customClass: {
+        container:     'swal2-container-inline',
+        popup:         'swal2-popup-inline',
+        confirmButton: 'boton-agregar small',
+        denyButton:    'boton-agregar small',
+        cancelButton:  'swal2-cancel-inline'
+      }
+    }).then(resultado => {
+      if (resultado.isConfirmed) {
+        agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+      } else if (resultado.isDenied) {
+        agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+      }
+      // Si canceló, no hace nada
+    });
+  }
+
+  /**
+   * Cierra el menú de inserción si estuviera abierto.
+   *
+   * @param {Element} tarjeta – La tarjeta destino.
+   * @function cerrarMenuAgregar
+   * @memberof module:moduloAnalisis
+   * @returns {void}
+   */
+  function cerrarMenuAgregar(tarjeta) {
+    const menuExistente = tarjeta.querySelector('.menu-agregar');
+    if (menuExistente) menuExistente.remove();
+  }
+}
+
+// Ejecutar inicialización tras cargar el DOM
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', inicializarModuloAnalisis);
+} else {
+  inicializarModuloAnalisis();
 }
 
 /**
  * Carga los datos de Excel almacenados en localStorage.
- *
+ * 
  * @function cargarDatosExcel
  * @memberof module:moduloAnalisis
- * @returns {Object|null} Datos de Excel parseados o null si no hay datos o ocurre un error.
+ * @returns {Object|null} Datos parseados o null si falla.
  */
 function cargarDatosExcel() {
   try {
+    // Verificar flag de disponibilidad de datos
     const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
     if (datosDisponibles !== 'true') {
       console.warn('No hay datos de Excel disponibles');
       return null;
     }
 
+    // Obtener y parsear el JSON de datos de Excel
     const datosExcelJSON = localStorage.getItem('datosExcel');
     if (!datosExcelJSON) {
       console.warn('No se encontraron datos de Excel en localStorage');
@@ -114,7 +223,6 @@ function cargarDatosExcel() {
     }
 
     const datosExcel = JSON.parse(datosExcelJSON);
-    window.datosExcelGlobal = datosExcel;
     return datosExcel;
 
   } catch (error) {
@@ -124,13 +232,11 @@ function cargarDatosExcel() {
 }
 
 /**
- * Genera y descarga el reporte en formato PDF usando jsPDF.
- * Recorre los elementos de previsualización en pantalla (texto y gráficas) y los añade al documento PDF.
+ * Genera y descarga el reporte en PDF usando jsPDF.
  *
  * @function descargarPDF
  * @memberof module:moduloAnalisis
- * @throws {Error} Si jsPDF no está cargado o el contenedor de previsualización no existe.
- * @returns {void}
+ * @throws {Error} Si jsPDF no está cargado o falla la extracción de previsualización.
  */
 async function descargarPDF() {
   if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -142,12 +248,14 @@ async function descargarPDF() {
     throw new Error('[PDF] jsPDF no cargado');
   }
 
+  // Configuración básica del documento
   const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen       = 40;
   const anchoPagina = documentoPDF.internal.pageSize.getWidth() - margen * 2;
   const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
   let posicionY      = margen;
 
+  // Obtener contenedor de previsualización de texto y gráficas
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
     Swal.fire({
@@ -158,6 +266,7 @@ async function descargarPDF() {
     throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
 
+  // Recorrer cada elemento y añadirlo al PDF según su tipo
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
       let tamanoFuente = 12;
@@ -223,15 +332,14 @@ async function descargarPDF() {
   ipcRenderer.send('guardar-pdf', Buffer.from(pdfBuffer));
 }
 
-// Exponer funciones en el ámbito global
+// Exponer funciones en el ámbito global para uso externo
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel          = cargarDatosExcel;
 window.descargarPDF              = descargarPDF;
+window.agregarTexto              = agregarTexto;
+window.agregarGrafica            = agregarGrafica;
 
-// Ejecutar inicialización al cargar el DOM
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', inicializarModuloAnalisis);
-} else {
-  // Ejecutar tras un breve retardo en caso de que ya esté listo
+// En algunos navegadores, volver a inicializar tras un breve retardo si ya cargó el DOM
+if (document.readyState !== 'loading') {
   setTimeout(inicializarModuloAnalisis, 100);
 }
