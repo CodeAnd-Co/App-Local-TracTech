@@ -382,8 +382,40 @@ async function editarUsuario() {
     const correoIngresado = document.getElementById('email').value.trim();
     const contraseniaIngresada = document.getElementById('password').value.trim();
     const rolIngresado = document.getElementById('rol').value.trim();
-
     const idRol = parseInt(rolIngresado.value, 10);
+
+
+    // TODO: Guardar el usuario a editar para extraer fácilmente sus valores y cambiar esto después
+    const usuario = listaUsuarios.find(usuario => usuario.id === idUsuarioAEditar);
+    if (!usuario) {
+        console.error('Usuario no encontrado');
+        return;
+    }
+
+    const camposSinModificar = !nombreIngresado && !correoIngresado && !contraseniaIngresada && (!idRol || idRol === usuario.rol);
+    
+    if (camposSinModificar) {
+        Swal2.fire({
+            title: 'Error',
+            text: 'Debes modificar un campo mínimo del usuario.',
+            icon: 'warning',
+        });
+        return;
+    }
+
+    // Verificar si el correo ya existe para otro usuario
+    const correoYaExiste = listaUsuarios.some(usuario =>
+        usuario.correo === correoIngresado && usuario.id !== idUsuarioAEditar
+    );
+    
+    if (correoYaExiste) {
+        Swal2.fire({
+            title: 'Error',
+            text: 'No se puede repetir el correo entre usuarios.',
+            icon: 'warning',
+        });
+        return;
+    }
 
     // TODO: Añadir validación de que campos se modificaron y cuales no
 
@@ -420,9 +452,6 @@ async function editarUsuario() {
             icon: 'error',
         });
     }
-
-    modoActual = modoFormulario.CREAR;
-    idUsuarioAEditar = null;
 }
 
 /**
@@ -557,7 +586,7 @@ function cargarRoles() {
             llenarSelectConRoles(selectRol);
         });
 
-        // También puedes agregar un evento para recargar los roles si es necesario
+        // Recarga los roles si es necesario
         selectRol.addEventListener('focus', () => llenarSelectConRoles(selectRol));
     } else {
         console.error('No se encontró el elemento <select> con id="rol".');
