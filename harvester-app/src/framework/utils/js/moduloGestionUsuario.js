@@ -15,6 +15,7 @@ let paginaActual = 1;
 let listaUsuarios = [];
 let usuariosFiltrados = [];
 let terminoBusqueda = '';
+let listaCorreos = [];
 
 /**
  * Inicializa el módulo de gestión de usuarios.
@@ -35,8 +36,6 @@ async function inicializarModuloGestionUsuarios() {
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
-
-        // Cargar roles
         
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
@@ -52,6 +51,7 @@ async function inicializarModuloGestionUsuarios() {
         evento.preventDefault();
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
+        listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
     });
 
     const botonCancelar = document.querySelector('.btn-cancelar');
@@ -74,6 +74,8 @@ async function inicializarModuloGestionUsuarios() {
         await crearUsuario();
         // Volver a habilitar el botón después de que termine el proceso
         nuevoBotonGuardar.disabled = false;
+
+        
     });
 
     // Configurar el campo de búsqueda
@@ -321,6 +323,15 @@ async function crearUsuario() {
         });
     }
 
+    if (listaCorreos.some(c => c && c.toLowerCase() === correo.toLowerCase())) {
+        await Swal2.fire({
+            title: 'Correo ya registrado',
+            text: 'El correo ingresado ya existe. Por favor, usa otro correo.',
+            icon: 'error',
+        });
+        return;
+    }
+
     if (nombre.length > 55) {
         await Swal2.fire({
             title: 'Nombre demasiado largo',
@@ -362,17 +373,6 @@ async function crearUsuario() {
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
         console.log('Error de correo duplicado detectado:', resultado); // <-- Aquí el console.log
-
-        // Detectar error de correo duplicado
-        if (resultado.code === 'ER_DUP_ENTRY' || (resultado.mensaje && resultado.mensaje.includes('Duplicate entry'))) {
-            console.log('Error de correo duplicado detectado:', resultado); // <-- Aquí el console.log
-            await Swal2.fire({
-                title: 'Correo ya registrado',
-                text: 'El correo ingresado ya está en uso. Por favor, usa otro correo.',
-                icon: 'error',
-            });
-            return;
-        }
 
         if (resultado.ok) {
             Swal2.fire({
