@@ -77,7 +77,6 @@ function cargarDatosExcel() {
     }
 
     const datosExcel = JSON.parse(datosExcelJSON);
-    window.datosExcelGlobal = datosExcel;
     return datosExcel;
 
   } catch (error) {
