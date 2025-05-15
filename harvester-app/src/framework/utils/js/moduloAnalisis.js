@@ -201,8 +201,6 @@ function cargarDatosExcel() {
     }
 
     const datosExcel = JSON.parse(datosExcelJSON);
-    // Almacenar globalmente para otras funciones
-    window.datosExcelGlobal = datosExcel;
     return datosExcel;
 
   } catch (error) {
