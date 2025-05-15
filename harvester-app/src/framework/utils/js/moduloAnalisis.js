@@ -12,6 +12,7 @@ const { jsPDF: JSPDF } = window.jspdf;
 if (typeof Swal === 'undefined'){
   const Swal = require('sweetalert2');
 }
+const { ipcRenderer } = require('electron');
 
 /**
  * Inicializa la interfaz de análisis:
@@ -45,8 +46,44 @@ function inicializarModuloAnalisis() {
           .addEventListener('click', () => window.agregarTexto(idContenedor, idPrevisualizacion));
   document.getElementById('agregarGrafica')
           .addEventListener('click', () => window.agregarGrafica(idContenedor, idPrevisualizacion));
-  document.getElementById('descargarPDF')
-          .addEventListener('click', descargarPDF);
+  
+  const botonPDF = document.getElementById('descargarPDF')
+  const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
+  botonPDF.addEventListener('click', async () => {
+    
+    const anterior = botonPDF.textContent;
+    botonPDF.disabled = true;
+    const contenedorTexto = botonPDF.children[1]
+    contenedorTexto.textContent = 'Descargando...';
+    pantallaBloqueo.classList.remove('oculto');
+
+    descargarPDF()
+
+    ipcRenderer.once("pdf-guardado", (event, exito) => {
+      botonPDF.disabled = false;
+      contenedorTexto.textContent = anterior;
+      pantallaBloqueo.classList.add('oculto');
+    });
+
+    // try {
+    //   descargarPDF().then((resultado) => { 
+    //     botonPDF.disabled = false;
+    //     contenedorTexto.textContent = 'Completado';
+    //     setTimeout(() => {
+    //       contenedorTexto.textContent = anterior;
+    //     }, 2000);
+    //   })
+    // } catch (error) { 
+    //   botonPDF.disabled = false;
+    //   contenedorTexto.textContent = 'Error';
+    // }
+
+    
+    // setTimeout(() => {
+      
+    // }
+    // , 5000);
+  });
 
   // Cargar los datos del Excel
   const datosExcel = cargarDatosExcel();
@@ -95,7 +132,7 @@ function cargarDatosExcel() {
  * @throws {Error} Si jsPDF no está cargado o el contenedor de previsualización no existe.
  * @returns {void}
  */
-function descargarPDF() {
+async function descargarPDF() {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     Swal.fire({
         title: 'Error al descargar reporte',
@@ -180,7 +217,10 @@ function descargarPDF() {
     }
   });
 
-  documentoPDF.save('reporte.pdf');
+  const documentoNuevo = documentoPDF.output('blob');
+  const pdfBuffer = await documentoNuevo.arrayBuffer();
+
+  ipcRenderer.send('guardar-pdf', Buffer.from(pdfBuffer));
 }
 
 // Exponer funciones en el ámbito global

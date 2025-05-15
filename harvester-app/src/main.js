@@ -1,5 +1,6 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('node:path');
+const fs = require('fs');
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -50,4 +51,24 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+ipcMain.on("guardar-pdf", async (event, buffer) => {
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: "Guardar PDF",
+    defaultPath: "reporte.pdf",
+    filters: [{ name: "PDF Files", extensions: ["pdf"] }],
+  });
+
+  if (!canceled && filePath) {
+    fs.writeFile(filePath, buffer, (err) => {
+      if (err) {
+        console.error("Error al guardar PDF:", err);
+      } else {
+        console.log("PDF guardado en", filePath);
+      }
+    });
+  }
+
+  event.sender.send("pdf-guardado", !canceled);
 });
