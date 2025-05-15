@@ -429,6 +429,12 @@ function masArgumentosCountif(contenedor) {
 function generarFormulaCompleja() {
     const seleccionFuncionPrincipal = document.getElementById('main-function');
     if (!seleccionFuncionPrincipal.value) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, selecciona una función principal.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
         document.getElementById('resultado').innerText = 'Por favor, selecciona una función principal.';
         return;
     }
