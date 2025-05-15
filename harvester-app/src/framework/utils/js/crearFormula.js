@@ -435,7 +435,6 @@ function generarFormulaCompleja() {
             icon: 'error',
             confirmButtonColor: '#1F4281',
         });
-        document.getElementById('resultado').innerText = 'Por favor, selecciona una función principal.';
         return;
     }
 
