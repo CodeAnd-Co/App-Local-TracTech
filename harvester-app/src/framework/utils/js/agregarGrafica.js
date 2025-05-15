@@ -21,11 +21,9 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
-  // Calcular ID único
-  const tarjetasExistentes = contenedor.querySelectorAll('.tarjeta-grafica');
-  const nuevaId = tarjetasExistentes.length
-    ? parseInt(tarjetasExistentes[tarjetasExistentes.length - 1].id, 10) + 1
-    : 1;
+  // Calcular ID único con timestamp
+  const timestamp = new Date().getTime();
+  const nuevaId = `grafica_${timestamp}`;
   tarjetaGrafica.id = nuevaId;
 
   // Inyectar HTML base
@@ -71,8 +69,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   // Contenedor de previsualización
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
-  graficaDiv.id = `grafica-${nuevaId}`; // Usar prefijo 'grafica-' para evitar conflictos
-  graficaDiv.setAttribute('data-tarjeta-id', nuevaId); // Usar setAttribute en lugar de dataset para mayor compatibilidad
+  graficaDiv.id = `grafica-${nuevaId}`; 
+  graficaDiv.setAttribute('data-tarjeta-id', nuevaId);
   const canvasGrafica = document.createElement('canvas');
   graficaDiv.appendChild(canvasGrafica);
 
@@ -82,56 +80,41 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   grafico.options.plugins.title.text = '';
   grafico.update();
 
-  // Listener para título dinámico - CORREGIDO para usar ID de la tarjeta actual
+  // Listener para título dinámico
   tarjetaGrafica
     .querySelector('.titulo-grafica')
     .addEventListener('input', function () {
-      // Obtener la tarjeta actual que contiene este input
       const tarjetaActual = this.closest('.tarjeta-grafica');
       const idTarjetaActual = tarjetaActual.id;
       
-      // DEBUG
-      console.log('Actualizando título para tarjeta ID:', idTarjetaActual);
-      
       const grafica = encontrarGrafica(idTarjetaActual);
       if (grafica) {
-        console.log('Gráfica encontrada:', grafica.id);
         const ctx = grafica.querySelector('canvas').getContext('2d');
         const chart = Chart.getChart(ctx);
         if (chart) {
           chart.options.plugins.title.text = this.value;
           chart.update();
         }
-      } else {
-        console.error('No se encontró la gráfica para la tarjeta ID:', idTarjetaActual);
       }
     });
 
-  // Selector de tipo de gráfica - CORREGIDO para usar tarjetaActual
+  // Selector de tipo de gráfica
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
   selectorTipo.value = grafico.config.type;
   selectorTipo.addEventListener('change', function() {
-    // Obtener la tarjeta actual que contiene este selector
     const tarjetaActual = this.closest('.tarjeta-grafica');
     const idTarjetaActual = tarjetaActual.id;
     
-    // DEBUG
-    console.log('Cambiando tipo de gráfica para tarjeta ID:', idTarjetaActual);
-    
     const grafica = encontrarGrafica(idTarjetaActual);
     if (grafica) {
-      console.log('Gráfica encontrada:', grafica.id);
       const ctx = grafica.querySelector('canvas').getContext('2d');
       const chart = Chart.getChart(ctx);
       if (chart) {
         chart.destroy();
         const nueva = crearGrafica(ctx, this.value);
-        // Usar el valor del título de la tarjeta actual, no de la variable 'tarjetaGrafica'
         nueva.options.plugins.title.text = tarjetaActual.querySelector('.titulo-grafica').value;
         nueva.update();
       }
-    } else {
-      console.error('No se encontró la gráfica para la tarjeta ID:', idTarjetaActual);
     }
   });
 
@@ -139,25 +122,17 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   tarjetaGrafica
     .querySelector('.eliminar')
     .addEventListener('click', function() {
-      // Obtener la tarjeta actual que contiene este botón
       const tarjetaActual = this.closest('.tarjeta-grafica');
       const idTarjetaActual = tarjetaActual.id;
-      
-      // DEBUG
-      console.log('Eliminando tarjeta ID:', idTarjetaActual);
       
       tarjetaActual.remove();
       const eliminado = encontrarGrafica(idTarjetaActual);
       if (eliminado) {
-        console.log('Eliminando gráfica:', eliminado.id);
         eliminado.remove();
-      } else {
-        console.error('No se encontró la gráfica para eliminar con ID:', idTarjetaActual);
       }
       eliminarCuadroFormulas();
     });
 
-  // -----------------------------------------
   // Añadir al DOM con inserción 'antes/después'
   if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
     // En el contenedor de edición
@@ -167,16 +142,16 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
       contenedor.insertBefore(tarjetaGrafica, tarjetaRef.nextSibling);
     }
     
-    // En la previsualización - CORREGIDO PARA MANEJAR REFERENCIAS A GRÁFICAS
+    // En la previsualización
     const idRef = tarjetaRef.id;
-    // Buscar referencia correspondiente en el contenedor de previsualización
     let vistaRef;
     
-    // Determinar si la tarjeta de referencia es texto o gráfica
     if (tarjetaRef.classList.contains('tarjeta-texto')) {
       vistaRef = previsualizacion.querySelector(`#preview-texto-${idRef}`);
+      if (!vistaRef) {
+        vistaRef = previsualizacion.querySelector(`.previsualizacion-texto[data-tarjeta-id='${idRef}']`);
+      }
     } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      // Usar getAttribute para mayor compatibilidad
       vistaRef = previsualizacion.querySelector(`.previsualizacion-grafica[data-tarjeta-id='${idRef}']`);
     }
     
@@ -194,38 +169,27 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     contenedor.appendChild(tarjetaGrafica);
     previsualizacion.appendChild(graficaDiv);
   }
-
-  // Para depuración: muestra las gráficas existentes después de añadir la nueva
-  testGraficasExistentes();
 }
 
 /**
- * Función de depuración para verificar todas las gráficas existentes.
+ * Encuentra una gráfica en la previsualización por ID.
+ * @param {string|number} id - ID exacto de la tarjeta gráfica a buscar.
+ * @returns {HTMLElement|null} Gráfica encontrada o null si no se encuentra.
  */
-function testGraficasExistentes() {
-  if (!window.previsualizacion) return;
+function encontrarGrafica(id) {
+  if (!window.previsualizacion) {
+    return null;
+  }
   
-  const graficas = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
-  console.log('=== GRÁFICAS EXISTENTES ===');
-  console.log(`Total: ${graficas.length}`);
+  const idString = String(id);
+  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
   
-  graficas.forEach((g, i) => {
-    console.log(`Gráfica ${i+1}:`);
-    console.log(` - ID: ${g.id}`);
-    console.log(` - data-tarjeta-id: ${g.getAttribute('data-tarjeta-id')}`);
-  });
+  const porAtributo = graficasExistentes.find(grafica => grafica.getAttribute('data-tarjeta-id') === idString);
+  if (porAtributo) {
+    return porAtributo;
+  }
   
-  // También mostrar las tarjetas de edición
-  const tarjetas = Array.from(document.querySelectorAll('.tarjeta-grafica'));
-  console.log('\n=== TARJETAS DE EDICIÓN ===');
-  console.log(`Total: ${tarjetas.length}`);
-  
-  tarjetas.forEach((t, i) => {
-    console.log(`Tarjeta ${i+1}:`);
-    console.log(` - ID: ${t.id}`);
-  });
-  
-  console.log('===========================');
+  return null;
 }
 
 /**
@@ -235,7 +199,7 @@ function testGraficasExistentes() {
  */
 function crearCuadroFormulas(columnas) {
   if (eliminarCuadroFormulas()) {
-    console.error('Cuadro de fórmulas existía');
+    // Un cuadro de fórmulas ya existía y fue eliminado
   }
 
   const cuadroFormulas = document.createElement('div');
@@ -324,48 +288,6 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
 }
 
 /**
- * Encuentra una gráfica en la previsualización por ID.
- * @param {string|number} id - ID de la tarjeta gráfica a buscar.
- * @returns {HTMLElement|null} Gráfica encontrada o null si no se encuentra.
- */
-function encontrarGrafica(id) {
-  if (!window.previsualizacion) {
-    console.error('No hay referencia al contenedor de previsualización');
-    return null;
-  }
-  
-  // Convertir ID a string para comparación consistente
-  const idString = String(id);
-  
-  // DEBUG
-  console.log(`Buscando gráfica para tarjeta ID: ${idString}`);
-  
-  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
-  
-  // Probar primero con getAttribute para mayor compatibilidad
-  const porAtributo = graficasExistentes.find(grafica => grafica.getAttribute('data-tarjeta-id') === idString);
-  if (porAtributo) {
-    console.log(`Encontrada gráfica por atributo: ${porAtributo.id}`);
-    return porAtributo;
-  }
-  
-  // Si no se encuentra por atributo, probar con dataset (alternativa)
-  const porDataset = graficasExistentes.find(grafica => grafica.dataset && grafica.dataset.tarjetaId === idString);
-  if (porDataset) {
-    console.log(`Encontrada gráfica por dataset: ${porDataset.id}`);
-    return porDataset;
-  }
-  
-  // Debug: muestra todas las gráficas disponibles
-  console.log('No se encontró gráfica. Todas las gráficas disponibles:');
-  graficasExistentes.forEach((g, i) => {
-    console.log(`- Gráfica ${i+1}: id=${g.id}, data-tarjeta-id=${g.getAttribute('data-tarjeta-id')}`);
-  });
-  
-  return null;
-}
-
-/**
  * Verifica si existe un cuadro de fórmulas y lo elimina si existe.
  * @returns {boolean} True si existía un cuadro de fórmulas, false en caso contrario.
  */
@@ -392,7 +314,6 @@ function eliminarCuadroFormulas() {
  */
 function crearGrafica(contexto, tipo, color) {
   if (!contexto) {
-    console.error('No se encontró el contexto del canvas');
     return;
   }
   
