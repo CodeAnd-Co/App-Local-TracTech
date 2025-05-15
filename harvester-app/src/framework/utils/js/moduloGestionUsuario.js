@@ -18,7 +18,7 @@ const modoFormulario = Object.freeze({
     EDITAR: 'editar',
 });
 let modoActual = modoFormulario.CREAR;
-let idUsuarioAEditar = null;
+let usuarioAEditar = null;
 let paginaActual = 1;
 let listaUsuarios = [];
 let usuariosFiltrados = [];
@@ -61,7 +61,7 @@ async function inicializarModuloGestionUsuarios() {
 
         // Actualizar estados globales
         modoActual = modoFormulario.CREAR;
-        idUsuarioAEditar = null;
+        usuarioAEditar = null;
 
         // Cambiar texto del formulario
         document.querySelector('.crear-modificar-usuario').textContent = 'Crear usuario';
@@ -347,21 +347,24 @@ function escucharEventoBotonesEditar(listaDeUsuarios) {
  * @throws {Error} Si el usuario con el ID proporcionado no se encuentra en la lista de usuarios.
  */
 function modoEditar(idUsuario) {
+
+    // Precargar los datos del usuario
+    const usuario = listaUsuarios.find(usuario => usuario.id === Number(idUsuario));
+    if (!usuario) {
+        console.error('Usuario no encontrado');
+        return;
+    }
+
     // Actualizar estados globales
     modoActual = modoFormulario.EDITAR;
-    idUsuarioAEditar = Number(idUsuario);
+    usuarioAEditar = usuario;
 
     // Cambiar texto del formulario
     document.querySelector('.crear-modificar-usuario').textContent = 'Modificar usuario';
     document.querySelector('.btn-guardar').textContent = 'Modificar';
     document.getElementById('columna-crear-modificar-usuario').style.display = 'block';
 
-    // Precargar los datos del usuario
-    const usuario = listaUsuarios.find(usuario => usuario.id === idUsuarioAEditar);
-    if (!usuario) {
-        console.error('Usuario no encontrado');
-        return;
-    }
+    
     document.getElementById('username').value = usuario.nombre;
     document.getElementById('email').value = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
@@ -386,7 +389,7 @@ async function editarUsuario() {
 
 
     // TODO: Guardar el usuario a editar para extraer fácilmente sus valores y cambiar esto después
-    const usuario = listaUsuarios.find(usuario => usuario.id === idUsuarioAEditar);
+    const usuario = listaUsuarios.find(usuario => usuario.id === usuarioAEditar.id);
     if (!usuario) {
         console.error('Usuario no encontrado');
         return;
@@ -405,7 +408,7 @@ async function editarUsuario() {
 
     // Verificar si el correo ya existe para otro usuario
     const correoYaExiste = listaUsuarios.some(usuario =>
-        usuario.correo === correoIngresado && usuario.id !== idUsuarioAEditar
+        usuario.correo === correoIngresado && usuario.id !== usuarioAEditar.id
     );
     
     if (correoYaExiste) {
@@ -420,7 +423,7 @@ async function editarUsuario() {
     // TODO: Añadir validación de que campos se modificaron y cuales no
 
     try {
-        const resultado = await modificarUsuario(idUsuarioAEditar, nombreIngresado, correoIngresado, contraseniaIngresada, idRol);
+        const resultado = await modificarUsuario(usuarioAEditar.id, nombreIngresado, correoIngresado, contraseniaIngresada, idRol);
         if (resultado.ok) {
             Swal2.fire({
                 title: 'Usuario modificado',
@@ -559,7 +562,7 @@ async function guardarRoles() {
  */
 function llenarSelectConRoles(selectRol) {
     // TODO: Guardar el usuario a editar para extraer fácilmente sus valores y cambiar esto después
-    const usuario = listaUsuarios.find(usuario => usuario.id === idUsuarioAEditar);
+    const usuario = listaUsuarios.find(usuario => usuario.id === usuarioAEditar.id);
     if (!usuario) {
         console.error('Usuario no encontrado');
         return;
