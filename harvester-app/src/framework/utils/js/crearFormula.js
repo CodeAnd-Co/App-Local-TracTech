@@ -260,11 +260,11 @@ function agregarArgumento(etiqueta, nombreClase, contenedor, permitirAnidado = f
             <label>${etiqueta}:</label>
         </div>
         <div class='argumentoContenido'>
-            <div class='argumentoInputs'>
+            <div class='argumentosEntradas'>
                 <input type='text' class='${nombreClase}' placeholder='${etiqueta}'>
                 ${permitirAnidado ? '<button class="botonFuncionAnidada" onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
             </div>
-            <div class='nested-function-container'></div>
+            <div class='contenedor-funciones-anidadas'></div>
         </div>
     `;
     contenedor.appendChild(argumentoDiv);
@@ -288,7 +288,7 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
             <label>${etiqueta}:</label>
         </div>
         <div class='argumentoContenido'>
-            <div class='argumentoInputs'>
+            <div class='argumentosEntradas'>
                 <select class='variable-selector ${nombreClase}-variable'>
                     <option value=''>Seleccionar variable</option>
                 </select>
@@ -317,7 +317,7 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
 function agregarFuncionAnidada(boton) {
     // Buscar el contenedor anidado dentro del contenido del argumento
     const argumentoContenido = boton.closest('.argumentoContenido');
-    const contenedorAnidado = argumentoContenido.querySelector('.nested-function-container');
+    const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
     
     // Crear un contenedor para esta función anidada específica
     const filaAnidada = document.createElement('div');
@@ -356,14 +356,14 @@ function agregarFuncionAnidada(boton) {
         const valorSeleccionado = evento.target.value;
         if (valorSeleccionado) {
             // Buscar si ya existe un div anidado en esta fila y eliminarlo
-            const divAnidadoExistente = filaAnidada.querySelector('.nested-function');
+            const divAnidadoExistente = filaAnidada.querySelector('.funciones-anidadas');
             if (divAnidadoExistente) {
                 divAnidadoExistente.remove();
             }
             
             // Si se selecciona una función, se crea un nuevo contenedor para los argumentos de la función anidada
             const divAnidado = document.createElement('div');
-            divAnidado.classList.add('nested-function');
+            divAnidado.classList.add('funciones-anidadas');
             filaAnidada.appendChild(divAnidado);
             
             // Se define la estructura de la función anidada
@@ -448,7 +448,7 @@ function masArgumentosCountif(contenedor) {
  * @throws {Error} Si no se selecciona una función principal o si hay un error al construir la fórmula.
  */
 function generarFormulaCompleja() {
-    const previsualizador = document.getElementsByClassName('formula-result-section');
+    const previsualizador = document.getElementsByClassName('formula-seccion-resultado');
     previsualizador[0].style.display = 'block';
     const seleccionFuncionPrincipal = document.getElementById('main-function');
     if (!seleccionFuncionPrincipal.value) {
@@ -547,7 +547,7 @@ function procesarArgumento(argumento) {
 
     const seleccionAnidado = argumento.querySelector('.selectorFuncionAnidada');
     if (seleccionAnidado && seleccionAnidado.value) {
-        const contenedorAnidado = argumento.querySelector('.nested-function');
+        const contenedorAnidado = argumento.querySelector('.funciones-anidadas');
         return construirFormulaDesdeContenedor(contenedorAnidado, seleccionAnidado.value);
     }
 
