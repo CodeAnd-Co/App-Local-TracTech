@@ -299,13 +299,13 @@
   box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
   max-width: none; /* Elimina cualquier restricción de ancho máximo */
 }
-.formula-header {
+.formula-encabezado {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.formula-header h2 {
+.formula-encabezado h2 {
   color: var(--texto-light, #000000);
   font-family: "SegoeUi-Regular", sans-serif;
   font-size: 32px;
@@ -314,21 +314,21 @@
   font-weight: 400;
 }
 
-.formula-name-input {
+.formula-entrada-nombre {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
 }
 
-.formula-name-input label {
+.formula-entrada-nombre label {
   color: var(--texto-light, #000000);
   font-family: "SegoeUi-Regular", sans-serif;
   font-size: 18px;
   line-height: 112%;
 }
 
-.formula-name-input input {
+.formula-entrada-nombre input {
   background: var(--box-textoporllenar, #e8e8e8);
   border-radius: 8px;
   border: 2px solid var(--bordenegro, rgba(0, 0, 0, 0.2));
@@ -338,7 +338,7 @@
   box-sizing: border-box;
 }
 
-.formula-builder-section {
+.formula-seccion-construccion {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -370,7 +370,7 @@
   flex-grow: 1;
 }
 
-.formula-build-area {
+.formula-area-construccion {
   background-color: #f9f9f9;
   border-radius: 8px;
   border: 1px solid #ddd;
@@ -382,14 +382,15 @@
   box-sizing: border-box;
 }
 
-.formula-result-section {
+.formula-seccion-resultado {
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  display: none;
 }
 
-.formula-result-section label {
+.formula-seccion-resultado label {
   color: var(--texto-light, #000000);
   font-family: "SegoeUi-Regular", sans-serif;
   font-size: 18px;
@@ -406,7 +407,7 @@
   overflow-x: scroll;
 }
 
-.formula-actions {
+.formula-acciones {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -419,7 +420,7 @@
   gap: 15px;
 }
 
-.formula-button {
+.formula-boton {
   border-radius: 8px;
   border: 2px solid;
   padding: 12px 20px;
@@ -432,19 +433,19 @@
   min-width: 150px;
 }
 
-.formula-button.primary {
+.formula-boton.primario {
   background: #a61930;
   border-color: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
-.formula-button.secondary {
+.formula-boton.secundario {
   background: #ffffff;
   border-color: #000000;
   color: #000000;
 }
 
-.formula-button:hover {
+.formula-boton:hover {
   opacity: 0.9;
 }
 
@@ -465,7 +466,7 @@
 }
 
 
-.argumentoInputs {
+.argumentosEntradas {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap; /* Permitir que los elementos se envuelvan si es necesario */
@@ -474,8 +475,8 @@
   align-items: center;
 }
 
-.argumentoInputs input,
-.argumentoInputs select {
+.argumentosEntradas input,
+.argumentosEntradas select {
   flex: 1;
   min-width: 150px;
   background: var(--box-textoporllenar, #e8e8e8);
@@ -515,7 +516,7 @@
   margin-top: 8px;
 }
 
-.nested-function-container {
+.contenedor-funciones-anidadas {
   width: 100%;
   margin-top: 10px;
   border-left: 3px solid #ddd;
@@ -526,7 +527,7 @@
   box-sizing: border-box;
 }
 
-.nested-function {
+.funciones-anidadas {
   width: 100%;
   margin-top: 5px;
   padding: 12px;
