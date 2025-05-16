@@ -10,7 +10,6 @@
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
 async function iniciarSesion(correo, contrasenia) {
-  console.log(`${process.env.URL_BASE}/sesion/iniciarSesion`);
   const respuesta = await fetch(`${process.env.URL_BASE}/sesion/iniciarSesion`, {
     method: 'POST', // Método HTTP POST para enviar las credenciales
     headers: {
