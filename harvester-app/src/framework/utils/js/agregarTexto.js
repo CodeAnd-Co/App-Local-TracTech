@@ -4,8 +4,8 @@
  * @description Proporciona la funcionalidad para añadir tarjetas de texto editables
  *              y sus previsualizaciones en el módulo de análisis, con opción de
  *              insertar antes o después de una tarjeta existente.
- * @version 1.2
- * @date 2025-05-13
+ * @version 1.3
+ * @date 2025-05-14
  */
 
 /**
@@ -27,7 +27,7 @@ function agregarTexto(
   const contenedorPrevia  = document.getElementById(idContenedorVistaPrevia);
   const observer = new MutationObserver(() => {
   const tarjetasTexto    = contenedor.querySelectorAll('.tarjeta-texto');
-  const tarjetasGrafica  = contenedor.querySelectorAll('.tarjeta-grafica'); // Asegúrate de usar esta clase en tus gráficas
+  const tarjetasGrafica  = contenedor.querySelectorAll('.tarjeta-grafica'); 
   const tarjetasTotales  = [...tarjetasTexto, ...tarjetasGrafica];
 
   tarjetasTotales.forEach(tarjeta => {
@@ -52,17 +52,14 @@ function agregarTexto(
 
   observer.observe(contenedor, { childList: true, subtree: true });
 
-
-  // 1) Calcular nuevo ID de tarjeta
-  const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
-  const nuevoId       = tarjetasTexto.length
-    ? (parseInt(tarjetasTexto[tarjetasTexto.length - 1].id, 10) || 0) + 1
-    : 1;
+  // 1) Calcular nuevo ID de tarjeta con timestamp para garantizar unicidad
+  const timestamp = new Date().getTime();
+  const nuevoId = `texto_${timestamp}`;
 
   // 2) Crear la tarjeta de edición
   const tarjetaTexto = document.createElement('div');
   tarjetaTexto.classList.add('tarjeta-texto');
-  tarjetaTexto.id = `${nuevoId}`;
+  tarjetaTexto.id = nuevoId;
   tarjetaTexto.innerHTML = `
     <div class='titulo-texto'>
       <select class='tipo-texto'>
@@ -99,6 +96,8 @@ function agregarTexto(
   const vistaPrevia = document.createElement('div');
   vistaPrevia.classList.add('previsualizacion-texto', 'preview-titulo');
   vistaPrevia.id = `preview-texto-${nuevoId}`;
+  // Atributo data-tarjeta-id para consistencia con el sistema de gráficas
+  vistaPrevia.setAttribute('data-tarjeta-id', nuevoId);
   vistaPrevia.alignIndex = 0;
 
   // 4) Insertar en el DOM de edición y de previsualización
@@ -114,10 +113,18 @@ function agregarTexto(
     const idRef = tarjetaRef.id;
     let vistaRef;
     
+    // Lógica mejorada para encontrar el elemento de vista previa correspondiente
     if (tarjetaRef.classList.contains('tarjeta-texto')) {
+      // Para tarjetas de texto, buscar por ID del preview
       vistaRef = contenedorPrevia.querySelector(`#preview-texto-${idRef}`);
+      
+      // Si no encuentra, intentar buscar por data-tarjeta-id (compatibilidad con nuevos IDs)
+      if (!vistaRef) {
+        vistaRef = contenedorPrevia.querySelector(`.previsualizacion-texto[data-tarjeta-id='${idRef}']`);
+      }
     } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      vistaRef = contenedorPrevia.querySelector(`.previsualizacion-grafica[id='${idRef}']`);
+      // Para tarjetas de gráfica, buscar por data-tarjeta-id
+      vistaRef = contenedorPrevia.querySelector(`.previsualizacion-grafica[data-tarjeta-id='${idRef}']`);
     }
     
     if (vistaRef) {
@@ -127,6 +134,7 @@ function agregarTexto(
         contenedorPrevia.insertBefore(vistaPrevia, vistaRef.nextSibling);
       }
     } else {
+      // Fallback: Si no se encuentra la referencia, añadir al final
       contenedorPrevia.appendChild(vistaPrevia);
     }
   } else {

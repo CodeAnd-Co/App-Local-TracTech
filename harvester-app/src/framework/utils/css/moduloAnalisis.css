@@ -7,6 +7,8 @@
   --color-border: #e0e0e0;
   --color-bg: #ffffff;
   --color-text: #333333;
+  --color-scrollbar: #999999; /* Nuevo - Color gris para scrollbar */
+  --color-scrollbar-hover: #777777; /* Nuevo - Color gris oscuro para hover */
 }
 body,
 .frame-analisis,
@@ -107,10 +109,11 @@ body,
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 645px;
-  position: relative;
-  height: 340px;
-  padding: 10px 10px;
+  width: 100%; /* Cambiado de 645px fijo a 100% para ser responsive */
+  min-height: 340px; /* Cambiado de height fijo a min-height */
+  height: auto; /* Permitir crecer en altura */
+  padding: 10px;
+  margin: 0 auto; /* Centrar si es más pequeño que el contenedor */
 }
 .bar-chart {
   flex-shrink: 0;
@@ -438,11 +441,15 @@ body,
   text-align: center;
 }
 .contenedor-elementos-previsualizacion {
-  width: 645px;
+  width: 100%; /* Cambiado de 645px fijo a 100% */
+  max-width: 800px; /* Añadido un máximo para pantallas muy grandes */
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column; /* Cambiado de wrap a column para mejor visualización */
   gap: var(--spacing-md);
   justify-content: center;
+  align-items: center;
+  margin: 0 auto; /* Centrar */
+  flex-grow: 1; /* Permitir crecer */
 }
 .previsualizacion-texto {
   background: transparent;      
@@ -933,6 +940,24 @@ body,
   padding: 8px 12px !important;
 }
 /* — Asegurar que el botón de denegar quede pegado a la barra — */
+.swal2-popup-inline .swal2-deny {
+  margin-left: 0 !important;
+}
+.swal2-popup-inline .swal2-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem !important;
+}
+
+.swal2-popup-inline .swal2-confirm,
+.swal2-popup-inline .swal2-deny {
+  flex: none;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+}
+
 .swal2-popup-inline .swal2-deny {
   margin-left: 0 !important;
 }
