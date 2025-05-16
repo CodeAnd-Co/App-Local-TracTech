@@ -55,7 +55,7 @@ function inicializarModuloAnalisis() {
 
     descargarPDF()
 
-    ipcRenderer.once("pdf-guardado", (event, exito) => {
+    ipcRenderer.once('pdf-guardado', (event, exito) => {
       botonPDF.disabled = false;
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
@@ -327,9 +327,9 @@ async function descargarPDF() {
   });
 
   const documentoNuevo = documentoPDF.output('blob');
-  const pdfBuffer = await documentoNuevo.arrayBuffer();
+  const pdfBufer = await documentoNuevo.arrayBuffer();
 
-  ipcRenderer.send('guardar-pdf', Buffer.from(pdfBuffer));
+  ipcRenderer.send('guardar-pdf', Buffer.from(pdfBufer));
 }
 
 // Exponer funciones en el ámbito global para uso externo

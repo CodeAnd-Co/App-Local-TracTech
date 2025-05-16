@@ -54,22 +54,22 @@ app.on('window-all-closed', () => {
 });
 
 // Manejar la apertura del diálogo de selección de archivos cuando se descarga un pdf
-ipcMain.on("guardar-pdf", async (event, buffer) => {
-  const { canceled, filePath } = await dialog.showSaveDialog({
-    title: "Guardar PDF",
-    defaultPath: "reporte.pdf",
-    filters: [{ name: "PDF Files", extensions: ["pdf"] }],
+ipcMain.on('guardar-pdf', async (evento, bufer) => {
+  const { canceled: cancelado, filePath: ubicacion } = await dialog.showSaveDialog({
+    title: 'Guardar PDF',
+    defaultPath: 'reporte.pdf',
+    filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
   });
 
-  if (!canceled && filePath) {
-    fs.writeFile(filePath, buffer, (err) => {
-      if (err) {
-        console.error("Error al guardar PDF:", err);
+  if (!cancelado && ubicacion) {
+    fs.writeFile(ubicacion, bufer, (error) => {
+      if (error) {
+        console.error('Error al guardar PDF:', error);
       } else {
-        console.log("PDF guardado en", filePath);
+        console.log('PDF guardado en', ubicacion);
       }
     });
   }
 
-  event.sender.send("pdf-guardado", !canceled);
+  evento.sender.send('pdf-guardado', !cancelado);
 });
