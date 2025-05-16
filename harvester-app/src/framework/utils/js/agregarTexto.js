@@ -72,7 +72,7 @@ function agregarTexto(
       </select>
       <img class='type' src='../utils/iconos/Texto.svg' alt='Icono Texto' />
     </div>
-    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='500'></textarea>
+    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='1000'></textarea>
     <style>
       .contador-caracteres {
         font-size: 12px;
