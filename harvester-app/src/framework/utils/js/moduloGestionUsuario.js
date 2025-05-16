@@ -385,6 +385,7 @@ async function editarUsuario() {
     const correoIngresado = document.getElementById('email').value.trim();
     const contraseniaIngresada = document.getElementById('password').value.trim();
     const rolIngresado = document.getElementById('rol').value.trim();
+    const idRolIngresado = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
     const usuario = listaUsuarios.find(usuario => usuario.id === usuarioAEditar.id);
     if (!usuario) {
@@ -396,7 +397,7 @@ async function editarUsuario() {
     const cambioNombre    = nombreIngresado && nombreIngresado !== usuario.nombre;
     const cambioCorreo    = correoIngresado && correoIngresado !== usuario.correo;
     const cambioPass      = contraseniaIngresada !== '';
-    const cambioRol       = rolIngresado && Number(rolIngresado) !== rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol;
+    const cambioRol       = rolIngresado && Number(rolIngresado) !== idRolIngresado;
 
     if (!(cambioNombre || cambioCorreo || cambioPass || cambioRol)) {
         return Swal2.fire({
@@ -420,10 +421,14 @@ async function editarUsuario() {
         return;
     }
 
-    // TODO: Añadir validación de que campos se modificaron y cuales no
+    // Validación de campos en caso de estar vacío
+    const idUsuario = usuarioAEditar.id;
+    const nombreUsuario = (nombreIngresado !== '') ? nombreIngresado : usuario.nombre;
+    const correoUsuario = (correoIngresado !== '') ? correoIngresado : usuario.correo;
+    const idRolUsuario = (!rolIngresado) ? rolIngresado : idRolIngresado;
 
     try {
-        const resultado = await modificarUsuario(usuarioAEditar.id, nombreIngresado, correoIngresado, contraseniaIngresada, rolIngresado);
+        const resultado = await modificarUsuario(idUsuario, nombreUsuario, correoUsuario, contraseniaIngresada, idRolUsuario);
         if (resultado.ok) {
             Swal2.fire({
                 title: 'Usuario modificado',
