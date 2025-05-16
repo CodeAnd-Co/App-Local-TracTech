@@ -11,7 +11,7 @@ const { Chart } = require('chart.js/auto');
  * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
  */
 function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
-  const contenedor       = document.getElementById(contenedorId);
+  const contenedor = document.getElementById(contenedorId);
   const previsualizacion = document.getElementById(previsualizacionId);
   
   // Guardar referencia global al contenedor de previsualización
@@ -22,8 +22,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
   // Calcular ID único con timestamp
-  const timestamp = new Date().getTime();
-  const nuevaId = `grafica_${timestamp}`;
+  const marcaTiempo = new Date().getTime();
+  const nuevaId = `grafica_${marcaTiempo}`;
   tarjetaGrafica.id = nuevaId;
 
   // Inyectar HTML base
@@ -76,7 +76,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   // Inicializar Chart.js
   const contexto = canvasGrafica.getContext('2d');
-  const grafico  = crearGrafica(contexto, 'line');
+  const grafico = crearGrafica(contexto, 'line');
   grafico.options.plugins.title.text = '';
   grafico.update();
 
@@ -90,10 +90,10 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
       const grafica = encontrarGrafica(idTarjetaActual);
       if (grafica) {
         const ctx = grafica.querySelector('canvas').getContext('2d');
-        const chart = Chart.getChart(ctx);
-        if (chart) {
-          chart.options.plugins.title.text = this.value;
-          chart.update();
+        const tabla = Chart.getChart(ctx);
+        if (tabla) {
+          tabla.options.plugins.title.text = this.value;
+          tabla.update();
         }
       }
     });
@@ -108,9 +108,9 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     const grafica = encontrarGrafica(idTarjetaActual);
     if (grafica) {
       const ctx = grafica.querySelector('canvas').getContext('2d');
-      const chart = Chart.getChart(ctx);
-      if (chart) {
-        chart.destroy();
+      const tabla = Chart.getChart(ctx);
+      if (tabla) {
+        tabla.destroy();
         const nueva = crearGrafica(ctx, this.value);
         nueva.options.plugins.title.text = tarjetaActual.querySelector('.titulo-grafica').value;
         nueva.update();
@@ -181,10 +181,10 @@ function encontrarGrafica(id) {
     return null;
   }
   
-  const idString = String(id);
+  const idCadena = String(id);
   const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
   
-  const porAtributo = graficasExistentes.find(grafica => grafica.getAttribute('data-tarjeta-id') === idString);
+  const porAtributo = graficasExistentes.find(grafica => grafica.getAttribute('data-tarjeta-id') === idCadena);
   if (porAtributo) {
     return porAtributo;
   }
@@ -240,11 +240,11 @@ function crearCuadroFormulas(columnas) {
               </div>
           </div>`;
 
-  const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
+  const contenedoresSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
-  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
-  // Fórmulas en contenedoesSeleccion[1]
+  crearMenuDesplegable(contenedoresSeleccion[0], 'A', columnas);
+  // Fórmulas en contenedoresSeleccion[1]
 
   const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
   botonRegresar.addEventListener('click', () => {
@@ -252,10 +252,10 @@ function crearCuadroFormulas(columnas) {
   });
 
   // 1) Busca la sección de elementos de reporte
-  const reporteSection = document.querySelector('.seccion-elemento-reporte');
+  const seccionReporte = document.querySelector('.seccion-elemento-reporte');
   // 2) Inserta el panel justo después de esa sección
-  if (reporteSection) {
-    reporteSection.insertAdjacentElement('afterend', cuadroFormulas);
+  if (seccionReporte) {
+    seccionReporte.insertAdjacentElement('afterend', cuadroFormulas);
   } else {
     // Fallback: si no lo encuentra, lo añade al final del frame
     document.querySelector('.frame-analisis').appendChild(cuadroFormulas);
@@ -276,10 +276,10 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
   divLetra.innerHTML = letra;
   const seleccionarValores = document.createElement('select');
   seleccionarValores.className = 'opcion-texto';
-  seleccionarValores.innerHTML = '<option>-- Selecciona Columna --</option>'
+  seleccionarValores.innerHTML = '<option>-- Selecciona Columna --</option>';
   columnas.forEach((texto) => {
     seleccionarValores.innerHTML = `${seleccionarValores.innerHTML}
-    <option> ${texto} </option>`
+    <option> ${texto} </option>`;
   });
 
   nuevo.appendChild(divLetra);
@@ -296,9 +296,9 @@ function eliminarCuadroFormulas() {
   if (!frameAnalisis) return false;
   
   const cuadrosExistentes = Array.from(frameAnalisis.children);
-  const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className == 'contenedor-formulas');
-  if (cuadros.length == 1) {
-    cuadros[0].remove()
+  const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className === 'contenedor-formulas');
+  if (cuadros.length === 1) {
+    cuadros[0].remove();
     return true;
   } else {
     return false;
@@ -326,24 +326,24 @@ function crearGrafica(contexto, tipo, color) {
     tipo = 'line';
   }
 
-  const colores = generarDegradadoHaciaBlanco(color, 7)
+  const colores = generarDegradadoHaciaBlanco(color, 7);
   color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
   const grafico = new Chart(contexto, {
     type: tipo,
     data: {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
       datasets: [{
         label: '',
         backgroundColor: fondo => {
-          if (tipo == 'line' || tipo == 'radar') {
+          if (tipo === 'line' || tipo === 'radar') {
             return color;
           } else {
             return colores[fondo.dataIndex];
           }
         },
         borderColor: borde => {
-          if (tipo == 'line' || tipo == 'radar') {
+          if (tipo === 'line' || tipo === 'radar') {
             return color;
           } else {
             return colores[borde.dataIndex];
@@ -357,8 +357,8 @@ function crearGrafica(contexto, tipo, color) {
         title: { display: true},
         legend: {
           labels: {
-            generateLabels: chart =>
-              chart.data.datasets.map(ds => ({
+            generateLabels: tabla =>
+              tabla.data.datasets.map(ds => ({
                 text: ds.label,
                 fillStyle: color,
                 strokeStyle: color
@@ -371,7 +371,6 @@ function crearGrafica(contexto, tipo, color) {
         x: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } },
         /* eslint-disable id-length */
         y: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } }
-         
       }
     }
   });
@@ -389,9 +388,7 @@ function generarDegradadoHaciaBlanco(rgb, pasos) {
   const [rojo, verde, azul] = rgb;
 
   return Array.from(
-    // Crea un arreglo de la longitud de pasps
     { length: pasos },
-    //Ejecuta la siguiente gunción en cada valor del arreglo
     (__, indice) => {
       // Calcula el factor por el cual se va a multiplicar el color para acercarse un poco al blanco
       const factor = indice / (pasos); // Factor de interpolación
