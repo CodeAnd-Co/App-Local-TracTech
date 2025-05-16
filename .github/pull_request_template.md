@@ -16,7 +16,7 @@
 
 - [ ] Nueva funcionalidad (Un cambio que agrega una funcionalidad)
 - [ ] Corrección de errores (Un cambio que arregla un problema)
-- [ ] Hotfix (Una correción urgente que será revisada posteriormente)
+- [ ] Hotfix (Una corrección urgente que será revisada posteriormente)
 - [ ] Refactorización (Reorganización o mejora del código sin cambiar su funcionalidad)
 
 ## Checklist del autor:
@@ -26,13 +26,15 @@
 - [ ] He determinado que los cambios no tienen un impacto negativo en la aplicación
 - [ ] La historia de usuario cumple con los requisitos de **Done**
 - [ ] El código sigue el estándar de codificación y cumple con la checklist de desarrollo
-- [ ] He actualizado los productos relacionados a la historia de usuario y lo cambiaré a "Terminado" una vez que se haga la fusión
+- [ ] He actualizado los productos relacionados a la historia de usuario y la cambiaré a "Terminado" una vez que se haga la fusión
+- [ ] He añadido todos los defectos inyectados y detectados en desarrollo a nuestro *Defectlog*
 - [ ] Alguien más está asignado como evaluador (tester/reviewer)
 
 ## Checklist del evaluador:
 
 <!--- Repasa los puntos siguientes, y pon una `x` en todas las cajas que aplican -->
 
+- [ ] He determinado que el autor cumplió con todos los puntos mencionados arriba
 - [ ] He determinado que los cambios no tienen un impacto negativo en la aplicación
 - [ ] He notificado al autor del PR en caso de dudas o ajustes necesarios
 - [ ] Una vez que acepte el PR, eliminaré la rama
@@ -40,10 +42,11 @@
 <!-- ## Registro de cambios
 
 Historial de cambios en la plantilla
-| Tipo de version | Descripción | Fecha | Colaborador |
+| Tipo de versión | Descripción | Fecha | Colaborador |
 | --------------- | ----------- | ----- | ----------- |
 | 1.0 | Primera versión de la plantilla | 22/04/2025 | Ian Julián Estrada Castro |
 | 1.1 | Publicar en docusaurus | 26/04/2025 | Daniel Queijeiro Albo |
 | 1.2 | Corrección de errores ortográficos | 01/05/2025 | Ian Julián Estrada Castro |
+| 1.3 | Añadir sección para registrar defectos a la plantilla | 16/05/2025 | Rommel Toledo C. |
  -->
  
