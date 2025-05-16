@@ -38,11 +38,11 @@ async function inicializarCrearFormula() {
                 fetch('../vistas/crearFormula.html')
                     .then(res => res.text())
                     .then(html => {
+                        const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
                         ventanaPrincipal.innerHTML = html;
                         const ejecutable = document.createElement('script');
                         ejecutable.src = '../utils/js/crearFormula.js';
                         document.body.appendChild(ejecutable);
-
                         document.getElementById('btnCancelar').addEventListener('click', () => {
                             window.cargarModulo('formulas');
                         });
@@ -57,6 +57,20 @@ async function inicializarCrearFormula() {
                                 console.error('El contenedor de argumentos no se encontró en el DOM.');
                             }
                         });
+
+                        if (nombreArchivo === null || nombreArchivo === undefined) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'No hay un archivo cargado.',
+                                icon: 'error',
+                                confirmButtonColor: '#1F4281',
+                            });
+                            document.getElementById('btnGuardar').disabled = true;
+                            document.getElementById('btnGenerar').disabled = true;
+
+                            return;
+                        }
+
                         
 
                     })
@@ -71,6 +85,7 @@ async function inicializarCrearFormula() {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
+    generarFormulaCompleja();
     const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
     const nombreFormula = nombreFormulaSinProcesar.trim();
     const formulasGuardadas = localStorage.getItem('nombresFormulas');
@@ -175,6 +190,12 @@ async function procesarFormula() {
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
     }
+    Swal.fire({
+        title: 'Fórmula guardada',
+        text: 'La fórmula ha sido guardada exitosamente.',
+        icon: 'success',
+        confirmButtonColor: '#1F4281',
+    });
 }
 
 /**
@@ -427,6 +448,8 @@ function masArgumentosCountif(contenedor) {
  * @throws {Error} Si no se selecciona una función principal o si hay un error al construir la fórmula.
  */
 function generarFormulaCompleja() {
+    const previsualizador = document.getElementsByClassName('formula-result-section');
+    previsualizador[0].style.display = 'block';
     const seleccionFuncionPrincipal = document.getElementById('main-function');
     if (!seleccionFuncionPrincipal.value) {
         Swal.fire({

@@ -387,6 +387,7 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  display: none;
 }
 
 .formula-result-section label {
