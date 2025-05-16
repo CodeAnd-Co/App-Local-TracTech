@@ -2,10 +2,8 @@
 // RF76 Consultar Fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 // RF71 Eliminar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF71
 
-const { URL_BASE } = require('../../../framework/utils/js/constantes.js');
-
 async function guardarFormula(nombre, formula, token) {
-    const respuesta = await fetch(`${URL_BASE}/formulas/guardarFormula`, {
+    const respuesta = await fetch(`${process.env.URL_BASE}/formulas/guardarFormula`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -19,7 +17,7 @@ async function guardarFormula(nombre, formula, token) {
 }
 
 async function consultarFormulas(token){
-    const respuesta = await fetch(`${URL_BASE}/formulas/consultarFormulas`, {
+    const respuesta = await fetch(`${process.env.URL_BASE}/formulas/consultarFormulas`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -32,7 +30,7 @@ async function consultarFormulas(token){
 }
 
 async function eliminarFormula(id, token){
-    const respuesta = await fetch(`${URL_BASE}/formulas/eliminarFormula/`, {
+    const respuesta = await fetch(`${process.env.URL_BASE}/formulas/eliminarFormula/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

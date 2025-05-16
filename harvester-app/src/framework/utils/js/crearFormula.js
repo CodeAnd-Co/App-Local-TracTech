@@ -4,7 +4,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
-const { URL_BASE } = require('./constantes.js');
 
 if (typeof Swal === 'undefined'){
     const Swal = require('sweetalert2');
