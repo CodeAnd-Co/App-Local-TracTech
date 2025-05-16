@@ -11,6 +11,7 @@ const { jsPDF: JSPDF } = window.jspdf;
 if (typeof Swal === 'undefined'){
   const Swal = require('sweetalert2');
 }
+const { ipcRenderer } = require('electron');
 
 /**
  * Inicializa la interfaz de análisis:
@@ -36,9 +37,30 @@ function inicializarModuloAnalisis() {
   document.getElementById('agregarTexto').style.display   = 'none';
   document.getElementById('agregarGrafica').style.display = 'none';
 
-  // 2) Listener de clic para descargar el reporte en PDF
-  document.getElementById('descargarPDF')
-          .addEventListener('click', descargarPDF);
+  // Configurar listeners de botones
+  document.getElementById('agregarTexto')
+          .addEventListener('click', () => window.agregarTexto(idContenedor, idContenedorPrevisualizacion));
+  document.getElementById('agregarGrafica')
+          .addEventListener('click', () => window.agregarGrafica(idContenedor, idContenedorPrevisualizacion));
+  
+  const botonPDF = document.getElementById('descargarPDF')
+  const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
+  botonPDF.addEventListener('click', async () => {
+    
+    const anterior = botonPDF.textContent;
+    botonPDF.disabled = true;
+    const contenedorTexto = botonPDF.children[1]
+    contenedorTexto.textContent = 'Descargando...';
+    pantallaBloqueo.classList.remove('oculto');
+
+    descargarPDF()
+
+    ipcRenderer.once('pdf-guardado', (event, exito) => {
+      botonPDF.disabled = false;
+      contenedorTexto.textContent = anterior;
+      pantallaBloqueo.classList.add('oculto');
+    });
+  });
 
   // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
@@ -201,8 +223,6 @@ function cargarDatosExcel() {
     }
 
     const datosExcel = JSON.parse(datosExcelJSON);
-    // Almacenar globalmente para otras funciones
-    window.datosExcelGlobal = datosExcel;
     return datosExcel;
 
   } catch (error) {
@@ -218,7 +238,7 @@ function cargarDatosExcel() {
  * @memberof module:moduloAnalisis
  * @throws {Error} Si jsPDF no está cargado o falla la extracción de previsualización.
  */
-function descargarPDF() {
+async function descargarPDF() {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     Swal.fire({
         title: 'Error al descargar reporte',
@@ -281,7 +301,14 @@ function descargarPDF() {
 
       const imagen     = lienzo.toDataURL('image/png');
       const proporcion = lienzo.height / lienzo.width;
-      const altoImagen = anchoPagina * proporcion;
+      let anchoImagen = anchoPagina;
+      let altoImagen = anchoPagina * proporcion;
+      let desplazamiento = 0;
+      if (proporcion == 1) {
+        anchoImagen /= 2
+        altoImagen /= 2;
+        desplazamiento = anchoImagen / 2
+      }
       const espaciado = 15;
       const anchoFondo = 520;
       const altoFondo = 265 + espaciado;
@@ -294,13 +321,15 @@ function descargarPDF() {
 
       documentoPDF.setFillColor(224, 224, 224);
       documentoPDF.roundedRect(margen - 2, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
-      documentoPDF.addImage(imagen, 'PNG', margen, posicionY + espaciado, anchoPagina, altoImagen);
+      documentoPDF.addImage(imagen, 'PNG', margen + desplazamiento, posicionY + espaciado, anchoImagen, altoImagen);
       posicionY += altoFondo + 35;
     }
   });
 
-  // Guardar el archivo PDF generado
-  documentoPDF.save('reporte.pdf');
+  const documentoNuevo = documentoPDF.output('blob');
+  const pdfBufer = await documentoNuevo.arrayBuffer();
+
+  ipcRenderer.send('guardar-pdf', Buffer.from(pdfBufer));
 }
 
 // Exponer funciones en el ámbito global para uso externo

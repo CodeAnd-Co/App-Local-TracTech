@@ -1,6 +1,9 @@
 // RF36 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
 // RF38 - Usuario modifica gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF38
-const { Chart } = require('chart.js/auto');
+const Chart = require('chart.js/auto');
+const ChartDataLabels = require('chartjs-plugin-datalabels');
+Chart.register(ChartDataLabels);
+
 
 /**
  * Agrega una nueva tarjeta de gráfica y su previsualización.
@@ -334,7 +337,7 @@ function crearGrafica(contexto, tipo, color) {
     data: {
       labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
       datasets: [{
-        label: '',
+        label: 'Datos',
         backgroundColor: fondo => {
           if (tipo === 'line' || tipo === 'radar') {
             return color;
@@ -354,17 +357,52 @@ function crearGrafica(contexto, tipo, color) {
     },
     options: {
       plugins: {
-        title: { display: true},
+        title: { display: true },
+        tooltip: {
+          enabled: false,
+        },
         legend: {
           labels: {
-            generateLabels: tabla =>
-              tabla.data.datasets.map(ds => ({
-                text: ds.label,
+            generateLabels: chart =>
+              chart.data.datasets.map(ds => ({
+                text: ds.label || 'Datos',
                 fillStyle: color,
-                strokeStyle: color
-              }))
+                strokeStyle: color,
+              })),
           },
         },
+        datalabels: {
+          display: () => {
+            if (['line', 'radar', 'polarArea'].includes(tipo)) {
+              return false;
+            } else {
+              return true;
+            }
+          },
+          anchor: () => {
+            if (tipo == 'bar') {
+              return 'end';
+            } else {
+              return 'center';
+            }
+          },
+          font: {
+            size: 12,
+            weight: 'bold'
+          },
+          formatter: (value, context) => { 
+            if (tipo == 'pie' || tipo == 'doughnut') { 
+              const datos = context.chart.data.datasets[0].data;
+              const valorTotal = datos.reduce((total, datapoint) => {
+                return total + datapoint;
+              }, 0);
+              const porcentaje = ((value / valorTotal) * 100).toFixed(2);
+              return `${porcentaje}%`;
+            } else {
+              return value;
+            }
+          },
+        }
       },
       scales: {
         /* eslint-disable id-length */
@@ -372,7 +410,7 @@ function crearGrafica(contexto, tipo, color) {
         /* eslint-disable id-length */
         y: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } }
       }
-    }
+    },
   });
 
   return grafico;
