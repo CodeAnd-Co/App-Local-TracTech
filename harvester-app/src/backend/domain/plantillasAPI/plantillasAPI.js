@@ -1,5 +1,7 @@
+const { URL_BASE } = require('../../../framework/utils/js/constantes');
+
 async function plantillas() {
-    const respuesta = await fetch(`${process.env.URL_BASE}/plantillas/consultar`, {
+    const respuesta = await fetch(`${URL_BASE}/plantillas/consultar`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

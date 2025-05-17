@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+
+# Constantes
+src/framework/utils/js/constantes.js
