@@ -1,8 +1,8 @@
 {
-  "name": "harvester-app",
-  "productName": "harvester-app",
+  "name": "harvester",
+  "productName": "Harvester",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Harvester es una aplicación de escritorio para la gestión de datos",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -28,14 +28,13 @@
       "uninstallerIcon": "src/framework/utils/imagenes/HarvesterAppIcon.ico",
       "uninstallDisplayName": "Desinstalador Harvester App",
       "license": "LICENSE",
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": false
     }
   },
 
   "keywords": [],
   "author": {
-    "name": "DanielContrerasCh",
-    "email": "danicontreras0409@gmail.com"
+    "name": "Code&Co - Tractech"
   },
   "license": "MIT",
   "dependencies": {
