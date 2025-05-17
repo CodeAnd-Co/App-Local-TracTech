@@ -62,6 +62,27 @@ function inicializarModuloAnalisis() {
     });
   });
 
+    const botonGuardarPlantilla = document.getElementById('guardarPlantilla')
+    botonGuardarPlantilla.addEventListener('click', async () => {
+    
+    const anterior = botonPDF.textContent;
+    botonPDF.disabled = true;
+    const contenedorTexto = botonPDF.children[1]
+    contenedorTexto.textContent = 'Descargando...';
+    pantallaBloqueo.classList.remove('oculto');
+
+    descargarPDF()
+
+
+    ipcRenderer.once('pdf-guardado', (event, exito) => {
+      botonPDF.disabled = false;
+      contenedorTexto.textContent = anterior;
+      pantallaBloqueo.classList.add('oculto');
+    });
+
+    guardarPlantilla()
+  });
+
   // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
     agregarTexto(idContenedor, idContenedorPrevisualizacion);
@@ -330,6 +351,10 @@ async function descargarPDF() {
   const pdfBufer = await documentoNuevo.arrayBuffer();
 
   ipcRenderer.send('guardar-pdf', Buffer.from(pdfBufer));
+}
+
+async function guardarPlantilla() {
+  console.log("aaaaaaaaaaaaaaa");
 }
 
 // Exponer funciones en el ámbito global para uso externo
