@@ -2,6 +2,7 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 // RF76 Consultar Fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 // RF71 Eliminar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF71
+const { URL_BASE } = require('../../../framework/utils/js/constantes');
 
 /**
  * 
@@ -14,7 +15,7 @@
  * @throws {Error} Si no se pudo guardar la fórmula.
  */
 async function guardarFormula(nombre, formula, token) {
-    const respuesta = await fetch(`${process.env.URL_BASE}/formulas/guardarFormula`, {
+    const respuesta = await fetch(`${URL_BASE}/formulas/guardarFormula`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ async function guardarFormula(nombre, formula, token) {
  * @throws {Error} Si no se pudo consultar las fórmulas.
  */
 async function consultarFormulas(token){
-    const respuesta = await fetch(`${process.env.URL_BASE}/formulas/consultarFormulas`, {
+    const respuesta = await fetch(`${URL_BASE}/formulas/consultarFormulas`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -56,7 +57,7 @@ async function consultarFormulas(token){
  * @throws {Error} Si no se pudo eliminar la fórmula.
  */
 async function eliminarFormula(id, token){
-    const respuesta = await fetch(`${process.env.URL_BASE}/formulas/eliminarFormula/`, {
+    const respuesta = await fetch(`${URL_BASE}/formulas/eliminarFormula/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
