@@ -4,6 +4,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
+
 if (typeof Swal === 'undefined'){
     const Swal = require('sweetalert2');
 }
@@ -38,11 +39,11 @@ async function inicializarCrearFormula() {
                 fetch('../vistas/crearFormula.html')
                     .then(res => res.text())
                     .then(html => {
+                        const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
                         ventanaPrincipal.innerHTML = html;
                         const ejecutable = document.createElement('script');
                         ejecutable.src = '../utils/js/crearFormula.js';
                         document.body.appendChild(ejecutable);
-
                         document.getElementById('btnCancelar').addEventListener('click', () => {
                             window.cargarModulo('formulas');
                         });
@@ -57,28 +58,26 @@ async function inicializarCrearFormula() {
                                 console.error('El contenedor de argumentos no se encontró en el DOM.');
                             }
                         });
+
+                        if (nombreArchivo === null || nombreArchivo === undefined) {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'No hay un archivo cargado.',
+                                icon: 'error',
+                                confirmButtonColor: '#1F4281',
+                            });
+                            document.getElementById('btnGuardar').disabled = true;
+                            document.getElementById('btnGenerar').disabled = true;
+
+                            return;
+                        }
+
                         
 
                     })
                     .catch(err => console.error('Error cargando módulo de creación de fórmulas:', err));
             }
     };
-
-
-async function guardarFormulaTemporal(nombre, formula) {
-    // REFACTORIZAR
-    const respuesta = await fetch('http://localhost:3000/formulas/guardarFormula', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({nombre, formula}),
-    });
-
-    const datos = await respuesta.json();
-    return { ok: respuesta.ok, ...datos };
-}
 
 /**
  * @function procesarFormula
@@ -87,19 +86,34 @@ async function guardarFormulaTemporal(nombre, formula) {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
-    const nombreFormula = document.getElementById('nombreFormula').value;
-    // Obtener referencia al botón de guardar
-        if(nombreFormula === '') {
+    generarFormulaCompleja();
+    const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
+    const nombreFormula = nombreFormulaSinProcesar.trim();
+    const formulasGuardadas = localStorage.getItem('nombresFormulas');
+ 
+    if (nombreFormula === '' || nombreFormula.length >= 30) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Verifica que la formula tenga un nombre válido y menor de 30 caracteres.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        return;
+    }
+    if (formulasGuardadas) {
+        const nombresFormulas = JSON.parse(formulasGuardadas);
+        if (nombresFormulas.includes(nombreFormula)) {
             Swal.fire({
                 title: 'Error',
-                text: 'Verifica que la formula tenga un nombre válido.',
+                text: 'Ya existe una fórmula con ese nombre.',
                 icon: 'error',
                 confirmButtonColor: '#1F4281',
             });
             return;
         }
-    const btnGuardar = document.getElementById('btnGuardar');
-    
+    }
+    // Obtener referencia al botón de guardar
+    const btnGuardar = document.getElementById('btnGuardar');    
     // Deshabilitar el botón para evitar múltiples clics
     btnGuardar.disabled = true;
     
@@ -111,7 +125,43 @@ async function procesarFormula() {
     
     const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
+    if (cuadroTextoGenerado === '') {
+        Swal.fire({
+            title: 'Error',
+            text: 'Verifica que la fórmula ha sido generada.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        // Restaurar el botón en caso de error
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
+        return;
+    } else if (cuadroTextoGenerado === 'Por favor, selecciona una función principal.') {
+        Swal.fire({
+            title: 'Error',
+            text: 'Verifica que la fórmula esté completa.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        // Restaurar el botón en caso de error
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
+        return;
+        
+    }
+    if (cuadroTextoGenerado.length >= 512) {
+        Swal.fire({
+            title: 'Error',
+            text: 'La fórmula excede los 512 caracteres, no puede ser guardada.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        btnGuardar.innerHTML = contenidoOriginal;
+        btnGuardar.disabled = false;
+        return;
+    }
     const formula = cuadroTextoGenerado.split(':')[1].trim();
+    
     try{
         const respuesta = await guardarFormula(nombreFormula, formula);
         if (respuesta.ok) {
@@ -141,6 +191,12 @@ async function procesarFormula() {
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
     }
+    Swal.fire({
+        title: 'Fórmula guardada',
+        text: 'La fórmula ha sido guardada exitosamente.',
+        icon: 'success',
+        confirmButtonColor: '#1F4281',
+    });
 }
 
 /**
@@ -205,11 +261,11 @@ function agregarArgumento(etiqueta, nombreClase, contenedor, permitirAnidado = f
             <label>${etiqueta}:</label>
         </div>
         <div class='argumentoContenido'>
-            <div class='argumentoInputs'>
+            <div class='argumentosEntradas'>
                 <input type='text' class='${nombreClase}' placeholder='${etiqueta}'>
                 ${permitirAnidado ? '<button class="botonFuncionAnidada" onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
             </div>
-            <div class='nested-function-container'></div>
+            <div class='contenedor-funciones-anidadas'></div>
         </div>
     `;
     contenedor.appendChild(argumentoDiv);
@@ -233,7 +289,7 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
             <label>${etiqueta}:</label>
         </div>
         <div class='argumentoContenido'>
-            <div class='argumentoInputs'>
+            <div class='argumentosEntradas'>
                 <select class='variable-selector ${nombreClase}-variable'>
                     <option value=''>Seleccionar variable</option>
                 </select>
@@ -262,7 +318,7 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
 function agregarFuncionAnidada(boton) {
     // Buscar el contenedor anidado dentro del contenido del argumento
     const argumentoContenido = boton.closest('.argumentoContenido');
-    const contenedorAnidado = argumentoContenido.querySelector('.nested-function-container');
+    const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
     
     // Crear un contenedor para esta función anidada específica
     const filaAnidada = document.createElement('div');
@@ -301,14 +357,14 @@ function agregarFuncionAnidada(boton) {
         const valorSeleccionado = evento.target.value;
         if (valorSeleccionado) {
             // Buscar si ya existe un div anidado en esta fila y eliminarlo
-            const divAnidadoExistente = filaAnidada.querySelector('.nested-function');
+            const divAnidadoExistente = filaAnidada.querySelector('.funciones-anidadas');
             if (divAnidadoExistente) {
                 divAnidadoExistente.remove();
             }
             
             // Si se selecciona una función, se crea un nuevo contenedor para los argumentos de la función anidada
             const divAnidado = document.createElement('div');
-            divAnidado.classList.add('nested-function');
+            divAnidado.classList.add('funciones-anidadas');
             filaAnidada.appendChild(divAnidado);
             
             // Se define la estructura de la función anidada
@@ -393,9 +449,16 @@ function masArgumentosCountif(contenedor) {
  * @throws {Error} Si no se selecciona una función principal o si hay un error al construir la fórmula.
  */
 function generarFormulaCompleja() {
+    const previsualizador = document.getElementsByClassName('formula-seccion-resultado');
+    previsualizador[0].style.display = 'block';
     const seleccionFuncionPrincipal = document.getElementById('main-function');
     if (!seleccionFuncionPrincipal.value) {
-        document.getElementById('resultado').innerText = 'Por favor, selecciona una función principal.';
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, selecciona una función principal.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
         return;
     }
 
@@ -485,7 +548,7 @@ function procesarArgumento(argumento) {
 
     const seleccionAnidado = argumento.querySelector('.selectorFuncionAnidada');
     if (seleccionAnidado && seleccionAnidado.value) {
-        const contenedorAnidado = argumento.querySelector('.nested-function');
+        const contenedorAnidado = argumento.querySelector('.funciones-anidadas');
         return construirFormulaDesdeContenedor(contenedorAnidado, seleccionAnidado.value);
     }
 
@@ -550,7 +613,25 @@ function traducirFuncion(nombre) {
 */
 function popularDropdown(elementoSeleccionado) {
     // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo TODO()
-    const columnas = ['Gasolina', 'Kilometraje', 'Fecha', 'Estado', 'Valor'];
+    let columnas = localStorage.getItem('columnas') ? JSON.parse(localStorage.getItem('columnas')) : [];
+    const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
+    if (nombreArchivo === null || nombreArchivo === undefined) {
+        columnas = [];
+        columnas.push('No hay archivo cargado');
+        elementoSeleccionado.innerHTML = '<option value="">No hay un archivo cargado</option>';
+        document.getElementById('btnGuardar').disabled = true;
+        document.getElementById('btnGenerar').disabled = true;
+        return;
+    }
+    if (!Array.isArray(columnas)) {
+        Swal.fire({
+            title: 'Error',
+            text: 'El archivo seleccionado no tiene parámetros.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        return;
+    }
     elementoSeleccionado.innerHTML = '<option value="">Seleccionar</option>';
     columnas.forEach(columna => {
         const opcion = document.createElement('option');

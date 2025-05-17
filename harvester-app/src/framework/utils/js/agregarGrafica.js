@@ -1,53 +1,62 @@
 // RF36 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
 // RF38 - Usuario modifica gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF38
-const { Chart } = require('chart.js/auto');
+const Chart = require('chart.js/auto');
+const ChartDataLabels = require('chartjs-plugin-datalabels');
+Chart.register(ChartDataLabels);
+
 
 /**
  * Agrega una nueva tarjeta de gráfica y su previsualización.
- * @param {string} contenedorId - ID del contenedor donde se agregará la tarjeta de gráfica.
- * @param {string} previsualizacionId - ID del contenedor de previsualización de la gráfica.
+ *
+ * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
+ * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
+ * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
  */
-function agregarGrafica(contenedorId, previsualizacionId) {
-  const contenedor = document.getElementById(contenedorId);
+function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
+  const contenedor       = document.getElementById(contenedorId);
   const previsualizacion = document.getElementById(previsualizacionId);
+  
+  // Guardar referencia global al contenedor de previsualización
+  window.previsualizacion = previsualizacion;
 
-  //Crear tarjeta
+  // Crear tarjeta de edición
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
-  //Calcular ID único
+  // Calcular ID único
   const tarjetasExistentes = contenedor.querySelectorAll('.tarjeta-grafica');
   const nuevaId = tarjetasExistentes.length
     ? parseInt(tarjetasExistentes[tarjetasExistentes.length - 1].id, 10) + 1
     : 1;
   tarjetaGrafica.id = nuevaId;
 
-  //Inyectar HTML base: nombre, selector tipo (igual a agregarTexto.js), botones
+  // Inyectar HTML base
   tarjetaGrafica.innerHTML = `
-    <input class="titulo-grafica" placeholder="Nombre de la gráfica" />
-    <div class="titulo-texto">
-      <select class="tipo-texto tipo-grafica">
-        <option value="line">Línea</option>
-        <option value="bar">Barras</option>
-        <option value="pie">Pastel</option>
-        <option value="doughnut">Dona</option>
-        <option value="radar">Radar</option>
-        <option value="polarArea">Polar</option>
+    <input class='titulo-grafica' placeholder='Nombre de la gráfica' />
+    <div class='titulo-texto'>
+      <select class='tipo-texto tipo-grafica'>
+        <option value='line'>Línea</option>
+        <option value='bar'>Barras</option>
+        <option value='pie'>Pastel</option>
+        <option value='doughnut'>Dona</option>
+        <option value='radar'>Radar</option>
+        <option value='polarArea'>Polar</option>
       </select>
-      <img class="type" src="../utils/iconos/GraficaBarras.svg" alt="Icono Gráfica" />
+      <img class='type' src='../utils/iconos/GraficaBarras.svg' alt='Icono Gráfica' />
     </div>
-    <div class="boton-formulas">
-      <div class="formulas">Fórmulas</div>
+    <div class='boton-formulas'>
+      <div class='formulas'>Fórmulas</div>
     </div>
-    <div class="botones-eliminar" style="display: flex; justify-content: flex-end;">
-      <div class="eliminar">
-        <img class="eliminar-icono" src="../utils/iconos/Basura.svg" />
-        <div class="texto-eliminar">Eliminar</div>
+    <div class='botones-eliminar' style='display: flex; justify-content: flex-end;'>
+      <div class='eliminar'>
+        <img class='eliminar-icono' src='../utils/iconos/Basura.svg' />
+        <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>
   `;
 
-  //Datos disponibles
+  // Datos disponibles para fórmulas
   let columnas = [];
   if (window.datosExcelGlobal) {
     window.datosGrafica = window.datosExcelGlobal.hojas[
@@ -56,64 +65,105 @@ function agregarGrafica(contenedorId, previsualizacionId) {
     columnas = window.datosGrafica[0].slice(3);
   }
 
-  //Botón Fórmulas
+  // Botón 'Fórmulas'
   tarjetaGrafica
     .querySelector('.boton-formulas')
     .addEventListener('click', () =>
       crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
 
-  //Área de previsualización
+  // Contenedor de previsualización
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
-  graficaDiv.id = nuevaId;
-
+  graficaDiv.id = `${nuevaId}`; // Asegura que el ID es un string
   const canvasGrafica = document.createElement('canvas');
+  graficaDiv.appendChild(canvasGrafica);
+
+  // Inicializar Chart.js
   const contexto = canvasGrafica.getContext('2d');
-  graficaDiv.appendChild(canvasGrafica);
+  const grafico  = crearGrafica(contexto, 'line');
+  grafico.options.plugins.title.text = '';
+  grafico.update();
 
-  //Iniciar Chart.js
-  const grafico = crearGrafica(contexto, 'line');
-
-  graficaDiv.appendChild(canvasGrafica);
-
-  //Cambiar título dinámicamente
+  // Listener para título dinámico
   tarjetaGrafica
     .querySelector('.titulo-grafica')
     .addEventListener('input', function () {
-      const contexto = encontrarGrafica(nuevaId).children[0].getContext('2d');
-      const graficaEncontrada = Chart.getChart(contexto);
-
-      graficaEncontrada.options.plugins.title.text = this.value;
-      graficaEncontrada.update();
+      const grafica = encontrarGrafica(nuevaId);
+      if (grafica) {
+        const ctx = grafica.querySelector('canvas').getContext('2d');
+        const chart = Chart.getChart(ctx);
+        if (chart) {
+          chart.options.plugins.title.text = this.value;
+          chart.update();
+        }
+      }
     });
 
-  //Selector de tipo de gráfica
-  const selectorTipoGrafica = tarjetaGrafica.querySelector('.tipo-grafica');
-  selectorTipoGrafica.value = grafico.config.type;
-  selectorTipoGrafica.addEventListener('change', () => {
-    const contexto = encontrarGrafica(nuevaId).children[0].getContext('2d');
-
-    Chart.getChart(contexto).destroy();
-
-    const nuevaGrafica = crearGrafica(contexto, selectorTipoGrafica.value);
-    nuevaGrafica.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
-    nuevaGrafica.update();
+  // Selector de tipo de gráfica
+  const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
+  selectorTipo.value = grafico.config.type;
+  selectorTipo.addEventListener('change', () => {
+    const grafica = encontrarGrafica(nuevaId);
+    if (grafica) {
+      const ctx = grafica.querySelector('canvas').getContext('2d');
+      const chart = Chart.getChart(ctx);
+      if (chart) {
+        chart.destroy();
+        const nueva = crearGrafica(ctx, selectorTipo.value);
+        nueva.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
+        nueva.update();
+      }
+    }
   });
 
-  //Eliminar gráfica
+  // Botón 'Eliminar'
   tarjetaGrafica
     .querySelector('.eliminar')
     .addEventListener('click', () => {
       tarjetaGrafica.remove();
-      const graficaEliminada = encontrarGrafica(nuevaId); // función original :contentReference[oaicite:2]{index=2}&#8203;:contentReference[oaicite:3]{index=3}
-      if (graficaEliminada) graficaEliminada.remove();
+      const eliminado = encontrarGrafica(nuevaId);
+      if (eliminado) eliminado.remove();
       eliminarCuadroFormulas();
     });
 
-  // 11) Añadir al DOM
-  contenedor.appendChild(tarjetaGrafica);
-  previsualizacion.appendChild(graficaDiv);
+  // -----------------------------------------
+  // Añadir al DOM con inserción 'antes/después'
+  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
+    // En el contenedor de edición
+    if (posicion === 'antes') {
+      contenedor.insertBefore(tarjetaGrafica, tarjetaRef);
+    } else {
+      contenedor.insertBefore(tarjetaGrafica, tarjetaRef.nextSibling);
+    }
+    
+    // En la previsualización - CORREGIDO PARA MANEJAR REFERENCIAS A GRÁFICAS
+    const idRef = tarjetaRef.id;
+    // Buscar referencia correspondiente en el contenedor de previsualización
+    let vistaRef;
+    
+    // Determinar si la tarjeta de referencia es texto o gráfica
+    if (tarjetaRef.classList.contains('tarjeta-texto')) {
+      vistaRef = previsualizacion.querySelector(`#preview-texto-${idRef}`);
+    } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
+      vistaRef = previsualizacion.querySelector(`.previsualizacion-grafica[id='${idRef}']`);
+    }
+    
+    if (vistaRef) {
+      if (posicion === 'antes') {
+        previsualizacion.insertBefore(graficaDiv, vistaRef);
+      } else {
+        previsualizacion.insertBefore(graficaDiv, vistaRef.nextSibling);
+      }
+    } else {
+      previsualizacion.appendChild(graficaDiv);
+    }
+  } else {
+    // Sin referencia: comportamiento original
+    contenedor.appendChild(tarjetaGrafica);
+    previsualizacion.appendChild(graficaDiv);
+  }
 }
+
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
@@ -127,35 +177,35 @@ function crearCuadroFormulas(columnas) {
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
 
-  cuadroFormulas.innerHTML = `<div class="titulo-formulas">
-              <img class="flecha-atras" src="../utils/iconos/FlechaAtras.svg" />
-              <p class="texto">Fórmulas</p>
+  cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
+              <img class='flecha-atras' src='../utils/iconos/FlechaAtras.svg' />
+              <p class='texto'>Fórmulas</p>
           </div>
-          <div class="seccion-formulas">
-              <div class="opciones-seccion">
+          <div class='seccion-formulas'>
+              <div class='opciones-seccion'>
                   <p>Parámetros</p>
-                  <div class="opciones-carta">
+                  <div class='opciones-carta'>
                   </div>
               </div>
-              <div class="opciones-seccion">
-                  <div class="titulo-aplicar-formulas">
+              <div class='opciones-seccion'>
+                  <div class='titulo-aplicar-formulas'>
                       <p>Aplicar Fórmula</p>
-                      <img class="circulo-ayuda" src="../utils/iconos/circulo-ayuda.svg" />
+                      <img class='circulo-ayuda' src='../utils/iconos/circulo-ayuda.svg' />
                   </div>
-                  <div class="opciones-carta">
-                      <input class="search-section" placeholder="Encuentra una fórmula">
-                      <div class="contenedor-busqueda">
-                          <div class="formula">
+                  <div class='opciones-carta'>
+                      <input class='search-section' placeholder='Encuentra una fórmula'>
+                      <div class='contenedor-busqueda'>
+                          <div class='formula'>
                               f(y): y + k
                           </div>
-                          <div class="formula">
+                          <div class='formula'>
                               f(y): 2x
                           </div>
-                          <div class="formula">
+                          <div class='formula'>
                               f(y): y + k
                           </div>
                       </div>
-                      <div class="boton-agregar">
+                      <div class='boton-agregar'>
                           <div >Aplicar Fórmula</div>
                       </div>
                   </div>
@@ -166,7 +216,7 @@ function crearCuadroFormulas(columnas) {
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
   crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
-  contenedoesSeleccion[1] //Fórmulas
+  // Fórmulas en contenedoesSeleccion[1]
 
   const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
   botonRegresar.addEventListener('click', () => {
@@ -212,11 +262,16 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
 /**
  * Encuentra una gráfica en la previsualización por ID.
  * @param {string|number} id - ID de la gráfica a buscar.
- * @returns {HTMLElement} Gráfica encontrada.
+ * @returns {HTMLElement|null} Gráfica encontrada o null si no se encuentra.
  */
 function encontrarGrafica(id) {
+  if (!window.previsualizacion) {
+    console.error('No hay referencia al contenedor de previsualización');
+    return null;
+  }
+  
   const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
-  return graficasExistentes.filter(grafica => grafica.id == id)[0];
+  return graficasExistentes.find(grafica => grafica.id == id) || null;
 }
 
 /**
@@ -224,13 +279,16 @@ function encontrarGrafica(id) {
  * @returns {boolean} True si existía un cuadro de fórmulas, false en caso contrario.
  */
 function eliminarCuadroFormulas() {
-  const cuadrosExistentes = Array.from(document.querySelector('.frame-analisis').children);
+  const frameAnalisis = document.querySelector('.frame-analisis');
+  if (!frameAnalisis) return false;
+  
+  const cuadrosExistentes = Array.from(frameAnalisis.children);
   const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className == 'contenedor-formulas');
   if (cuadros.length == 1) {
     cuadros[0].remove()
-    return true
+    return true;
   } else {
-    return false
+    return false;
   }
 }
 
@@ -264,7 +322,7 @@ function crearGrafica(contexto, tipo, color) {
     data: {
       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
       datasets: [{
-        label: '',
+        label: 'Datos',
         backgroundColor: fondo => {
           if (tipo == 'line' || tipo == 'radar') {
             return color;
@@ -284,17 +342,52 @@ function crearGrafica(contexto, tipo, color) {
     },
     options: {
       plugins: {
-        title: { display: true},
+        title: { display: true },
+        tooltip: {
+          enabled: false,
+        },
         legend: {
           labels: {
             generateLabels: chart =>
               chart.data.datasets.map(ds => ({
-                text: ds.label,
+                text: ds.label || 'Datos',
                 fillStyle: color,
-                strokeStyle: color
-              }))
+                strokeStyle: color,
+              })),
           },
         },
+        datalabels: {
+          display: () => {
+            if (['line', 'radar', 'polarArea'].includes(tipo)) {
+              return false;
+            } else {
+              return true;
+            }
+          },
+          anchor: () => {
+            if (tipo == 'bar') {
+              return 'end';
+            } else {
+              return 'center';
+            }
+          },
+          font: {
+            size: 12,
+            weight: 'bold'
+          },
+          formatter: (value, context) => { 
+            if (tipo == 'pie' || tipo == 'doughnut') { 
+              const datos = context.chart.data.datasets[0].data;
+              const valorTotal = datos.reduce((total, datapoint) => {
+                return total + datapoint;
+              }, 0);
+              const porcentaje = ((value / valorTotal) * 100).toFixed(2);
+              return `${porcentaje}%`;
+            } else {
+              return value;
+            }
+          },
+        }
       },
       scales: {
         /* eslint-disable id-length */
@@ -303,7 +396,7 @@ function crearGrafica(contexto, tipo, color) {
         y: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } }
          
       }
-    }
+    },
   });
 
   return grafico;

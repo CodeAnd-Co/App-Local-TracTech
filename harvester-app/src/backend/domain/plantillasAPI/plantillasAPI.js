@@ -1,5 +1,5 @@
 async function plantillas() {
-    const respuesta = await fetch('http://localhost:3000/plantillas/consultar', {
+    const respuesta = await fetch(`${process.env.URL_BASE}/plantillas/consultar`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
