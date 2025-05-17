@@ -22,6 +22,42 @@ function modificarFormulaCasoUso(id, nombre, formula) {
     }
 }
 
+function inicializarModificarFormula(id, nombre, formula) {
+    const nombreInput = document.getElementById(`nombreFormula-${id}`);
+    const formulaInput = document.getElementById(`formula-${id}`);
+    const botonModificar = document.getElementById(`botonModificar-${id}`);
+
+    nombreInput.value = nombre;
+    formulaInput.value = formula;
+
+    botonModificar.addEventListener('click', async () => {
+        try {
+            const respuesta = await modificarFormulaCasoUso(id, nombreInput.value, formulaInput.value);
+            if (respuesta.ok) {
+                Swal.fire({
+                    title: 'Fórmula modificada',
+                    text: 'La fórmula ha sido modificada exitosamente.',
+                    icon: 'success'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error de conexión',
+                    text: respuesta.mensaje,
+                    icon: 'error'
+                });
+            }
+        } catch (error) {
+            console.error('Error al modificar la fórmula:', error);
+            Swal.fire({
+                title: 'Error de conexión',
+                text: 'Verifica tu conexión e inténtalo de nuevo.',
+                icon: 'error'
+            });
+        }
+    });
+
+}
+
 module.exports = {
-    modificarFormulaCasoUso
+    inicializarModificarFormula
 };

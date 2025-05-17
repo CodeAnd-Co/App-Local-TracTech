@@ -81,7 +81,7 @@ async function eliminarFormula(id, token){
  * @throws {Error} Si no se pudo modificar la fórmula.
  */
 async function modificarFormula(id, nombre, formula, token) {
-    const respuesta = await fetch(`${process.env.URL_BASE}/formulas/modificarFormula`, {
+    const respuesta = await fetch(`${URL_BASE}/formulas/modificarFormula`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
