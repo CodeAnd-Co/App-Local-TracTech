@@ -18,6 +18,7 @@ const { agregarGrafica } = require('./agregarGrafica');
    * @returns {void}
    */
 function mostrarBotonesAgregar(tarjeta, idContenedor, idContenedorPrevisualizacion) {
+    if (!tarjeta) return;
 
     if (tarjeta.querySelector('.btn-agregar-flotante')) return;
     tarjeta.classList.add('tarjeta-con-posicion');
@@ -88,6 +89,7 @@ function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion, tarjeta, u
    * @returns {void}
    */
 function ocultarBotonesAgregar(tarjeta) {
+    if (!tarjeta) return;
     tarjeta.querySelectorAll('.btn-agregar-flotante')
         .forEach(boton => boton.remove());
     cerrarMenuAgregar(tarjeta);

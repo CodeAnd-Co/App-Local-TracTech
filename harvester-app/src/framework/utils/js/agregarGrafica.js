@@ -4,7 +4,11 @@
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
-
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+if (typeof Swal === 'undefined') {
+  const Swal = require('sweetalert2');
+}
 
 /**
  * Agrega una nueva tarjeta de gráfica y su previsualización.
@@ -18,6 +22,16 @@ Chart.register(ChartDataLabels);
 function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
   const contenedor       = document.getElementById(contenedorId);
   const previsualizacion = document.getElementById(previsualizacionId);
+
+  if (!contenedor || !previsualizacion) {
+    Swal.fire({
+      title: 'Error',
+      text: 'Ocurrió un error al agregar cuadro de texto.',
+      icon: 'error',
+      confirmButtonColor: '#1F4281',
+    });
+    return
+  }
   
   // Guardar referencia global al contenedor de previsualización
   window.previsualizacion = previsualizacion;
@@ -386,6 +400,13 @@ function crearGrafica(contexto, tipo, color) {
  * @returns {String[]} Arreglo de strings que representan los colores en formato rgb
  */
 function generarDegradadoHaciaBlanco(rgb, pasos) {
+  if (!rgb || rgb.length !== 3) {
+    return null;
+  }
+
+  if (pasos < 1) {
+    return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+  }
   const [rojo, verde, azul] = rgb;
 
   return Array.from({ length: pasos },
