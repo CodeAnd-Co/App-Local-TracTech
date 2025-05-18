@@ -20,7 +20,7 @@ if (typeof Swal === 'undefined') {
  * @returns {Element} tarjetaGrafica - La tarjeta de gráfica creada.
  */
 function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
-  const contenedor       = document.getElementById(contenedorId);
+  const contenedor = document.getElementById(contenedorId);
   const previsualizacion = document.getElementById(previsualizacionId);
 
   if (!contenedor || !previsualizacion) {
@@ -49,6 +49,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     nuevaId = 1;
   }
 
+  tarjetaGrafica.id = nuevaId;
   tarjetaGrafica.innerHTML = `
     <input class='titulo-grafica' placeholder='Nombre de la gráfica' />
     <div class='titulo-texto'>
@@ -83,11 +84,11 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   }
 
   tarjetaGrafica.querySelector('.boton-formulas').addEventListener('click', () =>
-      crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
+    crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
 
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
-  graficaDiv.id = `${nuevaId}`;
+  graficaDiv.id = `previsualizacion-grafica-${nuevaId}`;
   const canvasGrafica = document.createElement('canvas');
   graficaDiv.appendChild(canvasGrafica);
 
@@ -97,7 +98,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   grafico.update();
 
   tarjetaGrafica.querySelector('.titulo-grafica').addEventListener('input', function () {
-      const grafica = encontrarGrafica(nuevaId);
+      const grafica = document.getElementById(`previsualizacion-grafica-${nuevaId}`);
       if (grafica) {
         const ctx = grafica.querySelector('canvas').getContext('2d');
         const chart = Chart.getChart(ctx);
@@ -111,22 +112,22 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
   selectorTipo.value = grafico.config.type;
   selectorTipo.addEventListener('change', () => {
-    const grafica = encontrarGrafica(nuevaId);
+    const grafica = document.getElementById(`previsualizacion-grafica-${nuevaId}`);
     if (grafica) {
-      const ctx = grafica.querySelector('canvas').getContext('2d');
-      const chart = Chart.getChart(ctx);
-      if (chart) {
-        chart.destroy();
-        const nueva = crearGrafica(ctx, selectorTipo.value);
-        nueva.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
-        nueva.update();
+      const contexto = grafica.querySelector('canvas').getContext('2d');
+      const graficaOriginal = Chart.getChart(contexto);
+      if (graficaOriginal) {
+        graficaOriginal.destroy();
+        const nuevaGrafica = crearGrafica(contexto, selectorTipo.value);
+        nuevaGrafica.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
+        nuevaGrafica.update();
       }
     }
   });
 
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () => {
       tarjetaGrafica.remove();
-      const eliminado = encontrarGrafica(nuevaId);
+      const eliminado = document.getElementById(`previsualizacion-grafica-${nuevaId}`);
       if (eliminado) eliminado.remove();
       eliminarCuadroFormulas();
     });
@@ -141,12 +142,15 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     
     const idRef = tarjetaRef.id;
     let vistaRef;
+
+    console.log(tarjetaRef, tarjetaRef.classList);
     
     if (tarjetaRef.classList.contains('tarjeta-texto')) {
       vistaRef = previsualizacion.querySelector(`#preview-texto-${idRef}`);
     } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      vistaRef = previsualizacion.querySelector(`.previsualizacion-grafica[id='${idRef}']`);
+      vistaRef = previsualizacion.querySelector(`#previsualizacion-grafica-${idRef}`);
     }
+    console.log(vistaRef);
     
     if (vistaRef) {
       if (posicion === 'antes') {
@@ -255,18 +259,6 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
   nuevoMenu.appendChild(divLetra);
   nuevoMenu.appendChild(seleccionValores);
   contenedor.appendChild(nuevoMenu);
-}
-
-/**
- * Encuentra una gráfica en la previsualización por ID.
- * @param {string|number} id - ID de la gráfica a buscar.
- * @returns {HTMLElement|null} Gráfica encontrada o null si no se encuentra.
- */
-function encontrarGrafica(id) {
-  if (!window.previsualizacion) return null;
-  
-  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
-  return graficasExistentes.find(grafica => grafica.id == id) || null;
 }
 
 /**
