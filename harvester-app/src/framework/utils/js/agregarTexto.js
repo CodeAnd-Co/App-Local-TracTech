@@ -1,16 +1,12 @@
-/**
- * @file agregarTexto.js
- * @module agregarTexto
- * @description Proporciona la funcionalidad para añadir tarjetas de texto editables
- *              y sus previsualizaciones en el módulo de análisis, con opción de
- *              insertar antes o después de una tarjeta existente.
- * @version 1.3
- * @date 2025-05-17
- */
-
 // RF17 - Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf17/
 // RF18 - Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf18/
 // RF19 - Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf19/
+
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+if (typeof Swal === 'undefined') {
+  const Swal = require('sweetalert2');
+}
 
 /**
  * Crea y agrega una tarjeta de texto al contenedor de edición y su correspondiente
@@ -30,6 +26,17 @@ function agregarTexto(
 ) {
   const contenedor = document.getElementById(idContenedor);
   const contenedorPrevia = document.getElementById(idContenedorPrevisualizacion);
+
+  if (!contenedor || !contenedorPrevia) {
+    Swal.fire({
+      title: 'Error',
+      text: 'Ocurrió un error al agregar cuadro de texto.',
+      icon: 'error',
+      confirmButtonColor: '#1F4281',
+    });
+    return
+  }
+
   const observer = new MutationObserver(() => {
     const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
     const tarjetasGrafica = contenedor.querySelectorAll('.tarjeta-grafica'); // Asegúrate de usar esta clase en tus gráficas
@@ -60,9 +67,14 @@ function agregarTexto(
 
   // 1) Calcular nuevo ID de tarjeta
   const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
-  const nuevoId = tarjetasTexto.length
-    ? (parseInt(tarjetasTexto[tarjetasTexto.length - 1].id, 10) || 0) + 1
-    : 1;
+  let nuevoId;
+
+  if (tarjetasTexto.length > 0) {
+    const idAnterior = parseInt(tarjetasTexto[tarjetasTexto.length - 1].id, 10)
+    nuevoId = idAnterior + 1;
+  } else {
+    nuevoId = 1;
+  }
 
   // 2) Crear la tarjeta de edición
   const tarjetaTexto = document.createElement('div');
@@ -149,7 +161,8 @@ function agregarTexto(
 
   /**
    * Actualiza el contenido y estilo de la vista previa según el texto y tipo.
-   * @private
+   * 
+   * @returns {void}
    */
   function actualizarVistaPrevia() {
     vistaPrevia.innerHTML = '';
@@ -207,11 +220,11 @@ function agregarTexto(
   });
 
   botonAlinear.addEventListener('click', () => {
-    const alineaciones = ['left', 'center', 'justify', 'right'];
+    const alineaciones = ['left', 'center', 'right'];
     vistaPrevia.alignIndex = (vistaPrevia.alignIndex + 1) % alineaciones.length;
-    const modo = alineaciones[vistaPrevia.alignIndex];
-    vistaPrevia.style.textAlign = modo;
-    iconoAlineacion.className = `icono-align align-${modo}`;
+    const alineado = alineaciones[vistaPrevia.alignIndex];
+    vistaPrevia.style.textAlign = alineado;
+    iconoAlineacion.className = `icono-align align-${alineado}`;
   });
 
   botonEliminar.addEventListener('click', () => {
