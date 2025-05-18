@@ -4,6 +4,7 @@ if (typeof Swal === 'undefined') {
     const Swal = require('sweetalert2');
 }
 const { agregarTexto } = require('./agregarTexto');
+const { agregarGrafica } = require('./agregarGrafica');
 
 /**
    * Crea y añade dos botones flotantes “+” en la tarjeta (arriba y abajo).
@@ -14,10 +15,6 @@ const { agregarTexto } = require('./agregarTexto');
    * @returns {void}
    */
 function mostrarBotonesAgregar(tarjeta, idContenedor, idContenedorPrevisualizacion) {
-    console.log("Directorio actual:", __dirname);
-    console.log("Ruta completa del archivo:", __filename);
-
-    console.log('mostrarBotonesAgregar');
 
     if (tarjeta.querySelector('.btn-agregar-flotante')) return;
     tarjeta.classList.add('tarjeta-con-posicion');
@@ -72,9 +69,9 @@ function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion,tarjeta, ub
         }
     }).then(resultado => {
         if (resultado.isConfirmed) {
-            agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+            configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
         } else if (resultado.isDenied) {
-            window.agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+            agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
         }
         // Si canceló, no hace nada
     });
@@ -107,7 +104,21 @@ function cerrarMenuAgregar(tarjeta) {
     if (menuExistente) menuExistente.remove();
 }
 
+function configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta = null, ubicacion = null) {
+  const tarjetaTexto = agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+  
+  tarjetaTexto.addEventListener('mouseenter', () => {
+    console.log(`Entrando en tarjeta ${tarjetaTexto.id}`);
+    mostrarBotonesAgregar(tarjetaTexto, idContenedor, idContenedorPrevisualizacion);
+  })
+
+  tarjetaTexto.addEventListener('mouseleave', () => { 
+    ocultarBotonesAgregar(tarjetaTexto);
+  })
+}
+
 module.exports = {
     mostrarBotonesAgregar,
     ocultarBotonesAgregar,
+    configurarTexto
 };

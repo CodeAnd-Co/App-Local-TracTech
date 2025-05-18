@@ -14,9 +14,9 @@ if (typeof Swal === 'undefined'){
   const Swal = require('sweetalert2');
 }
 const { ipcRenderer } = require('electron');
-
-const {agregarTexto} = require('../utils/js/agregarTexto');
-const {mostrarBotonesAgregar, ocultarBotonesAgregar} = require('../utils/js/botonesAgregar');
+const { agregarTexto } = require('../utils/js/agregarTexto');
+const { agregarGrafica } = require('../utils/js/agregarGrafica');
+const { mostrarBotonesAgregar, ocultarBotonesAgregar, configurarTexto } = require('../utils/js/botonesAgregar');
 
 /**
  * Inicializa la interfaz de análisis:
@@ -78,35 +78,6 @@ function inicializarModuloAnalisis() {
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
     agregarGrafica(idContenedor, idContenedorPrevisualizacion);
-  }
-
-  // 4) Delegación de eventos en el contenedor para tarjetas: mostrar/ocultar botones flotantes
-  //contenedor.addEventListener('mouseenter', alEntrarTarjeta, true);
-  //contenedor.addEventListener('mouseleave', alSalirTarjeta, true);
-
-  /**
-   * Muestra los botones “+” al entrar el ratón sobre una tarjeta de texto o gráfica.
-   *
-   * @param {MouseEvent} evento
-   * @returns {void}
-   */
-  function alEntrarTarjeta(evento) {
-    console.log(`Entrando en tarjeta ${evento.target}`);
-    const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
-    if (tarjeta) mostrarBotonesAgregar(tarjeta);
-  }
-
-  /**
-   * Oculta los botones “+” al salir el ratón de una tarjeta.
-   *
-   * @param {MouseEvent} evento
-   * @returns {void}
-   */
-  function alSalirTarjeta(evento) {
-    console.log(`Saliendo de tarjeta ${evento.target}`);
-    const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
-    if (tarjeta) ocultarBotonesAgregar(tarjeta);
-      cerrarMenuAgregar(tarjeta);
   }
 }
 
@@ -248,19 +219,6 @@ async function descargarPDF() {
   const pdfBufer = await documentoNuevo.arrayBuffer();
 
   ipcRenderer.send('guardar-pdf', Buffer.from(pdfBufer));
-}
-
-function configurarTexto(idContenedor, idContenedorPrevisualizacion) {
-  const tarjetaTexto = agregarTexto(idContenedor, idContenedorPrevisualizacion);
-  
-  tarjetaTexto.addEventListener('mouseenter', () => {
-    console.log(`Entrando en tarjeta ${tarjetaTexto.id}`);
-    mostrarBotonesAgregar(tarjetaTexto, idContenedor, idContenedorPrevisualizacion);
-  })
-
-  tarjetaTexto.addEventListener('mouseleave', () => { 
-    ocultarBotonesAgregar(tarjetaTexto);
-  })
 }
 
 // Exponer funciones en el ámbito global para uso externo

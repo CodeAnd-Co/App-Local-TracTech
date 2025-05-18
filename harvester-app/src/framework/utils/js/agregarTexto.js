@@ -221,5 +221,3 @@ function agregarTexto(
 module.exports = {
   agregarTexto
 };
-// Exponer la función en el ámbito global para los listeners del módulo
-//window.agregarTexto = agregarTexto;
