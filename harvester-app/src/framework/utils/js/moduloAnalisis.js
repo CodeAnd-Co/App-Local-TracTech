@@ -65,12 +65,6 @@ function inicializarModuloAnalisis() {
   });
 
 
-  const botonGuardarPlantilla = document.getElementById('guardarPlantilla');
-  botonGuardarPlantilla.addEventListener('click', async () => {
-    guardarPlantilla(idContenedorPrevisualizacion)
-  });    
-
-
   // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
     agregarTexto(idContenedor, idContenedorPrevisualizacion);
