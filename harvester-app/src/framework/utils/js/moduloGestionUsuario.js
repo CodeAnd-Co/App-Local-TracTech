@@ -38,6 +38,9 @@ async function inicializarModuloGestionUsuarios() {
     const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
 
     try {
+        listaUsuarios = [];
+        usuariosFiltrados = [];
+
         // Cargar usuarios
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
@@ -385,19 +388,15 @@ async function editarUsuario() {
     const correoIngresado = document.getElementById('email').value.trim();
     const contraseniaIngresada = document.getElementById('password').value.trim();
     const rolIngresado = document.getElementById('rol').value.trim();
-    const idRolIngresado = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
+    const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
     const usuario = listaUsuarios.find(usuario => usuario.id === usuarioAEditar.id);
-    if (!usuario) {
-        console.error('Usuario no encontrado');
-        return;
-    }
 
     // Flags de “campo modificado”
     const cambioNombre    = nombreIngresado && nombreIngresado !== usuario.nombre;
     const cambioCorreo    = correoIngresado && correoIngresado !== usuario.correo;
     const cambioPass      = contraseniaIngresada !== '';
-    const cambioRol       = rolIngresado && Number(rolIngresado) !== idRolIngresado;
+    const cambioRol       = rolIngresado && Number(rolIngresado) !== idRolUsuarioAEditar;
 
     if (!(cambioNombre || cambioCorreo || cambioPass || cambioRol)) {
         return Swal2.fire({
@@ -425,7 +424,7 @@ async function editarUsuario() {
     const idUsuario = usuarioAEditar.id;
     const nombreUsuario = (nombreIngresado !== '') ? nombreIngresado : usuario.nombre;
     const correoUsuario = (correoIngresado !== '') ? correoIngresado : usuario.correo;
-    const idRolUsuario = (!rolIngresado) ? rolIngresado : idRolIngresado;
+    const idRolUsuario = (rolIngresado) ? Number(rolIngresado) : idRolUsuarioAEditar;
 
     try {
         const resultado = await modificarUsuario(idUsuario, nombreUsuario, correoUsuario, contraseniaIngresada, idRolUsuario);
