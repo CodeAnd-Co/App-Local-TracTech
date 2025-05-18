@@ -27,7 +27,6 @@ async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
 
         return respuesta;
     } catch (error) {
-        console.error('Error al modificar usuario:', error);
         return { ok: false, mensaje: 'Error al conectar con el servidor' };
     }
 }

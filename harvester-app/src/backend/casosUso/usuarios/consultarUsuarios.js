@@ -28,7 +28,6 @@ async function obtenerUsuarios() {
 
         return listaUsuarios;
     } catch (error) {
-        console.error('Error al obtener usuarios:', error);
         throw new Error('No se pudo obtener la lista de usuarios');
     }
 }

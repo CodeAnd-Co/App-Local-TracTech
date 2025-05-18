@@ -55,7 +55,6 @@ async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
     
         return { ok: respuesta.ok, ...datos };
     } catch (error) {
-        console.error('Error al obtener usuarios:', error);
         return { ok: false, mensaje: 'Error al conectar con el servidor' };
     }
 }
