@@ -174,9 +174,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
  * @param {number} idGrafica - ID de la gráfica asociada.
  */
 function crearCuadroFormulas(columnas) {
-  if (eliminarCuadroFormulas()) {
-    console.error('Cuadro de fórmulas existía');
-  }
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
@@ -269,10 +266,7 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
  * @returns {HTMLElement|null} Gráfica encontrada o null si no se encuentra.
  */
 function encontrarGrafica(id) {
-  if (!window.previsualizacion) {
-    console.error('No hay referencia al contenedor de previsualización');
-    return null;
-  }
+  if (!window.previsualizacion) return null;
   
   const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
   return graficasExistentes.find(grafica => grafica.id == id) || null;
@@ -304,10 +298,7 @@ function eliminarCuadroFormulas() {
  * @returns {Chart} - Instancia de la gráfica creada.
  */
 function crearGrafica(contexto, tipo, color) {
-  if (!contexto) {
-    console.error('No se encontró el contexto del canvas');
-    return;
-  }
+  if (!contexto) return;
   
   // Color por defecto
   if (!color) {

@@ -10,7 +10,7 @@
 
 /* eslint-disable no-unused-vars */
 const { jsPDF: JSPDF } = window.jspdf;
-if (typeof Swal === 'undefined'){
+if (typeof Swal === 'undefined') {
   const Swal = require('sweetalert2');
 }
 const { ipcRenderer } = require('electron');
@@ -31,7 +31,7 @@ const { configurarTexto, configurarGrafica } = require('../utils/js/botonesAgreg
 function inicializarModuloAnalisis() {
 
   // IDs de los contenedores principales
-  const idContenedor                 = 'contenedorElementos';
+  const idContenedor = 'contenedorElementos';
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
   // Obtener referencia al contenedor donde se añaden las tarjetas
@@ -43,7 +43,7 @@ function inicializarModuloAnalisis() {
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
   botonPDF.addEventListener('click', async () => {
-    
+
     const anterior = botonPDF.textContent;
     botonPDF.disabled = true;
     const contenedorTexto = botonPDF.children[1]
@@ -75,25 +75,22 @@ function inicializarModuloAnalisis() {
  */
 function cargarDatosExcel() {
   try {
-    // Verificar flag de disponibilidad de datos
     const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
-    if (datosDisponibles !== 'true') {
-      console.warn('No hay datos de Excel disponibles');
-      return null;
-    }
-
-    // Obtener y parsear el JSON de datos de Excel
     const datosExcelJSON = localStorage.getItem('datosExcel');
-    if (!datosExcelJSON) {
-      console.warn('No se encontraron datos de Excel en localStorage');
-      return null;
+    if (datosDisponibles !== 'true' || !datosExcelJSON) {
+      throw new Error('No hay datos de Excel disponibles');
     }
 
     const datosExcel = JSON.parse(datosExcelJSON);
     return datosExcel;
 
   } catch (error) {
-    console.error('Error al cargar datos de Excel:', error);
+    Swal.fire({
+      title: 'Error',
+      text: 'Ocurrió un error al cargar los datos de Excel.',
+      icon: 'error',
+      confirmButtonColor: '#1F4281',
+    });
     return null;
   }
 }
@@ -108,27 +105,27 @@ function cargarDatosExcel() {
 async function descargarPDF() {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     Swal.fire({
-        title: 'Error al descargar reporte',
-        text: 'Ha courrido un error, contacta a soporte',
-        icon: 'error'
+      title: 'Error al descargar reporte',
+      text: 'Ha courrido un error, contacta a soporte',
+      icon: 'error'
     });
     throw new Error('[PDF] jsPDF no cargado');
   }
 
   // Configuración básica del documento
   const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-  const margen       = 40;
+  const margen = 40;
   const anchoPagina = documentoPDF.internal.pageSize.getWidth() - margen * 2;
-  const altoPagina   = documentoPDF.internal.pageSize.getHeight() - margen * 2;
-  let posicionY      = margen;
+  const altoPagina = documentoPDF.internal.pageSize.getHeight() - margen * 2;
+  let posicionY = margen;
 
   // Obtener contenedor de previsualización de texto y gráficas
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
     Swal.fire({
-        title: 'Error al descargar reporte',
-        text: 'No se encontró el contenedor de previsualización',
-        icon: 'warning'
+      title: 'Error al descargar reporte',
+      text: 'No se encontró el contenedor de previsualización',
+      icon: 'warning'
     });
     throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
@@ -138,8 +135,8 @@ async function descargarPDF() {
     if (elemento.classList.contains('previsualizacion-texto')) {
       let tamanoFuente = 12;
       let estiloFuente = 'normal';
-      let espaciado     = 11;
-      if (elemento.classList.contains('preview-titulo'))    { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 14; }
+      let espaciado = 11;
+      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 14; }
       if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 16; }
 
       documentoPDF.setFontSize(tamanoFuente);
@@ -157,7 +154,7 @@ async function descargarPDF() {
         }
 
         documentoPDF.text(lineas, margen, posicionY);
-        
+
         posicionY += lineas.length * tamanoFuente + espaciado + 12;
       })
 
@@ -166,7 +163,7 @@ async function descargarPDF() {
       const lienzo = elemento.querySelector('canvas');
       if (!lienzo) return;
 
-      const imagen     = lienzo.toDataURL('image/png');
+      const imagen = lienzo.toDataURL('image/png');
       const proporcion = lienzo.height / lienzo.width;
       let anchoImagen = anchoPagina;
       let altoImagen = anchoPagina * proporcion;
@@ -201,9 +198,4 @@ async function descargarPDF() {
 
 // Exponer funciones en el ámbito global para uso externo
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
-window.cargarDatosExcel          = cargarDatosExcel;
-
-// En algunos navegadores, volver a inicializar tras un breve retardo si ya cargó el DOM
-if (document.readyState !== 'loading') {
-  setTimeout(inicializarModuloAnalisis, 100);
-}
+window.cargarDatosExcel = cargarDatosExcel;

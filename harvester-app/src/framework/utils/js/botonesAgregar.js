@@ -1,7 +1,8 @@
 // RF17 - Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf17/
 // RF36 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
 
-// /* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
     const Swal = require('sweetalert2');
 }
@@ -48,7 +49,7 @@ function mostrarBotonesAgregar(tarjeta, idContenedor, idContenedorPrevisualizaci
    * @memberof module:moduloAnalisis
    * @returns {void}
    */
-function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion,tarjeta, ubicacion) {
+function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion) {
     Swal.fire({
         title: 'Agregar',
         width: '180px',
@@ -106,6 +107,15 @@ function cerrarMenuAgregar(tarjeta) {
     if (menuExistente) menuExistente.remove();
 }
 
+/**
+ * Agrega un cuadro de texto al contenedor especificado y configura los botones de agregar.
+ * 
+ * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
+ * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
+ * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
+ * @returns {void}
+ */
 function configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta = null, ubicacion = null) {
   const tarjetaTexto = agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
   
@@ -118,6 +128,15 @@ function configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta = n
   })
 }
 
+/**
+ * Agrega una gráfica al contenedor especificado y configura los botones de agregar.
+ * 
+ * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
+ * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
+ * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
+ * @returns {void}
+ */
 function configurarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta = null, ubicacion = null) {
   const tarjetaGrafica = agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
   
