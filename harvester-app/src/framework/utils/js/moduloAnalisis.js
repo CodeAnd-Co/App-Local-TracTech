@@ -46,7 +46,7 @@ function inicializarModuloAnalisis() {
           .addEventListener('click', async () => {
             const nombre = await pedirNombrePlantilla();
             if (!nombre) return;
-            window.guardarPlantilla(idContenedor, nombre);
+              window.guardarPlantilla(idContenedor, nombre);
           });
 
   const botonPDF = document.getElementById('descargarPDF')
