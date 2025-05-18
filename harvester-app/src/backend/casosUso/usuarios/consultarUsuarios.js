@@ -21,8 +21,8 @@ async function obtenerUsuarios() {
 
         const datosUsuarios = respuesta.usuarios || [];
 
-        datosUsuarios.forEach(usuarionInformacion => {
-            const usuario = new Usuario(usuarionInformacion.id, usuarionInformacion.nombre, usuarionInformacion.correo, usuarionInformacion.rol);
+        datosUsuarios.forEach(usuarioInformacion => {
+            const usuario = new Usuario(usuarioInformacion.id, usuarioInformacion.nombre, usuarioInformacion.correo, usuarioInformacion.rol);
             listaUsuarios.agregarUsuario(usuario);
         });
 
