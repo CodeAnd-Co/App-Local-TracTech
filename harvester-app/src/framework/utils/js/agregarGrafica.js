@@ -172,6 +172,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
  * @param {number} idGrafica - ID de la gráfica asociada.
+ * @returns {void}
  */
 function crearCuadroFormulas(columnas) {
 
@@ -240,6 +241,7 @@ function crearCuadroFormulas(columnas) {
  * @param {HTMLElement} contenedor - Contenedor donde se agregará el menú desplegable.
  * @param {string} letra - Letra identificadora del menú.
  * @param {string[]} columnas - Lista de columnas disponibles.
+ * @returns {void}
  */
 function crearMenuDesplegable(contenedor, letra, columnas) {
   const nuevo = document.createElement('div');
