@@ -76,7 +76,6 @@ body,
   flex: 1 1 auto;
   position: relative;
   overflow-y: auto;
-  /* max-height: 600px; */
   gap: 10px;
   flex-direction: column;
 }
