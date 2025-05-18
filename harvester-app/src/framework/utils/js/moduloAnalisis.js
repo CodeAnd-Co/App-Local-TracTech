@@ -42,7 +42,9 @@ function inicializarModuloAnalisis() {
           .addEventListener('click', () => window.agregarTexto(idContenedor, idContenedorPrevisualizacion));
   document.getElementById('agregarGrafica')
           .addEventListener('click', () => window.agregarGrafica(idContenedor, idContenedorPrevisualizacion));
-  
+  document.getElementById('guardarPlantilla')
+          .addEventListener('click', () => window.guardarPlantilla(idContenedor));
+
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
   botonPDF.addEventListener('click', async () => {
@@ -62,26 +64,12 @@ function inicializarModuloAnalisis() {
     });
   });
 
-    const botonGuardarPlantilla = document.getElementById('guardarPlantilla')
-    botonGuardarPlantilla.addEventListener('click', async () => {
-    
-    const anterior = botonPDF.textContent;
-    botonPDF.disabled = true;
-    const contenedorTexto = botonPDF.children[1]
-    contenedorTexto.textContent = 'Descargando...';
-    pantallaBloqueo.classList.remove('oculto');
 
-    descargarPDF()
+  const botonGuardarPlantilla = document.getElementById('guardarPlantilla');
+  botonGuardarPlantilla.addEventListener('click', async () => {
+    guardarPlantilla(idContenedorPrevisualizacion)
+  });    
 
-
-    ipcRenderer.once('pdf-guardado', (event, exito) => {
-      botonPDF.disabled = false;
-      contenedorTexto.textContent = anterior;
-      pantallaBloqueo.classList.add('oculto');
-    });
-
-    guardarPlantilla()
-  });
 
   // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
@@ -353,9 +341,6 @@ async function descargarPDF() {
   ipcRenderer.send('guardar-pdf', Buffer.from(pdfBufer));
 }
 
-async function guardarPlantilla() {
-  console.log("aaaaaaaaaaaaaaa");
-}
 
 // Exponer funciones en el ámbito global para uso externo
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
@@ -363,6 +348,7 @@ window.cargarDatosExcel          = cargarDatosExcel;
 window.descargarPDF              = descargarPDF;
 window.agregarTexto              = agregarTexto;
 window.agregarGrafica            = agregarGrafica;
+window.guardarPlantilla          = guardarPlantilla;
 
 // En algunos navegadores, volver a inicializar tras un breve retardo si ya cargó el DOM
 if (document.readyState !== 'loading') {
