@@ -154,7 +154,6 @@ body,
 }
 
 .titulo-grafica{
-  background-image: url(../utils/iconos/GraficaBarras.svg);
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: 95% 50%;

@@ -12,6 +12,7 @@ Chart.register(ChartDataLabels);
  * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
  * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
  * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
+ * @returns {Element} tarjetaGrafica - La tarjeta de gráfica creada.
  */
 function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
   const contenedor       = document.getElementById(contenedorId);
@@ -162,6 +163,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     contenedor.appendChild(tarjetaGrafica);
     previsualizacion.appendChild(graficaDiv);
   }
+
+  return tarjetaGrafica;
 }
 
 /**
@@ -426,5 +429,4 @@ function generarDegradadoHaciaBlanco(rgb, pasos) {
   );
 }
 
-// Hace la función agregarGrafica disponible en todo el proyecto
-window.agregarGrafica = agregarGrafica;
+module.exports = { agregarGrafica };

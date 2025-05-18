@@ -14,9 +14,7 @@ if (typeof Swal === 'undefined'){
   const Swal = require('sweetalert2');
 }
 const { ipcRenderer } = require('electron');
-const { agregarTexto } = require('../utils/js/agregarTexto');
-const { agregarGrafica } = require('../utils/js/agregarGrafica');
-const { mostrarBotonesAgregar, ocultarBotonesAgregar, configurarTexto } = require('../utils/js/botonesAgregar');
+const { configurarTexto, configurarGrafica } = require('../utils/js/botonesAgregar');
 
 /**
  * Inicializa la interfaz de análisis:
@@ -31,12 +29,12 @@ const { mostrarBotonesAgregar, ocultarBotonesAgregar, configurarTexto } = requir
  */
 // /* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
-  console.log("Directorio actual:", __dirname);
-  console.log("Ruta completa del archivo:", __filename);
-  console.log("Ruta del módulo:", path.resolve(__dirname, '../utils/js/agregarTexto.js'));
-  console.log(fs.existsSync(path.resolve(__dirname, '../utils/js/agregarTexto.js')));
-  console.log("Ruta del módulo:", path.resolve(__dirname, '../utils/js/botonesAgregar.js'));
-  console.log(fs.existsSync(path.resolve(__dirname, '../utils/js/botonesAgregar.js')));
+  // console.log("Directorio actual:", __dirname);
+  // console.log("Ruta completa del archivo:", __filename);
+  // console.log("Ruta del módulo:", path.resolve(__dirname, '../utils/js/agregarTexto.js'));
+  // console.log(fs.existsSync(path.resolve(__dirname, '../utils/js/agregarTexto.js')));
+  // console.log("Ruta del módulo:", path.resolve(__dirname, '../utils/js/botonesAgregar.js'));
+  // console.log(fs.existsSync(path.resolve(__dirname, '../utils/js/botonesAgregar.js')));
 
   // IDs de los contenedores principales
   const idContenedor                 = 'contenedorElementos';
@@ -45,15 +43,17 @@ function inicializarModuloAnalisis() {
   // Obtener referencia al contenedor donde se añaden las tarjetas
   const contenedor = document.getElementById(idContenedor);
 
-  // 1) Ocultar botones globales de agregar texto y gráfica
-  document.getElementById('agregarTexto').style.display   = 'none';
-  document.getElementById('agregarGrafica').style.display = 'none';
+  if (!contenedor) return;
 
-  // Configurar listeners de botones
-  document.getElementById('agregarTexto')
-          .addEventListener('click', () => agregarTexto(idContenedor, idContenedorPrevisualizacion));
-  document.getElementById('agregarGrafica')
-          .addEventListener('click', () => window.agregarGrafica(idContenedor, idContenedorPrevisualizacion));
+  // // 1) Ocultar botones globales de agregar texto y gráfica
+  // document.getElementById('agregarTexto').style.display   = 'none';
+  // document.getElementById('agregarGrafica').style.display = 'none';
+
+  // // Configurar listeners de botones
+  // document.getElementById('agregarTexto')
+  //         .addEventListener('click', () => agregarTexto(idContenedor, idContenedorPrevisualizacion));
+  // document.getElementById('agregarGrafica')
+  //         .addEventListener('click', () => window.agregarGrafica(idContenedor, idContenedorPrevisualizacion));
   
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
@@ -77,7 +77,7 @@ function inicializarModuloAnalisis() {
   // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
-    agregarGrafica(idContenedor, idContenedorPrevisualizacion);
+    configurarGrafica(idContenedor, idContenedorPrevisualizacion);
   }
 }
 
@@ -225,7 +225,6 @@ async function descargarPDF() {
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel          = cargarDatosExcel;
 window.descargarPDF              = descargarPDF;
-window.agregarGrafica            = agregarGrafica;
 
 // En algunos navegadores, volver a inicializar tras un breve retardo si ya cargó el DOM
 if (document.readyState !== 'loading') {

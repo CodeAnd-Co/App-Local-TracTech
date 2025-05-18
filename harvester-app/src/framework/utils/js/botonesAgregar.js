@@ -71,7 +71,7 @@ function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion,tarjeta, ub
         if (resultado.isConfirmed) {
             configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
         } else if (resultado.isDenied) {
-            agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+            configurarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
         }
         // Si canceló, no hace nada
     });
@@ -108,7 +108,6 @@ function configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta = n
   const tarjetaTexto = agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
   
   tarjetaTexto.addEventListener('mouseenter', () => {
-    console.log(`Entrando en tarjeta ${tarjetaTexto.id}`);
     mostrarBotonesAgregar(tarjetaTexto, idContenedor, idContenedorPrevisualizacion);
   })
 
@@ -117,8 +116,21 @@ function configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta = n
   })
 }
 
+function configurarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta = null, ubicacion = null) {
+  const tarjetaGrafica = agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
+  
+  tarjetaGrafica.addEventListener('mouseenter', () => {
+    mostrarBotonesAgregar(tarjetaGrafica, idContenedor, idContenedorPrevisualizacion);
+  })
+
+  tarjetaGrafica.addEventListener('mouseleave', () => { 
+    ocultarBotonesAgregar(tarjetaGrafica);
+  })
+}
+
 module.exports = {
     mostrarBotonesAgregar,
     ocultarBotonesAgregar,
-    configurarTexto
+    configurarTexto,
+    configurarGrafica,
 };
