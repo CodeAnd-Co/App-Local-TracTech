@@ -19,7 +19,10 @@ async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
         const respuesta = await modificarUsuarioAPI(idUsuario, nombre, correo, contrasenia, idRol);
 
         if (!respuesta.ok) {
-            throw new Error('Error al modificar el usuario');
+            return {
+                ok: false,
+                mensaje: respuesta.mensaje || 'Error al modificar el usuario',
+            };
         }
 
         return respuesta;
