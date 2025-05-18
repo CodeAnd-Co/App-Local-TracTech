@@ -44,6 +44,9 @@ async function inicializarModuloGestionUsuarios() {
         listaUsuarios = [];
         usuariosFiltrados = [];
 
+        // Limpiar el campo de búsqueda
+        document.getElementById('buscar-usuario').value = '';
+
         // Cargar usuarios
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
