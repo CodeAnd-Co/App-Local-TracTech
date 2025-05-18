@@ -446,6 +446,9 @@ async function editarUsuario() {
             setTimeout(() => {
                 inicializarModuloGestionUsuarios();
             }, 500);
+            
+            // Ocultar el formulario tras una modificación exitosa
+            document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
         } else {
             Swal2.fire({
                 title: 'Error al modificar usuario',
