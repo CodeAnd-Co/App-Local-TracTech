@@ -147,21 +147,24 @@ async function eliminarUsuario(id) {
             return Swal2.fire({
                 title: 'Error',
                 text: 'Error al eliminar el usuario.',
-                icon: 'error'
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
             });
         }
         
         return Swal2.fire({
             title: 'Eliminación exitosa',
             text: 'El usuario ha sido eliminado.',
-            icon: 'success'
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
         });
     } catch (error) {
         console.error('Error al eliminar el usuario:', error);
         return Swal2.fire({
                 title: 'Error de conexión',
                 text: 'Verifica tu conexión e inténtalo de nuevo.',
-                icon: 'error'
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
             });
     }
 }
@@ -403,6 +406,7 @@ async function editarUsuario() {
         title: 'Error',
         text: 'Debes modificar al menos un campo del usuario.',
         icon: 'warning',
+        confirmButtonColor: '#3085d6',
         });
     }
 
@@ -416,6 +420,7 @@ async function editarUsuario() {
             title: 'Error',
             text: 'No se puede repetir el correo entre usuarios.',
             icon: 'warning',
+            confirmButtonColor: '#3085d6',
         });
         return;
     }
@@ -433,6 +438,7 @@ async function editarUsuario() {
                 title: 'Usuario modificado',
                 text: resultado.mensaje || 'El usuario fue modificado correctamente.',
                 icon: 'success',
+                confirmButtonColor: '#3085d6',
             });
 
             // Limpiar los campos del formulario
@@ -453,6 +459,7 @@ async function editarUsuario() {
                 title: 'Error al modificar usuario',
                 text: resultado.mensaje || 'No se pudo modificar el usuario.',
                 icon: 'error',
+                confirmButtonColor: '#3085d6',
             });
         }
     } catch (error) {
@@ -460,6 +467,7 @@ async function editarUsuario() {
             title: 'Error de red',
             text: 'Hubo un problema al conectar con el servidor.',
             icon: 'error',
+            confirmButtonColor: '#3085d6',
         });
     }
 }
@@ -489,6 +497,7 @@ async function crearUsuario() {
             title: 'Datos incompletos',
             text: 'Por favor, completa todos los campos.',
             icon: 'warning',
+            confirmButtonColor: '#3085d6',
         });
     }
 
@@ -500,6 +509,7 @@ async function crearUsuario() {
                 title: 'Usuario creado',
                 text: resultado.mensaje || 'El usuario fue registrado correctamente.',
                 icon: 'success',
+                confirmButtonColor: '#3085d6',
             });
 
             // Limpiar los campos del formulario
@@ -519,6 +529,7 @@ async function crearUsuario() {
                 title: 'Error al crear usuario',
                 text: resultado.mensaje || 'No se pudo registrar el usuario.',
                 icon: 'error',
+                confirmButtonColor: '#3085d6',
             });
         }
     } catch (error) {
@@ -527,6 +538,7 @@ async function crearUsuario() {
             title: 'Error de red',
             text: 'Hubo un problema al conectar con el servidor.',
             icon: 'error',
+            confirmButtonColor: '#3085d6',
         });
     }
 }
