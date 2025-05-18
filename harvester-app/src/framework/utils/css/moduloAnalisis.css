@@ -22,9 +22,7 @@ body,
   gap: var(--spacing-lg);         
   align-items: flex-start;
   justify-content: flex-start;
-  padding: var(--spacing-lg);
-  overflow: hidden;
-  overflow-y: auto;
+  overflow-x: auto;
 }
 .seccion-elemento-reporte {
   display: grid;
@@ -35,7 +33,7 @@ body,
   flex: 0 0 360px;             
   display: flex;
   flex-direction: column;
-  height: auto;
+  height: 650px;
   align-items: center;
 }
 .contenedor-botones-agregar {
@@ -78,7 +76,7 @@ body,
   flex: 1 1 auto;
   position: relative;
   overflow-y: auto;
-  min-height: 0; 
+  /* max-height: 600px; */
   gap: 10px;
   flex-direction: column;
 }
@@ -88,14 +86,14 @@ body,
   width: auto;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; 
+  overflow-y: scroll; 
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   padding: var(--spacing-lg);
   gap: var(--spacing-md);
-  max-height: 600px;
+  max-height: 650px;
   align-items: center;
 }
 .previsualizacion-grafica {
@@ -130,7 +128,6 @@ body,
   align-items: flex-start;
   justify-content: flex-start;
   position: relative;
-  overflow: hidden;
   width: 362px;
 }
 .titulo-grafica,
