@@ -4,8 +4,8 @@
  * @description Proporciona la funcionalidad para añadir tarjetas de texto editables
  *              y sus previsualizaciones en el módulo de análisis, con opción de
  *              insertar antes o después de una tarjeta existente.
- * @version 1.2
- * @date 2025-05-13
+ * @version 1.3
+ * @date 2025-05-17
  */
 
 /**
@@ -13,49 +13,50 @@
  * previsualización. Puede insertarse antes o después de otra tarjeta.
  *
  * @param {string} idContenedor           - ID del elemento donde se añadirán las tarjetas de edición.
- * @param {string} idContenedorVistaPrevia - ID del elemento donde se mostrará la previsualización.
+ * @param {string} idContenedorPrevisualizacion - ID del elemento donde se mostrará la previsualización.
  * @param {Element|null} tarjetaRef       - Nodo de tarjeta existente junto al cual insertar.
  * @param {'antes'|'despues'} posicion    - 'antes' para arriba, 'despues' para abajo.
+ * @returns {Element} tarjetaTexto - La tarjeta de texto creada.
  */
 function agregarTexto(
   idContenedor,
-  idContenedorVistaPrevia,
-  tarjetaRef       = null,
-  posicion         = null
+  idContenedorPrevisualizacion,
+  tarjetaRef = null,
+  posicion = null
 ) {
-  const contenedor        = document.getElementById(idContenedor);
-  const contenedorPrevia  = document.getElementById(idContenedorVistaPrevia);
+  const contenedor = document.getElementById(idContenedor);
+  const contenedorPrevia = document.getElementById(idContenedorPrevisualizacion);
   const observer = new MutationObserver(() => {
-  const tarjetasTexto    = contenedor.querySelectorAll('.tarjeta-texto');
-  const tarjetasGrafica  = contenedor.querySelectorAll('.tarjeta-grafica'); // Asegúrate de usar esta clase en tus gráficas
-  const tarjetasTotales  = [...tarjetasTexto, ...tarjetasGrafica];
+    const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
+    const tarjetasGrafica = contenedor.querySelectorAll('.tarjeta-grafica'); // Asegúrate de usar esta clase en tus gráficas
+    const tarjetasTotales = [...tarjetasTexto, ...tarjetasGrafica];
 
-  tarjetasTotales.forEach(tarjeta => {
-    const botonEliminar = tarjeta.querySelector('.eliminar');
-    const divisor       = tarjeta.querySelector('.divisor');
-    const contenedorBotones = tarjeta.querySelector('.botones-editar-eliminar');
+    tarjetasTotales.forEach(tarjeta => {
+      const botonEliminar = tarjeta.querySelector('.eliminar');
+      const divisor = tarjeta.querySelector('.divisor');
+      const contenedorBotones = tarjeta.querySelector('.botones-editar-eliminar');
 
-    const soloUnaGrafica = tarjetasGrafica.length <= 1;
-    const soloUnaTexto   = tarjetasTexto.length <= 1;
+      const soloUnaGrafica = tarjetasGrafica.length <= 1;
+      const soloUnaTexto = tarjetasTexto.length <= 1;
 
-    if (soloUnaTexto && soloUnaGrafica) {
-      if (botonEliminar) botonEliminar.style.display = 'none';
-      if (divisor) divisor.style.display = 'none';
-      if (contenedorBotones) contenedorBotones.style.justifyContent = 'center';
-    } else {
-      if (botonEliminar) botonEliminar.style.display = 'flex';
-      if (divisor) divisor.style.display = 'block';
-      if (contenedorBotones) contenedorBotones.style.justifyContent = 'space-between';
-    }
+      if (soloUnaTexto && soloUnaGrafica) {
+        if (botonEliminar) botonEliminar.style.display = 'none';
+        if (divisor) divisor.style.display = 'none';
+        if (contenedorBotones) contenedorBotones.style.justifyContent = 'center';
+      } else {
+        if (botonEliminar) botonEliminar.style.display = 'flex';
+        if (divisor) divisor.style.display = 'block';
+        if (contenedorBotones) contenedorBotones.style.justifyContent = 'space-between';
+      }
+    });
   });
-});
 
   observer.observe(contenedor, { childList: true, subtree: true });
 
 
   // 1) Calcular nuevo ID de tarjeta
   const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
-  const nuevoId       = tarjetasTexto.length
+  const nuevoId = tarjetasTexto.length
     ? (parseInt(tarjetasTexto[tarjetasTexto.length - 1].id, 10) || 0) + 1
     : 1;
 
@@ -113,13 +114,13 @@ function agregarTexto(
     // Determinar la vista de referencia y hacer la misma inserción
     const idRef = tarjetaRef.id;
     let vistaRef;
-    
+
     if (tarjetaRef.classList.contains('tarjeta-texto')) {
       vistaRef = contenedorPrevia.querySelector(`#preview-texto-${idRef}`);
     } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
       vistaRef = contenedorPrevia.querySelector(`.previsualizacion-grafica[id='${idRef}']`);
     }
-    
+
     if (vistaRef) {
       if (posicion === 'antes') {
         contenedorPrevia.insertBefore(vistaPrevia, vistaRef);
@@ -136,10 +137,10 @@ function agregarTexto(
   }
 
   // 5) Obtener referencias a controles internos
-  const selectorTipo    = tarjetaTexto.querySelector('.tipo-texto');
-  const areaEscritura   = tarjetaTexto.querySelector('.area-escritura');
-  const botonEliminar   = tarjetaTexto.querySelector('.eliminar');
-  const botonAlinear    = tarjetaTexto.querySelector('.alinear');
+  const selectorTipo = tarjetaTexto.querySelector('.tipo-texto');
+  const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
+  const botonEliminar = tarjetaTexto.querySelector('.eliminar');
+  const botonAlinear = tarjetaTexto.querySelector('.alinear');
   const iconoAlineacion = botonAlinear.querySelector('.icono-align');
 
   /**
@@ -149,25 +150,25 @@ function agregarTexto(
   function actualizarVistaPrevia() {
     vistaPrevia.innerHTML = '';
     const texto = areaEscritura.value.split('\n');
-    texto.forEach((linea) => { 
+    texto.forEach((linea) => {
       const parrafo = document.createElement('p');
       parrafo.textContent = linea;
-      
+
       // Aplicar estilos directamente al párrafo para garantizar el ajuste de texto
       parrafo.style.maxWidth = '100%';
       parrafo.style.wordWrap = 'break-word';
       parrafo.style.overflowWrap = 'break-word';
       parrafo.style.whiteSpace = 'normal';
-      
+
       vistaPrevia.appendChild(parrafo);
     })
-    
+
     // Aplicar estilos directamente al contenedor
     vistaPrevia.style.maxWidth = '100%';
     vistaPrevia.style.wordWrap = 'break-word';
     vistaPrevia.style.overflowWrap = 'break-word';
     vistaPrevia.style.whiteSpace = 'normal';
-    
+
     vistaPrevia.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
     vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
   }
@@ -176,12 +177,12 @@ function agregarTexto(
   selectorTipo.addEventListener('change', actualizarVistaPrevia);
   areaEscritura.addEventListener('input', () => {
     actualizarVistaPrevia();
-    
+
     // Mostrar contador de caracteres restantes
     const caracteresUsados = areaEscritura.value.length;
     const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
     const caracteresRestantes = limite - caracteresUsados;
-    
+
     // Verificar si ya existe un contador
     let contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
     if (!contadorCaracteres) {
@@ -189,10 +190,10 @@ function agregarTexto(
       contadorCaracteres.className = 'contador-caracteres';
       tarjetaTexto.insertBefore(contadorCaracteres, tarjetaTexto.querySelector('.botones-editar-eliminar'));
     }
-    
+
     // Actualizar el texto del contador
     contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
-    
+
     // Cambiar color si queda poco espacio
     if (caracteresRestantes < 50) {
       contadorCaracteres.style.color = '#e74c3c';
@@ -205,7 +206,7 @@ function agregarTexto(
     const alineaciones = ['left', 'center', 'justify', 'right'];
     vistaPrevia.alignIndex = (vistaPrevia.alignIndex + 1) % alineaciones.length;
     const modo = alineaciones[vistaPrevia.alignIndex];
-    vistaPrevia.style.textAlign       = modo;
+    vistaPrevia.style.textAlign = modo;
     iconoAlineacion.className = `icono-align align-${modo}`;
   });
 
@@ -213,7 +214,12 @@ function agregarTexto(
     tarjetaTexto.remove();
     vistaPrevia.remove();
   });
+
+  return tarjetaTexto;
 }
 
+module.exports = {
+  agregarTexto
+};
 // Exponer la función en el ámbito global para los listeners del módulo
-window.agregarTexto = agregarTexto;
+//window.agregarTexto = agregarTexto;

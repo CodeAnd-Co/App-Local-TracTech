@@ -6,12 +6,17 @@
  * @since 2025-04-28
  */
 
+const path = require('path');
+const fs = require('fs');
 /* eslint-disable no-unused-vars */
 const { jsPDF: JSPDF } = window.jspdf;
 if (typeof Swal === 'undefined'){
   const Swal = require('sweetalert2');
 }
 const { ipcRenderer } = require('electron');
+
+const {agregarTexto} = require('../utils/js/agregarTexto');
+const {mostrarBotonesAgregar, ocultarBotonesAgregar} = require('../utils/js/botonesAgregar');
 
 /**
  * Inicializa la interfaz de análisis:
@@ -24,8 +29,15 @@ const { ipcRenderer } = require('electron');
  * @memberof module:moduloAnalisis
  * @returns {void}
  */
-/* eslint-disable no-undef */
+// /* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
+  console.log("Directorio actual:", __dirname);
+  console.log("Ruta completa del archivo:", __filename);
+  console.log("Ruta del módulo:", path.resolve(__dirname, '../utils/js/agregarTexto.js'));
+  console.log(fs.existsSync(path.resolve(__dirname, '../utils/js/agregarTexto.js')));
+  console.log("Ruta del módulo:", path.resolve(__dirname, '../utils/js/botonesAgregar.js'));
+  console.log(fs.existsSync(path.resolve(__dirname, '../utils/js/botonesAgregar.js')));
+
   // IDs de los contenedores principales
   const idContenedor                 = 'contenedorElementos';
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
@@ -39,7 +51,7 @@ function inicializarModuloAnalisis() {
 
   // Configurar listeners de botones
   document.getElementById('agregarTexto')
-          .addEventListener('click', () => window.agregarTexto(idContenedor, idContenedorPrevisualizacion));
+          .addEventListener('click', () => agregarTexto(idContenedor, idContenedorPrevisualizacion));
   document.getElementById('agregarGrafica')
           .addEventListener('click', () => window.agregarGrafica(idContenedor, idContenedorPrevisualizacion));
   
@@ -64,13 +76,13 @@ function inicializarModuloAnalisis() {
 
   // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
-    agregarTexto(idContenedor, idContenedorPrevisualizacion);
+    configurarTexto(idContenedor, idContenedorPrevisualizacion);
     agregarGrafica(idContenedor, idContenedorPrevisualizacion);
   }
 
   // 4) Delegación de eventos en el contenedor para tarjetas: mostrar/ocultar botones flotantes
-  contenedor.addEventListener('mouseenter', alEntrarTarjeta, true);
-  contenedor.addEventListener('mouseleave', alSalirTarjeta, true);
+  //contenedor.addEventListener('mouseenter', alEntrarTarjeta, true);
+  //contenedor.addEventListener('mouseleave', alSalirTarjeta, true);
 
   /**
    * Muestra los botones “+” al entrar el ratón sobre una tarjeta de texto o gráfica.
@@ -79,6 +91,7 @@ function inicializarModuloAnalisis() {
    * @returns {void}
    */
   function alEntrarTarjeta(evento) {
+    console.log(`Entrando en tarjeta ${evento.target}`);
     const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
     if (tarjeta) mostrarBotonesAgregar(tarjeta);
   }
@@ -90,105 +103,10 @@ function inicializarModuloAnalisis() {
    * @returns {void}
    */
   function alSalirTarjeta(evento) {
+    console.log(`Saliendo de tarjeta ${evento.target}`);
     const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
     if (tarjeta) ocultarBotonesAgregar(tarjeta);
       cerrarMenuAgregar(tarjeta);
-
-  }
-  /**
-   * Crea y añade dos botones flotantes “+” en la tarjeta (arriba y abajo).
-   *
-   * @param {Element} tarjeta – La tarjeta destino.
-   * @function mostrarBotonesAgregar
-   * @memberof module:moduloAnalisis
-   * @returns {void}
-   */
-  function mostrarBotonesAgregar(tarjeta) {
-    if (tarjeta.querySelector('.btn-agregar-flotante')) return;
-    tarjeta.classList.add('tarjeta-con-posicion');
-
-    ['antes', 'despues'].forEach(ubicacion => {
-      const botonFlotante = document.createElement('button');
-      botonFlotante.classList.add(
-        'btn-agregar-flotante',
-        ubicacion === 'antes'
-          ? 'btn-agregar-superior'
-          : 'btn-agregar-inferior'
-      );
-      botonFlotante.textContent       = '+';
-      botonFlotante.dataset.ubicacion = ubicacion;
-      botonFlotante.addEventListener('click', evento => {
-        evento.stopPropagation();
-        abrirMenuAgregar(tarjeta, ubicacion);
-      });
-      tarjeta.appendChild(botonFlotante);
-    });
-  }
-
-  /**
-   * Elimina los botones flotantes “+” de la tarjeta dada.
-   *
-   * @param {Element} tarjeta – La tarjeta destino.
-   * @function ocultarBotonesAgregar
-   * @memberof module:moduloAnalisis
-   * @returns {void}
-   */
-  function ocultarBotonesAgregar(tarjeta) {
-    tarjeta.querySelectorAll('.btn-agregar-flotante')
-           .forEach(boton => boton.remove());
-  }
-
-  /**
-   * Abre un modal de SweetAlert2 con opciones para insertar una tarjeta de texto o de gráfica.
-   *
-   * @param {Element} tarjeta    – La tarjeta donde se hizo clic.
-   * @param {'antes'|'despues'} ubicacion – Posición donde insertar la nueva tarjeta.
-   * @function abrirMenuAgregar
-   * @memberof module:moduloAnalisis
-   * @returns {void}
-   */
-  function abrirMenuAgregar(tarjeta, ubicacion) {
-    Swal.fire({
-      title: 'Agregar',
-      width: '180px',
-      padding: '0.5rem',
-      showCancelButton: true,
-      showDenyButton:   true,
-      confirmButtonText:
-        '<img src="../utils/iconos/Texto.svg" class="icono-agregar"/> Texto',
-      denyButtonText:
-        '<img src="../utils/iconos/GraficaBarras.svg" class="icono-agregar"/> Gráfica',
-      cancelButtonText: '✕',
-      target:           tarjeta,
-      buttonsStyling:   false,
-      customClass: {
-        container:     'swal2-container-inline',
-        popup:         'swal2-popup-inline',
-        confirmButton: 'boton-agregar small',
-        denyButton:    'boton-agregar small',
-        cancelButton:  'swal2-cancel-inline'
-      }
-    }).then(resultado => {
-      if (resultado.isConfirmed) {
-        agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
-      } else if (resultado.isDenied) {
-        agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
-      }
-      // Si canceló, no hace nada
-    });
-  }
-
-  /**
-   * Cierra el menú de inserción si estuviera abierto.
-   *
-   * @param {Element} tarjeta – La tarjeta destino.
-   * @function cerrarMenuAgregar
-   * @memberof module:moduloAnalisis
-   * @returns {void}
-   */
-  function cerrarMenuAgregar(tarjeta) {
-    const menuExistente = tarjeta.querySelector('.menu-agregar');
-    if (menuExistente) menuExistente.remove();
   }
 }
 
@@ -332,11 +250,23 @@ async function descargarPDF() {
   ipcRenderer.send('guardar-pdf', Buffer.from(pdfBufer));
 }
 
+function configurarTexto(idContenedor, idContenedorPrevisualizacion) {
+  const tarjetaTexto = agregarTexto(idContenedor, idContenedorPrevisualizacion);
+  
+  tarjetaTexto.addEventListener('mouseenter', () => {
+    console.log(`Entrando en tarjeta ${tarjetaTexto.id}`);
+    mostrarBotonesAgregar(tarjetaTexto, idContenedor, idContenedorPrevisualizacion);
+  })
+
+  tarjetaTexto.addEventListener('mouseleave', () => { 
+    ocultarBotonesAgregar(tarjetaTexto);
+  })
+}
+
 // Exponer funciones en el ámbito global para uso externo
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel          = cargarDatosExcel;
 window.descargarPDF              = descargarPDF;
-window.agregarTexto              = agregarTexto;
 window.agregarGrafica            = agregarGrafica;
 
 // En algunos navegadores, volver a inicializar tras un breve retardo si ya cargó el DOM
