@@ -11,6 +11,7 @@ const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/u
 const { consultarRoles: consultarRolesCU } = require('../../backend/casosUso/usuarios/consultarRoles.js');
 
 const Swal2 = require('sweetalert2');
+const validator = require('validator');
 
 const usuariosPorPagina = 6;
 const modoFormulario = Object.freeze({
@@ -395,48 +396,28 @@ async function editarUsuario() {
     const correoIngresado = document.getElementById('email').value.trim();
     const contraseniaIngresada = document.getElementById('password').value.trim();
     const rolIngresado = document.getElementById('rol').value.trim();
-    const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
-    const usuario = listaUsuarios.find(usuario => usuario.id === usuarioAEditar.id);
+    // Llamar a la función de validación
+    const { error, datos } = validarYLimpiarUsuario({
+        nombre: nombreIngresado,
+        correo: correoIngresado,
+        contrasenia: contraseniaIngresada,
+        idRol: Number(rolIngresado),
+    });
 
-    // Flags de “campo modificado”
-    const cambioNombre    = nombreIngresado && nombreIngresado !== usuario.nombre;
-    const cambioCorreo    = correoIngresado && correoIngresado !== usuario.correo;
-    const cambioPass      = contraseniaIngresada !== '';
-    const cambioRol       = rolIngresado && Number(rolIngresado) !== idRolUsuarioAEditar;
-
-    if (!(cambioNombre || cambioCorreo || cambioPass || cambioRol)) {
-        return Swal2.fire({
-        title: 'Error',
-        text: 'Debes modificar al menos un campo del usuario.',
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-        });
-    }
-
-    // Verificar si el correo ya existe para otro usuario
-    const correoYaExiste = listaUsuarios.some(usuario =>
-        usuario.correo === correoIngresado && usuario.id !== usuarioAEditar.id
-    );
-    
-    if (correoYaExiste) {
+    if (error) {
         Swal2.fire({
             title: 'Error',
-            text: 'No se puede repetir el correo entre usuarios.',
+            text: error,
             icon: 'warning',
             confirmButtonColor: '#3085d6',
         });
-        return;
     }
 
-    // Validación de campos en caso de estar vacío
-    const idUsuario = usuarioAEditar.id;
-    const nombreUsuario = (nombreIngresado !== '') ? nombreIngresado : usuario.nombre;
-    const correoUsuario = (correoIngresado !== '') ? correoIngresado : usuario.correo;
-    const idRolUsuario = (rolIngresado) ? Number(rolIngresado) : idRolUsuarioAEditar;
+    const { idUsuario, nombre, correo, contrasenia, idRol } = datos;
 
     try {
-        const resultado = await modificarUsuario(idUsuario, nombreUsuario, correoUsuario, contraseniaIngresada, idRolUsuario);
+        const resultado = await modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol);
         if (resultado.ok) {
             Swal2.fire({
                 title: 'Usuario modificado',
@@ -475,6 +456,89 @@ async function editarUsuario() {
         });
     }
 }
+
+/**
+ * Valida y sanea los datos para la edición de un usuario en el front-end.
+ * Reproduce las mismas validaciones que el back-end y devuelve los valores listos para enviar.
+ *
+ * @param {Object} params - Parámetros de validación.
+ * @param {string} params.nombre - Nuevo nombre ingresado por el usuario.
+ * @param {string} params.correo - Nuevo correo ingresado por el usuario.
+ * @param {string} params.contrasenia - Nueva contraseña ingresada por el usuario.
+ * @param {number|null} params.idRol - Nuevo ID de rol ingresado, o null si no se modificó.
+ * @returns {{ error: string|null, datos: Object|null }}
+ */
+function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
+    const numeroMinimoID = 1;
+    const tamanioMinimoNombre = 1;
+    const tamanioMaxNombre = 50;
+    const tamanioMinContrasenia = 8;
+    const tamanioMaxContrasenia = 50;
+    const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
+
+    // Flags de “campo modificado”
+    const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
+    const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
+    const cambioContrasenia = contrasenia !== '';
+    const cambioRol = idRol !== null && idRol !== idRolUsuarioAEditar
+
+    // Validar que haya cambiado mínimo un campo
+    if (!(cambioNombre || cambioCorreo || cambioContrasenia || cambioRol)) {
+        return { error: 'Debes modificar al menos un campo del usuario.', datos: null };
+    }
+
+    const datos = { idUsuario: usuarioAEditar.id };
+
+    // Validar nombre
+    if (cambioNombre) {
+        const nombreRecortado = nombre.trim();
+        if (nombreRecortado.length < tamanioMinimoNombre || nombreRecortado.length > tamanioMaxNombre) {
+            return { error: `El nombre debe tener entre ${tamanioMinimoNombre} y ${tamanioMaxNombre} caracteres.`, datos: null };
+        }
+        const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ\. ]+$/;
+        if (!regex.test(nombreRecortado)) {
+            return { error: 'El nombre solo puede contener letras, espacios y puntos.', datos: null };
+        }
+        datos.nombre = validator.escape(nombreRecortado);
+    }
+
+    // Validar correo
+    if (cambioCorreo) {
+        const correoRecortado = correo.trim();
+        if (!validator.isEmail(correoRecortado)) {
+            return { error: 'El correo debe tener un formato válido.', datos: null };
+        }
+
+        const correoYaExiste = listaUsuarios.some(usuario =>
+            usuario.correo === correoRecortado && usuario.id !== usuarioAEditar.id
+        );
+
+        if (correoYaExiste) {
+            return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
+        }
+
+        datos.correo = validator.normalizeEmail(correoRecortado);
+    }
+
+    // Validar contraseña
+    if (cambioContrasenia) {
+        const contraseniaRecortada = contrasenia.trim();
+        if (contraseniaRecortada.length < tamanioMinContrasenia || contraseniaRecortada.length > tamanioMaxContrasenia)
+        return { error: `La contraseña debe tener entre ${tamanioMinContrasenia} y ${tamanioMaxContrasenia} caracteres.`, datos: null };
+        datos.contrasenia = contraseniaRecortada;
+    }
+
+    // Validar rol
+    if (cambioRol) {
+        if (!Number.isInteger(idRol) || idRol < numeroMinimoID)
+        return { error: 'El rol debe ser un número entero mayor o igual a 1.', datos: null };
+        datos.idRol = idRol;
+    }
+
+    return { error: null, datos };
+}
+
+
 
 /**
  * Crea un nuevo usuario en el sistema.
