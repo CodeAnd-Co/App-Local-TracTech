@@ -12,7 +12,7 @@ body,
 .frame-analisis,
 .frame-analisis * {
   box-sizing: border-box;
-  font-family: var(--font-base, "Inter", sans-serif) !important;
+  font-family: var(--font-base, 'Inter', sans-serif) !important;
 }
 .frame-analisis {
   height: 90vh;
@@ -49,7 +49,7 @@ body,
 .boton-agregar {
   background-color: #a61930;
   color: #ffffff;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 16px;
   padding: 10px 20px;
   border: none;
@@ -83,32 +83,23 @@ body,
   flex-direction: column;
 }
 .seccion-previsualizacion-grafica {
+  flex: 1;
+  height: 100%;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; 
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   padding: var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
   gap: var(--spacing-md);
-  flex: 1;                     
-  width: auto;
-  max-height: none;             
-  overflow: auto;
+  max-height: 600px;
   align-items: center;
 }
-.previsualizacion-gr-fica {
-  color: #000000;
-  text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
-  font-size: 52px;
-  line-height: 100%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
-  position: relative;
-}
 .previsualizacion-grafica {
-  background: #9e9e9e;
+  background: #E0E0E0;
   border-radius: 8px;
   display: flex;
   flex-direction: row;
@@ -116,9 +107,10 @@ body,
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 750px;
-  height: 396px;
+  width: 645px;
   position: relative;
+  height: 340px;
+  padding: 10px 10px;
 }
 .bar-chart {
   flex-shrink: 0;
@@ -154,7 +146,7 @@ body,
   position: relative;
   color: var(--negro, #000000);
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -171,7 +163,7 @@ body,
 }
 .titulo-grafica::placeholder {
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -184,7 +176,7 @@ body,
 .nombre-del-texto {
   color: var(--negro, #000000);
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -211,7 +203,7 @@ body,
   flex-shrink: 0;
   position: relative;
   color: #ffffff;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -265,7 +257,7 @@ body,
 .texto-eliminar {
   color: var(--blanco, #ffffff);
   text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 112%;
   letter-spacing: -0.02em;
@@ -291,7 +283,7 @@ body,
   resize: none;
   padding: 12px;
   font-size: 16px;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   border-radius: 8px;
   border: 1px solid #ccc;
   resize: vertical;
@@ -313,7 +305,7 @@ body,
   background-color: transparent;
   border: none;
   padding: 8px 32px 8px 12px;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   color: #000;
   border-radius: 8px;
@@ -323,7 +315,7 @@ body,
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 .titulo-texto::after {
-  content: "";
+  content: '';
   position: absolute;
   right: 20px;
   top: 50%;
@@ -401,56 +393,40 @@ body,
   transform: translateX(2px);
 }
 .previsualizacion-texto {
+  font-family: 'SegoeUi-Regular', sans-serif;
   background: transparent !important;
   border-radius: none !important;
   padding: 6px;
-  margin-bottom: var(--spacing-md);
   width:100% ; 
   box-sizing: border-box;
   height: auto;
   width: auto;
   max-width: 100%;
   max-height: 100%;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  word-break: break-all;
 }
+
 .preview-titulo {
   font-size: 24px;
   font-weight: 700;
+}
+
+.preview-titulo > p {
+  margin-bottom: 22px;
 }
 .preview-subtitulo {
   font-size: 20px;
   font-weight: 700;
 }
+
+.preview-subtitulo > p {
+  margin-bottom: 19px;
+}
 .preview-contenido {
   font-size: 16px;
   font-weight: 400;
 }
-.previsualizacion-texto {
-  font-family: "SegoeUi-Regular", sans-serif;
-}
-.previsualizacion-texto {
-  white-space: pre-wrap;       
-  word-wrap: break-word;      
-  overflow-wrap: break-word;   
-}
-.seccion-previsualizacion-grafica {
-  flex: 1;            /* crece para llenar */
-  height: 100%;       /* completa el alto de .frame-analisis */
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; 
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  padding: var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  max-height: 600px;
+.preview-contenido > p {
+  margin-bottom: 15px;
 }
 .preview-header {
   font-size: 24px;
@@ -462,6 +438,7 @@ body,
   text-align: center;
 }
 .contenedor-elementos-previsualizacion {
+  width: 645px;
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-md);
@@ -514,7 +491,7 @@ body,
 }
 .alinear .texto-editar {
   color: var(--blanco, #ffffff);
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 112%;
   letter-spacing: -0.02em;
@@ -592,7 +569,7 @@ body,
 .titulo-formulas > p {
   color: #000000;
   text-align: left;
-  font-family: "Inter-Regular", sans-serif;
+  font-family: 'Inter-Regular', sans-serif;
   font-size: 24px;
   line-height: 100%;
   font-weight: 400;
@@ -638,7 +615,7 @@ body,
 .opciones-seccion > p{
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 32px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -674,7 +651,7 @@ body,
 .opcion-letra {
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -697,7 +674,7 @@ body,
 .opcion-texto {
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -730,7 +707,7 @@ body,
 .titulo-aplicar-formulas > p{
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 32px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -767,7 +744,7 @@ body,
   position: relative;
   color: var(--negro, #000000);
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
@@ -799,9 +776,163 @@ body,
   position: relative;
   color: #000000;
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   letter-spacing: -0.02em;
   font-weight: 400;
+}
+/* — Oculta los botones globales de “Agregar” — */
+.contenedor-botones-agregar {
+  display: none;
+}
+
+/* — Botón “+” flotante dentro de cada tarjeta — */
+.btn-add {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Aparece solo al hacer hover en la tarjeta */
+.tarjeta-texto:hover .btn-add,
+.tarjeta-grafica:hover .btn-add {
+  opacity: 1;
+}
+
+/* — Menú de opciones que surge al clicar “+”: ahora horizontal — */
+/* — Menú de opciones ahora horizontal y con gap suave — */
+.menu-agregar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: var(--spacing-xs);
+
+  display: flex;            /* fila en lugar de columna */
+  flex-direction: row;
+  gap: var(--spacing-sm);   /* espacio ligero entre botones */
+
+  z-index: 20;
+}
+
+/* Opcional: un poco de padding interno en cada botón */
+.menu-agregar .boton-agregar {
+  flex: 1;                           /* repartir espacio igual */
+  margin: 0 !important;
+  padding: var(--spacing-sm) !important;
+  text-align: center;
+}
+.btn-agregar-flotante {
+  --tamaño: 32px;
+  position: absolute;
+  width: var(--tamaño);
+  height: var(--tamaño);
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-text);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+/* Solo visible al hover de la tarjeta */
+.tarjeta-texto:hover .btn-agregar-flotante,
+.tarjeta-grafica:hover .btn-agregar-flotante {
+  opacity: 1;
+}
+
+.btn-agregar-superior {
+  top: 2px;
+  right: 1px;
+}
+
+.btn-agregar-inferior {
+  bottom: 2px;
+  right: 1px;
+}
+/* — Contenedor de SweetAlert dentro de la tarjeta, centrado — */
+.swal2-container-inline {
+  position: absolute !important;
+  inset: 0;                          /* ocupa toda la tarjeta */
+  display: flex !important;
+  align-items: center;               /* centra verticalmente */
+  justify-content: center;           /* centra horizontalmente */
+  pointer-events: auto;              /* permite clicks sólo dentro del popup */
+  padding: 0;                        /* sin padding extra */
+}
+
+/* — Popup reducido ahora centrado por flex, no absoluto — */
+.swal2-popup-inline {
+  pointer-events: auto !important;
+  position: relative !important;
+  transform: none !important;
+  margin: 0 !important;
+  width: auto !important;
+  max-width: 260px !important;       /* mismo que el JS */
+  padding: 1rem !important;          /* más padding interno */
+  background: var(--color-bg) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: calc(var(--radius) * 1.2) !important; /* un pelín más redondeado */
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15) !important;
+}
+/* — Botón de cancelar reducidito en la esquina superior derecha del popup — */
+.swal2-cancel-inline {
+  position: absolute !important;
+  top: 4px;
+  right: 4px;
+  font-size: 0.8em;
+  background: transparent !important;
+  border: none !important;
+  color: var(--color-text) !important;
+  cursor: pointer;
+}
+/* — Forzar acciones de SweetAlert en fila dentro del popup inline — */
+.swal2-popup-inline .swal2-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem !important;  /* antes 0; ahora más separación */
+}
+
+/* — Ajustar estilo de cada botón para que no ocupen todo el ancho — */
+.swal2-popup-inline .swal2-confirm,
+.swal2-popup-inline .swal2-deny {
+  flex: none;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+}
+/* — Asegurar que el botón de denegar quede pegado a la barra — */
+.swal2-popup-inline .swal2-deny {
+  margin-left: 0 !important;
 }

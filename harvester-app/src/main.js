@@ -1,5 +1,6 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('node:path');
+const fs = require('fs');
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -13,7 +14,6 @@ const createWindow = () => {
     width: 1920,
     height: 1080,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
       contextIsolation: false, // Desactivar el aislamiento de contexto para permitir el uso de Node.js en el frontend
     },
@@ -50,4 +50,25 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+// Manejar la apertura del diálogo de selección de archivos cuando se descarga un pdf
+ipcMain.on('guardar-pdf', async (evento, bufer) => {
+  const { canceled: cancelado, filePath: ubicacion } = await dialog.showSaveDialog({
+    title: 'Guardar PDF',
+    defaultPath: 'reporte.pdf',
+    filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+  });
+
+  if (!cancelado && ubicacion) {
+    fs.writeFile(ubicacion, bufer, (error) => {
+      if (error) {
+        console.error('Error al guardar PDF:', error);
+      } else {
+        console.log('PDF guardado en', ubicacion);
+      }
+    });
+  }
+
+  evento.sender.send('pdf-guardado', !cancelado);
 });

@@ -1,5 +1,6 @@
 // RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
 // RF3 Usuario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
+const { URL_BASE } = require('../../../framework/utils/js/constantes');
 
 /**
  * Realiza la solicitud para iniciar sesión en el servidor.
@@ -9,7 +10,7 @@
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
 async function iniciarSesion(correo, contrasenia) {
-  const respuesta = await fetch('http://localhost:3000/sesion/iniciarSesion', {
+  const respuesta = await fetch(`${URL_BASE}/sesion/iniciarSesion`, {
     method: 'POST', // Método HTTP POST para enviar las credenciales
     headers: {
       'Content-Type': 'application/json', // Especificar el tipo de contenido
@@ -31,7 +32,7 @@ async function iniciarSesion(correo, contrasenia) {
  * @returns {Promise<object>} - Objeto con el estado de la respuesta y los datos recibidos
  */
 async function cerrarSesion(token) {
-  const respuesta = await fetch('http://localhost:3000/sesion/cerrarSesion', {
+  const respuesta = await fetch(`${URL_BASE}/sesion/cerrarSesion`, {
     method: 'POST', // Método HTTP POST para cerrar sesión
     headers: {
       'Content-Type': 'application/json', // Especificar el tipo de contenido

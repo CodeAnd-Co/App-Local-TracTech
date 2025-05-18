@@ -1,3 +1,6 @@
+const { URL_BASE } = require('../../framework/utils/js/constantes');
+
+
 /**
  * Verifica la validez de un token JWT enviando una solicitud al servidor.
  *
@@ -12,22 +15,22 @@ async function verificarToken(token) {
 
   try {
       // Enviar solicitud GET al servidor para verificar el token
-      const respuesta = await fetch("http://localhost:3000", {
-          method: "GET",
+      const respuesta = await fetch(`${URL_BASE}`, {
+          method: 'GET',
           headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`, // Incluir el token en el encabezado Authorization
           },
       });
 
       // Parsear la respuesta del servidor
       const datos = await respuesta.json();
-      localStorage.setItem("permisos", datos.permisos); // Guardar los permisos en el localStorage
+      localStorage.setItem('permisos', datos.permisos); // Guardar los permisos en el localStorage
 
       // Retornar true si la respuesta fue exitosa y el servidor confirmó la validez
       return respuesta.ok;
   } catch (error) {
-      console.error("Error al verificar el token:", error);
+      console.error('Error al verificar el token:', error);
       // En caso de error en la solicitud, se considera que el token no es válido
       return false;
   }

@@ -147,7 +147,6 @@ function cargarDatosDeExcel() {
             alert('No hay datos de Excel disponibles');
             return null;
         }
-        
         // Parsear los datos JSON
         const datosExcel = JSON.parse(datosExcelJSON);
         return datosExcel;
@@ -191,7 +190,8 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
         // Si el primer elemento es un array, usamos sus valores como encabezados
         columnas = datosHoja[0];
     }
-
+    localStorage.setItem('columnas', JSON.stringify(columnas));
+    console.log(localStorage.getItem('columnas'));
     columnas.forEach(nombreColumna => {
         // Crear div para la columna
         const columnaDiv = document.createElement('div');

@@ -23,6 +23,7 @@ let paginaActual = 1;
 let listaUsuarios = [];
 let usuariosFiltrados = [];
 let terminoBusqueda = '';
+let listaCorreos = [];
 
 /**
  * Inicializa el módulo de gestión de usuarios.
@@ -46,8 +47,6 @@ async function inicializarModuloGestionUsuarios() {
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
-
-        // Cargar roles
         
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
@@ -78,6 +77,7 @@ async function inicializarModuloGestionUsuarios() {
 
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
+        listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
     });
 
     const botonCancelar = document.querySelector('.btn-cancelar');
@@ -96,7 +96,11 @@ async function inicializarModuloGestionUsuarios() {
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
         if (modoActual === modoFormulario.CREAR) {
+            // Deshabilitar el botón para evitar múltiples envíos
+            nuevoBotonGuardar.disabled = true;
             await crearUsuario();
+            // Volver a habilitar el botón después de que termine el proceso
+            nuevoBotonGuardar.disabled = false;
         } else if (modoActual === modoFormulario.EDITAR) {
             await editarUsuario();
         }
@@ -491,7 +495,6 @@ async function crearUsuario() {
     const contrasenia = contraseniaInput.value.trim();
     const idRolFK = parseInt(rolInput.value, 10);
 
-
     if (!nombre || !correo || !contrasenia || isNaN(idRolFK)) {
         return Swal2.fire({
             title: 'Datos incompletos',
@@ -501,9 +504,55 @@ async function crearUsuario() {
         });
     }
 
+    if (listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correo.toLowerCase())) {
+        await Swal2.fire({
+            title: 'Correo ya registrado',
+            text: 'El correo ingresado ya existe. Por favor, usa otro correo.',
+            icon: 'error',
+        });
+        return;
+    }
+
+    if (nombre.length > 55) {
+        await Swal2.fire({
+            title: 'Nombre demasiado largo',
+            text: 'El nombre no puede tener más de 55 caracteres.',
+            icon: 'error',
+        });
+        return;
+    }
+
+    if (correo.length > 55) {
+        await Swal2.fire({ 
+            title: 'Correo demasiado largo',
+            text: 'El correo no puede tener más de 55 caracteres.',
+            icon: 'error',
+        });
+        return
+
+    }
+
+    if (contrasenia.length < 5) {
+        await Swal2.fire({
+            title: 'Contraseña demasiado corta',
+            text: 'La contraseña debe de tener más de 5 caracteres.',
+            icon: 'error',
+        });
+        return
+    }
+
+    if (contrasenia.length > 55) {
+        await Swal2.fire({
+            title: 'Contraseña demasiado larga',
+            text: 'La contraseña no puede tener más de 55 caracteres.',
+            icon: 'error',
+        });
+        return
+    }
+    
+
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
-
         if (resultado.ok) {
             Swal2.fire({
                 title: 'Usuario creado',

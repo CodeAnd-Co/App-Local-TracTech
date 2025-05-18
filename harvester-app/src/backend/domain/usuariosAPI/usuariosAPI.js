@@ -1,6 +1,7 @@
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
 // RF41 Administrador modifica usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41
 // RF43 Administrador elimina usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF43
+const { URL_BASE } = require('../../../framework/utils/js/constantes');
 
 const token = localStorage.getItem('token');
 
@@ -11,7 +12,7 @@ const token = localStorage.getItem('token');
  * @throws {Error} Si hay un error en la comunicación con el servidor
  */
 async function obtenerUsuarios() {
-    const respuesta = await fetch('http://localhost:3000/usuarios/consultarUsuarios', {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/consultarUsuarios`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -71,7 +72,7 @@ async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
  * @returns {Promise<{ok: boolean, mensaje?: string}>} Objeto con el estado de la operación y un posible mensaje del servidor.
  */
 async function eliminarUsuario(id) {
-    const respuesta = await fetch(`http://localhost:3000/usuarios/eliminarUsuario/${id}`, {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/eliminarUsuario/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ async function eliminarUsuario(id) {
 async function crearUsuario(datos) {
     const token = localStorage.getItem('token');
 
-    const respuesta = await fetch('http://localhost:3000/usuarios/crearUsuario', {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/crearUsuario`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ async function crearUsuario(datos) {
  * @throws {Error} Si hay un error en la comunicación con el servidor
  */
 async function consultarRoles() {
-    const respuesta = await fetch('http://localhost:3000/usuarios/consultarRolesUsuarios', {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/consultarRolesUsuarios`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
