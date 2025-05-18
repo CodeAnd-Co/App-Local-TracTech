@@ -9,6 +9,7 @@ const { crearUsuario: crearUsuarioCU } = require('../../backend/casosUso/usuario
 const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
 const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
 const { consultarRoles: consultarRolesCU } = require('../../backend/casosUso/usuarios/consultarRoles.js');
+const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require('../utils/js/validacionesCompartidas.js');
 
 const Swal2 = require('sweetalert2');
 const validator = require('validator');
@@ -469,13 +470,10 @@ async function editarUsuario() {
  * @returns {{ error: string|null, datos: Object|null }}
  */
 function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
-    const numeroMinimoID = 1;
-    const tamanioMinimoNombre = 1;
-    const tamanioMaxNombre = 50;
-    const tamanioMinContrasenia = 8;
-    const tamanioMaxContrasenia = 50;
+    
     const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
+    // TODO: Utilizar estructuras de control en lugar de operadores ternarios
     // Flags de “campo modificado”
     const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
     const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
@@ -491,47 +489,44 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
 
     // Validar nombre
     if (cambioNombre) {
-        const nombreRecortado = nombre.trim();
-        if (nombreRecortado.length < tamanioMinimoNombre || nombreRecortado.length > tamanioMaxNombre) {
-            return { error: `El nombre debe tener entre ${tamanioMinimoNombre} y ${tamanioMaxNombre} caracteres.`, datos: null };
+        const error = validarNombreCampo(nombre);
+        if (error) {
+            return { error, datos: null };
         }
-        const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ\. ]+$/;
-        if (!regex.test(nombreRecortado)) {
-            return { error: 'El nombre solo puede contener letras, espacios y puntos.', datos: null };
-        }
-        datos.nombre = validator.escape(nombreRecortado);
+        datos.nombre = validator.escape(nombre.trim());
     }
 
     // Validar correo
     if (cambioCorreo) {
-        const correoRecortado = correo.trim();
-        if (!validator.isEmail(correoRecortado)) {
-            return { error: 'El correo debe tener un formato válido.', datos: null };
+        const error = validarCorreoCampo(correo);
+        if (error) {
+            return { error, datos: null };
         }
-
+        const correoNormalizado = validator.normalizeEmail(correo.trim())
         const correoYaExiste = listaUsuarios.some(usuario =>
-            usuario.correo === correoRecortado && usuario.id !== usuarioAEditar.id
+            usuario.correo === correoNormalizado && usuario.id !== usuarioAEditar.id
         );
-
         if (correoYaExiste) {
             return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
         }
-
-        datos.correo = validator.normalizeEmail(correoRecortado);
+        datos.correo = correoNormalizado;
     }
 
     // Validar contraseña
     if (cambioContrasenia) {
-        const contraseniaRecortada = contrasenia.trim();
-        if (contraseniaRecortada.length < tamanioMinContrasenia || contraseniaRecortada.length > tamanioMaxContrasenia)
-        return { error: `La contraseña debe tener entre ${tamanioMinContrasenia} y ${tamanioMaxContrasenia} caracteres.`, datos: null };
-        datos.contrasenia = contraseniaRecortada;
+        const error = validarContraseniaCampo(contrasenia);
+        if (error) {
+            return { error, datos: null };
+        }
+        datos.contrasenia = contrasenia.trim();
     }
 
     // Validar rol
     if (cambioRol) {
-        if (!Number.isInteger(idRol) || idRol < numeroMinimoID)
-        return { error: 'El rol debe ser un número entero mayor o igual a 1.', datos: null };
+        const error = validarRolCampo(idRol);
+        if (error) {
+            return { error, datos: null };
+        }
         datos.idRol = idRol;
     }
 
