@@ -6,8 +6,6 @@
  * @since 2025-04-28
  */
 
-const path = require('path');
-const fs = require('fs');
 /* eslint-disable no-unused-vars */
 const { jsPDF: JSPDF } = window.jspdf;
 if (typeof Swal === 'undefined'){
@@ -27,14 +25,8 @@ const { configurarTexto, configurarGrafica } = require('../utils/js/botonesAgreg
  * @memberof module:moduloAnalisis
  * @returns {void}
  */
-// /* eslint-disable no-undef */
+/* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
-  // console.log("Directorio actual:", __dirname);
-  // console.log("Ruta completa del archivo:", __filename);
-  // console.log("Ruta del módulo:", path.resolve(__dirname, '../utils/js/agregarTexto.js'));
-  // console.log(fs.existsSync(path.resolve(__dirname, '../utils/js/agregarTexto.js')));
-  // console.log("Ruta del módulo:", path.resolve(__dirname, '../utils/js/botonesAgregar.js'));
-  // console.log(fs.existsSync(path.resolve(__dirname, '../utils/js/botonesAgregar.js')));
 
   // IDs de los contenedores principales
   const idContenedor                 = 'contenedorElementos';
@@ -45,16 +37,7 @@ function inicializarModuloAnalisis() {
 
   if (!contenedor) return;
 
-  // // 1) Ocultar botones globales de agregar texto y gráfica
-  // document.getElementById('agregarTexto').style.display   = 'none';
-  // document.getElementById('agregarGrafica').style.display = 'none';
-
-  // // Configurar listeners de botones
-  // document.getElementById('agregarTexto')
-  //         .addEventListener('click', () => agregarTexto(idContenedor, idContenedorPrevisualizacion));
-  // document.getElementById('agregarGrafica')
-  //         .addEventListener('click', () => window.agregarGrafica(idContenedor, idContenedorPrevisualizacion));
-  
+  // 1) Configurar boton de descarga de PDF
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
   botonPDF.addEventListener('click', async () => {
@@ -74,18 +57,11 @@ function inicializarModuloAnalisis() {
     });
   });
 
-  // 3) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
+  // 2) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
     configurarGrafica(idContenedor, idContenedorPrevisualizacion);
   }
-}
-
-// Ejecutar inicialización tras cargar el DOM
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', inicializarModuloAnalisis);
-} else {
-  inicializarModuloAnalisis();
 }
 
 /**
@@ -224,7 +200,6 @@ async function descargarPDF() {
 // Exponer funciones en el ámbito global para uso externo
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel          = cargarDatosExcel;
-window.descargarPDF              = descargarPDF;
 
 // En algunos navegadores, volver a inicializar tras un breve retardo si ya cargó el DOM
 if (document.readyState !== 'loading') {
