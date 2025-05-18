@@ -8,6 +8,10 @@
  * @date 2025-05-17
  */
 
+// RF17 - Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf17/
+// RF18 - Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf18/
+// RF19 - Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf19/
+
 /**
  * Crea y agrega una tarjeta de texto al contenedor de edición y su correspondiente
  * previsualización. Puede insertarse antes o después de otra tarjeta.

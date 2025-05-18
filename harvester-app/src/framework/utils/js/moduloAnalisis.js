@@ -6,6 +6,8 @@
  * @since 2025-04-28
  */
 
+// RF25 - Usuario descarga reporte en PDF - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf25/
+
 /* eslint-disable no-unused-vars */
 const { jsPDF: JSPDF } = window.jspdf;
 if (typeof Swal === 'undefined'){
