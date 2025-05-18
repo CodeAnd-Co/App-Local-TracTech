@@ -80,8 +80,13 @@ function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
             return;
         }
     } catch (error) {
-        console.error('Error al modificar la fórmula:', error);
-        throw new Error('No se pudo modificar la fórmula');
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo modificar la fórmula. Inténtalo de nuevo más tarde.',
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+        return;
     }
 }
 
