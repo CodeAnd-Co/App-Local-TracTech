@@ -13,19 +13,14 @@ const { guardarPlantillaAPI } = require('../../domain/plantillasAPI/guardarPlant
  */
 async function guardarPlantillas(
   htmlString,
-  {
-    nombrePlantilla  = 'Plantilla',
-    frecuenciaEnvio  = null,
-    correoDestino    = null,
-    numeroDestino    = null,
-  } = {}
+  nombrePlantillaParametro
 ) {
   const plantilla = new PlantillaReporte({
-    nombrePlantilla,
+    nombrePlantilla:   nombrePlantillaParametro,
     datos: htmlString,
-    frecuenciaEnvio,
-    correoDestino,
-    numeroDestino,
+    frecuenciaEnvio: null ,
+    correoDestino: null,
+    numeroDestino: null,
   });
 
   return guardarPlantillaAPI(plantilla);

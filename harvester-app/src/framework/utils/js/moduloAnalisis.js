@@ -43,7 +43,11 @@ function inicializarModuloAnalisis() {
   document.getElementById('agregarGrafica')
           .addEventListener('click', () => window.agregarGrafica(idContenedor, idContenedorPrevisualizacion));
   document.getElementById('guardarPlantilla')
-          .addEventListener('click', () => window.guardarPlantilla(idContenedor));
+          .addEventListener('click', async () => {
+            const nombre = await pedirNombrePlantilla();
+            if (!nombre) return;
+            window.guardarPlantilla(idContenedor, nombre);
+          });
 
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
@@ -85,6 +89,28 @@ function inicializarModuloAnalisis() {
     const tarjeta = evento.target.closest('.tarjeta-texto, .tarjeta-grafica');
     if (tarjeta) mostrarBotonesAgregar(tarjeta);
   }
+
+  async function pedirNombrePlantilla() {
+    const { value: nombrePlantilla } = await Swal.fire({
+      title: 'Guardar plantilla',
+      input: 'text',
+      inputLabel: 'Nombre de la plantilla',
+      inputPlaceholder: 'Escribe un nombre para la plantilla',
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return '¡Necesitas ingresar un nombre!';
+        }
+        return null;
+      }
+    });
+
+  if (nombrePlantilla) {
+    return nombrePlantilla
+  }
+}
 
   /**
    * Oculta los botones “+” al salir el ratón de una tarjeta.
