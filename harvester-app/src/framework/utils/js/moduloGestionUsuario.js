@@ -568,34 +568,29 @@ async function guardarRoles() {
  * @returns {void}
  */
 function llenarSelectConRoles(selectRol) {
-    const usuario = listaUsuarios.find(usuario => usuario.id === usuarioAEditar.id);
-    if (!usuario) {
-        console.error('Usuario no encontrado');
-        return;
-    }
 
-    const defaultIdRol = usuario.rol; // ID del rol por defecto
+    const rolPorDefecto = usuarioAEditar.rol;
     
     if (!rolesCache || rolesCache.length === 0) {
         selectRol.innerHTML = '<option value="">No hay roles disponibles</option>';
         return;
     }
 
-
-
     // Limpiar el contenido previo del <select>
     selectRol.innerHTML = `
-        <option value="" disabled ${defaultIdRol===null ? 'selected' : ''}>
+        <option value="" disabled ${rolPorDefecto===null ? 'selected' : ''}>
         Selecciona rol
         </option>
     `;
 
     // Agregar los roles al <select>
     rolesCache.forEach(rol => {
-        
         const option = document.createElement('option');
-        option.value = rol.idRol; // Envía el idRol al backend
-        option.textContent = rol.Nombre; // Muestra el nombre del rol
+        option.value = rol.idRol;
+        option.textContent = rol.Nombre;
+        if (rol.Nombre === rolPorDefecto) {
+          option.selected = true;
+        }
         selectRol.appendChild(option);
     });
 }
