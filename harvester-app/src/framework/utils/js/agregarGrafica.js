@@ -26,10 +26,14 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
   const tarjetasExistentes = contenedor.querySelectorAll('.tarjeta-grafica');
-  const nuevaId = tarjetasExistentes.length
-    ? parseInt(tarjetasExistentes[tarjetasExistentes.length - 1].id, 10) + 1
-    : 1;
-  tarjetaGrafica.id = nuevaId;
+  let nuevaId;
+
+  if (tarjetasExistentes.length > 0) {
+    const idAnterior = parseInt(tarjetasExistentes[tarjetasExistentes.length - 1].id, 10)
+    nuevaId = idAnterior + 1;
+  } else {
+    nuevaId = 1;
+  }
 
   tarjetaGrafica.innerHTML = `
     <input class='titulo-grafica' placeholder='Nombre de la gráfica' />
@@ -154,6 +158,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
  * @returns {void}
  */
 function crearCuadroFormulas(columnas) {
+  eliminarCuadroFormulas()
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
@@ -204,9 +209,9 @@ function crearCuadroFormulas(columnas) {
     cuadroFormulas.remove();
   });
 
-  const reporteSection = document.querySelector('.seccion-elemento-reporte');
-  if (reporteSection) {
-    reporteSection.insertAdjacentElement('afterend', cuadroFormulas);
+  const seccionReporte = document.querySelector('.seccion-elemento-reporte');
+  if (seccionReporte) {
+    seccionReporte.insertAdjacentElement('afterend', cuadroFormulas);
   } else {
     document.querySelector('.frame-analisis').appendChild(cuadroFormulas);
   }
@@ -220,22 +225,22 @@ function crearCuadroFormulas(columnas) {
  * @returns {void}
  */
 function crearMenuDesplegable(contenedor, letra, columnas) {
-  const nuevo = document.createElement('div');
-  nuevo.className = 'opcion';
+  const nuevoMenu = document.createElement('div');
+  nuevoMenu.className = 'opcion';
   const divLetra = document.createElement('div');
   divLetra.className = 'opcion-letra';
   divLetra.innerHTML = letra;
-  const seleccValores = document.createElement('select');
-  seleccValores.className = 'opcion-texto';
-  seleccValores.innerHTML = '<option>-- Selecciona Columna --</option>'
+  const seleccionValores = document.createElement('select');
+  seleccionValores.className = 'opcion-texto';
+  seleccionValores.innerHTML = '<option>-- Selecciona Columna --</option>'
   columnas.forEach((texto) => {
-    seleccValores.innerHTML = `${seleccValores.innerHTML}
+    seleccionValores.innerHTML = `${seleccionValores.innerHTML}
     <option> ${texto} </option>`
   });
 
-  nuevo.appendChild(divLetra);
-  nuevo.appendChild(seleccValores);
-  contenedor.appendChild(nuevo);
+  nuevoMenu.appendChild(divLetra);
+  nuevoMenu.appendChild(seleccionValores);
+  contenedor.appendChild(nuevoMenu);
 }
 
 /**
@@ -255,10 +260,10 @@ function encontrarGrafica(id) {
  * @returns {boolean} True si existía un cuadro de fórmulas, false en caso contrario.
  */
 function eliminarCuadroFormulas() {
-  const frameAnalisis = document.querySelector('.frame-analisis');
-  if (!frameAnalisis) return false;
+  const contenedorAnalisis = document.querySelector('.frame-analisis');
+  if (!contenedorAnalisis) return false;
   
-  const cuadrosExistentes = Array.from(frameAnalisis.children);
+  const cuadrosExistentes = Array.from(contenedorAnalisis.children);
   const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className == 'contenedor-formulas');
   if (cuadros.length == 1) {
     cuadros[0].remove()
