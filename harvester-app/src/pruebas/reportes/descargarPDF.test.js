@@ -23,7 +23,7 @@ const { descargarPDF } = require('../../framework/utils/js/moduloAnalisis');
 const Swal = require('sweetalert2');
 const { ipcRenderer } = require('electron');
 
-/*  2. ───── Mock de módulos externos ──────────────────────────── */
+/*  2. ───── Mocks de módulos ──────────────────────────── */
 jest.mock('electron', () => ({
     ipcRenderer: {
       send: jest.fn(),
@@ -57,3 +57,42 @@ const jsPDFMock = jest.fn().mockImplementation(() => ({
 
 global.window = {};
 window.jspdf = { jsPDF: jsPDFMock };
+
+/*  4. ───── Setup de pruebas ──────────────────────────── */
+beforeEach(() => {
+    jest.clearAllMocks();
+
+    document.body.innerHTML = `
+        <div id='contenedor-elementos-previsualizacion'>
+        <div class='previsualizacion-texto preview-titulo'>
+            <div>Este es un título</div>
+        </div>
+        <div class='previsualizacion-texto'>
+            <div>Este es un párrafo</div>
+        </div>
+        <div class='previsualizacion-grafica'>
+            <canvas id='grafica1'></canvas>
+        </div>
+        </div>
+    `;
+})
+
+/*  5. ───── Tests ──────────────────────────────────────────────────────── */
+test('Generar y enviar un PDF correctamente', async () => {
+    await descargarPDF();
+
+    expect(jsPDFMock).toHaveBeenCalled();
+    expect(ipcRenderer).toHaveBeenCalledWith(expect.any(String), expect.any(Buffer));
+})
+
+test('Descargar un PDF en menos de 10 segundos', async () => {
+    const tiempoDeInicio = Date.now();
+
+    await descargarPDF();
+
+    const tiempoDeFin = Date.now();
+    const duracion = tiempoDeFin - tiempoDeInicio;
+
+    expect(duracion).toBeLessThan(10000);
+    expect(ipcRenderer.send).toHaveBeenCalled();
+})
