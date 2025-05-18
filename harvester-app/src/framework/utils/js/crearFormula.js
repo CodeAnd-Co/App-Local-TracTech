@@ -1,6 +1,7 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
-
+const { LONGITUD_MAXIMA_FORMULA,
+    LONGITUD_MAXIMA_NOMBRE_FORMULA,} = require('../../../framework/utils/js/constantes');
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
@@ -91,7 +92,7 @@ async function procesarFormula() {
     const nombreFormula = nombreFormulaSinProcesar.trim();
     const formulasGuardadas = localStorage.getItem('nombresFormulas');
  
-    if (nombreFormula === '' || nombreFormula.length >= 30) {
+    if (nombreFormula === '' || nombreFormula.length >= LONGITUD_MAXIMA_NOMBRE_FORMULA) {
         Swal.fire({
             title: 'Error',
             text: 'Verifica que la formula tenga un nombre válido y menor de 30 caracteres.',
@@ -149,7 +150,7 @@ async function procesarFormula() {
         return;
         
     }
-    if (cuadroTextoGenerado.length >= 512) {
+    if (cuadroTextoGenerado.length >= LONGITUD_MAXIMA_FORMULA) {
         Swal.fire({
             title: 'Error',
             text: 'La fórmula excede los 512 caracteres, no puede ser guardada.',

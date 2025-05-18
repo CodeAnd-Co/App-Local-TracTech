@@ -220,6 +220,8 @@
   flex: 1;
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
+  
 }
 .texto-usuario {
   color: var(--texto-light, #000000);
