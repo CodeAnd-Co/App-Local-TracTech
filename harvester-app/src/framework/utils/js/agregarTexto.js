@@ -2,8 +2,8 @@
 // RF18 - Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf18/
 // RF19 - Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf19/
 
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+// /* eslint-disable no-unused-vars */
+// /* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
   const Swal = require('sweetalert2');
 }
@@ -114,6 +114,92 @@ function agregarTexto(
   vistaPrevia.id = `preview-texto-${nuevoId}`;
   vistaPrevia.alignIndex = 0;
 
+  agregarEnPosicion(tarjetaRef, tarjetaTexto, vistaPrevia, contenedor, contenedorPrevia, posicion)
+
+  const selectorTipo = tarjetaTexto.querySelector('.tipo-texto');
+  const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
+  const botonEliminar = tarjetaTexto.querySelector('.eliminar');
+  const botonAlinear = tarjetaTexto.querySelector('.alinear');
+  const iconoAlineacion = botonAlinear.querySelector('.icono-align');
+
+  selectorTipo.addEventListener('change', () => {
+    vistaPrevia.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
+    vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
+  });
+
+  areaEscritura.addEventListener('input', () => {
+    actualizarTexto(vistaPrevia, areaEscritura);
+    actualizarCaracteres(areaEscritura, tarjetaTexto);
+  });
+
+  botonAlinear.addEventListener('click', () => {
+    const alineaciones = ['left', 'center', 'right'];
+    vistaPrevia.alignIndex = (vistaPrevia.alignIndex + 1) % alineaciones.length;
+    const alineado = alineaciones[vistaPrevia.alignIndex];
+    vistaPrevia.style.textAlign = alineado;
+    iconoAlineacion.className = `icono-align align-${alineado}`;
+  });
+
+  botonEliminar.addEventListener('click', () => {
+    tarjetaTexto.remove();
+    vistaPrevia.remove();
+  });
+
+  return tarjetaTexto;
+}
+
+/**
+   * Actualiza el contenido de la vista previa según el texto del {@link areaEscritura}.
+   * 
+   * @param {Element} vistaPrevia - Vista previa del texto
+   * @param {Element} areaEscritura - Area de tecto con el contenido a mostrar
+   * @returns {void}
+   */
+function actualizarTexto(vistaPrevia, areaEscritura) {
+  vistaPrevia.innerHTML = '';
+  const texto = areaEscritura.value.split('\n');
+  texto.forEach((linea) => {
+    const parrafo = document.createElement('p');
+    parrafo.textContent = linea;
+
+    parrafo.style.maxWidth = '100%';
+    parrafo.style.wordWrap = 'break-word';
+    parrafo.style.overflowWrap = 'break-word';
+    parrafo.style.whiteSpace = 'normal';
+
+    vistaPrevia.appendChild(parrafo);
+  })
+}
+
+/**
+ * Actualiza el contador de caracteres restantes en la tarjeta del {@link areaEscritura}.
+ * 
+ * @param {Element} areaEscritura - Area de tecto con el contenido a mostrar
+ * @param {Element} tarjetaTexto - Tarjeta de edición del cuadro de texto
+ * @returns {void}
+ */
+function actualizarCaracteres(areaEscritura, tarjetaTexto) {
+  const caracteresUsados = areaEscritura.value.length;
+  const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
+  const caracteresRestantes = limite - caracteresUsados;
+
+  let contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
+  if (!contadorCaracteres) {
+    contadorCaracteres = document.createElement('div');
+    contadorCaracteres.className = 'contador-caracteres';
+    tarjetaTexto.insertBefore(contadorCaracteres, tarjetaTexto.querySelector('.botones-editar-eliminar'));
+  }
+
+  contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
+
+  if (caracteresRestantes < 50) {
+    contadorCaracteres.style.color = '#e74c3c';
+  } else {
+    contadorCaracteres.style.color = '#7f8c8d';
+  }
+}
+
+function agregarEnPosicion(tarjetaRef, tarjetaTexto, vistaPrevia, contenedor, contenedorPrevia, posicion) {
   if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
     if (posicion === 'antes') {
       contenedor.insertBefore(tarjetaTexto, tarjetaRef);
@@ -143,80 +229,6 @@ function agregarTexto(
     contenedor.appendChild(tarjetaTexto);
     contenedorPrevia.appendChild(vistaPrevia);
   }
-
-  const selectorTipo = tarjetaTexto.querySelector('.tipo-texto');
-  const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
-  const botonEliminar = tarjetaTexto.querySelector('.eliminar');
-  const botonAlinear = tarjetaTexto.querySelector('.alinear');
-  const iconoAlineacion = botonAlinear.querySelector('.icono-align');
-
-  /**
-   * Actualiza el contenido y estilo de la vista previa según el texto y tipo.
-   * 
-   * @returns {void}
-   */
-  function actualizarVistaPrevia() {
-    vistaPrevia.innerHTML = '';
-    const texto = areaEscritura.value.split('\n');
-    texto.forEach((linea) => {
-      const parrafo = document.createElement('p');
-      parrafo.textContent = linea;
-
-      parrafo.style.maxWidth = '100%';
-      parrafo.style.wordWrap = 'break-word';
-      parrafo.style.overflowWrap = 'break-word';
-      parrafo.style.whiteSpace = 'normal';
-
-      vistaPrevia.appendChild(parrafo);
-    })
-
-    vistaPrevia.style.maxWidth = '100%';
-    vistaPrevia.style.wordWrap = 'break-word';
-    vistaPrevia.style.overflowWrap = 'break-word';
-    vistaPrevia.style.whiteSpace = 'normal';
-
-    vistaPrevia.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
-    vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
-  }
-
-  selectorTipo.addEventListener('change', actualizarVistaPrevia);
-  areaEscritura.addEventListener('input', () => {
-    actualizarVistaPrevia();
-
-    const caracteresUsados = areaEscritura.value.length;
-    const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
-    const caracteresRestantes = limite - caracteresUsados;
-
-    let contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
-    if (!contadorCaracteres) {
-      contadorCaracteres = document.createElement('div');
-      contadorCaracteres.className = 'contador-caracteres';
-      tarjetaTexto.insertBefore(contadorCaracteres, tarjetaTexto.querySelector('.botones-editar-eliminar'));
-    }
-
-    contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
-
-    if (caracteresRestantes < 50) {
-      contadorCaracteres.style.color = '#e74c3c';
-    } else {
-      contadorCaracteres.style.color = '#7f8c8d';
-    }
-  });
-
-  botonAlinear.addEventListener('click', () => {
-    const alineaciones = ['left', 'center', 'right'];
-    vistaPrevia.alignIndex = (vistaPrevia.alignIndex + 1) % alineaciones.length;
-    const alineado = alineaciones[vistaPrevia.alignIndex];
-    vistaPrevia.style.textAlign = alineado;
-    iconoAlineacion.className = `icono-align align-${alineado}`;
-  });
-
-  botonEliminar.addEventListener('click', () => {
-    tarjetaTexto.remove();
-    vistaPrevia.remove();
-  });
-
-  return tarjetaTexto;
 }
 
 module.exports = {

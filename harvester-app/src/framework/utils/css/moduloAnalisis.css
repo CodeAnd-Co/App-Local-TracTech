@@ -387,18 +387,6 @@ body,
 .tarjeta-texto .eliminar:hover {
   transform: translateX(2px);
 }
-.previsualizacion-texto {
-  font-family: 'SegoeUi-Regular', sans-serif;
-  background: transparent !important;
-  border-radius: none !important;
-  padding: 6px;
-  width:100% ; 
-  box-sizing: border-box;
-  height: auto;
-  width: auto;
-  max-width: 100%;
-  max-height: 100%;
-}
 
 .preview-titulo {
   font-size: 24px;
@@ -440,22 +428,25 @@ body,
   justify-content: center;
 }
 .previsualizacion-texto {
+  font-family: 'SegoeUi-Regular', sans-serif;
   background: transparent;      
-  border: none;      
+  border: none;
+  border-radius: none !important;
   box-shadow: none;                         
   border-radius: calc(var(--radius) * 0.8);
-  padding: 0;
   width: 100%;
   box-sizing: border-box;
   transition: background 0.3s ease, transform 0.2s ease;
   overflow-y: none;
+  padding: 6px;
+  height: auto;
+  max-height: 100%;
+  word-wrap: 'break-word';
+  overflow-wrap: 'break-word';
+  white-space: 'normal';
 }
 .previsualizacion-texto:hover {
   background: rgba(255, 255, 255, 0.6);     
-  transform: translateY(-2px);
-}
-.previsualizacion-texto:hover {
-  background: rgba(255, 255, 255, 0.6) !important;
   transform: translateY(-2px);
 }
 .preview-titulo {
