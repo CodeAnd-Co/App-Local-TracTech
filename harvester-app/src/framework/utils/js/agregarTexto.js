@@ -39,7 +39,7 @@ function agregarTexto(
 
   const observer = new MutationObserver(() => {
     const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
-    const tarjetasGrafica = contenedor.querySelectorAll('.tarjeta-grafica'); // Asegúrate de usar esta clase en tus gráficas
+    const tarjetasGrafica = contenedor.querySelectorAll('.tarjeta-grafica');
     const tarjetasTotales = [...tarjetasTexto, ...tarjetasGrafica];
 
     tarjetasTotales.forEach(tarjeta => {
@@ -64,8 +64,6 @@ function agregarTexto(
 
   observer.observe(contenedor, { childList: true, subtree: true });
 
-
-  // 1) Calcular nuevo ID de tarjeta
   const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
   let nuevoId;
 
@@ -76,7 +74,6 @@ function agregarTexto(
     nuevoId = 1;
   }
 
-  // 2) Crear la tarjeta de edición
   const tarjetaTexto = document.createElement('div');
   tarjetaTexto.classList.add('tarjeta-texto');
   tarjetaTexto.id = `${nuevoId}`;
@@ -112,22 +109,18 @@ function agregarTexto(
     </div>
   `;
 
-  // 3) Crear la vista previa
   const vistaPrevia = document.createElement('div');
   vistaPrevia.classList.add('previsualizacion-texto', 'preview-titulo');
   vistaPrevia.id = `preview-texto-${nuevoId}`;
   vistaPrevia.alignIndex = 0;
 
-  // 4) Insertar en el DOM de edición y de previsualización
   if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
-    // Inserción en el contenedor de edición
     if (posicion === 'antes') {
       contenedor.insertBefore(tarjetaTexto, tarjetaRef);
     } else {
       contenedor.insertBefore(tarjetaTexto, tarjetaRef.nextSibling);
     }
 
-    // Determinar la vista de referencia y hacer la misma inserción
     const idRef = tarjetaRef.id;
     let vistaRef;
 
@@ -147,12 +140,10 @@ function agregarTexto(
       contenedorPrevia.appendChild(vistaPrevia);
     }
   } else {
-    // Si no hay referencia válida, añadir al final
     contenedor.appendChild(tarjetaTexto);
     contenedorPrevia.appendChild(vistaPrevia);
   }
 
-  // 5) Obtener referencias a controles internos
   const selectorTipo = tarjetaTexto.querySelector('.tipo-texto');
   const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
   const botonEliminar = tarjetaTexto.querySelector('.eliminar');
@@ -171,7 +162,6 @@ function agregarTexto(
       const parrafo = document.createElement('p');
       parrafo.textContent = linea;
 
-      // Aplicar estilos directamente al párrafo para garantizar el ajuste de texto
       parrafo.style.maxWidth = '100%';
       parrafo.style.wordWrap = 'break-word';
       parrafo.style.overflowWrap = 'break-word';
@@ -180,7 +170,6 @@ function agregarTexto(
       vistaPrevia.appendChild(parrafo);
     })
 
-    // Aplicar estilos directamente al contenedor
     vistaPrevia.style.maxWidth = '100%';
     vistaPrevia.style.wordWrap = 'break-word';
     vistaPrevia.style.overflowWrap = 'break-word';
@@ -190,17 +179,14 @@ function agregarTexto(
     vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
   }
 
-  // 6) Listeners de interacción
   selectorTipo.addEventListener('change', actualizarVistaPrevia);
   areaEscritura.addEventListener('input', () => {
     actualizarVistaPrevia();
 
-    // Mostrar contador de caracteres restantes
     const caracteresUsados = areaEscritura.value.length;
     const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
     const caracteresRestantes = limite - caracteresUsados;
 
-    // Verificar si ya existe un contador
     let contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
     if (!contadorCaracteres) {
       contadorCaracteres = document.createElement('div');
@@ -208,10 +194,8 @@ function agregarTexto(
       tarjetaTexto.insertBefore(contadorCaracteres, tarjetaTexto.querySelector('.botones-editar-eliminar'));
     }
 
-    // Actualizar el texto del contador
     contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
 
-    // Cambiar color si queda poco espacio
     if (caracteresRestantes < 50) {
       contadorCaracteres.style.color = '#e74c3c';
     } else {

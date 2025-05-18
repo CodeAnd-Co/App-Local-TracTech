@@ -76,7 +76,6 @@ function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion, tarjeta, u
         } else if (resultado.isDenied) {
             configurarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
         }
-        // Si canceló, no hace nada
     });
 }
 

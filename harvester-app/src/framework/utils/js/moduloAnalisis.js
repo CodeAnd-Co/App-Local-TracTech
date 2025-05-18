@@ -30,16 +30,13 @@ const { configurarTexto, configurarGrafica } = require('../utils/js/botonesAgreg
 /* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
 
-  // IDs de los contenedores principales
   const idContenedor = 'contenedorElementos';
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
-  // Obtener referencia al contenedor donde se añaden las tarjetas
   const contenedor = document.getElementById(idContenedor);
 
   if (!contenedor) return;
 
-  // 1) Configurar boton de descarga de PDF
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
   botonPDF.addEventListener('click', async () => {
@@ -59,7 +56,6 @@ function inicializarModuloAnalisis() {
     });
   });
 
-  // 2) Si el contenedor está vacío, iniciar con una tarjeta de texto y otra de gráfica
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
     configurarGrafica(idContenedor, idContenedorPrevisualizacion);
@@ -119,7 +115,6 @@ async function descargarPDF() {
   const altoPagina = documentoPDF.internal.pageSize.getHeight() - margen * 2;
   let posicionY = margen;
 
-  // Obtener contenedor de previsualización de texto y gráficas
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
     Swal.fire({
@@ -130,7 +125,6 @@ async function descargarPDF() {
     throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
 
-  // Recorrer cada elemento y añadirlo al PDF según su tipo
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
       let tamanoFuente = 12;
@@ -196,6 +190,5 @@ async function descargarPDF() {
   ipcRenderer.send('guardar-pdf', Buffer.from(pdfBufer));
 }
 
-// Exponer funciones en el ámbito global para uso externo
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel = cargarDatosExcel;
