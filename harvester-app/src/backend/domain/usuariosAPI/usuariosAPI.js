@@ -43,7 +43,7 @@ async function obtenerUsuarios() {
  */
 async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
     try {
-        const respuesta = await fetch('http://localhost:3000/usuarios/modificarUsuario', {
+        const respuesta = await fetch(`${URL_BASE}/usuarios/modificarUsuario`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
