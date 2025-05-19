@@ -23,9 +23,9 @@
 
   </div>
 
-  <div class='columna-crear-usuario' id='columna-crear-usuario'>
+  <div class='columna-crear-modificar-usuario' id='columna-crear-modificar-usuario'>
     <div class='pop-out'>
-      <h2 class='crear-usuario'>Crear usuario</h2>
+      <h2 class='crear-modificar-usuario'>Crear usuario</h2>
       <form class='modificacion'>
 
         <div class='campo'>
@@ -38,6 +38,7 @@
             required
             maxlength="55"
           />
+          <small id='mensajeErrorNombre' class='mensajeError'></small>
         </div>
       
         <div class='campo'>
@@ -50,6 +51,7 @@
             required
             maxlength="55"
           />
+          <small id='mensajeErrorCorreo' class='mensajeError'></small>
         </div>
       
         <div class='campo'>
@@ -62,6 +64,25 @@
             required
             maxlength="55"
           />
+          <small id='mensajeErrorContrasenia' class='mensajeError'></small>
+        </div>
+
+        <div class='campo'>
+          <label for='passwordConfirmar'>Confirmar contraseña</label>
+          <input
+            type='password'
+            id='passwordConfirmar'
+            name='passwordConfirmar'
+            placeholder='Confirmar contraseña'
+            required
+            maxlength="55"
+          />
+          <small id='mensajeErrorConfirmarContrasenia' class='mensajeError'></small>
+        </div>
+
+        <div class='verContraseniaInput'>
+          <input name='verContrasenia' type='checkbox' id='verContrasenia' />
+          <label for='verContrasenia'>Ver contraseña</label>
         </div>
       
         <div class='campo'>
@@ -69,6 +90,7 @@
           <select id='rol' name='rol' required>
             <option value="" disabled selected>Selecciona rol</option>
           </select>
+          <small id='mensaje-error-rol' class='mensaje-error'></small>
         </div>
       
         <div class='line-1'></div>

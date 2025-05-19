@@ -1,6 +1,12 @@
 const { renderizarFormulas } = require('../utils/js/consultarFormulas');
 
 
+/**
+ * Inicializa el módulo de fórmulas.
+ * @async
+ * @function inicializarModuloFormulas
+ * @returns {Promise<void>}
+ */
 async function inicializarModuloFormulas(){
 
     localStorage.setItem('seccion-activa', 'formulas');
