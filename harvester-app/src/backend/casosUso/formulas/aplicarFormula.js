@@ -4,33 +4,32 @@ const opciones = {
     licenseKey: 'gpl-v3',
 };
 
+/**
+ * Aplica una fórmula estructurada a una hoja de Excel almacenada en localStorage.
+ * @param {string} nombreFormula - Nombre de la fórmula a aplicar.
+ * @param {string} formulaEstructurada - Fórmula estructurada a aplicar.
+ * @param {string|null} nombreHoja - Nombre de la hoja donde se aplicará la fórmula (opcional).
+ * @returns {Object} Resultado de la aplicación de la fórmula.
+ */
 function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
     try {
         // Obtener datos del localStorage
-        let datosExcelStr = localStorage.getItem('datosExcel');
-        if (!datosExcelStr) {
+        let datosExcelString = localStorage.getItem('datosExcel');
+        if (!datosExcelString) {
             throw new Error('No se encontraron datos en localStorage');
-        }
-        
-        // Intentar reparar el JSON si está incompleto
-        if (!datosExcelStr.endsWith('}')) {
-            console.warn('El JSON parece estar incompleto, intentando reparar...');
-            datosExcelStr += '}}';
         }
         
         let datosExcel;
         try {
-            datosExcel = JSON.parse(datosExcelStr);
-        } catch (e) {
-            console.error('Error al parsear JSON:', e);
-            console.log('String problematico:', datosExcelStr);
+            datosExcel = JSON.parse(datosExcelString);
+        } catch (error) {
+            console.error('Error al parsear JSON:', error);
+
             throw new Error('Los datos en localStorage no son un JSON válido');
         }
         
-        // Estructura específica para el formato que has mencionado
+   
         let hojas = datosExcel;
-        
-        // Comprobar si tiene la estructura específica con propiedad "hojas"
         if (datosExcel.hojas) {
             hojas = datosExcel.hojas;
         }
@@ -106,7 +105,13 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
     }
 }
 
-// Función para encontrar la primera columna vacía en los datos
+
+/**
+ * @function encontrarColumnaVacia
+ * @param {Array} datos - Datos de la hoja de Excel.
+ * @returns {number} Índice de la primera columna vacía.
+ * @throws {Error} Si los datos no son un array.
+ */
 function encontrarColumnaVacia(datos) {
     if (!Array.isArray(datos)) {
         console.error('encontrarColumnaVacia: datos no es un array', datos);
@@ -125,6 +130,7 @@ function encontrarColumnaVacia(datos) {
 }
 
 // Utilidad para traducir [@Columna] a letra de columna+fila
+// Es importante mantener el [@Columna] para que también funcione en Excel
 function traducirFormulaEstructurada(formula, encabezados, filaActiva) {
     return formula.replace(/\[@([^\]]+)\]/g, (_restoFormula, nombreColumna) => {
         const columna = encabezados.indexOf(nombreColumna);
