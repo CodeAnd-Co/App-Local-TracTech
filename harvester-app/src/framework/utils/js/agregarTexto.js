@@ -1,12 +1,13 @@
-/**
- * @file agregarTexto.js
- * @module agregarTexto
- * @description Proporciona la funcionalidad para añadir tarjetas de texto editables
- *              y sus previsualizaciones en el módulo de análisis, con opción de
- *              insertar antes o después de una tarjeta existente.
- * @version 1.3
- * @date 2025-05-14
- */
+// RF17 - Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf17/
+// RF18 - Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf18/
+// RF19 - Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf19/
+
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+if (typeof Swal === 'undefined') {
+  const Swal = require('sweetalert2');
+}
+const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
 
 /**
  * Crea y agrega una tarjeta de texto al contenedor de edición y su correspondiente
@@ -24,43 +25,35 @@ function agregarTexto(
   tarjetaRef = null,
   posicion = null
 ) {
-  const contenedor        = document.getElementById(idContenedor);
-  const contenedorPrevia  = document.getElementById(idContenedorVistaPrevia);
-  const observer = new MutationObserver(() => {
-  const tarjetasTexto    = contenedor.querySelectorAll('.tarjeta-texto');
-  const tarjetasGrafica  = contenedor.querySelectorAll('.tarjeta-grafica'); 
-  const tarjetasTotales  = [...tarjetasTexto, ...tarjetasGrafica];
+  const contenedor = document.getElementById(idContenedor);
+  const contenedorPrevia = document.getElementById(idContenedorPrevisualizacion);
+  const contenedores = new Contenedores(contenedor, contenedorPrevia);
 
-  tarjetasTotales.forEach(tarjeta => {
-    const botonEliminar = tarjeta.querySelector('.eliminar');
-    const divisor       = tarjeta.querySelector('.divisor');
-    const contenedorBotones = tarjeta.querySelector('.botones-editar-eliminar');
+  if (!contenedor || !contenedorPrevia) {
+    Swal.fire({
+      title: 'Error',
+      text: 'Ocurrió un error al agregar cuadro de texto.',
+      icon: 'error',
+      confirmButtonColor: '#1F4281',
+    });
+    return
+  }
 
-    const soloUnaGrafica = tarjetasGrafica.length <= 1;
-    const soloUnaTexto   = tarjetasTexto.length <= 1;
+  configurarObservadorLimite(contenedor)
 
-    if (soloUnaTexto && soloUnaGrafica) {
-      if (botonEliminar) botonEliminar.style.display = 'none';
-      if (divisor) divisor.style.display = 'none';
-      if (contenedorBotones) contenedorBotones.style.justifyContent = 'center';
-    } else {
-      if (botonEliminar) botonEliminar.style.display = 'flex';
-      if (divisor) divisor.style.display = 'block';
-      if (contenedorBotones) contenedorBotones.style.justifyContent = 'space-between';
-    }
-  });
-});
+  const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
+  let nuevoId;
 
-  observer.observe(contenedor, { childList: true, subtree: true });
+  if (tarjetasTexto.length > 0) {
+    const idAnterior = parseInt(tarjetasTexto[tarjetasTexto.length - 1].id, 10)
+    nuevoId = idAnterior + 1;
+  } else {
+    nuevoId = 1;
+  }
 
-  // 1) Calcular nuevo ID de tarjeta con timestamp para garantizar unicidad
-  const timestamp = new Date().getTime();
-  const nuevoId = `texto_${timestamp}`;
-
-  // 2) Crear la tarjeta de edición
   const tarjetaTexto = document.createElement('div');
   tarjetaTexto.classList.add('tarjeta-texto');
-  tarjetaTexto.id = nuevoId;
+  tarjetaTexto.id = `${nuevoId}`;
   tarjetaTexto.innerHTML = `
     <div class='titulo-texto'>
       <select class='tipo-texto'>
@@ -95,59 +88,16 @@ function agregarTexto(
 
   const vistaPrevia = document.createElement('div');
   vistaPrevia.classList.add('previsualizacion-texto', 'preview-titulo');
-  vistaPrevia.id = `preview-texto-${nuevoId}`;
-  // Atributo data-tarjeta-id para consistencia con el sistema de gráficas
-  vistaPrevia.setAttribute('data-tarjeta-id', nuevoId);
+  vistaPrevia.id = `previsualizacion-texto-${nuevoId}`;
   vistaPrevia.alignIndex = 0;
 
-  // 4) Insertar en el DOM de edición y de previsualización
-  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
-    // Inserción en el contenedor de edición
-    if (posicion === 'antes') {
-      contenedor.insertBefore(tarjetaTexto, tarjetaRef);
-    } else {
-      contenedor.insertBefore(tarjetaTexto, tarjetaRef.nextSibling);
-    }
+  const elementoReporte = new ElementoNuevo(tarjetaTexto, vistaPrevia);
+  agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion)
 
-    // Determinar la vista de referencia y hacer la misma inserción
-    const idRef = tarjetaRef.id;
-    let vistaRef;
-    
-    // Lógica mejorada para encontrar el elemento de vista previa correspondiente
-    if (tarjetaRef.classList.contains('tarjeta-texto')) {
-      // Para tarjetas de texto, buscar por ID del preview
-      vistaRef = contenedorPrevia.querySelector(`#preview-texto-${idRef}`);
-      
-      // Si no encuentra, intentar buscar por data-tarjeta-id (compatibilidad con nuevos IDs)
-      if (!vistaRef) {
-        vistaRef = contenedorPrevia.querySelector(`.previsualizacion-texto[data-tarjeta-id='${idRef}']`);
-      }
-    } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      // Para tarjetas de gráfica, buscar por data-tarjeta-id
-      vistaRef = contenedorPrevia.querySelector(`.previsualizacion-grafica[data-tarjeta-id='${idRef}']`);
-    }
-    
-    if (vistaRef) {
-      if (posicion === 'antes') {
-        contenedorPrevia.insertBefore(vistaPrevia, vistaRef);
-      } else {
-        contenedorPrevia.insertBefore(vistaPrevia, vistaRef.nextSibling);
-      }
-    } else {
-      // Fallback: Si no se encuentra la referencia, añadir al final
-      contenedorPrevia.appendChild(vistaPrevia);
-    }
-  } else {
-    // Si no hay referencia válida, añadir al final
-    contenedor.appendChild(tarjetaTexto);
-    contenedorPrevia.appendChild(vistaPrevia);
-  }
-
-  // 5) Obtener referencias a controles internos
-  const selectorTipo    = tarjetaTexto.querySelector('.tipo-texto');
-  const areaEscritura   = tarjetaTexto.querySelector('.area-escritura');
-  const botonEliminar   = tarjetaTexto.querySelector('.eliminar');
-  const botonAlinear    = tarjetaTexto.querySelector('.alinear');
+  const selectorTipo = tarjetaTexto.querySelector('.tipo-texto');
+  const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
+  const botonEliminar = tarjetaTexto.querySelector('.eliminar');
+  const botonAlinear = tarjetaTexto.querySelector('.alinear');
   const iconoAlineacion = botonAlinear.querySelector('.icono-align');
 
   selectorTipo.addEventListener('change', () => {

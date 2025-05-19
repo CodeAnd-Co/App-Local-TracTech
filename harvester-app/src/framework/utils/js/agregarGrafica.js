@@ -38,9 +38,16 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
-  // Calcular ID único con timestamp
-  const marcaTiempo = new Date().getTime();
-  const nuevaId = `grafica_${marcaTiempo}`;
+  const tarjetasExistentes = contenedor.querySelectorAll('.tarjeta-grafica');
+  let nuevaId;
+
+  if (tarjetasExistentes.length > 0) {
+    const idAnterior = parseInt(tarjetasExistentes[tarjetasExistentes.length - 1].id, 10)
+    nuevaId = idAnterior + 1;
+  } else {
+    nuevaId = 1;
+  }
+
   tarjetaGrafica.id = nuevaId;
   tarjetaGrafica.innerHTML = `
     <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='30'/>
@@ -89,128 +96,32 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
-  graficaDiv.id = `grafica-${nuevaId}`; 
-  graficaDiv.setAttribute('data-tarjeta-id', nuevaId);
+  graficaDiv.id = `previsualizacion-grafica-${nuevaId}`;
   const canvasGrafica = document.createElement('canvas');
   graficaDiv.appendChild(canvasGrafica);
 
   const contexto = canvasGrafica.getContext('2d');
   const grafico = crearGrafica(contexto, 'line');
-  const grafico = crearGrafica(contexto, 'line');
   grafico.options.plugins.title.text = '';
   grafico.update();
 
-  // Listener para título dinámico
-  tarjetaGrafica
-    .querySelector('.titulo-grafica')
-    .addEventListener('input', function () {
-      const tarjetaActual = this.closest('.tarjeta-grafica');
-      const idTarjetaActual = tarjetaActual.id;
-      
-      const grafica = encontrarGrafica(idTarjetaActual);
-      if (grafica) {
-        const ctx = grafica.querySelector('canvas').getContext('2d');
-        const tabla = Chart.getChart(ctx);
-        if (tabla) {
-          tabla.options.plugins.title.text = this.value;
-          tabla.update();
-        }
-      }
-    });
+  const entradaTexto = tarjetaGrafica.querySelector('.titulo-grafica');
+  entradaTexto.addEventListener('input', () =>
+    modificarTitulo(graficaDiv, entradaTexto, tarjetaGrafica));
 
-  // Selector de tipo de gráfica
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
   const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
   selectorTipo.value = grafico.config.type;
-  selectorTipo.addEventListener('change', function() {
-    const tarjetaActual = this.closest('.tarjeta-grafica');
-    const idTarjetaActual = tarjetaActual.id;
-    
-    const grafica = encontrarGrafica(idTarjetaActual);
-    if (grafica) {
-      const ctx = grafica.querySelector('canvas').getContext('2d');
-      const tabla = Chart.getChart(ctx);
-      if (tabla) {
-        tabla.destroy();
-        const nueva = crearGrafica(ctx, this.value);
-        nueva.options.plugins.title.text = tarjetaActual.querySelector('.titulo-grafica').value;
-        nueva.update();
-      }
-    }
-  });
+  selectorTipo.addEventListener('change', () =>
+    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica));
 
-  // Botón 'Eliminar'
-  tarjetaGrafica
-    .querySelector('.eliminar')
-    .addEventListener('click', function() {
-      const tarjetaActual = this.closest('.tarjeta-grafica');
-      const idTarjetaActual = tarjetaActual.id;
-      
-      tarjetaActual.remove();
-      const eliminado = encontrarGrafica(idTarjetaActual);
-      if (eliminado) {
-        eliminado.remove();
-      }
-      eliminarCuadroFormulas();
-    });
+  tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () =>
+    eliminarGrafica(tarjetaGrafica, graficaDiv));
 
-  // Añadir al DOM con inserción 'antes/después'
-  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
-    // En el contenedor de edición
-    if (posicion === 'antes') {
-      contenedor.insertBefore(tarjetaGrafica, tarjetaRef);
-    } else {
-      contenedor.insertBefore(tarjetaGrafica, tarjetaRef.nextSibling);
-    }
-    
-    // En la previsualización
-    const idRef = tarjetaRef.id;
-    let vistaRef;
-    
-    if (tarjetaRef.classList.contains('tarjeta-texto')) {
-      vistaRef = previsualizacion.querySelector(`#preview-texto-${idRef}`);
-      if (!vistaRef) {
-        vistaRef = previsualizacion.querySelector(`.previsualizacion-texto[data-tarjeta-id='${idRef}']`);
-      }
-    } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      vistaRef = previsualizacion.querySelector(`.previsualizacion-grafica[data-tarjeta-id='${idRef}']`);
-    }
-    
-    if (vistaRef) {
-      if (posicion === 'antes') {
-        previsualizacion.insertBefore(graficaDiv, vistaRef);
-      } else {
-        previsualizacion.insertBefore(graficaDiv, vistaRef.nextSibling);
-      }
-    } else {
-      previsualizacion.appendChild(graficaDiv);
-    }
-  } else {
-    // Sin referencia: comportamiento original
-    contenedor.appendChild(tarjetaGrafica);
-    previsualizacion.appendChild(graficaDiv);
-  }
-}
+  const elementoReporte = new ElementoNuevo(tarjetaGrafica, graficaDiv);
+  agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion);
 
-/**
- * Encuentra una gráfica en la previsualización por ID.
- * @param {string|number} id - ID exacto de la tarjeta gráfica a buscar.
- * @returns {HTMLElement|null} Gráfica encontrada o null si no se encuentra.
- */
-function encontrarGrafica(id) {
-  if (!window.previsualizacion) {
-    return null;
-  }
-  
-  const idCadena = String(id);
-  const graficasExistentes = Array.from(window.previsualizacion.querySelectorAll('.previsualizacion-grafica'));
-  
-  const porAtributo = graficasExistentes.find(grafica => grafica.getAttribute('data-tarjeta-id') === idCadena);
-  if (porAtributo) {
-    return porAtributo;
-  }
-  
-  return null;
+  return tarjetaGrafica;
 }
 
 /**
@@ -219,9 +130,7 @@ function encontrarGrafica(id) {
  * @returns {void}
  */
 function crearCuadroFormulas(columnas) {
-  if (eliminarCuadroFormulas()) {
-    // Un cuadro de fórmulas ya existía y fue eliminado
-  }
+  eliminarCuadroFormulas()
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
@@ -261,20 +170,18 @@ function crearCuadroFormulas(columnas) {
               </div>
           </div>`;
 
-  const contenedoresSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
+  const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
-  crearMenuDesplegable(contenedoresSeleccion[0], 'A', columnas);
-  // Fórmulas en contenedoresSeleccion[1]
+  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
+  // Fórmulas en contenedoesSeleccion[1]
 
   const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
   botonRegresar.addEventListener('click', () => {
     cuadroFormulas.remove();
   });
 
-  // 1) Busca la sección de elementos de reporte
   const seccionReporte = document.querySelector('.seccion-elemento-reporte');
-  // 2) Inserta el panel justo después de esa sección
   if (seccionReporte) {
     seccionReporte.insertAdjacentElement('afterend', cuadroFormulas);
   } else {
@@ -295,17 +202,17 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
   const divLetra = document.createElement('div');
   divLetra.className = 'opcion-letra';
   divLetra.innerHTML = letra;
-  const seleccionarValores = document.createElement('select');
-  seleccionarValores.className = 'opcion-texto';
-  seleccionarValores.innerHTML = '<option>-- Selecciona Columna --</option>';
+  const seleccionValores = document.createElement('select');
+  seleccionValores.className = 'opcion-texto';
+  seleccionValores.innerHTML = '<option>-- Selecciona Columna --</option>'
   columnas.forEach((texto) => {
-    seleccionarValores.innerHTML = `${seleccionarValores.innerHTML}
-    <option> ${texto} </option>`;
+    seleccionValores.innerHTML = `${seleccionValores.innerHTML}
+    <option> ${texto} </option>`
   });
 
-  nuevo.appendChild(divLetra);
-  nuevo.appendChild(seleccionarValores);
-  contenedor.appendChild(nuevo);
+  nuevoMenu.appendChild(divLetra);
+  nuevoMenu.appendChild(seleccionValores);
+  contenedor.appendChild(nuevoMenu);
 }
 
 /**
@@ -314,16 +221,13 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
  * @returns {void} True si existía un cuadro de fórmulas, false en caso contrario.
  */
 function eliminarCuadroFormulas() {
-  const frameAnalisis = document.querySelector('.frame-analisis');
-  if (!frameAnalisis) return false;
-  
-  const cuadrosExistentes = Array.from(frameAnalisis.children);
-  const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className === 'contenedor-formulas');
-  if (cuadros.length === 1) {
-    cuadros[0].remove();
-    return true;
-  } else {
-    return false;
+  const contenedorAnalisis = document.querySelector('.frame-analisis');
+  if (!contenedorAnalisis) return false;
+
+  const cuadrosExistentes = Array.from(contenedorAnalisis.children);
+  const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className == 'contenedor-formulas');
+  if (cuadros.length == 1) {
+    cuadros[0].remove()
   }
 }
 
@@ -336,11 +240,8 @@ function eliminarCuadroFormulas() {
  * @returns {Chart} - Instancia de la gráfica creada.
  */
 function crearGrafica(contexto, tipo, color) {
-  if (!contexto) {
-    return;
-  }
-  
-  // Color por defecto
+  if (!contexto) return;
+
   if (!color) {
     color = [166, 25, 48];
   }
@@ -349,24 +250,24 @@ function crearGrafica(contexto, tipo, color) {
     tipo = 'line';
   }
 
-  const colores = generarDegradadoHaciaBlanco(color, 7);
+  const colores = generarDegradadoHaciaBlanco(color, 7)
   color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
   const grafico = new Chart(contexto, {
     type: tipo,
     data: {
-      labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
       datasets: [{
         label: 'Datos',
         backgroundColor: fondo => {
-          if (tipo === 'line' || tipo === 'radar') {
+          if (tipo == 'line' || tipo == 'radar') {
             return color;
           } else {
             return colores[fondo.dataIndex];
           }
         },
         borderColor: borde => {
-          if (tipo === 'line' || tipo === 'radar') {
+          if (tipo == 'line' || tipo == 'radar') {
             return color;
           } else {
             return colores[borde.dataIndex];
@@ -429,6 +330,7 @@ function crearGrafica(contexto, tipo, color) {
         x: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } },
         /* eslint-disable id-length */
         y: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } }
+
       }
     },
   });
@@ -453,8 +355,7 @@ function generarDegradadoHaciaBlanco(rgb, pasos) {
   }
   const [rojo, verde, azul] = rgb;
 
-  return Array.from(
-    { length: pasos },
+  return Array.from({ length: pasos },
     (__, indice) => {
       const factorCambio = indice / (pasos);
       const nuevoRojo = Math.round(rojo + (255 - rojo) * factorCambio);
