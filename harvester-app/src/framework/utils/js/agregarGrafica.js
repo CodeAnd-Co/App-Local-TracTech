@@ -1,26 +1,40 @@
 // RF36 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
-// RF38 - Usuario modifica gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF38
+// RF37 - Usuario modifica gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf37/
+// RF38 - Usuario elimina gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf38/
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
-
+const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+if (typeof Swal === 'undefined') {
+  const Swal = require('sweetalert2');
+}
 
 /**
  * Agrega una nueva tarjeta de gráfica y su previsualización.
  *
  * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
  * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
- * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {HTMLDivElement|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
  * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
+ * @returns {HTMLDivElement} tarjetaGrafica - La tarjeta de gráfica creada.
  */
 function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
   const contenedor = document.getElementById(contenedorId);
   const previsualizacion = document.getElementById(previsualizacionId);
-  
-  // Guardar referencia global al contenedor de previsualización
-  window.previsualizacion = previsualizacion;
+  const contenedores = new Contenedores(contenedor, previsualizacion);
 
-  // Crear tarjeta de edición
+  if (!contenedor || !previsualizacion) {
+    Swal.fire({
+      title: 'Error',
+      text: 'Ocurrió un error al agregar cuadro de texto.',
+      icon: 'error',
+      confirmButtonColor: '#1F4281',
+    });
+    return
+  }
+
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
 
@@ -28,10 +42,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const marcaTiempo = new Date().getTime();
   const nuevaId = `grafica_${marcaTiempo}`;
   tarjetaGrafica.id = nuevaId;
-
-  // Inyectar HTML base
   tarjetaGrafica.innerHTML = `
-    <input class='titulo-grafica' placeholder='Nombre de la gráfica' />
+    <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='30'/>
     <div class='titulo-texto'>
       <select class='tipo-texto tipo-grafica'>
         <option value='line'>Línea</option>
@@ -52,6 +64,15 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>
+    <style>
+      .contador-caracteres {
+        font-size: 12px;
+        text-align: right;
+        color: #7f8c8d;
+        margin: 4px 0;
+        padding-right: 4px;
+      }
+    </style>
   `;
 
   // Datos disponibles para fórmulas
@@ -63,13 +84,9 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     columnas = window.datosGrafica[0].slice(3);
   }
 
-  // Botón 'Fórmulas'
-  tarjetaGrafica
-    .querySelector('.boton-formulas')
-    .addEventListener('click', () =>
-      crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
+  tarjetaGrafica.querySelector('.boton-formulas').addEventListener('click', () =>
+    crearCuadroFormulas(columnas, nuevaId, window.datosGrafica));
 
-  // Contenedor de previsualización
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
   graficaDiv.id = `grafica-${nuevaId}`; 
@@ -77,8 +94,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const canvasGrafica = document.createElement('canvas');
   graficaDiv.appendChild(canvasGrafica);
 
-  // Inicializar Chart.js
   const contexto = canvasGrafica.getContext('2d');
+  const grafico = crearGrafica(contexto, 'line');
   const grafico = crearGrafica(contexto, 'line');
   grafico.options.plugins.title.text = '';
   grafico.update();
@@ -103,6 +120,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   // Selector de tipo de gráfica
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
+  const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
   selectorTipo.value = grafico.config.type;
   selectorTipo.addEventListener('change', function() {
     const tarjetaActual = this.closest('.tarjeta-grafica');
@@ -198,7 +216,7 @@ function encontrarGrafica(id) {
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
- * @param {number} idGrafica - ID de la gráfica asociada.
+ * @returns {void}
  */
 function crearCuadroFormulas(columnas) {
   if (eliminarCuadroFormulas()) {
@@ -260,20 +278,20 @@ function crearCuadroFormulas(columnas) {
   if (seccionReporte) {
     seccionReporte.insertAdjacentElement('afterend', cuadroFormulas);
   } else {
-    // Fallback: si no lo encuentra, lo añade al final del frame
     document.querySelector('.frame-analisis').appendChild(cuadroFormulas);
   }
 }
 
 /**
  * Crea un menú desplegable para seleccionar columnas.
- * @param {HTMLElement} contenedor - Contenedor donde se agregará el menú desplegable.
+ * @param {HTMLDivElement} contenedor - Contenedor donde se agregará el menú desplegable.
  * @param {string} letra - Letra identificadora del menú.
  * @param {string[]} columnas - Lista de columnas disponibles.
+ * @returns {void}
  */
 function crearMenuDesplegable(contenedor, letra, columnas) {
-  const nuevo = document.createElement('div');
-  nuevo.className = 'opcion';
+  const nuevoMenu = document.createElement('div');
+  nuevoMenu.className = 'opcion';
   const divLetra = document.createElement('div');
   divLetra.className = 'opcion-letra';
   divLetra.innerHTML = letra;
@@ -292,7 +310,8 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
 
 /**
  * Verifica si existe un cuadro de fórmulas y lo elimina si existe.
- * @returns {boolean} True si existía un cuadro de fórmulas, false en caso contrario.
+ * 
+ * @returns {void} True si existía un cuadro de fórmulas, false en caso contrario.
  */
 function eliminarCuadroFormulas() {
   const frameAnalisis = document.querySelector('.frame-analisis');
@@ -310,6 +329,7 @@ function eliminarCuadroFormulas() {
 
 /**
  * Crea una gráfica utilizando Chart.js.
+ * 
  * @param {CanvasRenderingContext2D} contexto - 2dcontext del canvas donde se dibujará la gráfica.
  * @param {String} tipo - String que representa el tipo de gráfica (ej. 'line', 'bar', 'pie', 'doughnut', 'radar', 'polarArea').
  * @param {Int[]} color - Arreglo de 3 enteros que representan el color RGB de la gráfica.
@@ -322,9 +342,9 @@ function crearGrafica(contexto, tipo, color) {
   
   // Color por defecto
   if (!color) {
-    color = [255, 99, 132];
+    color = [166, 25, 48];
   }
-  // Tipo por defecto
+
   if (!tipo) {
     tipo = 'line';
   }
@@ -390,8 +410,8 @@ function crearGrafica(contexto, tipo, color) {
             size: 12,
             weight: 'bold'
           },
-          formatter: (value, context) => { 
-            if (tipo == 'pie' || tipo == 'doughnut') { 
+          formatter: (value, context) => {
+            if (tipo == 'pie' || tipo == 'doughnut') {
               const datos = context.chart.data.datasets[0].data;
               const valorTotal = datos.reduce((total, datapoint) => {
                 return total + datapoint;
@@ -417,26 +437,131 @@ function crearGrafica(contexto, tipo, color) {
 }
 
 /**
- * Crea un arreglo de colores en formato rgb que van desde el color dado hasta el blanco.
+ * Crea un arreglo de colores en formato rgb que van desde el color dado hacia el blanco.
+ * 
  * @param {Int[]} rgb - Arreglo de 3 enteros que representan el color RGB inicial.
  * @param {Int} pasos - Número de pasos para el degradado.
  * @returns {String[]} Arreglo de strings que representan los colores en formato rgb
  */
 function generarDegradadoHaciaBlanco(rgb, pasos) {
+  if (!rgb || rgb.length !== 3) {
+    return null;
+  }
+
+  if (pasos < 1) {
+    return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+  }
   const [rojo, verde, azul] = rgb;
 
   return Array.from(
     { length: pasos },
     (__, indice) => {
-      // Calcula el factor por el cual se va a multiplicar el color para acercarse un poco al blanco
-      const factor = indice / (pasos); // Factor de interpolación
-      const nuevoRojo = Math.round(rojo + (255 - rojo) * factor);
-      const nuevoVerde = Math.round(verde + (255 - verde) * factor);
-      const nuevoAzul = Math.round(azul + (255 - azul) * factor);
+      const factorCambio = indice / (pasos);
+      const nuevoRojo = Math.round(rojo + (255 - rojo) * factorCambio);
+      const nuevoVerde = Math.round(verde + (255 - verde) * factorCambio);
+      const nuevoAzul = Math.round(azul + (255 - azul) * factorCambio);
       return `rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`;
-    }
-  );
+    });
 }
 
-// Hace la función agregarGrafica disponible en todo el proyecto
-window.agregarGrafica = agregarGrafica;
+/**
+ * Modifica el título de la gráfica según la entrada del usuario.
+ * 
+ * @param {HTMLDivElement} grafica - Contenedor de la gráfica a modificar.
+ * @param {HTMLInputElement} entradaTexto - Campo de texto donde el usuario ingresa el nuevo título.
+ * @param {HTMLDivElement} tarjetaGrafica - Tarjeta de gráfica donde se encuentra el campo de texto.
+ */
+function modificarTitulo(grafica, entradaTexto, tarjetaGrafica) {
+  let contador = tarjetaGrafica.querySelector('.contador-caracteres');
+  if (!contador) {
+    contador = document.createElement('div');
+    contador.className = 'contador-caracteres';
+    tarjetaGrafica.insertBefore(contador, tarjetaGrafica.querySelector('.titulo-texto'));
+  }
+
+  contador.textContent = `${entradaTexto.value.length}/30 caracteres`;
+
+  if (grafica) {
+    const contexto = grafica.querySelector('canvas').getContext('2d');
+    const graficaChartjs = Chart.getChart(contexto);
+    if (graficaChartjs) {
+      graficaChartjs.options.plugins.title.text = entradaTexto.value;
+      graficaChartjs.update();
+    }
+  }
+}
+
+/**
+ * Modifica el tipo de gráfica según la selección del usuario.
+ * 
+ * @param {HTMLDivElement} grafica - Contenedor de la gráfica a modificar.
+ * @param {HTMLSelectElement} selectorTipo - Selector de tipo de gráfica.
+ * @param {string} tituloGrafica - Título de la gráfica.
+ */
+function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
+  if (grafica) {
+    const contexto = grafica.querySelector('canvas').getContext('2d');
+    const graficaOriginal = Chart.getChart(contexto);
+    if (graficaOriginal) {
+      graficaOriginal.destroy();
+      const nuevaGrafica = crearGrafica(contexto, selectorTipo.value);
+      nuevaGrafica.options.plugins.title.text = tituloGrafica;
+      nuevaGrafica.update();
+    }
+  }
+}
+
+/**
+ * Elimina la tarjeta de gráfica, su previsualización y el cuadro de fórmulas si es que existe.
+ * 
+ * @param {HTMLDivElement} tarjetaGrafica - Tarjeta de gráfica a eliminar.
+ * @param {HTMLDivElement} grafica - Contenedor de la gráfica a eliminar.
+ */
+function eliminarGrafica(tarjetaGrafica, grafica) {
+  tarjetaGrafica.remove();
+  if (grafica) grafica.remove();
+  eliminarCuadroFormulas();
+}
+
+/**
+ * Inserta una tarjeta de texto y su previsualización en la posición deseada
+ * 
+ * @param {HTMLDivElement} tarjetaRef - Tarjeta de referencia para la inserción
+ * @param {ElementoReporte} elementoReporte - Elemento de reporte a insertar
+ * @param {Contenedores} contenedores - Contenedores de tarjetas y previsualizaciones
+ * @param {'antes'|'despues'} posicion - Posición de inserción ('antes' o 'despues')
+ * @returns {void}
+ */
+function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) {
+  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
+    if (posicion === 'antes') {
+      contenedores.contenedorTarjeta.insertBefore(elementoReporte.tarjeta, tarjetaRef);
+    } else {
+      contenedores.contenedorTarjeta.insertBefore(elementoReporte.tarjeta, tarjetaRef.nextSibling);
+    }
+
+    const idRef = tarjetaRef.id;
+    let vistaRef;
+
+    if (tarjetaRef.classList.contains('tarjeta-texto')) {
+      vistaRef = contenedores.contenedorPrevisualizacion.querySelector(`#previsualizacion-texto-${idRef}`);
+    } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
+      vistaRef = contenedores.contenedorPrevisualizacion.querySelector(`#previsualizacion-grafica-${idRef}`);
+    }
+
+    if (vistaRef) {
+      if (posicion === 'antes') {
+        contenedores.contenedorPrevisualizacion.insertBefore(elementoReporte.previsualizacion, vistaRef);
+      } else {
+        contenedores.contenedorPrevisualizacion.insertBefore(elementoReporte.previsualizacion, vistaRef.nextSibling);
+      }
+    } else {
+      contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
+    }
+  } else {
+    contenedores.contenedorTarjeta.appendChild(elementoReporte.tarjeta);
+    contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
+  }
+}
+
+module.exports = { agregarGrafica };

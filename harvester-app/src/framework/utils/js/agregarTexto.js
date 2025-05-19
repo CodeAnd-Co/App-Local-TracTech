@@ -13,15 +13,16 @@
  * previsualización. Puede insertarse antes o después de otra tarjeta.
  *
  * @param {string} idContenedor           - ID del elemento donde se añadirán las tarjetas de edición.
- * @param {string} idContenedorVistaPrevia - ID del elemento donde se mostrará la previsualización.
- * @param {Element|null} tarjetaRef       - Nodo de tarjeta existente junto al cual insertar.
+ * @param {string} idContenedorPrevisualizacion - ID del elemento donde se mostrará la previsualización.
+ * @param {HTMLDivElement|null} tarjetaRef       - Nodo de tarjeta existente junto al cual insertar.
  * @param {'antes'|'despues'} posicion    - 'antes' para arriba, 'despues' para abajo.
+ * @returns {HTMLDivElement} tarjetaTexto - La tarjeta de texto creada.
  */
 function agregarTexto(
   idContenedor,
-  idContenedorVistaPrevia,
-  tarjetaRef       = null,
-  posicion         = null
+  idContenedorPrevisualizacion,
+  tarjetaRef = null,
+  posicion = null
 ) {
   const contenedor        = document.getElementById(idContenedor);
   const contenedorPrevia  = document.getElementById(idContenedorVistaPrevia);
@@ -69,7 +70,7 @@ function agregarTexto(
       </select>
       <img class='type' src='../utils/iconos/Texto.svg' alt='Icono Texto' />
     </div>
-    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='500'></textarea>
+    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='1000'></textarea>
     <style>
       .contador-caracteres {
         font-size: 12px;
@@ -92,7 +93,6 @@ function agregarTexto(
     </div>
   `;
 
-  // 3) Crear la vista previa
   const vistaPrevia = document.createElement('div');
   vistaPrevia.classList.add('previsualizacion-texto', 'preview-titulo');
   vistaPrevia.id = `preview-texto-${nuevoId}`;
@@ -150,78 +150,159 @@ function agregarTexto(
   const botonAlinear    = tarjetaTexto.querySelector('.alinear');
   const iconoAlineacion = botonAlinear.querySelector('.icono-align');
 
-  /**
-   * Actualiza el contenido y estilo de la vista previa según el texto y tipo.
-   * @private
-   */
-  function actualizarVistaPrevia() {
-    vistaPrevia.innerHTML = '';
-    const texto = areaEscritura.value.split('\n');
-    texto.forEach((linea) => { 
-      const parrafo = document.createElement('p');
-      parrafo.textContent = linea;
-      
-      // Aplicar estilos directamente al párrafo para garantizar el ajuste de texto
-      parrafo.style.maxWidth = '100%';
-      parrafo.style.wordWrap = 'break-word';
-      parrafo.style.overflowWrap = 'break-word';
-      parrafo.style.whiteSpace = 'normal';
-      
-      vistaPrevia.appendChild(parrafo);
-    })
-    
-    // Aplicar estilos directamente al contenedor
-    vistaPrevia.style.maxWidth = '100%';
-    vistaPrevia.style.wordWrap = 'break-word';
-    vistaPrevia.style.overflowWrap = 'break-word';
-    vistaPrevia.style.whiteSpace = 'normal';
-    
+  selectorTipo.addEventListener('change', () => {
     vistaPrevia.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
     vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
-  }
+  });
 
-  // 6) Listeners de interacción
-  selectorTipo.addEventListener('change', actualizarVistaPrevia);
   areaEscritura.addEventListener('input', () => {
-    actualizarVistaPrevia();
-    
-    // Mostrar contador de caracteres restantes
-    const caracteresUsados = areaEscritura.value.length;
-    const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
-    const caracteresRestantes = limite - caracteresUsados;
-    
-    // Verificar si ya existe un contador
-    let contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
-    if (!contadorCaracteres) {
-      contadorCaracteres = document.createElement('div');
-      contadorCaracteres.className = 'contador-caracteres';
-      tarjetaTexto.insertBefore(contadorCaracteres, tarjetaTexto.querySelector('.botones-editar-eliminar'));
-    }
-    
-    // Actualizar el texto del contador
-    contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
-    
-    // Cambiar color si queda poco espacio
-    if (caracteresRestantes < 50) {
-      contadorCaracteres.style.color = '#e74c3c';
-    } else {
-      contadorCaracteres.style.color = '#7f8c8d';
-    }
+    actualizarTexto(vistaPrevia, areaEscritura);
+    actualizarCaracteres(areaEscritura, tarjetaTexto);
   });
 
   botonAlinear.addEventListener('click', () => {
-    const alineaciones = ['left', 'center', 'justify', 'right'];
+    const alineaciones = ['left', 'center', 'right'];
     vistaPrevia.alignIndex = (vistaPrevia.alignIndex + 1) % alineaciones.length;
-    const modo = alineaciones[vistaPrevia.alignIndex];
-    vistaPrevia.style.textAlign       = modo;
-    iconoAlineacion.className = `icono-align align-${modo}`;
+    const alineado = alineaciones[vistaPrevia.alignIndex];
+    vistaPrevia.style.textAlign = alineado;
+    iconoAlineacion.className = `icono-align align-${alineado}`;
   });
 
   botonEliminar.addEventListener('click', () => {
     tarjetaTexto.remove();
     vistaPrevia.remove();
   });
+
+  return tarjetaTexto;
 }
 
-// Exponer la función en el ámbito global para los listeners del módulo
-window.agregarTexto = agregarTexto;
+/**
+   * Actualiza el contenido de la vista previa según el texto del {@link areaEscritura}.
+   * 
+   * @param {HTMLDivElement} vistaPrevia - Vista previa del texto
+   * @param {HTMLTextAreaElement} areaEscritura - Area de tecto con el contenido a mostrar
+   * @returns {void}
+   */
+function actualizarTexto(vistaPrevia, areaEscritura) {
+  vistaPrevia.innerHTML = '';
+  const texto = areaEscritura.value.split('\n');
+  texto.forEach((linea) => {
+    const parrafo = document.createElement('p');
+    parrafo.textContent = linea;
+
+    parrafo.style.maxWidth = '100%';
+    parrafo.style.wordWrap = 'break-word';
+    parrafo.style.overflowWrap = 'break-word';
+    parrafo.style.whiteSpace = 'normal';
+
+    vistaPrevia.appendChild(parrafo);
+  })
+}
+
+/**
+ * Actualiza el contador de caracteres restantes en la tarjeta del {@link areaEscritura}.
+ * 
+ * @param {HTMLDivElement} tarjetaTexto - Tarjeta de edición del cuadro de texto
+ * @param {HTMLTextAreaElement} areaEscritura - Area de tecto con el contenido a mostrar
+ * @returns {void}
+ */
+function actualizarCaracteres(tarjetaTexto, areaEscritura) {
+  const caracteresUsados = areaEscritura.value.length;
+  const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
+  const caracteresRestantes = limite - caracteresUsados;
+
+  let contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
+  if (!contadorCaracteres) {
+    contadorCaracteres = document.createElement('div');
+    contadorCaracteres.className = 'contador-caracteres';
+    tarjetaTexto.insertBefore(contadorCaracteres, tarjetaTexto.querySelector('.botones-editar-eliminar'));
+  }
+
+  contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
+
+  if (caracteresRestantes < 50) {
+    contadorCaracteres.style.color = '#e74c3c';
+  } else {
+    contadorCaracteres.style.color = '#7f8c8d';
+  }
+}
+
+/**
+ * Inserta una tarjeta de texto y su previsualización en la posición deseada
+ * 
+ * @param {HTMLDivElement} tarjetaRef - Tarjeta de referencia para la inserción
+ * @param {ElementoReporte} elementoReporte - Elemento de reporte a insertar
+ * @param {Contenedores} contenedores - Contenedores de tarjetas y previsualizaciones
+ * @param {'antes'|'despues'} posicion - Posición de inserción ('antes' o 'despues')
+ * @returns {void}
+ */
+function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) {
+  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
+    if (posicion === 'antes') {
+      contenedores.contenedorTarjeta.insertBefore(elementoReporte.tarjeta, tarjetaRef);
+    } else {
+      contenedores.contenedorTarjeta.insertBefore(elementoReporte.tarjeta, tarjetaRef.nextSibling);
+    }
+
+    const idRef = tarjetaRef.id;
+    let vistaRef;
+
+    if (tarjetaRef.classList.contains('tarjeta-texto')) {
+      vistaRef = contenedores.contenedorPrevisualizacion.querySelector(`#previsualizacion-texto-${idRef}`);
+    } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
+      vistaRef = contenedores.contenedorPrevisualizacion.querySelector(`#previsualizacion-grafica-${idRef}`);
+    }
+
+    if (vistaRef) {
+      if (posicion === 'antes') {
+        contenedores.contenedorPrevisualizacion.insertBefore(elementoReporte.previsualizacion, vistaRef);
+      } else {
+        contenedores.contenedorPrevisualizacion.insertBefore(elementoReporte.previsualizacion, vistaRef.nextSibling);
+      }
+    } else {
+      contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
+    }
+  } else {
+    contenedores.contenedorTarjeta.appendChild(elementoReporte.tarjeta);
+    contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
+  }
+}
+
+/**
+ * Crea un observador que revisa que haya al menos un cuadro de texto y una gráfica
+ * 
+ * @param {HTMLDivElement} contenedor - Contenedor de tarjetas
+ * @returns {void}
+ */
+function configurarObservadorLimite(contenedor) { 
+  const observer = new MutationObserver(() => {
+    const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
+    const tarjetasGrafica = contenedor.querySelectorAll('.tarjeta-grafica');
+    const tarjetasTotales = [...tarjetasTexto, ...tarjetasGrafica];
+
+    tarjetasTotales.forEach(tarjeta => {
+      const botonEliminar = tarjeta.querySelector('.eliminar');
+      const divisor = tarjeta.querySelector('.divisor');
+      const contenedorBotones = tarjeta.querySelector('.botones-editar-eliminar');
+
+      const soloUnaGrafica = tarjetasGrafica.length <= 1;
+      const soloUnaTexto = tarjetasTexto.length <= 1;
+
+      if (soloUnaTexto && soloUnaGrafica) {
+        if (botonEliminar) botonEliminar.style.display = 'none';
+        if (divisor) divisor.style.display = 'none';
+        if (contenedorBotones) contenedorBotones.style.justifyContent = 'center';
+      } else {
+        if (botonEliminar) botonEliminar.style.display = 'flex';
+        if (divisor) divisor.style.display = 'block';
+        if (contenedorBotones) contenedorBotones.style.justifyContent = 'space-between';
+      }
+    });
+  });
+
+  observer.observe(contenedor, { childList: true, subtree: true });
+}
+
+module.exports = {
+  agregarTexto
+};

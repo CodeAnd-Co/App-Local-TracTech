@@ -42,7 +42,7 @@ async function manejarInicioSesion() {
       const usuario = resultado.usuario;
       localStorage.setItem('nombreUsuario', usuario);
       // Redirigir al usuario a la página principal
-      window.location.href = './frameLayout.html';
+      window.location.href = 'FrameLayout.html';
 
     } else {
       // Mostrar mensaje de error si las credenciales no son válidas

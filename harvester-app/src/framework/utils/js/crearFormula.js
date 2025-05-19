@@ -1,6 +1,7 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
-
+const { LONGITUD_MAXIMA_FORMULA,
+    LONGITUD_MAXIMA_NOMBRE_FORMULA,} = require('../../../framework/utils/js/constantes');
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
@@ -55,7 +56,12 @@ async function inicializarCrearFormula() {
                             if (contenedor) {
                                 generarFormulaCompleja();
                             } else {
-                                console.error('El contenedor de argumentos no se encontró en el DOM.');
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'No se ha podido generar la fórmula.',
+                                    icon: 'error',
+                                    confirmButtonColor: '#1F4281',
+                                });
                             }
                         });
 
@@ -86,15 +92,20 @@ async function inicializarCrearFormula() {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
+    const contenedor = document.getElementById('function-arguments');
+    if (!validarCamposFormula(contenedor)) {
+        return;
+    }
+
     generarFormulaCompleja();
     const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
     const nombreFormula = nombreFormulaSinProcesar.trim();
     const formulasGuardadas = localStorage.getItem('nombresFormulas');
  
-    if (nombreFormula === '' || nombreFormula.length >= 30) {
+    if (nombreFormula === '' || nombreFormula.length >= LONGITUD_MAXIMA_NOMBRE_FORMULA) {
         Swal.fire({
             title: 'Error',
-            text: 'Verifica que la formula tenga un nombre válido y menor de 30 caracteres.',
+            text: `Verifica que la formula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
             icon: 'error',
             confirmButtonColor: '#1F4281',
         });
@@ -149,10 +160,10 @@ async function procesarFormula() {
         return;
         
     }
-    if (cuadroTextoGenerado.length >= 512) {
+    if (cuadroTextoGenerado.length >= LONGITUD_MAXIMA_FORMULA) {
         Swal.fire({
             title: 'Error',
-            text: 'La fórmula excede los 512 caracteres, no puede ser guardada.',
+            text: `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`,
             icon: 'error',
             confirmButtonColor: '#1F4281',
         });
@@ -179,7 +190,6 @@ async function procesarFormula() {
             btnGuardar.disabled = false;
         }
     } catch (error) {
-        console.error('Error al conectar con el backend:', error);
         Swal.fire({
             title: 'Error',
             text: 'Hubo un error en la conexión.',
@@ -443,6 +453,61 @@ function masArgumentosCountif(contenedor) {
 }
 
 /**
+ * @function validarCamposFormula
+ * @description Verifica que todos los campos requeridos de la fórmula tengan datos.
+ * @param {HTMLElement} contenedor - El contenedor que contiene los argumentos de la función.
+ * @return {boolean} - True si todos los campos requeridos tienen datos, false en caso contrario.
+ */
+function validarCamposFormula(contenedor) {
+    const elementosArgumentos = Array.from(contenedor.children);
+    let camposValidos = true;
+    let mensajeError = '';
+
+    elementosArgumentos.forEach(argumento => {
+        if (!camposValidos) return; // Si ya encontramos un error, no seguimos validando
+        
+        // Validar selectores de variables
+        const variableSelector = argumento.querySelector('.variable-selector');
+        if (variableSelector && !variableSelector.value) {
+            camposValidos = false;
+            mensajeError = 'Hay campos de variable sin seleccionar';
+            return;
+        }
+        
+        // Validar inputs de texto
+        const inputTexto = argumento.querySelector('input[type="text"]');
+        if (inputTexto && !inputTexto.value.trim()) {
+            camposValidos = false;
+            mensajeError = 'Hay campos de texto vacíos';
+            return;
+        }
+        
+        // Validar funciones anidadas
+        const selectorAnidado = argumento.querySelector('.selectorFuncionAnidada');
+        if (selectorAnidado && selectorAnidado.value) {
+            const contenedorAnidado = argumento.querySelector('.funciones-anidadas');
+            if (contenedorAnidado && !validarCamposFormula(contenedorAnidado)) {
+                camposValidos = false;
+                mensajeError = 'Hay campos vacíos en las funciones anidadas';
+                return;
+            }
+        }
+    });
+    
+    if (!camposValidos) {
+        Swal.fire({
+            title: 'Error',
+            text: mensajeError,
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+    }
+    
+    return camposValidos;
+}
+
+
+/**
  * @function generarFormulaCompleja
  * @description Genera una fórmula compleja basada en la función seleccionada y los argumentos proporcionados.
  * @returns {void} - No devuelve nada.
@@ -461,8 +526,13 @@ function generarFormulaCompleja() {
         });
         return;
     }
+    
+    const contenedor = document.getElementById('function-arguments');
+    if (!validarCamposFormula(contenedor)) {
+        return;
+    }
 
-    const formula = construirFormulaDesdeContenedor(document.getElementById('function-arguments'), seleccionFuncionPrincipal.value);
+    const formula = construirFormulaDesdeContenedor(contenedor, seleccionFuncionPrincipal.value);
     document.getElementById('resultado').innerText = `Fórmula generada (en inglés para HyperFormula):\n=${formula}`;
 }
 
@@ -676,7 +746,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (contenedor) {
             generarFormulaCompleja();
         } else {
-            console.error('El contenedor de argumentos no se encontró en el DOM.');
+            Swal.fire({
+                title: 'Error',
+                text: 'No se ha podido generar la fórmula.',
+                icon: 'error',
+                confirmButtonColor: '#1F4281',
+            });
         }
     });
     

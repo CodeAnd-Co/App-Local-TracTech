@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Módulo de Análisis</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../utils/css/resetStyles.css">
   <link rel="stylesheet" href="../utils/css/moduloAnalisis.css">
 </head>
 <body>
@@ -12,16 +11,6 @@
 
     <!-- Sección de agregados y acciones -->
     <section class="seccion-elemento-reporte">
-      <div class="contenedor-botones-agregar">
-        <button id="agregarTexto" class="boton-agregar">
-          <img class="icono-agregar" src="../utils/iconos/Texto.svg" alt="Texto">
-          <span>Agregar texto</span>
-        </button>
-        <button id="agregarGrafica" class="boton-agregar">
-          <img class="icono-agregar" src="../utils/iconos/GraficaBarras.svg" alt="Gráfica">
-          <span>Agregar gráfica</span>
-        </button>
-      </div>
       <div class="seccion-contenido" id="contenedorElementos"></div>
       <div class="contenedor-botones-acciones">
         <button id="descargarPDF" class="boton-agregar">
@@ -35,64 +24,6 @@
       </div>
     </section>
 
-    <!-- Sección de fórmulas 
-    <section class="contenedor-formulas">
-      <div class="titulo-formulas">
-        <button class="flecha-atras" aria-label="Volver">
-          <img src="../utils/iconos/FlechaAtras.svg" alt="Atrás">
-        </button>
-        <p class="texto">Fórmulas</p>
-      </div>
-      <div class="seccion-formulas">
-        <div class="opciones-seccion">
-          <p>Parámetros</p>
-          <div class="opciones-carta">
-            <div class="opcion">
-              <div class="opcion-letra">A</div>
-              <select class="opcion-texto">
-                <option value="gasolina">Gasolina</option>
-                <option value="velocidad">Velocidad</option>
-                <option value="aceleracion">Aceleración</option>
-              </select>
-            </div>
-            <div class="opcion">
-              <div class="opcion-letra">B</div>
-              <select class="opcion-texto">
-                <option value="gasolina">Gasolina</option>
-                <option value="velocidad" selected>Velocidad</option>
-                <option value="aceleracion">Aceleración</option>
-              </select>
-            </div>
-            <div class="opcion">
-              <div class="opcion-letra">C</div>
-              <select class="opcion-texto">
-                <option value="gasolina">Gasolina</option>
-                <option value="velocidad">Velocidad</option>
-                <option value="aceleracion" selected>Aceleración</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="opciones-seccion">
-          <div class="titulo-aplicar-formulas">
-            <p>Aplicar fórmula</p>
-            <button class="circulo-ayuda" aria-label="Ayuda fórmula">
-              <img src="../utils/iconos/circulo-ayuda.svg" alt="Ayuda">
-            </button>
-          </div>
-          <div class="opciones-carta">
-            <input type="text" class="search-section" placeholder="Encuentra una fórmula">
-            <div class="contenedor-busqueda">
-              <div class="formula">f(y): y + k</div>
-              <div class="formula">f(y): 2x</div>
-            </div>
-            <button class="boton-agregar">Aplicar fórmula</button>
-          </div>
-        </div>
-      </div>
-      <body>
-    </section> -->
-
     <!-- Vista previa del reporte -->
     <section class="seccion-previsualizacion-grafica" id="previsualizacion">
       <h2 class="preview-header">Vista previa del reporte</h2>
@@ -100,8 +31,5 @@
     </section>
 
   </div>
-  <script src="./utils/js/agregarTexto.js"></script>
-  <script src="./utils/js/agregarGrafica.js"></script>
-  <script type="module" src="../utils/js/moduloAnalisis.js"></script>
 </body>
 </html>

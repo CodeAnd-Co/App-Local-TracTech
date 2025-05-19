@@ -1,6 +1,7 @@
+const { URL_BASE } = require('../../../framework/utils/js/constantes');
 
 async function seleccionarPlantillas(idPlantilla) {
-    const respuesta = await fetch(`${process.env.URL_BASE}/plantillas/seleccionar`, {
+    const respuesta = await fetch(`${URL_BASE}/plantillas/seleccionar`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

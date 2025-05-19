@@ -1,6 +1,7 @@
+const { URL_BASE } = require('../../../framework/utils/js/constantes');
 
 async function eliminarPlantillas(idPlantilla) {
-    const respuesta = await fetch(`${process.env.URL_BASE}/plantillas/eliminar`, {
+    const respuesta = await fetch(`${URL_BASE}/plantillas/eliminar`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
