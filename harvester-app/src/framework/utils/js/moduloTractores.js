@@ -120,10 +120,8 @@ function inicializarTractores(datosExcel) {
     const nombresTractores = Object.keys(datosExcel.hojas);
 
     if (nombresTractores.length === 0) {
-        const mensaje = document.createElement('div');
-        mensaje.className = 'rancho';
-        mensaje.textContent = 'No se encontraron tractores';
-        tractoresContenedor.appendChild(mensaje);
+        mostrarMensaje(tractoresContenedor, 'No se encontraron tractores')
+        return;
     } 
 
     // Iterar sobre los tractores asumiendo que cada hoja es un tractor
@@ -193,20 +191,14 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
 
     const datosHoja = datosExcel.hojas[nombreTractor];
     if (!Array.isArray(datosHoja) || datosHoja.length === 0) {
-        const mensaje = document.createElement('div');
-        mensaje.className = 'columna-nombre';
-        mensaje.textContent = 'No hay datos en esta hoja';
-        columnasContenedor.appendChild(mensaje);
+        mostrarMensaje(columnasContenedor, 'No hay datos en esta hoja');
         return;
     }
 
     // Obtener las columnas del primer objeto
     let columnas = obtenerColumnas(datosHoja);
     if (!columnas.length) {
-        const mensaje = document.createElement('div');
-        mensaje.className = 'columna-nombre';
-        mensaje.textContent = 'Formato de datos no reconocido';
-        columnasContenedor.appendChild(mensaje);
+        mostrarMensaje(columnasContenedor, 'Formato de datos no reconocido')
         return;
     }
 
@@ -524,6 +516,20 @@ function cambiarSeleccionVisualUnica(contenedor) {
 
 }
 
+/**
+ * Crea un elemento que contiene el mensaje designado
+ * 
+ * @function mostrarMensaje
+ * @param {HTMLElement} contenedor
+ * @param {string} mensajeTexto
+ * @returns {void}
+ */
+function mostrarMensaje(contenedor, mensajeTexto) {
+    const mensaje = document.createElement('div');
+    mensaje.className = 'rancho';
+    mensaje.textContent = mensajeTexto;
+    contenedor.appendChild(mensaje);
+}
 
 // Exportar funciones para uso global
 window.inicializarModuloTractores = inicializarModuloTractores;
