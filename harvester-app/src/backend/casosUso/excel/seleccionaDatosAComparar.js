@@ -12,11 +12,22 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
     try {
         const nuevoJSON = { hojas: {} };
     
-        Object.entries(seleccion).forEach(([nombreTractor, columnas]) => {
+        Object.entries(seleccion).forEach(([nombreTractor, datosSeleccion]) => {
+            if (!datosSeleccion.seleccionado) {
+                return;
+            }
             // Obtener los datos completos del tractor desde el JSON original
+            const columnas = datosSeleccion.columnas;
             const datosTractor = datosExcel.hojas[nombreTractor];
     
-            if (!datosTractor || !Array.isArray(columnas) || columnas.length === 0) return;
+            if (!datosTractor || !Array.isArray(columnas) || columnas.length === 0) { 
+                return;
+            }
+
+            if (!datosTractor) {
+                console.warn(`No se encontró la hoja para el tractor: ${nombreTractor}`);
+                return;
+            }            
     
             // Para cada fila del tractor, creamos una nueva fila con solo las columnas seleccionadas
             nuevoJSON.hojas[nombreTractor] = datosTractor.map(fila =>
