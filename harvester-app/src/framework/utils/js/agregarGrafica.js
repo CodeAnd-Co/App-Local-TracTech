@@ -4,8 +4,9 @@
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
+// /* eslint-disable no-unused-vars */
+// /* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
   const Swal = require('sweetalert2');
 }
@@ -15,13 +16,14 @@ if (typeof Swal === 'undefined') {
  *
  * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
  * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
- * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {HTMLElement|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
  * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
- * @returns {Element} tarjetaGrafica - La tarjeta de gráfica creada.
+ * @returns {HTMLElement} tarjetaGrafica - La tarjeta de gráfica creada.
  */
 function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
   const contenedor = document.getElementById(contenedorId);
   const previsualizacion = document.getElementById(previsualizacionId);
+  const contenedores = new Contenedores(contenedor, previsualizacion);
 
   if (!contenedor || !previsualizacion) {
     Swal.fire({
@@ -32,7 +34,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     });
     return
   }
-  
+
   // Guardar referencia global al contenedor de previsualización
   window.previsualizacion = previsualizacion;
 
@@ -93,78 +95,25 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   graficaDiv.appendChild(canvasGrafica);
 
   const contexto = canvasGrafica.getContext('2d');
-  const grafico  = crearGrafica(contexto, 'line');
+  const grafico = crearGrafica(contexto, 'line');
   grafico.options.plugins.title.text = '';
   grafico.update();
 
-  tarjetaGrafica.querySelector('.titulo-grafica').addEventListener('input', function () {
-      const grafica = document.getElementById(`previsualizacion-grafica-${nuevaId}`);
-      if (grafica) {
-        const ctx = grafica.querySelector('canvas').getContext('2d');
-        const chart = Chart.getChart(ctx);
-        if (chart) {
-          chart.options.plugins.title.text = this.value;
-          chart.update();
-        }
-      }
-    });
+  const entradaTexto = tarjetaGrafica.querySelector('.titulo-grafica');
+  entradaTexto.addEventListener('input', () =>
+    modificarTitulo(graficaDiv, entradaTexto));
 
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
+  const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
   selectorTipo.value = grafico.config.type;
-  selectorTipo.addEventListener('change', () => {
-    const grafica = document.getElementById(`previsualizacion-grafica-${nuevaId}`);
-    if (grafica) {
-      const contexto = grafica.querySelector('canvas').getContext('2d');
-      const graficaOriginal = Chart.getChart(contexto);
-      if (graficaOriginal) {
-        graficaOriginal.destroy();
-        const nuevaGrafica = crearGrafica(contexto, selectorTipo.value);
-        nuevaGrafica.options.plugins.title.text = tarjetaGrafica.querySelector('.titulo-grafica').value;
-        nuevaGrafica.update();
-      }
-    }
-  });
+  selectorTipo.addEventListener('change', () =>
+    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica));
 
-  tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () => {
-      tarjetaGrafica.remove();
-      const eliminado = document.getElementById(`previsualizacion-grafica-${nuevaId}`);
-      if (eliminado) eliminado.remove();
-      eliminarCuadroFormulas();
-    });
+  tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () =>
+    eliminarGrafica(tarjetaGrafica, graficaDiv));
 
-
-  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
-    if (posicion === 'antes') {
-      contenedor.insertBefore(tarjetaGrafica, tarjetaRef);
-    } else {
-      contenedor.insertBefore(tarjetaGrafica, tarjetaRef.nextSibling);
-    }
-    
-    const idRef = tarjetaRef.id;
-    let vistaRef;
-
-    console.log(tarjetaRef, tarjetaRef.classList);
-    
-    if (tarjetaRef.classList.contains('tarjeta-texto')) {
-      vistaRef = previsualizacion.querySelector(`#previsualizacion-texto-${idRef}`);
-    } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      vistaRef = previsualizacion.querySelector(`#previsualizacion-grafica-${idRef}`);
-    }
-    console.log(vistaRef);
-    
-    if (vistaRef) {
-      if (posicion === 'antes') {
-        previsualizacion.insertBefore(graficaDiv, vistaRef);
-      } else {
-        previsualizacion.insertBefore(graficaDiv, vistaRef.nextSibling);
-      }
-    } else {
-      previsualizacion.appendChild(graficaDiv);
-    }
-  } else {
-    contenedor.appendChild(tarjetaGrafica);
-    previsualizacion.appendChild(graficaDiv);
-  }
+  const elementoReporte = new ElementoNuevo(tarjetaGrafica, graficaDiv);
+  agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion);
 
   return tarjetaGrafica;
 }
@@ -263,19 +212,16 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
 
 /**
  * Verifica si existe un cuadro de fórmulas y lo elimina si existe.
- * @returns {boolean} True si existía un cuadro de fórmulas, false en caso contrario.
+ * @returns {void} True si existía un cuadro de fórmulas, false en caso contrario.
  */
 function eliminarCuadroFormulas() {
   const contenedorAnalisis = document.querySelector('.frame-analisis');
   if (!contenedorAnalisis) return false;
-  
+
   const cuadrosExistentes = Array.from(contenedorAnalisis.children);
   const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className == 'contenedor-formulas');
   if (cuadros.length == 1) {
     cuadros[0].remove()
-    return true;
-  } else {
-    return false;
   }
 }
 
@@ -288,7 +234,7 @@ function eliminarCuadroFormulas() {
  */
 function crearGrafica(contexto, tipo, color) {
   if (!contexto) return;
-  
+
   if (!color) {
     color = [255, 99, 132];
   }
@@ -358,8 +304,8 @@ function crearGrafica(contexto, tipo, color) {
             size: 12,
             weight: 'bold'
           },
-          formatter: (value, context) => { 
-            if (tipo == 'pie' || tipo == 'doughnut') { 
+          formatter: (value, context) => {
+            if (tipo == 'pie' || tipo == 'doughnut') {
               const datos = context.chart.data.datasets[0].data;
               const valorTotal = datos.reduce((total, datapoint) => {
                 return total + datapoint;
@@ -377,7 +323,7 @@ function crearGrafica(contexto, tipo, color) {
         x: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } },
         /* eslint-disable id-length */
         y: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } }
-         
+
       }
     },
   });
@@ -409,6 +355,78 @@ function generarDegradadoHaciaBlanco(rgb, pasos) {
       const nuevoAzul = Math.round(azul + (255 - azul) * factorCambio);
       return `rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`;
     });
+}
+
+function modificarTitulo(grafica, entradaTexto) {
+  console.log(grafica);
+  if (grafica) {
+    const contexto = grafica.querySelector('canvas').getContext('2d');
+    const graficaChartjs = Chart.getChart(contexto);
+    if (graficaChartjs) {
+      graficaChartjs.options.plugins.title.text = entradaTexto.value;
+      graficaChartjs.update();
+    }
+  }
+}
+
+function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
+  if (grafica) {
+    const contexto = grafica.querySelector('canvas').getContext('2d');
+    const graficaOriginal = Chart.getChart(contexto);
+    if (graficaOriginal) {
+      graficaOriginal.destroy();
+      const nuevaGrafica = crearGrafica(contexto, selectorTipo.value);
+      nuevaGrafica.options.plugins.title.text = tituloGrafica;
+      nuevaGrafica.update();
+    }
+  }
+}
+
+function eliminarGrafica(tarjetaGrafica, grafica) {
+  tarjetaGrafica.remove();
+  if (grafica) grafica.remove();
+  eliminarCuadroFormulas();
+}
+
+/**
+ * Inserta una tarjeta de texto y su previsualización en la posición deseada
+ * 
+ * @param {HTMLElement} tarjetaRef - Tarjeta de referencia para la inserción
+ * @param {ElementoReporte} elementoReporte - Elemento de reporte a insertar
+ * @param {Contenedores} contenedores - Contenedores de tarjetas y previsualizaciones
+ * @param {'antes'|'despues'} posicion - Posición de inserción ('antes' o 'despues')
+ * @returns {void}
+ */
+function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) {
+  if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
+    if (posicion === 'antes') {
+      contenedores.contenedorTarjeta.insertBefore(elementoReporte.tarjeta, tarjetaRef);
+    } else {
+      contenedores.contenedorTarjeta.insertBefore(elementoReporte.tarjeta, tarjetaRef.nextSibling);
+    }
+
+    const idRef = tarjetaRef.id;
+    let vistaRef;
+
+    if (tarjetaRef.classList.contains('tarjeta-texto')) {
+      vistaRef = contenedores.contenedorPrevisualizacion.querySelector(`#previsualizacion-texto-${idRef}`);
+    } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
+      vistaRef = contenedores.contenedorPrevisualizacion.querySelector(`#previsualizacion-grafica-${idRef}`);
+    }
+
+    if (vistaRef) {
+      if (posicion === 'antes') {
+        contenedores.contenedorPrevisualizacion.insertBefore(elementoReporte.previsualizacion, vistaRef);
+      } else {
+        contenedores.contenedorPrevisualizacion.insertBefore(elementoReporte.previsualizacion, vistaRef.nextSibling);
+      }
+    } else {
+      contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
+    }
+  } else {
+    contenedores.contenedorTarjeta.appendChild(elementoReporte.tarjeta);
+    contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
+  }
 }
 
 module.exports = { agregarGrafica };
