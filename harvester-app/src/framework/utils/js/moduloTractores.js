@@ -217,12 +217,10 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
     if (!tractoresSeleccionados[nombreTractor]) {
         tractoresSeleccionados[nombreTractor] = { eleccionado: false, columnas: [] };
     }
-    localStorage.setItem('columnas', JSON.stringify(columnas));
-    console.log(localStorage.getItem('columnas'));
+    console.log(tractoresSeleccionados);
     columnas.forEach(nombreColumna => {
         const columnaDiv = crearElementoColumna(nombreTractor, nombreColumna);
-        
-        columnaContenedor.appendChild(columnaDiv);
+        columnasContenedor.appendChild(columnaDiv);
     });
 }
 
@@ -266,7 +264,7 @@ function crearElementoColumna(nombreTractor, nombreColumna) {
 
     // Verificar si la columna ya está seleccionada
     if (tractoresSeleccionados[nombreTractor].columnas.includes(nombreColumna)) {
-        caja.src = '../utils/iconos/check_box.svg';
+        casillaVerificacion.src = '../utils/iconos/check_box.svg';
     }
     columnaDiv.addEventListener('click', () => {
         seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion);
