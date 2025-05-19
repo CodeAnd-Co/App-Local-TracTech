@@ -7,6 +7,7 @@
 if (typeof Swal === 'undefined') {
   const Swal = require('sweetalert2');
 }
+const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
 
 /**
  * Crea y agrega una tarjeta de texto al contenedor de edición y su correspondiente
@@ -26,6 +27,7 @@ function agregarTexto(
 ) {
   const contenedor = document.getElementById(idContenedor);
   const contenedorPrevia = document.getElementById(idContenedorPrevisualizacion);
+  const contenedores = new Contenedores(contenedor, contenedorPrevia);
 
   if (!contenedor || !contenedorPrevia) {
     Swal.fire({
@@ -37,32 +39,7 @@ function agregarTexto(
     return
   }
 
-  const observer = new MutationObserver(() => {
-    const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
-    const tarjetasGrafica = contenedor.querySelectorAll('.tarjeta-grafica');
-    const tarjetasTotales = [...tarjetasTexto, ...tarjetasGrafica];
-
-    tarjetasTotales.forEach(tarjeta => {
-      const botonEliminar = tarjeta.querySelector('.eliminar');
-      const divisor = tarjeta.querySelector('.divisor');
-      const contenedorBotones = tarjeta.querySelector('.botones-editar-eliminar');
-
-      const soloUnaGrafica = tarjetasGrafica.length <= 1;
-      const soloUnaTexto = tarjetasTexto.length <= 1;
-
-      if (soloUnaTexto && soloUnaGrafica) {
-        if (botonEliminar) botonEliminar.style.display = 'none';
-        if (divisor) divisor.style.display = 'none';
-        if (contenedorBotones) contenedorBotones.style.justifyContent = 'center';
-      } else {
-        if (botonEliminar) botonEliminar.style.display = 'flex';
-        if (divisor) divisor.style.display = 'block';
-        if (contenedorBotones) contenedorBotones.style.justifyContent = 'space-between';
-      }
-    });
-  });
-
-  observer.observe(contenedor, { childList: true, subtree: true });
+  configurarObservadorLimite(contenedor)
 
   const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
   let nuevoId;
@@ -111,10 +88,11 @@ function agregarTexto(
 
   const vistaPrevia = document.createElement('div');
   vistaPrevia.classList.add('previsualizacion-texto', 'preview-titulo');
-  vistaPrevia.id = `preview-texto-${nuevoId}`;
+  vistaPrevia.id = `previsualizacion-texto-${nuevoId}`;
   vistaPrevia.alignIndex = 0;
 
-  agregarEnPosicion(tarjetaRef, tarjetaTexto, vistaPrevia, contenedor, contenedorPrevia, posicion)
+  const elementoReporte = new ElementoNuevo(tarjetaTexto, vistaPrevia);
+  agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion)
 
   const selectorTipo = tarjetaTexto.querySelector('.tipo-texto');
   const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
@@ -199,36 +177,74 @@ function actualizarCaracteres(areaEscritura, tarjetaTexto) {
   }
 }
 
-function agregarEnPosicion(tarjetaRef, tarjetaTexto, vistaPrevia, contenedor, contenedorPrevia, posicion) {
+/**
+ * Inserta una tarjeta de texto y su previsualización en la posición deseada
+ * 
+ * @param {Element} tarjetaRef - Tarjeta de referencia para la inserción
+ * @param {ElementoReporte} elementoReporte - Elemento de reporte a insertar
+ * @param {Contenedores} contenedores - Contenedores de tarjetas y previsualizaciones
+ * @param {'antes'|'despues'} posicion - Posición de inserción ('antes' o 'despues')
+ * @returns {void}
+ */
+function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) {
   if (tarjetaRef && (posicion === 'antes' || posicion === 'despues')) {
     if (posicion === 'antes') {
-      contenedor.insertBefore(tarjetaTexto, tarjetaRef);
+      contenedores.contenedorTarjeta.insertBefore(elementoReporte.tarjeta, tarjetaRef);
     } else {
-      contenedor.insertBefore(tarjetaTexto, tarjetaRef.nextSibling);
+      contenedores.contenedorTarjeta.insertBefore(elementoReporte.tarjeta, tarjetaRef.nextSibling);
     }
 
     const idRef = tarjetaRef.id;
     let vistaRef;
 
     if (tarjetaRef.classList.contains('tarjeta-texto')) {
-      vistaRef = contenedorPrevia.querySelector(`#preview-texto-${idRef}`);
+      vistaRef = contenedores.contenedorPrevisualizacion.querySelector(`#previsualizacion-texto-${idRef}`);
     } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
-      vistaRef = contenedorPrevia.querySelector(`.previsualizacion-grafica[id='${idRef}']`);
+      vistaRef = contenedores.contenedorPrevisualizacion.querySelector(`#previsualizacion-grafica-${idRef}`);
     }
 
     if (vistaRef) {
       if (posicion === 'antes') {
-        contenedorPrevia.insertBefore(vistaPrevia, vistaRef);
+        contenedores.contenedorPrevisualizacion.insertBefore(elementoReporte.previsualizacion, vistaRef);
       } else {
-        contenedorPrevia.insertBefore(vistaPrevia, vistaRef.nextSibling);
+        contenedores.contenedorPrevisualizacion.insertBefore(elementoReporte.previsualizacion, vistaRef.nextSibling);
       }
     } else {
-      contenedorPrevia.appendChild(vistaPrevia);
+      contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
     }
   } else {
-    contenedor.appendChild(tarjetaTexto);
-    contenedorPrevia.appendChild(vistaPrevia);
+    contenedores.contenedorTarjeta.appendChild(elementoReporte.tarjeta);
+    contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
   }
+}
+
+function configurarObservadorLimite(contenedor) { 
+  const observer = new MutationObserver(() => {
+    const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
+    const tarjetasGrafica = contenedor.querySelectorAll('.tarjeta-grafica');
+    const tarjetasTotales = [...tarjetasTexto, ...tarjetasGrafica];
+
+    tarjetasTotales.forEach(tarjeta => {
+      const botonEliminar = tarjeta.querySelector('.eliminar');
+      const divisor = tarjeta.querySelector('.divisor');
+      const contenedorBotones = tarjeta.querySelector('.botones-editar-eliminar');
+
+      const soloUnaGrafica = tarjetasGrafica.length <= 1;
+      const soloUnaTexto = tarjetasTexto.length <= 1;
+
+      if (soloUnaTexto && soloUnaGrafica) {
+        if (botonEliminar) botonEliminar.style.display = 'none';
+        if (divisor) divisor.style.display = 'none';
+        if (contenedorBotones) contenedorBotones.style.justifyContent = 'center';
+      } else {
+        if (botonEliminar) botonEliminar.style.display = 'flex';
+        if (divisor) divisor.style.display = 'block';
+        if (contenedorBotones) contenedorBotones.style.justifyContent = 'space-between';
+      }
+    });
+  });
+
+  observer.observe(contenedor, { childList: true, subtree: true });
 }
 
 module.exports = {

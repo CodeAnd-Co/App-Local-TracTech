@@ -146,7 +146,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     console.log(tarjetaRef, tarjetaRef.classList);
     
     if (tarjetaRef.classList.contains('tarjeta-texto')) {
-      vistaRef = previsualizacion.querySelector(`#preview-texto-${idRef}`);
+      vistaRef = previsualizacion.querySelector(`#previsualizacion-texto-${idRef}`);
     } else if (tarjetaRef.classList.contains('tarjeta-grafica')) {
       vistaRef = previsualizacion.querySelector(`#previsualizacion-grafica-${idRef}`);
     }
