@@ -14,14 +14,14 @@ const opciones = {
 function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
     try {
         // Obtener datos del localStorage
-        const datosExcelString = localStorage.getItem('datosExcel');
-        if (!datosExcelString) {
+        const datosExcelCadena = localStorage.getItem('datosExcel');
+        if (!datosExcelCadena) {
             throw new Error('No se encontraron datos en localStorage');
         }
         
         let datosExcel;
         try {
-            datosExcel = JSON.parse(datosExcelString);
+            datosExcel = JSON.parse(datosExcelCadena);
         } catch (error) {
             console.error('Error al parsear JSON:', error);
 
