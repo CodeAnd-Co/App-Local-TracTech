@@ -192,7 +192,6 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
     columnaContenedor.style.display = 'block';
 
     const datosHoja = datosExcel.hojas[nombreTractor];
-
     if (!Array.isArray(datosHoja) || datosHoja.length === 0) {
         const mensaje = document.createElement('div');
         mensaje.className = 'columna-nombre';
@@ -202,13 +201,8 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
     }
 
     // Obtener las columnas del primer objeto
-    let columnas = [];
-
-    if (Array.isArray(datosHoja[0])) {
-        columnas = datosHoja[0]; // Usar los valores como nombres de columna
-    } else if (typeof datosHoja[0] === 'object') {
-        columnas = Object.keys(datosHoja[0]); // Usar las claves
-    } else {
+    let columnas = obtenerColumnas(datosHoja);
+    if (!columnas.length) {
         const mensaje = document.createElement('div');
         mensaje.className = 'columna-nombre';
         mensaje.textContent = 'Formato de datos no reconocido';
@@ -218,44 +212,102 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
 
     // Asegurarse de que el objeto para este tractor exista en tractoresSeleccionados
     if (!tractoresSeleccionados[nombreTractor]) {
+        tractoresSeleccionados[nombreTractor] = { eleccionado: false, columnas: [] };
+    }
+    localStorage.setItem('columnas', JSON.stringify(columnas));
+    console.log(localStorage.getItem('columnas'));
+    columnas.forEach(nombreColumna => {
+        const columnaDiv = crearElementoColumna(nombreTractor, nombreColumna);
+        
+        columnaContenedor.appendChild(columnaDiv);
+    });
+}
+
+/**
+ * Obtiene las columnas dentro de una hoja del excel parseado
+ * 
+ * @function obtenerColumnas
+ * @param {string} hoja
+ * @returns {Array}
+ */
+function obtenerColumnas(hoja) {
+    if (Array.isArray(hoja[0])) {
+        return hoja[0]; // Usar los valores como nombres de columna
+    } 
+    if (typeof hoja[0] === 'object') {
+        return Object.keys(hoja[0]); // Usar las claves
+    }
+    return [];
+}
+
+/**
+ * Crea un elemento que contiene el nombre de la columna dentro de una hoja
+ * Permite la seleccion de una columna y agregarla al arreglo global
+ * 
+ * @function crearElementoColumna
+ * @param {string} nombreTractor
+ * @param {string} nombreColumna
+ * @returns {HTMLElement}
+ */
+function crearElementoColumna(nombreTractor, nombreColumna) {
+    const columnaDiv = document.createElement('div');
+    columnaDiv.className = 'columna-nombre';
+
+    const nombreColumnaDiv = document.createElement('div');
+    nombreColumnaDiv.className = 'rancho-texto';
+    nombreColumnaDiv.textContent = nombreColumna;
+
+    const casillaVerificacion = document.createElement('img');
+    casillaVerificacion.className = 'check-box';
+    casillaVerificacion.src = '../utils/iconos/check_box_outline_blank.svg';
+
+    // Verificar si la columna ya está seleccionada
+    if (tractoresSeleccionados[nombreTractor].columnas.includes(nombreColumna)) {
+        caja.src = '../utils/iconos/check_box.svg';
+    }
+    columnaDiv.addEventListener('click', () => {
+        seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion);
+    });
+    columnaDiv.appendChild(nombreColumnaDiv);
+    columnaDiv.appendChild(casillaVerificacion);
+    return columnaDiv;
+}
+
+/**
+ * Selecciona o deselecciona una columna en el panel de columnas de un tractor.
+ * Esta función actualiza la lista de columnas seleccionadas para el tractor específico,
+ * y cambia el icono del checkbox de acuerdo con el estado de selección de la columna.
+ * 
+ * @function seleccionarColumna
+ * @param {string} nombreTractor - El nombre del tractor cuya columna se va a seleccionar o deseleccionar.
+ * @param {string} nombreColumna - El nombre de la columna que se desea seleccionar o deseleccionar.
+ * @param {HTMLElement} caja - El elemento de imagen (checkbox) que refleja el estado de selección de la columna.
+ * @returns {void}
+ */
+function seleccionarColumna(nombreTractor, nombreColumna, caja) {
+    // Verificamos si el tractor está seleccionado
+    if (!tractoresSeleccionados[nombreTractor]) {
         tractoresSeleccionados[nombreTractor] = {
             seleccionado: false, // El tractor no está seleccionado por defecto
             columnas: [] // No tiene columnas seleccionadas inicialmente
         };
     }
-    localStorage.setItem('columnas', JSON.stringify(columnas));
-    console.log(localStorage.getItem('columnas'));
-    columnas.forEach(nombreColumna => {
-        // Crear div para la columna
-        const columnaDiv = document.createElement('div');
-        columnaDiv.className = 'columna-nombre';
 
-        // Texto del nombre
-        const nombreColumnaDiv = document.createElement('div');
-        nombreColumnaDiv.className = 'rancho-texto';
-        nombreColumnaDiv.textContent = nombreColumna;
+    // Verificamos si la columna ya está seleccionada
+    const seleccion = tractoresSeleccionados[nombreTractor];
+    const indice = seleccion.columnas.indexOf(nombreColumna);
+    if (indice === -1) {
+        // Si la columna no está seleccionada, la agregamos
+        seleccion.columnas.push(nombreColumna);
+    } else {
+        // Si la columna ya está seleccionada, la deseleccionamos
+        seleccion.columnas.splice(indice, 1);
+    }
+    // Si hay al menos una columna seleccionada, marcar el tractor como seleccionado
+    seleccion.seleccionado = seleccion.columnas.length > 0;
 
-        const caja = document.createElement('img');
-        caja.className = 'check-box';
-        caja.src = '../utils/iconos/check_box_outline_blank.svg';
-
-        // Verificar si la columna ya está seleccionada
-        if (tractoresSeleccionados[nombreTractor].columnas.includes(nombreColumna)) {
-            caja.src = '../utils/iconos/check_box.svg';
-        }
-
-
-        // Evento de click para seleccionar/deseleccionar la columna
-        columnaDiv.addEventListener('click', () => {
-            // Llamar a la función que maneja la selección/deselección de la columna
-            seleccionarColumna(nombreTractor, nombreColumna, caja);
-        });
-        
-        // Agregar al DOM
-        columnaDiv.appendChild(nombreColumnaDiv);
-        columnaDiv.appendChild(caja);
-        columnasContenedor.appendChild(columnaDiv);
-    });
+    cambiarIconoMarcadoADesmarcado(caja)
+    console.log(tractoresSeleccionados);
 }
 
 /**
@@ -472,42 +524,6 @@ function cambiarSeleccionVisualUnica(contenedor) {
 
 }
 
-/**
- * Selecciona o deselecciona una columna en el panel de columnas de un tractor.
- * Esta función actualiza la lista de columnas seleccionadas para el tractor específico,
- * y cambia el icono del checkbox de acuerdo con el estado de selección de la columna.
- * 
- * @function seleccionarColumna
- * @param {string} nombreTractor - El nombre del tractor cuya columna se va a seleccionar o deseleccionar.
- * @param {string} nombreColumna - El nombre de la columna que se desea seleccionar o deseleccionar.
- * @param {HTMLElement} caja - El elemento de imagen (checkbox) que refleja el estado de selección de la columna.
- * @returns {void}
- */
-function seleccionarColumna(nombreTractor, nombreColumna, caja) {
-    // Verificamos si el tractor está seleccionado
-    if (!tractoresSeleccionados[nombreTractor]) {
-        tractoresSeleccionados[nombreTractor] = {
-            seleccionado: false, // El tractor no está seleccionado por defecto
-            columnas: [] // No tiene columnas seleccionadas inicialmente
-        };
-    }
-
-    // Verificamos si la columna ya está seleccionada
-    const seleccion = tractoresSeleccionados[nombreTractor];
-    const indice = seleccion.columnas.indexOf(nombreColumna);
-    if (indice === -1) {
-        // Si la columna no está seleccionada, la agregamos
-        seleccion.columnas.push(nombreColumna);
-    } else {
-        // Si la columna ya está seleccionada, la deseleccionamos
-        seleccion.columnas.splice(indice, 1);
-    }
-    // Si hay al menos una columna seleccionada, marcar el tractor como seleccionado
-    seleccion.seleccionado = seleccion.columnas.length > 0;
-
-    cambiarIconoMarcadoADesmarcado(caja)
-    console.log(tractoresSeleccionados);
-}
 
 // Exportar funciones para uso global
 window.inicializarModuloTractores = inicializarModuloTractores;
