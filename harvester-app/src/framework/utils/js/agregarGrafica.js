@@ -5,8 +5,8 @@ const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
 const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
-// /* eslint-disable no-unused-vars */
-// /* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
   const Swal = require('sweetalert2');
 }
@@ -16,9 +16,9 @@ if (typeof Swal === 'undefined') {
  *
  * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
  * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
- * @param {HTMLElement|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {HTMLDivElement|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
  * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
- * @returns {HTMLElement} tarjetaGrafica - La tarjeta de gráfica creada.
+ * @returns {HTMLDivElement} tarjetaGrafica - La tarjeta de gráfica creada.
  */
 function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, posicion = null) {
   const contenedor = document.getElementById(contenedorId);
@@ -34,9 +34,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     });
     return
   }
-
-  // Guardar referencia global al contenedor de previsualización
-  window.previsualizacion = previsualizacion;
 
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
@@ -121,7 +118,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
- * @param {number} idGrafica - ID de la gráfica asociada.
  * @returns {void}
  */
 function crearCuadroFormulas(columnas) {
@@ -186,7 +182,7 @@ function crearCuadroFormulas(columnas) {
 
 /**
  * Crea un menú desplegable para seleccionar columnas.
- * @param {HTMLElement} contenedor - Contenedor donde se agregará el menú desplegable.
+ * @param {HTMLDivElement} contenedor - Contenedor donde se agregará el menú desplegable.
  * @param {string} letra - Letra identificadora del menú.
  * @param {string[]} columnas - Lista de columnas disponibles.
  * @returns {void}
@@ -212,6 +208,7 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
 
 /**
  * Verifica si existe un cuadro de fórmulas y lo elimina si existe.
+ * 
  * @returns {void} True si existía un cuadro de fórmulas, false en caso contrario.
  */
 function eliminarCuadroFormulas() {
@@ -227,6 +224,7 @@ function eliminarCuadroFormulas() {
 
 /**
  * Crea una gráfica utilizando Chart.js.
+ * 
  * @param {CanvasRenderingContext2D} contexto - 2dcontext del canvas donde se dibujará la gráfica.
  * @param {String} tipo - String que representa el tipo de gráfica (ej. 'line', 'bar', 'pie', 'doughnut', 'radar', 'polarArea').
  * @param {Int[]} color - Arreglo de 3 enteros que representan el color RGB de la gráfica.
@@ -332,7 +330,8 @@ function crearGrafica(contexto, tipo, color) {
 }
 
 /**
- * Crea un arreglo de colores en formato rgb que van desde el color dado hasta el blanco.
+ * Crea un arreglo de colores en formato rgb que van desde el color dado hacia el blanco.
+ * 
  * @param {Int[]} rgb - Arreglo de 3 enteros que representan el color RGB inicial.
  * @param {Int} pasos - Número de pasos para el degradado.
  * @returns {String[]} Arreglo de strings que representan los colores en formato rgb
@@ -357,6 +356,12 @@ function generarDegradadoHaciaBlanco(rgb, pasos) {
     });
 }
 
+/**
+ * Modifica el título de la gráfica según la entrada del usuario.
+ * 
+ * @param {HTMLDivElement} grafica - Contenedor de la gráfica a modificar.
+ * @param {HTMLInputElement} entradaTexto - Campo de texto donde el usuario ingresa el nuevo título.
+ */
 function modificarTitulo(grafica, entradaTexto) {
   console.log(grafica);
   if (grafica) {
@@ -369,6 +374,13 @@ function modificarTitulo(grafica, entradaTexto) {
   }
 }
 
+/**
+ * Modifica el tipo de gráfica según la selección del usuario.
+ * 
+ * @param {HTMLDivElement} grafica - Contenedor de la gráfica a modificar.
+ * @param {HTMLSelectElement} selectorTipo - Selector de tipo de gráfica.
+ * @param {string} tituloGrafica - Título de la gráfica.
+ */
 function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');
@@ -382,6 +394,12 @@ function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
   }
 }
 
+/**
+ * Elimina la tarjeta de gráfica, su previsualización y el cuadro de fórmulas si es que existe.
+ * 
+ * @param {HTMLDivElement} tarjetaGrafica - Tarjeta de gráfica a eliminar.
+ * @param {HTMLDivElement} grafica - Contenedor de la gráfica a eliminar.
+ */
 function eliminarGrafica(tarjetaGrafica, grafica) {
   tarjetaGrafica.remove();
   if (grafica) grafica.remove();
@@ -391,7 +409,7 @@ function eliminarGrafica(tarjetaGrafica, grafica) {
 /**
  * Inserta una tarjeta de texto y su previsualización en la posición deseada
  * 
- * @param {HTMLElement} tarjetaRef - Tarjeta de referencia para la inserción
+ * @param {HTMLDivElement} tarjetaRef - Tarjeta de referencia para la inserción
  * @param {ElementoReporte} elementoReporte - Elemento de reporte a insertar
  * @param {Contenedores} contenedores - Contenedores de tarjetas y previsualizaciones
  * @param {'antes'|'despues'} posicion - Posición de inserción ('antes' o 'despues')

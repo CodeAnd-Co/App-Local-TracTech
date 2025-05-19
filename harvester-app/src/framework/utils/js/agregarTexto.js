@@ -15,9 +15,9 @@ const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisM
  *
  * @param {string} idContenedor           - ID del elemento donde se añadirán las tarjetas de edición.
  * @param {string} idContenedorPrevisualizacion - ID del elemento donde se mostrará la previsualización.
- * @param {Element|null} tarjetaRef       - Nodo de tarjeta existente junto al cual insertar.
+ * @param {HTMLDivElement|null} tarjetaRef       - Nodo de tarjeta existente junto al cual insertar.
  * @param {'antes'|'despues'} posicion    - 'antes' para arriba, 'despues' para abajo.
- * @returns {Element} tarjetaTexto - La tarjeta de texto creada.
+ * @returns {HTMLDivElement} tarjetaTexto - La tarjeta de texto creada.
  */
 function agregarTexto(
   idContenedor,
@@ -129,8 +129,8 @@ function agregarTexto(
 /**
    * Actualiza el contenido de la vista previa según el texto del {@link areaEscritura}.
    * 
-   * @param {Element} vistaPrevia - Vista previa del texto
-   * @param {Element} areaEscritura - Area de tecto con el contenido a mostrar
+   * @param {HTMLDivElement} vistaPrevia - Vista previa del texto
+   * @param {HTMLTextAreaElement} areaEscritura - Area de tecto con el contenido a mostrar
    * @returns {void}
    */
 function actualizarTexto(vistaPrevia, areaEscritura) {
@@ -152,11 +152,11 @@ function actualizarTexto(vistaPrevia, areaEscritura) {
 /**
  * Actualiza el contador de caracteres restantes en la tarjeta del {@link areaEscritura}.
  * 
- * @param {Element} areaEscritura - Area de tecto con el contenido a mostrar
- * @param {Element} tarjetaTexto - Tarjeta de edición del cuadro de texto
+ * @param {HTMLDivElement} tarjetaTexto - Tarjeta de edición del cuadro de texto
+ * @param {HTMLTextAreaElement} areaEscritura - Area de tecto con el contenido a mostrar
  * @returns {void}
  */
-function actualizarCaracteres(areaEscritura, tarjetaTexto) {
+function actualizarCaracteres(tarjetaTexto, areaEscritura) {
   const caracteresUsados = areaEscritura.value.length;
   const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
   const caracteresRestantes = limite - caracteresUsados;
@@ -180,7 +180,7 @@ function actualizarCaracteres(areaEscritura, tarjetaTexto) {
 /**
  * Inserta una tarjeta de texto y su previsualización en la posición deseada
  * 
- * @param {Element} tarjetaRef - Tarjeta de referencia para la inserción
+ * @param {HTMLDivElement} tarjetaRef - Tarjeta de referencia para la inserción
  * @param {ElementoReporte} elementoReporte - Elemento de reporte a insertar
  * @param {Contenedores} contenedores - Contenedores de tarjetas y previsualizaciones
  * @param {'antes'|'despues'} posicion - Posición de inserción ('antes' o 'despues')
@@ -218,6 +218,12 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
   }
 }
 
+/**
+ * Crea un observador que revisa que haya al menos un cuadro de texto y una gráfica
+ * 
+ * @param {HTMLDivElement} contenedor - Contenedor de tarjetas
+ * @returns {void}
+ */
 function configurarObservadorLimite(contenedor) { 
   const observer = new MutationObserver(() => {
     const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');

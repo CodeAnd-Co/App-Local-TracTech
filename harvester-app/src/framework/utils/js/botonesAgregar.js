@@ -12,12 +12,12 @@ const { agregarGrafica } = require('./agregarGrafica');
 /**
    * Crea y añade dos botones flotantes “+” en la tarjeta (arriba y abajo).
    *
-   * @param {Element} tarjeta – La tarjeta destino.
-   * @function mostrarBotonesAgregar
-   * @memberof module:moduloAnalisis
+   * @param {string} idContenedor – ID del contenedor donde se agregará la tarjeta de gráfica.
+   * @param {string} idContenedorPrevisualizacion – ID del contenedor de previsualización de la gráfica.
+   * @param {HTMLDivElement} tarjeta – La tarjeta destino.
    * @returns {void}
    */
-function mostrarBotonesAgregar(tarjeta, idContenedor, idContenedorPrevisualizacion) {
+function mostrarBotonesAgregar(idContenedor, idContenedorPrevisualizacion, tarjeta) {
     if (!tarjeta) return;
 
     if (tarjeta.querySelector('.btn-agregar-flotante')) return;
@@ -44,10 +44,10 @@ function mostrarBotonesAgregar(tarjeta, idContenedor, idContenedorPrevisualizaci
 /**
    * Abre un modal de SweetAlert2 con opciones para insertar una tarjeta de texto o de gráfica.
    *
-   * @param {Element} tarjeta    – La tarjeta donde se hizo clic.
+   * @param {string} idContenedor            – ID del contenedor donde se agregará la tarjeta de gráfica.
+   * @param {string} idContenedorPrevisualizacion – ID del contenedor de previsualización de la gráfica.
+   * @param {HTMLDivElement} tarjeta    – La tarjeta donde se hizo clic.
    * @param {'antes'|'despues'} ubicacion – Posición donde insertar la nueva tarjeta.
-   * @function abrirMenuAgregar
-   * @memberof module:moduloAnalisis
    * @returns {void}
    */
 function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion) {
@@ -83,9 +83,7 @@ function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion, tarjeta, u
 /**
    * Elimina los botones flotantes “+” de la tarjeta dada.
    *
-   * @param {Element} tarjeta – La tarjeta destino.
-   * @function ocultarBotonesAgregar
-   * @memberof module:moduloAnalisis
+   * @param {HTMLDivElement} tarjeta – La tarjeta destino.
    * @returns {void}
    */
 function ocultarBotonesAgregar(tarjeta) {
@@ -98,9 +96,7 @@ function ocultarBotonesAgregar(tarjeta) {
 /**
  * Cierra el menú de inserción si estuviera abierto.
  *
- * @param {Element} tarjeta – La tarjeta destino.
- * @function cerrarMenuAgregar
- * @memberof module:moduloAnalisis
+ * @param {HTMLDivElement} tarjeta – La tarjeta destino.
  * @returns {void}
  */
 function cerrarMenuAgregar(tarjeta) {
@@ -113,7 +109,7 @@ function cerrarMenuAgregar(tarjeta) {
  * 
  * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
  * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
- * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {HTMLDivElement|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
  * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
  * @returns {void}
  */
@@ -134,7 +130,7 @@ function configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta = n
  * 
  * @param {string} contenedorId            - ID del contenedor donde se agregará la tarjeta de gráfica.
  * @param {string} previsualizacionId      - ID del contenedor de previsualización de la gráfica.
- * @param {Element|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
+ * @param {HTMLDivElement|null} tarjetaRef        - Tarjeta existente junto a la cual insertar (null = al final).
  * @param {'antes'|'despues'} posicion     - 'antes' o 'despues' respecto a tarjetaRef.
  * @returns {void}
  */

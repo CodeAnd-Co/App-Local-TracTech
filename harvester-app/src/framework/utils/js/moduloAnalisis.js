@@ -1,11 +1,3 @@
-/**
- * @file moduloAnalisis.js
- * @module moduloAnalisis
- * @description Módulo que inicializa la interfaz de análisis, configura eventos de botones para agregar texto, gráficas y descargar el reporte en PDF.
- * @version 1.0
- * @since 2025-04-28
- */
-
 // RF25 - Usuario descarga reporte en PDF - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf25/
 
 /* eslint-disable no-unused-vars */
@@ -23,8 +15,6 @@ const { configurarTexto, configurarGrafica } = require('../utils/js/botonesAgreg
  * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío.
  * - Configura delegación de eventos para mostrar/ocultar botones flotantes en tarjetas.
  *
- * @function inicializarModuloAnalisis
- * @memberof module:moduloAnalisis
  * @returns {void}
  */
 /* eslint-disable no-undef */
@@ -65,8 +55,6 @@ function inicializarModuloAnalisis() {
 /**
  * Carga los datos de Excel almacenados en localStorage.
  * 
- * @function cargarDatosExcel
- * @memberof module:moduloAnalisis
  * @returns {Object|null} Datos parseados o null si falla.
  */
 function cargarDatosExcel() {
@@ -94,8 +82,6 @@ function cargarDatosExcel() {
 /**
  * Genera y descarga el reporte en PDF usando jsPDF.
  *
- * @function descargarPDF
- * @memberof module:moduloAnalisis
  * @throws {Error} Si jsPDF no está cargado o falla la extracción de previsualización.
  */
 async function descargarPDF() {
