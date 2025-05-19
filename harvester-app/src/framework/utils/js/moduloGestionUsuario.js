@@ -457,7 +457,7 @@ async function editarUsuario() {
     } catch (error) {
         Swal2.fire({
             title: 'Error de red',
-            text: 'Hubo un problema al conectar con el servidor.',
+            text: error.message || 'Hubo un problema al conectar con el servidor.',
             icon: 'error',
             confirmButtonColor: '#3085d6',
         });
@@ -510,8 +510,7 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
         }
         const correoNormalizado = validator.normalizeEmail(correo.trim())
         const correoYaExiste = listaUsuarios.some(usuario =>
-            usuario.correo === correoNormalizado && usuario.id !== usuarioAEditar.id
-        );
+            usuario.correo === correoNormalizado && usuario.id !== usuarioAEditar.id);
         if (correoYaExiste) {
             return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
         }

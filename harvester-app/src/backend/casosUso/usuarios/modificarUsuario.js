@@ -27,7 +27,7 @@ async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
 
         return respuesta;
     } catch (error) {
-        return { ok: false, mensaje: 'Error al conectar con el servidor' };
+        return { ok: false, mensaje: error.message || 'Error al conectar con el servidor' };
     }
 }
 
