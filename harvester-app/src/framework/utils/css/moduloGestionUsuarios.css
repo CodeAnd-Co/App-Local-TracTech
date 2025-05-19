@@ -181,7 +181,7 @@
 .pop-out form.modificacion {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 2rem;
 }
 
 .pop-out .campo {
@@ -200,6 +200,27 @@
   border: 2px solid rgba(0,0,0,.2);
   border-radius: .5rem;
   font-size: 1rem;
+}
+
+.pop-out .verContrasenia{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  color: rgba(0,0,0,.8);
+  cursor: pointer;
+}
+
+.pop-out .verContrasenia input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.pop-out .verContrasenia label {
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 .pop-out .line-1 {
@@ -235,7 +256,7 @@
 }
 
 /* Mensajes de error bajo los campos */
-.mensaje-error {
+.mensajeError {
   display: none;          /* oculto por defecto */
   color: #e63946;         /* letra roja */
   font-size: 0.875rem;    /* un poco más pequeña que el texto normal */
@@ -244,11 +265,11 @@
 }
 
 /* Input en estado de error: borde en rojo */
-.input-error {
+.inputError {
   border-color: #e63946 !important;
 }
 
 /* Cuando el input tenga clase .input-error, muestra el mensaje bajo él */
-.input-error + .mensaje-error {
+.inputError + .mensajeError {
   display: block;
 }

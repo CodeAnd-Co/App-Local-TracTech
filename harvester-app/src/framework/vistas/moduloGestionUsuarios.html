@@ -38,7 +38,7 @@
             required
             maxlength="55"
           />
-          <small id='mensaje-error-nombre' class='mensaje-error'></small>
+          <small id='mensajeErrorNombre' class='mensajeError'></small>
         </div>
       
         <div class='campo'>
@@ -51,7 +51,7 @@
             required
             maxlength="55"
           />
-          <small id='mensaje-error-correo' class='mensaje-error'></small>
+          <small id='mensajeErrorCorreo' class='mensajeError'></small>
         </div>
       
         <div class='campo'>
@@ -64,7 +64,25 @@
             required
             maxlength="55"
           />
-          <small id='mensaje-error-contrasenia' class='mensaje-error'></small>
+          <small id='mensajeErrorContrasenia' class='mensajeError'></small>
+        </div>
+
+        <div class='campo'>
+          <label for='passwordConfirmar'>Confirmar contraseña</label>
+          <input
+            type='password'
+            id='passwordConfirmar'
+            name='passwordConfirmar'
+            placeholder='Confirmar contraseña'
+            required
+            maxlength="55"
+          />
+          <small id='mensajeErrorConfirmarContrasenia' class='mensajeError'></small>
+        </div>
+
+        <div class='verContraseniaInput'>
+          <input name='verContrasenia' type='checkbox' id='verContrasenia' />
+          <label for='verContrasenia'>Ver contraseña</label>
         </div>
       
         <div class='campo'>
