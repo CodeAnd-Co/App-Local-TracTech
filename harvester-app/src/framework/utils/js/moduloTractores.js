@@ -16,21 +16,36 @@ function inicializarModuloTractores() {
     if (window.actualizarBarraSuperior) {
         window.actualizarBarraSuperior('tractores');
     }
-
-    // Cargar los datos del Excel desde localStorage
     const datosExcel = cargarDatosDeExcel();
-    
-    // Si hay datos, inicializar la visualización aquí
     if (!datosExcel) {
         console.warn('No hay datos disponibles para análisis');
     }
-
     iniciarDistribuidores(datosExcel);
     inicializarTractores(datosExcel);
-    
     busquedaTractores();
     botonesFiltrosTractores()
     botonReporte(datosExcel);
+}
+
+/** 
+ * Cargamos los datos de excel que se encuentran en localStorage
+ * 
+ * @function cargarDatosDeExcel
+ * @returns {object|null} - objeto con las hojas de excel parseadas
+*/
+function cargarDatosDeExcel() {
+    try {
+        const datosExcelJSON = localStorage.getItem('datosExcel');
+        if (!datosExcelJSON) {
+            alert('No hay datos de Excel disponibles');
+            return null;
+        }
+        const datosExcel = JSON.parse(datosExcelJSON);
+        return datosExcel;
+    } catch (error) {
+        console.error('Error al cargar datos de Excel:', error);
+        return null;
+    }
 }
 
 /**
@@ -144,29 +159,6 @@ function inicializarTractores(datosExcel) {
             manejarClickTractor(tractorNombre, datosExcel);
             });
         })
-    }
-}
-
-/** 
- * Cargamos los datos de excel que se encuentran en localStorage
- * 
- * @function cargarDatosDeExcel
- * @returns {object|null} - objeto con las hojas de excel parseadas
-*/
-function cargarDatosDeExcel() {
-    try {
-        // Recuperar los datos de Excel
-        const datosExcelJSON = localStorage.getItem('datosExcel');
-        if (!datosExcelJSON) {
-            alert('No hay datos de Excel disponibles');
-            return null;
-        }
-        // Parsear los datos JSON
-        const datosExcel = JSON.parse(datosExcelJSON);
-        return datosExcel;
-    } catch (error) {
-        console.error('Error al cargar datos de Excel:', error);
-        return null;
     }
 }
 
