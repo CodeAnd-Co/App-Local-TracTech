@@ -81,6 +81,7 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('username').value = '';
         document.getElementById('email').value = '';
         document.getElementById('password').value = '';
+        document.getElementById('passwordConfirmar').value = '';
         document.getElementById('rol').value = '';
 
         columnaCrear.style.display = 'block';
@@ -415,7 +416,9 @@ function modoEditar(idUsuario) {
     document.getElementById('username').value = usuario.nombre;
     document.getElementById('email').value = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
+    document.getElementById('passwordConfirmar').value = '';
     document.getElementById('rol').value = usuario.rol;
+    
 }
 
 /**
@@ -450,7 +453,20 @@ async function editarUsuario() {
     const nombreIngresado = document.getElementById('username').value.trim();
     const correoIngresado = document.getElementById('email').value.trim();
     const contraseniaIngresada = document.getElementById('password').value.trim();
+    const contraseniaConfirmada = document.getElementById('passwordConfirmar').value.trim();
     const rolIngresado = document.getElementById('rol').value.trim();
+
+    // Verificar que las contraseñas coincidan si se está cambiando la contraseña
+    if (contraseniaIngresada !== '') {
+        if (contraseniaIngresada !== contraseniaConfirmada) {
+            return Swal2.fire({
+                title: 'Contraseñas no coinciden',
+                text: 'La contraseña y su confirmación deben ser iguales.',
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+            });
+        }
+    }
 
     // Llamar a la función de validación
     const { error, datos } = validarYLimpiarUsuario({
@@ -485,6 +501,7 @@ async function editarUsuario() {
             document.getElementById('username').value = '';
             document.getElementById('email').value = '';
             document.getElementById('password').value = '';
+            document.getElementById('passwordConfirmar').value = '';
             document.getElementById('rol').value = '';
 
             // Recargar la lista de usuarios
@@ -765,7 +782,7 @@ async function crearUsuario() {
     }
 
     // Verificar campos obligatorios
-    if (!nombre || !correo || !contrasenia || isNaN(idRolFK)) {
+    if (!nombre || !correo || !contrasenia || !confirmContrasenia || isNaN(idRolFK)) {
         return Swal2.fire({
             title: 'Datos incompletos',
             text: 'Por favor, completa todos los campos.',
@@ -774,14 +791,6 @@ async function crearUsuario() {
         });
     }
 
-    if (!nombre || !correo || !contrasenia || isNaN(idRolFK)) {
-        return Swal2.fire({
-            title: 'Datos incompletos',
-            text: 'Por favor, completa todos los campos.',
-            icon: 'warning',
-            confirmButtonColor: '#3085d6',
-        });
-    }
 
     if (listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correo.toLowerCase())) {
         await Swal2.fire({
