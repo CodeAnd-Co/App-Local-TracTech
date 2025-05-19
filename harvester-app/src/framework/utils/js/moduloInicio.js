@@ -99,6 +99,11 @@ function botonCargar() {
                     } else {
                         // Si hubo error de validación, mostramos el mensaje
                         elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+                        botonBorrar.style.display = 'none';
+                        botonAnalisis.setAttribute('disabled', 'true');
+                        botonAnalisis.style.cursor = 'default';
+                        localStorage.removeItem('nombreArchivoExcel');
+                        localStorage.removeItem('datosExcel');
                         
                         // Mostrar modal con el error de validación
                         Swal.fire({
@@ -118,6 +123,9 @@ function botonCargar() {
                     
                     // Actualizar UI
                     elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+                    botonAnalisis.setAttribute('disabled', 'true');
+                    localStorage.removeItem('nombreArchivoExcel');
+                    localStorage.removeItem('datosExcel');
                     
                     // Mostrar modal con el error
                     Swal.fire({
