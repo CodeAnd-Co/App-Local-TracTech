@@ -65,35 +65,46 @@ function iniciarDistribuidores(datosExcel) {
 
     const hojaExcel = datosExcel.hojas.Distribuidor;
     
-    if (!hojaExcel || !Array.isArray(hojaExcel) || hojaExcel.length === 0) {
-        console.warn('No se encontraron distribuidores');
-    } else {
-        distribuidorContenedor.style.visibility = 'visible';
-        hojaExcel.forEach(fila => {
-            const nombreDistribuidor = fila.Distribuidor || fila.Nombre || fila.NombreDistribuidor;
-            if (!nombreDistribuidor) return;
-    
-            // Crear div para distribuidor
-            const distribuidorDiv = document.createElement('div');
-            distribuidorDiv.className = 'rancho';
-    
-            // Crear nombre del distribuidor
-            const nombreDistribuidorDiv = document.createElement('div');
-            nombreDistribuidorDiv.className = 'rancho-texto';
-            nombreDistribuidorDiv.textContent = nombreDistribuidor;
-    
-            // Crear checkbox
-            const caja = document.createElement('img');
-            caja.className = 'check-box';
-            caja.src = '../utils/iconos/check_box_outline_blank.svg';
-    
-            // Añadir elementos
-            distribuidorDiv.appendChild(nombreDistribuidorDiv);
-            distribuidorDiv.appendChild(caja);
-            distribuidoresContenedor.appendChild(distribuidorDiv);
-        });
+    if (!Array.isArray(hojaExcel) || hojaExcel.length === 0) {
+        return console.warn('No se encontraron distribuidores');
     }
 
+    distribuidorContenedor.style.visibility = 'visible';
+
+    hojaExcel.forEach(fila => {
+        const nombreDistribuidor = fila.distribuidor || fila.nombre || fila.nombreDistribuidor;
+        if (!nombreDistribuidor) {
+            return;
+        }
+        const distribuidorDiv = crearElementoDistribuidor(nombreDistribuidor)
+        distribuidoresContenedor.appendChild(distribuidorDiv);
+    });
+}
+
+/**
+ * Crea un elemento que contiene el nombre del distribuidor
+ * 
+ * @function crearElementoDistribuidor
+ * @param {String} nombreDistribuidor
+ * @returns {void}
+ */
+function crearElementoDistribuidor(nombreDistribuidor) {
+    const distribuidorDiv = document.createElement('div');
+    distribuidorDiv.className = 'rancho';
+
+    // Crear nombre del distribuidor
+    const textoDistribuidor = document.createElement('div');
+    textoDistribuidor.className = 'rancho-texto';
+    textoDistribuidor.textContent = nombreDistribuidor;
+
+    const casillaVerificacion = document.createElement('img');
+    casillaVerificacion.className = 'check-box';
+    casillaVerificacion.src = '../utils/iconos/check_box_outline_blank.svg';
+
+    // Añadir elementos
+    distribuidorDiv.appendChild(nombreDistribuidorDiv);
+    distribuidorDiv.appendChild(caja);
+    return distribuidorDiv;
 }
 
 /**
