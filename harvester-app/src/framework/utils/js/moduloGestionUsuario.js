@@ -51,6 +51,12 @@ async function inicializarModuloGestionUsuarios() {
         // Cargar usuarios
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
+
+        // No mostrar el usuario que consulta la lista
+        const usuarioActual = localStorage.getItem('nombreUsuario');
+        listaUsuarios = listaUsuarios.filter(usuario => usuario.nombre !== usuarioActual.trim());
+
+        // Cargar usuarios filtrados
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
 
