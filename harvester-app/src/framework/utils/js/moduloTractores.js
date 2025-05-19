@@ -21,7 +21,7 @@ function inicializarModuloTractores() {
         console.warn('No hay datos disponibles para análisis');
     }
     iniciarDistribuidores(datosExcel);
-    inicializarTractores(datosExcel);
+    iniciarTractores(datosExcel);
     busquedaTractores();
     botonesFiltrosTractores()
     botonReporte(datosExcel);
@@ -114,7 +114,7 @@ function crearElementoDistribuidor(nombreDistribuidor) {
  * @param {object} datosExcel - Objeto que contiene las hojas del Excel cargado.
  * @returns {void}
  */
-function inicializarTractores(datosExcel) {
+function iniciarTractores(datosExcel) {
     const tractoresContenedor = document.querySelector('.tractores-contenido');
     tractoresContenedor.innerHTML = '';
     const nombresTractores = Object.keys(datosExcel.hojas);
@@ -158,16 +158,7 @@ function crearElementoTractor(nombreTractor, datosExcel) {
     casillaVerificacion.src = '../utils/iconos/check_box_outline_blank.svg';
     tractorDiv.appendChild(casillaVerificacion);
     
-    casillaVerificacion.addEventListener('click', () => {
-        // Cambiar el estado de selección del tractor
-        const indice = tractoresSeleccionados[nombreTractor] ? tractoresSeleccionados[nombreTractor].seleccionado : false;
-        tractoresSeleccionados[nombreTractor] = {
-            seleccionado: !indice,
-            columnas: tractoresSeleccionados[nombreTractor] ? tractoresSeleccionados[nombreTractor].columnas : []
-        };
-        cambiarIconoMarcadoADesmarcado(casillaVerificacion);
-        console.log(tractoresSeleccionados);
-    })
+    casillaVerificacion.addEventListener('click', () => cambiarSeleccionTractor(nombreTractor, casillaVerificacion));
     tractorTextoDiv.addEventListener('click', () => {
         cambiarSeleccionVisualUnica(tractorDiv);
         manejarClickTractor(nombreTractor, datosExcel);
@@ -176,7 +167,27 @@ function crearElementoTractor(nombreTractor, datosExcel) {
 }
 
 /**
+ * Cambia la seleccion de un tractor dentro del arreglo global tractoresSeleccionados
+ * 
+ * @function cambiarSeleccionTractor 
+ * @param {string} nombreTractor
+ * @param {HTMLElement} casillaVerificacion
+ * @returns {void}
+ */
+function cambiarSeleccionTractor(nombreTractor, casillaVerificacion) {
+    const estadoActual = tractoresSeleccionados[nombreTractor]?.seleccionado ?? false;
+    const columnas = tractoresSeleccionados[nombreTractor]?.columnas ?? [];
+    tractoresSeleccionados[nombreTractor] = {
+        seleccionado: !estadoActual,
+        columnas
+    };
+    cambiarIconoMarcadoADesmarcado(casillaVerificacion);
+    console.log(tractoresSeleccionados);
+}
+
+/**
  * Muestra las colmunas de un tractor específico en el contenedor de columnas
+ * Permite la seleccion individual
  * 
  * @function mostrarColumnasTractor
  * @param {string} nombreTractor
