@@ -94,12 +94,10 @@ async function renderizarFormulas() {
                  
                 const formulaId = evento.currentTarget.getAttribute('data-id');
                 // Implementar lógica para editar fórmula
-                console.log(`Editar fórmula con ID: ${formulaId}`);
                 formulas.forEach((formula) => {
                     if (formula.idFormula == formulaId) {
                         const nombre = formula.Nombre;
                         const formulaTexto = formula.Datos;
-                        console.log(`Nombre: ${nombre}, Fórmula: ${formulaTexto}`);
                         inicializarModificarFormula(formulaId, nombre, formulaTexto);
                     }
                 })

@@ -14,7 +14,7 @@ const Swal = require('sweetalert2');
  * @returns {Promise<Object>} Respuesta del servidor con la fórmula modificada.
  * @throws {Error} Si no se pudo modificar la fórmula.
  */
-function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
+async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     if (!id || !nombre || !formula || id === '' || nombre === '' || formula === '') {
         Swal.fire({
             title: 'Error',
@@ -43,8 +43,6 @@ function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         return;
     }
     
-    // When passing nombre and formula to the function, pass the original name too
-    // This allows us to check if the name is being changed or not
     
     let formulasGuardadas = localStorage.getItem('nombresFormulas');
     formulasGuardadas = JSON.parse(formulasGuardadas);
@@ -61,7 +59,7 @@ function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     
     const token = localStorage.getItem('token');
     try {
-        const respuesta = modificarFormula(id, nombre, formula, token);
+        const respuesta = await modificarFormula(id, nombre, formula, token);
         if (respuesta.ok) {
             Swal.fire({
                 title: 'Fórmula modificada',
@@ -90,6 +88,12 @@ function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     }
 }
 
+/**
+ * @function inicializarModificarFormula
+ * @param {string} id - ID de la fórmula a modificar.
+ * @param {string} nombre - Nombre de la fórmula a modificar.
+ * @param {string} formula - Fórmula a modificar.
+ */
 function inicializarModificarFormula(id, nombre, formula) {
     localStorage.setItem('secccion-activa', 'modificarFormula');
     const ventanaPrincipal = document.querySelector('.ventana-principal');
