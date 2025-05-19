@@ -92,6 +92,11 @@ async function inicializarCrearFormula() {
  * @throws {Error} Si hay un error al guardar la fórmula.
  */
 async function procesarFormula() {
+    const contenedor = document.getElementById('function-arguments');
+    if (!validarCamposFormula(contenedor)) {
+        return;
+    }
+
     generarFormulaCompleja();
     const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
     const nombreFormula = nombreFormulaSinProcesar.trim();
@@ -448,6 +453,61 @@ function masArgumentosCountif(contenedor) {
 }
 
 /**
+ * @function validarCamposFormula
+ * @description Verifica que todos los campos requeridos de la fórmula tengan datos.
+ * @param {HTMLElement} contenedor - El contenedor que contiene los argumentos de la función.
+ * @return {boolean} - True si todos los campos requeridos tienen datos, false en caso contrario.
+ */
+function validarCamposFormula(contenedor) {
+    const elementosArgumentos = Array.from(contenedor.children);
+    let camposValidos = true;
+    let mensajeError = '';
+
+    elementosArgumentos.forEach(argumento => {
+        if (!camposValidos) return; // Si ya encontramos un error, no seguimos validando
+        
+        // Validar selectores de variables
+        const variableSelector = argumento.querySelector('.variable-selector');
+        if (variableSelector && !variableSelector.value) {
+            camposValidos = false;
+            mensajeError = 'Hay campos de variable sin seleccionar';
+            return;
+        }
+        
+        // Validar inputs de texto
+        const inputTexto = argumento.querySelector('input[type="text"]');
+        if (inputTexto && !inputTexto.value.trim()) {
+            camposValidos = false;
+            mensajeError = 'Hay campos de texto vacíos';
+            return;
+        }
+        
+        // Validar funciones anidadas
+        const selectorAnidado = argumento.querySelector('.selectorFuncionAnidada');
+        if (selectorAnidado && selectorAnidado.value) {
+            const contenedorAnidado = argumento.querySelector('.funciones-anidadas');
+            if (contenedorAnidado && !validarCamposFormula(contenedorAnidado)) {
+                camposValidos = false;
+                mensajeError = 'Hay campos vacíos en las funciones anidadas';
+                return;
+            }
+        }
+    });
+    
+    if (!camposValidos) {
+        Swal.fire({
+            title: 'Error',
+            text: mensajeError,
+            icon: 'error',
+            confirmButtonColor: '#1F4281',
+        });
+    }
+    
+    return camposValidos;
+}
+
+
+/**
  * @function generarFormulaCompleja
  * @description Genera una fórmula compleja basada en la función seleccionada y los argumentos proporcionados.
  * @returns {void} - No devuelve nada.
@@ -466,8 +526,13 @@ function generarFormulaCompleja() {
         });
         return;
     }
+    
+    const contenedor = document.getElementById('function-arguments');
+    if (!validarCamposFormula(contenedor)) {
+        return;
+    }
 
-    const formula = construirFormulaDesdeContenedor(document.getElementById('function-arguments'), seleccionFuncionPrincipal.value);
+    const formula = construirFormulaDesdeContenedor(contenedor, seleccionFuncionPrincipal.value);
     document.getElementById('resultado').innerText = `Fórmula generada (en inglés para HyperFormula):\n=${formula}`;
 }
 
