@@ -859,9 +859,10 @@ async function crearUsuario() {
             nombreInput.value = '';
             correoInput.value = '';
             contraseniaInput.value = '';
+            confirmContrasenia.value = '';
             rolInput.value = '';
 
-            document.getElementById('columna-crear-usuario').style.display = 'none';
+            document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
             
             // Actualizar la vista para mostrar el nuevo usuario en la lista
             setTimeout(() => {
