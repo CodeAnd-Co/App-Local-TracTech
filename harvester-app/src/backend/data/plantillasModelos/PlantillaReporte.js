@@ -1,6 +1,3 @@
-/**
- * Representa la estructura de una plantilla de reporte tal y como la ves en tu tabla.
- */
 class PlantillaReporte {
   /**
    * @param {Object} props
