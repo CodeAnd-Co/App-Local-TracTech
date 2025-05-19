@@ -2,8 +2,8 @@
 // RF18 - Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf18/
 // RF19 - Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf19/
 
-// /* eslint-disable no-unused-vars */
-// /* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
   const Swal = require('sweetalert2');
 }
