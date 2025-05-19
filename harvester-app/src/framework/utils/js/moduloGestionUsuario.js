@@ -1,16 +1,26 @@
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
+// RF41 Administrador modifica usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41
 // RF43 Administrador elimina usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF43
 // RF41 Administrador consulta usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41 
 // RF39 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF39
 
+const { modificarUsuario } = require('../../backend/casosUso/usuarios/modificarUsuario.js');
 const { crearUsuario: crearUsuarioCU } = require('../../backend/casosUso/usuarios/crearUsuario');
 const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
 const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
 const { consultarRoles: consultarRolesCU } = require('../../backend/casosUso/usuarios/consultarRoles.js');
+const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require('../utils/js/validacionesCompartidas.js');
 
 const Swal2 = require('sweetalert2');
+const validator = require('validator');
 
 const usuariosPorPagina = 6;
+const modoFormulario = Object.freeze({
+    CREAR: 'crear',
+    EDITAR: 'editar',
+});
+let modoActual = modoFormulario.CREAR;
+let usuarioAEditar = null;
 let paginaActual = 1;
 let listaUsuarios = [];
 let usuariosFiltrados = [];
@@ -28,14 +38,23 @@ let listaCorreos = [];
 async function inicializarModuloGestionUsuarios() {
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
-    const columnaCrear = document.getElementById('columna-crear-usuario');
+    const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
 
     try {
+        // Limpiar la lista de usuarios y los filtros
+        listaUsuarios = [];
+        usuariosFiltrados = [];
+
+        // Limpiar el campo de búsqueda
+        document.getElementById('buscar-usuario').value = '';
+
         // Cargar usuarios
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
+
+        configurarValidacionesCampos()
         
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
@@ -49,6 +68,21 @@ async function inicializarModuloGestionUsuarios() {
     botonAgregar.parentNode.replaceChild(nuevoBotonAgregar, botonAgregar);
     nuevoBotonAgregar.addEventListener('click', evento => {
         evento.preventDefault();
+
+        // Actualizar estados globales
+        modoActual = modoFormulario.CREAR;
+        usuarioAEditar = null;
+
+        // Cambiar texto del formulario
+        document.querySelector('.crear-modificar-usuario').textContent = 'Crear usuario';
+        document.querySelector('.btn-guardar').textContent = 'Guardar';
+
+        // Limpiar los campos del formulario
+        document.getElementById('username').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('rol').value = '';
+
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
         listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
@@ -69,13 +103,15 @@ async function inicializarModuloGestionUsuarios() {
     botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
-        // Deshabilitar el botón para evitar múltiples envíos
-        nuevoBotonGuardar.disabled = true;
-        await crearUsuario();
-        // Volver a habilitar el botón después de que termine el proceso
-        nuevoBotonGuardar.disabled = false;
-
-
+        if (modoActual === modoFormulario.CREAR) {
+            // Deshabilitar el botón para evitar múltiples envíos
+            nuevoBotonGuardar.disabled = true;
+            await crearUsuario();
+            // Volver a habilitar el botón después de que termine el proceso
+            nuevoBotonGuardar.disabled = false;
+        } else if (modoActual === modoFormulario.EDITAR) {
+            await editarUsuario();
+        }
     });
 
     // Configurar el campo de búsqueda
@@ -123,21 +159,24 @@ async function eliminarUsuario(id) {
             return Swal2.fire({
                 title: 'Error',
                 text: 'Error al eliminar el usuario.',
-                icon: 'error'
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
             });
         }
         
         return Swal2.fire({
             title: 'Eliminación exitosa',
             text: 'El usuario ha sido eliminado.',
-            icon: 'success'
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
         });
     } catch (error) {
         console.error('Error al eliminar el usuario:', error);
         return Swal2.fire({
                 title: 'Error de conexión',
                 text: 'Verifica tu conexión e inténtalo de nuevo.',
-                icon: 'error'
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
             });
     }
 }
@@ -258,7 +297,7 @@ function mostrarUsuarios(usuarios) {
             <div class='nombre-usuario'>
                 <div class='texto-usuario'>${nombre}</div>
             </div>
-                <button class='boton-editar'>
+                <button class='boton-editar' data-id='${id}'>
                   <img src='../utils/iconos/Editar2.svg' alt='Editar'/>
                 </button>
                 <button class='boton-eliminar' data-id='${id}'>
@@ -268,6 +307,9 @@ function mostrarUsuarios(usuarios) {
         fragmento.appendChild(div);
     }
     listaUsuariosElemento.appendChild(fragmento);
+
+    // Añadir eventos a los botones de editar
+    escucharEventoBotonesEditar(listaUsuariosElemento);
 
     // Añadir eventos a los botones de eliminar
     const botonesEliminar = listaUsuariosElemento.querySelectorAll('.boton-eliminar');
@@ -297,6 +339,260 @@ function mostrarUsuarios(usuarios) {
 }
 
 /**
+ * Esta función busca todos los elementos con la clase `.boton-editar` en la lista
+ * de usuarios actualmente renderizados (paginados). Al hacer clic en uno de estos
+ * botones, se obtiene el `idUsuario` correspondiente desde `usuariosFiltrados`,
+ * y se invoca la función `modificarUsuario(id)` para iniciar el proceso de edición.
+ *
+ * @param {void}
+ * @returns {void}
+ */
+function escucharEventoBotonesEditar(listaDeUsuarios) {
+    listaDeUsuarios.querySelectorAll('.boton-editar').forEach(boton => {
+        boton.addEventListener('click', evento => {
+            evento.preventDefault();
+            modoEditar(boton.dataset.id);
+            cargarRoles();
+        });
+    });
+}
+
+/**
+ * Cambia el modo del formulario a "Editar" y precarga los datos del usuario seleccionado.
+ *
+ * @function modoEditar
+ * @param {number} idUsuario - El identificador único del usuario que se desea editar.
+ * @throws {Error} Si el usuario con el ID proporcionado no se encuentra en la lista de usuarios.
+ */
+function modoEditar(idUsuario) {
+
+    // Precargar los datos del usuario
+    const usuario = listaUsuarios.find(usuario => usuario.id === Number(idUsuario));
+    if (!usuario) {
+        console.error('Usuario no encontrado');
+        return;
+    }
+
+    // Actualizar estados globales
+    modoActual = modoFormulario.EDITAR;
+    usuarioAEditar = usuario;
+
+    // Cambiar texto del formulario
+    document.querySelector('.crear-modificar-usuario').textContent = 'Modificar usuario';
+    document.querySelector('.btn-guardar').textContent = 'Modificar';
+    document.getElementById('columna-crear-modificar-usuario').style.display = 'block';
+
+    
+    document.getElementById('username').value = usuario.nombre;
+    document.getElementById('email').value = usuario.correo;
+    document.getElementById('password').value = ''; // Por seguridad, no se muestra
+    document.getElementById('rol').value = usuario.rol;
+}
+
+/**
+ * Envía los datos modificados del usuario al backend y actualiza la vista.
+ * Al finalizar—tanto si tuvo éxito como si no—resetea el formulario y el estado
+ * de edición para volver al modo de creación de usuario.
+ *
+ * @async
+ * @function editarUsuario
+ * @returns {Promise<void>}
+ */
+async function editarUsuario() {
+    const nombreIngresado = document.getElementById('username').value.trim();
+    const correoIngresado = document.getElementById('email').value.trim();
+    const contraseniaIngresada = document.getElementById('password').value.trim();
+    const rolIngresado = document.getElementById('rol').value.trim();
+
+    // Llamar a la función de validación
+    const { error, datos } = validarYLimpiarUsuario({
+        nombre: nombreIngresado,
+        correo: correoIngresado,
+        contrasenia: contraseniaIngresada,
+        idRol: Number(rolIngresado),
+    });
+
+    if (error) {
+        Swal2.fire({
+            title: 'Error',
+            text: error,
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+        });
+    }
+
+    const { idUsuario, nombre, correo, contrasenia, idRol } = datos;
+
+    try {
+        const resultado = await modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol);
+        if (resultado.ok) {
+            Swal2.fire({
+                title: 'Usuario modificado',
+                text: resultado.mensaje || 'El usuario fue modificado correctamente.',
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+            });
+
+            // Limpiar los campos del formulario
+            document.getElementById('username').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('rol').value = '';
+
+            // Recargar la lista de usuarios
+            setTimeout(() => {
+                inicializarModuloGestionUsuarios();
+            }, 500);
+            
+            // Ocultar el formulario tras una modificación exitosa
+            document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
+        } else {
+            Swal2.fire({
+                title: 'Error al modificar usuario',
+                text: resultado.mensaje || 'No se pudo modificar el usuario.',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+            });
+        }
+    } catch (error) {
+        Swal2.fire({
+            title: 'Error de red',
+            text: error.message || 'Hubo un problema al conectar con el servidor.',
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+        });
+    }
+}
+
+/**
+ * Valida y sanea los datos para la edición de un usuario en el front-end.
+ * Reproduce las mismas validaciones que el back-end y devuelve los valores listos para enviar.
+ *
+ * @param {Object} params - Parámetros de validación.
+ * @param {string} params.nombre - Nuevo nombre ingresado por el usuario.
+ * @param {string} params.correo - Nuevo correo ingresado por el usuario.
+ * @param {string} params.contrasenia - Nueva contraseña ingresada por el usuario.
+ * @param {number|null} params.idRol - Nuevo ID de rol ingresado, o null si no se modificó.
+ * @returns {{ error: string|null, datos: Object|null }}
+ */
+function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
+    
+    const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
+
+    // TODO: Utilizar estructuras de control en lugar de operadores ternarios
+    // Flags de “campo modificado”
+    const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
+    const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
+    const cambioContrasenia = contrasenia !== '';
+    const cambioRol = idRol !== null && idRol !== idRolUsuarioAEditar
+
+    // Validar que haya cambiado mínimo un campo
+    if (!(cambioNombre || cambioCorreo || cambioContrasenia || cambioRol)) {
+        return { error: 'Debes modificar al menos un campo del usuario.', datos: null };
+    }
+
+    const datos = { idUsuario: usuarioAEditar.id };
+
+    // Validar nombre
+    if (cambioNombre) {
+        const error = validarNombreCampo(nombre);
+        if (error) {
+            return { error, datos: null };
+        }
+        datos.nombre = validator.escape(nombre.trim());
+    }
+
+    // Validar correo
+    if (cambioCorreo) {
+        const error = validarCorreoCampo(correo);
+        if (error) {
+            return { error, datos: null };
+        }
+        const correoNormalizado = validator.normalizeEmail(correo.trim())
+        const correoYaExiste = listaUsuarios.some(usuario =>
+            usuario.correo === correoNormalizado && usuario.id !== usuarioAEditar.id);
+        if (correoYaExiste) {
+            return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
+        }
+        datos.correo = correoNormalizado;
+    }
+
+    // Validar contraseña
+    if (cambioContrasenia) {
+        const error = validarContraseniaCampo(contrasenia);
+        if (error) {
+            return { error, datos: null };
+        }
+        datos.contrasenia = contrasenia.trim();
+    }
+
+    // Validar rol
+    if (cambioRol) {
+        const error = validarRolCampo(idRol);
+        if (error) {
+            return { error, datos: null };
+        }
+        datos.idRol = idRol;
+    }
+
+    return { error: null, datos };
+}
+
+/**
+ * Configura validaciones en tiempo real para los campos del formulario de usuarios.
+ *
+ * @function configurarValidacionesCampos
+ * @returns {void}
+ */
+function configurarValidacionesCampos() {
+    // Mapeo de campos a validar:
+    const campos = [
+        {
+            idInput: 'username',
+            idError: 'mensaje-error-nombre',
+            validador: validarNombreCampo
+        },
+        {
+            idInput: 'email',
+            idError: 'mensaje-error-correo',
+            validador: validarCorreoCampo
+        },
+        {
+            idInput: 'password',
+            idError: 'mensaje-error-contrasenia',
+            validador: validarContraseniaCampo
+        }
+    ];
+
+    campos.forEach(({ idInput: idEntrada, idError, validador, evento }) => {
+        const campoEntrada = document.getElementById(idEntrada);
+        const mensajeError = document.getElementById(idError);
+        const tipoEvento = evento || 'input';
+
+        campoEntrada.addEventListener(tipoEvento, () => {
+            const valor = campoEntrada.value;
+            
+            if(valor.trim() === '') {
+                campoEntrada.classList.remove('input-error');
+                mensajeError.textContent = '';
+                return;
+            }
+
+            const mensaje = validador(valor);
+
+            if (mensaje) {
+                campoEntrada.classList.add('input-error');
+                mensajeError.textContent = mensaje;
+            } else {
+                campoEntrada.classList.remove('input-error');
+                mensajeError.textContent = '';
+            }
+        });
+    });
+}
+
+
+/**
  * Crea un nuevo usuario en el sistema.
  * Captura los datos del formulario, valida los campos, 
  * realiza la petición al backend mediante crearUsuarioAPI y muestra retroalimentación.
@@ -320,6 +616,7 @@ async function crearUsuario() {
             title: 'Datos incompletos',
             text: 'Por favor, completa todos los campos.',
             icon: 'warning',
+            confirmButtonColor: '#3085d6',
         });
     }
 
@@ -377,6 +674,7 @@ async function crearUsuario() {
                 title: 'Usuario creado',
                 text: resultado.mensaje || 'El usuario fue registrado correctamente.',
                 icon: 'success',
+                confirmButtonColor: '#3085d6',
             });
 
             // Limpiar los campos del formulario
@@ -396,6 +694,7 @@ async function crearUsuario() {
                 title: 'Error al crear usuario',
                 text: resultado.mensaje || 'No se pudo registrar el usuario.',
                 icon: 'error',
+                confirmButtonColor: '#3085d6',
             });
         }
     } catch (error) {
@@ -404,6 +703,7 @@ async function crearUsuario() {
             title: 'Error de red',
             text: 'Hubo un problema al conectar con el servidor.',
             icon: 'error',
+            confirmButtonColor: '#3085d6',
         });
     }
 }
@@ -445,26 +745,34 @@ async function guardarRoles() {
  * @returns {void}
  */
 function llenarSelectConRoles(selectRol) {
+
+    const rolPorDefecto = usuarioAEditar.rol;
+    
     if (!rolesCache || rolesCache.length === 0) {
         selectRol.innerHTML = '<option value="">No hay roles disponibles</option>';
         return;
     }
 
     // Limpiar el contenido previo del <select>
-    selectRol.innerHTML = '<option value="">Selecciona un rol</option>';
+    selectRol.innerHTML = `
+        <option value="" disabled ${rolPorDefecto===null ? 'selected' : ''}>
+        Selecciona rol
+        </option>
+    `;
 
     // Agregar los roles al <select>
     rolesCache.forEach(rol => {
-        
         const option = document.createElement('option');
-        option.value = rol.idRol; // Envía el idRol al backend
-        option.textContent = rol.Nombre; // Muestra el nombre del rol
+        option.value = rol.idRol;
+        option.textContent = rol.Nombre;
+        if (rol.Nombre === rolPorDefecto) {
+          option.selected = true;
+        }
         selectRol.appendChild(option);
     });
 }
 
 
-// Ejemplo de uso
 function cargarRoles() {
     const selectRol = document.querySelector('#rol'); // Busca el <select> con id="rol"
     if (selectRol) {
@@ -473,9 +781,6 @@ function cargarRoles() {
             // Llenar el <select> con los roles guardados
             llenarSelectConRoles(selectRol);
         });
-
-        // También puedes agregar un evento para recargar los roles si es necesario
-        selectRol.addEventListener('focus', () => llenarSelectConRoles(selectRol));
     } else {
         console.error('No se encontró el elemento <select> con id="rol".');
     }

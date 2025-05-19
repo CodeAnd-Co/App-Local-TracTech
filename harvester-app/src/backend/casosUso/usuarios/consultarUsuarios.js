@@ -21,15 +21,14 @@ async function obtenerUsuarios() {
 
         const datosUsuarios = respuesta.usuarios || [];
 
-        datosUsuarios.forEach(usuarionInformacion => {
-            const usuario = new Usuario(usuarionInformacion.id, usuarionInformacion.nombre, usuarionInformacion.correo);
+        datosUsuarios.forEach(usuarioInformacion => {
+            const usuario = new Usuario(usuarioInformacion.id, usuarioInformacion.nombre, usuarioInformacion.correo, usuarioInformacion.rol);
             listaUsuarios.agregarUsuario(usuario);
         });
 
         return listaUsuarios;
     } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-        throw new Error('No se pudo obtener la lista de usuarios');
+        throw new Error('No se pudo obtener la lista de usuarios:', error.message);
     }
 }
 

@@ -5,8 +5,8 @@ const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
 const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+// /* eslint-disable no-unused-vars */
+// /* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
   const Swal = require('sweetalert2');
 }
@@ -50,7 +50,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   tarjetaGrafica.id = nuevaId;
   tarjetaGrafica.innerHTML = `
-    <input class='titulo-grafica' placeholder='Nombre de la gráfica' />
+    <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='30'/>
     <div class='titulo-texto'>
       <select class='tipo-texto tipo-grafica'>
         <option value='line'>Línea</option>
@@ -71,6 +71,15 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>
+    <style>
+      .contador-caracteres {
+        font-size: 12px;
+        text-align: right;
+        color: #7f8c8d;
+        margin: 4px 0;
+        padding-right: 4px;
+      }
+    </style>
   `;
 
   // Datos disponibles para fórmulas
@@ -98,7 +107,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   const entradaTexto = tarjetaGrafica.querySelector('.titulo-grafica');
   entradaTexto.addEventListener('input', () =>
-    modificarTitulo(graficaDiv, entradaTexto));
+    modificarTitulo(graficaDiv, entradaTexto, tarjetaGrafica));
 
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
   const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
@@ -361,9 +370,18 @@ function generarDegradadoHaciaBlanco(rgb, pasos) {
  * 
  * @param {HTMLDivElement} grafica - Contenedor de la gráfica a modificar.
  * @param {HTMLInputElement} entradaTexto - Campo de texto donde el usuario ingresa el nuevo título.
+ * @param {HTMLDivElement} tarjetaGrafica - Tarjeta de gráfica donde se encuentra el campo de texto.
  */
-function modificarTitulo(grafica, entradaTexto) {
-  console.log(grafica);
+function modificarTitulo(grafica, entradaTexto, tarjetaGrafica) {
+  let contador = tarjetaGrafica.querySelector('.contador-caracteres');
+  if (!contador) {
+    contador = document.createElement('div');
+    contador.className = 'contador-caracteres';
+    tarjetaGrafica.insertBefore(contador, tarjetaGrafica.querySelector('.titulo-texto'));
+  }
+
+  contador.textContent = `${this.value.length}/30 caracteres`;
+
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');
     const graficaChartjs = Chart.getChart(contexto);
