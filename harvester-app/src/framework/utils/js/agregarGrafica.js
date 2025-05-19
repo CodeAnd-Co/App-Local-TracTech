@@ -37,17 +37,19 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
-
-  const tarjetasExistentes = contenedor.querySelectorAll('.tarjeta-grafica');
+  const idsTarjetasExistentes = Array.from(contenedor.querySelectorAll('.tarjeta-grafica'), (tarjeta) => {
+    return parseInt(tarjeta.id, 10);
+  });
+  
   let nuevaId;
 
-  if (tarjetasExistentes.length > 0) {
-    const idAnterior = parseInt(tarjetasExistentes[tarjetasExistentes.length - 1].id, 10)
+  if (idsTarjetasExistentes.length > 0) {
+    const idAnterior = Math.max(...idsTarjetasExistentes)
     nuevaId = idAnterior + 1;
   } else {
     nuevaId = 1;
   }
-
+  
   tarjetaGrafica.id = nuevaId;
   tarjetaGrafica.innerHTML = `
     <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='30'/>

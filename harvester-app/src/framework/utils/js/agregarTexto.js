@@ -41,11 +41,14 @@ function agregarTexto(
 
   configurarObservadorLimite(contenedor)
 
-  const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
+  const idsTarjetasTexto =Array.from(contenedor.querySelectorAll('.tarjeta-texto'), (tarjeta) => {
+    return parseInt(tarjeta.id, 10);
+  });
+    
   let nuevoId;
 
-  if (tarjetasTexto.length > 0) {
-    const idAnterior = parseInt(tarjetasTexto[tarjetasTexto.length - 1].id, 10)
+  if (idsTarjetasTexto.length > 0) {
+    const idAnterior = Math.max(...idsTarjetasTexto)
     nuevoId = idAnterior + 1;
   } else {
     nuevoId = 1;

@@ -113,6 +113,7 @@ async function leerExcel(archivo) {
                     // Guardar los datos en localStorage con la nueva estructura
                     localStorage.setItem('datosExcel', JSON.stringify(datosCompletos));
                     localStorage.setItem('nombreArchivoExcel', archivo.name);
+                    localStorage.setItem('datosExcelDisponibles', true);
                     
                     resolve({
                         exito: true,
