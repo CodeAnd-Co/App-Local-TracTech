@@ -3,6 +3,7 @@
 const { consultaFormulasCasoUso } = require('../../../backend/casosUso/formulas/consultaFormulas');
 const { inicializarCrearFormula } = require('../../utils/js/crearFormula');
 const { manejarEliminarFormula } = require('../../utils/js/eliminarFormula');
+const { inicializarModificarFormula } = require('../../../backend/casosUso/formulas/modificarFormula');
 /* eslint-disable no-undef */
 
 async function consultarFormulas() {
@@ -90,9 +91,16 @@ async function renderizarFormulas() {
         // Agregar event listeners para los botones de editar y eliminar
         document.querySelectorAll('.editar').forEach(btn => {
             btn.addEventListener('click', (evento) => {
-                // eslint-disable-next-line no-unused-vars
+                 
                 const formulaId = evento.currentTarget.getAttribute('data-id');
                 // Implementar lógica para editar fórmula
+                formulas.forEach((formula) => {
+                    if (formula.idFormula == formulaId) {
+                        const nombre = formula.Nombre;
+                        const formulaTexto = formula.Datos;
+                        inicializarModificarFormula(formulaId, nombre, formulaTexto);
+                    }
+                })
             });
         });
 
