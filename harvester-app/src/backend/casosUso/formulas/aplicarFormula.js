@@ -14,7 +14,7 @@ const opciones = {
 function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
     try {
         // Obtener datos del localStorage
-        let datosExcelString = localStorage.getItem('datosExcel');
+        const datosExcelString = localStorage.getItem('datosExcel');
         if (!datosExcelString) {
             throw new Error('No se encontraron datos en localStorage');
         }
@@ -75,8 +75,8 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
         hyperFormula.setCellContents({ row: 0, col: indiceColumnaVacio, sheet: 0 }, nombreColumnaResultado);
         
         // Aplicar la fórmula a cada fila de datos
-        let resultados = [];
-        for (let fila = 1; fila < datos.length; fila++) {
+        const resultados = [];
+        for (let fila = 1; fila < datos.length; fila = fila + 1) {
             // Traducir fórmula estructurada a fórmula clásica para esta fila específica
             const formulaTraducida = traducirFormulaEstructurada(formulaEstructurada, encabezados, fila);
             
@@ -93,8 +93,8 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
             indiceColumna: indiceColumnaVacio,
             nombreColumna: nombreColumnaResultado,
             nombreHoja: nombreHojaUsada,
-            resultados: resultados,
-            datosActualizados: datosActualizados
+            resultados,
+            datosActualizados
         };
     } catch (error) {
         console.error('Error en aplicarFormula:', error);
