@@ -5,8 +5,8 @@ const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
 const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
-// /* eslint-disable no-unused-vars */
-// /* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
   const Swal = require('sweetalert2');
 }
@@ -380,7 +380,7 @@ function modificarTitulo(grafica, entradaTexto, tarjetaGrafica) {
     tarjetaGrafica.insertBefore(contador, tarjetaGrafica.querySelector('.titulo-texto'));
   }
 
-  contador.textContent = `${this.value.length}/30 caracteres`;
+  contador.textContent = `${entradaTexto.value.length}/30 caracteres`;
 
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');

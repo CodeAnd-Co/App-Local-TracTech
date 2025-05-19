@@ -117,7 +117,7 @@ function configurarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta = n
   const tarjetaTexto = agregarTexto(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
   
   tarjetaTexto.addEventListener('mouseenter', () => {
-    mostrarBotonesAgregar(tarjetaTexto, idContenedor, idContenedorPrevisualizacion);
+    mostrarBotonesAgregar(idContenedor, idContenedorPrevisualizacion, tarjetaTexto);
   })
 
   tarjetaTexto.addEventListener('mouseleave', () => { 
@@ -138,7 +138,7 @@ function configurarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta =
   const tarjetaGrafica = agregarGrafica(idContenedor, idContenedorPrevisualizacion, tarjeta, ubicacion);
   
   tarjetaGrafica.addEventListener('mouseenter', () => {
-    mostrarBotonesAgregar(tarjetaGrafica, idContenedor, idContenedorPrevisualizacion);
+    mostrarBotonesAgregar(idContenedor, idContenedorPrevisualizacion, tarjetaGrafica);
   })
 
   tarjetaGrafica.addEventListener('mouseleave', () => { 
