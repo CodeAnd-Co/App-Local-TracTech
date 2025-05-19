@@ -18,9 +18,10 @@ function validarNombreCampo(nombre) {
     if (valor.length < tamanioMinimoNombre || valor.length > tamanioMaximoNombre) {
         return `El nombre debe tener entre ${tamanioMinimoNombre} y ${tamanioMaximoNombre} caracteres.`;
     }
-    const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ. ]+$/;
+    // Primer carácter debe ser letra, luego letras, espacios o puntos
+    const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
     if (!regex.test(valor)) {
-        return 'El nombre solo puede contener letras, espacios y puntos.';
+        return 'El nombre solo puede contener letras, espacios y puntos, y no puede empezar con punto.';
     }
     return '';
 }
