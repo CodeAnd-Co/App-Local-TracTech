@@ -243,7 +243,7 @@ function crearGrafica(contexto, tipo, color) {
   if (!contexto) return;
 
   if (!color) {
-    color = [255, 99, 132];
+    color = [166, 25, 48];
   }
 
   if (!tipo) {
