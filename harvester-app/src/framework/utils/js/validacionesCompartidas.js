@@ -3,6 +3,8 @@ const validator = require('validator');
 const numeroMinimoID = 1;
 const tamanioMinimoNombre = 1;
 const tamanioMaximoNombre = 50;
+const tamanioMinimoCorreo = 5;
+const tamanioMaximoCorreo = 50;
 const tamanioMinimoContrasenia = 8;
 const tamanioMaximoContrasenia = 50;
 
@@ -30,6 +32,9 @@ function validarNombreCampo(nombre) {
  */
 function validarCorreoCampo(correo) {
     const valor = correo.trim();
+    if (valor.length < tamanioMinimoCorreo || valor.length > tamanioMaximoCorreo) {
+        return `El correo debe tener entre ${tamanioMinimoCorreo} y ${tamanioMaximoCorreo} caracteres.`;
+    }
     if (!validator.isEmail(valor)) {
         return 'El correo debe tener un formato válido.';
     }

@@ -233,3 +233,22 @@
   font-size: 1.25rem;
   cursor: pointer;
 }
+
+/* Mensajes de error bajo los campos */
+.mensaje-error {
+  display: none;          /* oculto por defecto */
+  color: #e63946;         /* letra roja */
+  font-size: 0.875rem;    /* un poco más pequeña que el texto normal */
+  min-height: 1em;        /* reserva espacio aunque esté vacío */
+  margin-top: 0.25rem;    /* separación con el input */
+}
+
+/* Input en estado de error: borde en rojo */
+.input-error {
+  border-color: #e63946 !important;
+}
+
+/* Cuando el input tenga clase .input-error, muestra el mensaje bajo él */
+.input-error + .mensaje-error {
+  display: block;
+}

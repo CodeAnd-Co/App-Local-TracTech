@@ -41,6 +41,7 @@ async function inicializarModuloGestionUsuarios() {
     const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
 
     try {
+        // Limpiar la lista de usuarios y los filtros
         listaUsuarios = [];
         usuariosFiltrados = [];
 
@@ -52,6 +53,8 @@ async function inicializarModuloGestionUsuarios() {
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
+
+        configurarValidacionesCampos()
         
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
@@ -536,6 +539,58 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
     return { error: null, datos };
 }
 
+/**
+ * Configura validaciones en tiempo real para los campos del formulario de usuarios.
+ *
+ * @function configurarValidacionesCampos
+ * @returns {void}
+ */
+function configurarValidacionesCampos() {
+    // Mapeo de campos a validar:
+    const campos = [
+        {
+            idInput: 'username',
+            idError: 'mensaje-error-nombre',
+            validador: validarNombreCampo
+        },
+        {
+            idInput: 'email',
+            idError: 'mensaje-error-correo',
+            validador: validarCorreoCampo
+        },
+        {
+            idInput: 'password',
+            idError: 'mensaje-error-contrasenia',
+            validador: validarContraseniaCampo
+        }
+    ];
+
+    campos.forEach(({ idInput: idEntrada, idError, validador, evento }) => {
+        const campoEntrada = document.getElementById(idEntrada);
+        const mensajeError = document.getElementById(idError);
+        const tipoEvento = evento || 'input';
+
+        campoEntrada.addEventListener(tipoEvento, () => {
+            const valor = campoEntrada.value;
+            
+            if(valor.trim() === '') {
+                campoEntrada.classList.remove('input-error');
+                mensajeError.textContent = '';
+                return;
+            }
+
+            const mensaje = validador(valor);
+
+            if (mensaje) {
+                campoEntrada.classList.add('input-error');
+                mensajeError.textContent = mensaje;
+            } else {
+                campoEntrada.classList.remove('input-error');
+                mensajeError.textContent = '';
+            }
+        });
+    });
+}
 
 
 /**
