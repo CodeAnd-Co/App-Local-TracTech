@@ -129,8 +129,13 @@ function encontrarColumnaVacia(datos) {
     return maxColumnas;
 }
 
-// Utilidad para traducir [@Columna] a letra de columna+fila
-// Es importante mantener el [@Columna] para que también funcione en Excel
+/**
+ * @function traducirFormulaEstructurada
+ * @param {string} formula - Fórmula estructurada a traducir.
+ * @param {Array} encabezados - Encabezados de la hoja de Excel.
+ * @param {number} filaActiva - Fila activa para la traducción.
+ * @returns {string} Fórmula traducida a formato clásico de Excel.
+ */
 function traducirFormulaEstructurada(formula, encabezados, filaActiva) {
     return formula.replace(/\[@([^\]]+)\]/g, (_restoFormula, nombreColumna) => {
         const columna = encabezados.indexOf(nombreColumna);
@@ -141,7 +146,11 @@ function traducirFormulaEstructurada(formula, encabezados, filaActiva) {
     });
 }
 
-// Convertir índice de columna (0,1,2...) a letra de Excel (A,B,C...)
+/**
+ * @function indiceALetraColumna
+ * @param {number} indice - Índice de la columna (0-indexed).
+ * @returns {string} Letra correspondiente a la columna.
+ */
 function indiceALetraColumna(indice) {
     let letra = '';
     while (indice >= 0) {
