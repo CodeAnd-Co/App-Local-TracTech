@@ -12,7 +12,6 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
     const nuevoJSON = { hojas: {} };
 
     Object.entries(seleccion).forEach(([nombreTractor, columnas]) => {
-        const columnas = datosSeleccion.columnas;
         // Obtener los datos completos del tractor desde el JSON original
         const datosTractor = datosExcel.hojas[nombreTractor];
 
@@ -36,4 +35,4 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
 
 module.exports = {
     seleccionaDatosAComparar
-}
+};

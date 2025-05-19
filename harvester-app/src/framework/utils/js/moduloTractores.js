@@ -352,7 +352,7 @@ function botonReporte(datosExcel) {
                     console.log(datosExcel); // Verifica si contiene los datos esperados
                     console.log(tractoresSeleccionados);
                     const jsonFiltrado = seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
-                    // Ahora, podemos acceder al JSON filtrado desde localStorage en el módulo de análisis
+                    // Ahora podemos acceder al JSON filtrado desde localStorage en el módulo de análisis
                     const datosDesdeStorage = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
                     console.log('Datos filtrados listos para el análisis:', datosDesdeStorage);
 
