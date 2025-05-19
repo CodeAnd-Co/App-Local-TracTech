@@ -8,8 +8,10 @@ const opciones = {
 
 const archivo = path.resolve(__dirname, '../../../RTEC FEBRERO.xlsx');
 
-function aplicarFormula(nombreFormula ,formulaEstructurada) {
-    const datos = leerArchivo(archivo);
+function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
+    // Leer el archivo y obtener datos de la hoja especificada
+    const datosDesdeStorage = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
+    const { datos, nombreHojaUsada } = leerArchivo(archivo, nombreHoja);
 
     // Obtener encabezados
     const encabezados = datos[0];
@@ -38,16 +40,15 @@ function aplicarFormula(nombreFormula ,formulaEstructurada) {
         hyperFormula.setCellContents({ row: fila, col: indiceColumnaVacio, sheet: 0 }, formulaTraducida);
         const result = hyperFormula.getCellValue({ row: fila, col: indiceColumnaVacio, sheet: 0 });
         resultados.push(result);
-        
-    
     }
     
     // Guardar cambios en el archivo Excel
-    guardarExcel(hyperFormula, archivo);
+    guardarExcel(hyperFormula, archivo, nombreHojaUsada);
     
     return {
         indiceColumna: indiceColumnaVacio,
         nombreColumna: nombreColumnaResultado,
+        nombreHoja: nombreHojaUsada,
         resultados: resultados
     };
 }
@@ -65,26 +66,42 @@ function encontrarColumnaVacia(datos) {
     return maxColumnas;
 }
 
-function leerArchivo(filePath) {
+function leerArchivo(filePath, nombreHoja = null) {
     try {
         const libro = XLSX.readFile(filePath);
-        const nombreHojas = libro.SheetNames[0];
-        const hojaActiva = libro.Sheets[nombreHojas];
+        
+        // Si no se especifica una hoja, usar la primera
+        let indiceHoja = 0;
+        let nombreHojaUsada = libro.SheetNames[0];
+        
+        // Si se especifica una hoja, buscarla por nombre
+        if (nombreHoja) {
+            const hojaEncontradaIndice = libro.SheetNames.indexOf(nombreHoja);
+            if (hojaEncontradaIndice !== -1) {
+                indiceHoja = hojaEncontradaIndice;
+                nombreHojaUsada = nombreHoja;
+            } else {
+                console.warn(`Hoja "${nombreHoja}" no encontrada. Usando la primera hoja: ${nombreHojaUsada}`);
+            }
+        }
+        
+        const hojaActiva = libro.Sheets[nombreHojaUsada];
         const datos = XLSX.utils.sheet_to_json(hojaActiva, { header: 1 });
-        return datos;
+        
+        console.log(`Usando hoja: ${nombreHojaUsada} (índice: ${indiceHoja})`);
+        
+        return { datos, indiceHoja, nombreHojaUsada };
     } catch (error) {
         console.error('Error de lectura: ', error);
+        throw error;
     }
 }
 
 // Guardar los cambios en el archivo Excel
-function guardarExcel(hyperFormula, filePath) {
+function guardarExcel(hyperFormula, filePath, nombreHoja) {
     try {
         // Leer el libro existente para mantener todas las hojas
         const libroExistente = XLSX.readFile(filePath);
-        
-        // Obtener el nombre de la primera hoja (la que estamos modificando)
-        const nombreHoja = libroExistente.SheetNames[0];
         
         // Obtener los datos actualizados de HyperFormula
         const datosActualizados = hyperFormula.getSheetValues(0);
@@ -98,9 +115,10 @@ function guardarExcel(hyperFormula, filePath) {
         // Escribir el libro actualizado (manteniendo todas las hojas)
         XLSX.writeFile(libroExistente, filePath);
         
-        console.log('Archivo Excel actualizado correctamente, preservando todas las hojas');
+        console.log(`Archivo Excel actualizado correctamente en la hoja "${nombreHoja}", preservando todas las hojas`);
     } catch (err) {
         console.error('Error al guardar el archivo:', err);
+        throw err;
     }
 }
 
@@ -125,8 +143,4 @@ function indiceALetraColumna(indice) {
     return letra;
 }
 
-// Ejemplo de uso
-const resultado = aplicarFormula("Suma de Velocidad y Lts",'=SUM([@Velocidad],[@Lts])');
-console.log('Resultado final:', resultado);
-// console.log(aplicarFormula('=SUM([@ADC])'));
 
