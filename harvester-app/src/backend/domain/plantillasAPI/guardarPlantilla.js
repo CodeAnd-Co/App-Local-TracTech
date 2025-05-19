@@ -1,25 +1,33 @@
-const {URL_BASE} = require('../../../framework/utils/js/constantes.js')
+// frontend/utils/js/guardarPlantillaAPI.js
+const { URL_BASE } = require('../../../framework/utils/js/constantes.js')
 
 /**
- * Se mandan los datos a la API
- * @param {string} contenedor - HTML de la vista a enviar
+ * Envía el objeto Plantilla al backend y devuelve un objeto con:
+ *   - status: código HTTP
+ *   - ok:     boolean (response.ok)
+ *   - mensaje y id: lo que retorne tu API en JSON
  */
+async function guardarPlantillaAPI(plantilla) {
+  console.log('entraAPI', plantilla)
+  const respuesta = await fetch(`${URL_BASE}/plantillas/guardar/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ plantilla })
+  })
 
-async function guardarPlantillaAPI(contenedor) {
-    console.log('entraAPI');
-    console.log(contenedor)
-    const respuesta = await fetch(`${URL_BASE}/plantillas/guardar/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plantilla: contenedor })
-    });
-    console.log("respuesta:",respuesta)
-    const datos = await respuesta.json();
-     console.log('HTTP status:', respuesta.status);
-     console.log('response.ok:', respuesta.ok); 
-     console.log('response.ok:', respuesta.mensaje); 
-     
-    return { ok: respuesta.ok, ...datos };
+  const status = respuesta.status
+  let body = {}
+  try {
+    body = await respuesta.json()
+  } catch (err) {
+    console.error('Error parseando JSON de respuesta:', err)
+  }
+
+  return {
+    status,
+    ok:     respuesta.ok,
+    mensaje: body.mensaje,
+    id:     body.id
+  }
 }
-
 module.exports = { guardarPlantillaAPI };
