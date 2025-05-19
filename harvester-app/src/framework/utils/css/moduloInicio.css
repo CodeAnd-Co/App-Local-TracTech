@@ -36,11 +36,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
+  justify-content: space-evenly;
   width: 414px;
-  height: 343px;
-  position: relative;
+  height: 75%;
 }
 .texto-usar-excel {
   color: var(--texto-light, #000000);
@@ -93,10 +91,6 @@
   justify-content: center;
 }
 .boton-borrar {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
   padding: 0;
   display: none;
   background: transparent;
@@ -148,7 +142,8 @@
     display: none;
 }
 .avanzar-analisis:disabled {
-    background: #DADADB;
+  cursor: default;
+  background: #DADADB;
 }
 .avanzar-analisis {
   background: var(--primario, #a61930);
