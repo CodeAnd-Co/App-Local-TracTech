@@ -87,6 +87,7 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('username').value = '';
         document.getElementById('email').value = '';
         document.getElementById('password').value = '';
+        document.getElementById('passwordConfirmar').value = '';
         document.getElementById('rol').value = '';
 
         columnaCrear.style.display = 'block';
@@ -135,7 +136,36 @@ async function inicializarModuloGestionUsuarios() {
             filtrarUsuarios();
         }
     });
+
+    // Configurar el botón de ver contraseña
+    verContrasenia();
+    validarCoincidenciaContrasenas();
 }
+
+function verContrasenia() {
+    const botonVerContrasenia = document.querySelector('#verContrasenia');
+    const inputContrasenia = document.querySelector('#password');
+    const inputConfirmarContrasenia = document.querySelector('#passwordConfirmar');
+
+    // Función para alternar entre mostrar/ocultar contraseña
+    if (botonVerContrasenia && inputContrasenia) {
+        botonVerContrasenia.addEventListener('change', () => {
+            // Cambia el tipo de los inputs según el estado del checkbox
+            if (botonVerContrasenia.checked) {
+                inputContrasenia.type = 'text';
+                if (inputConfirmarContrasenia) {
+                    inputConfirmarContrasenia.type = 'text';
+                }
+            } else {
+                inputContrasenia.type = 'password';
+                if (inputConfirmarContrasenia) {
+                    inputConfirmarContrasenia.type = 'password';
+                }
+            }
+        });
+    }
+}
+
 
 function filtrarUsuarios() {
     if (terminoBusqueda === '') {
@@ -392,7 +422,9 @@ function modoEditar(idUsuario) {
     document.getElementById('username').value = usuario.nombre;
     document.getElementById('email').value = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
+    document.getElementById('passwordConfirmar').value = '';
     document.getElementById('rol').value = usuario.rol;
+    
 }
 
 /**
@@ -405,10 +437,42 @@ function modoEditar(idUsuario) {
  * @returns {Promise<void>}
  */
 async function editarUsuario() {
+    // Verificar si hay mensajes de error visibles en el formulario
+    const mensajesError = document.querySelectorAll('.mensajeError');
+    let hayErroresVisibles = false;
+    
+    mensajesError.forEach(mensaje => {
+        if (mensaje.textContent.trim() !== '') {
+            hayErroresVisibles = true;
+        }
+    });
+    
+    if (hayErroresVisibles) {
+        return Swal2.fire({
+            title: 'Formulario con errores',
+            text: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+        });
+    }
+
     const nombreIngresado = document.getElementById('username').value.trim();
     const correoIngresado = document.getElementById('email').value.trim();
     const contraseniaIngresada = document.getElementById('password').value.trim();
+    const contraseniaConfirmada = document.getElementById('passwordConfirmar').value.trim();
     const rolIngresado = document.getElementById('rol').value.trim();
+
+    // Verificar que las contraseñas coincidan si se está cambiando la contraseña
+    if (contraseniaIngresada !== '') {
+        if (contraseniaIngresada !== contraseniaConfirmada) {
+            return Swal2.fire({
+                title: 'Contraseñas no coinciden',
+                text: 'La contraseña y su confirmación deben ser iguales.',
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+            });
+        }
+    }
 
     // Llamar a la función de validación
     const { error, datos } = validarYLimpiarUsuario({
@@ -443,6 +507,7 @@ async function editarUsuario() {
             document.getElementById('username').value = '';
             document.getElementById('email').value = '';
             document.getElementById('password').value = '';
+            document.getElementById('passwordConfirmar').value = '';
             document.getElementById('rol').value = '';
 
             // Recargar la lista de usuarios
@@ -555,48 +620,122 @@ function configurarValidacionesCampos() {
     const campos = [
         {
             idInput: 'username',
-            idError: 'mensaje-error-nombre',
+            idError: 'mensajeErrorNombre',
             validador: validarNombreCampo
         },
         {
             idInput: 'email',
-            idError: 'mensaje-error-correo',
+            idError: 'mensajeErrorCorreo',
             validador: validarCorreoCampo
         },
         {
             idInput: 'password',
-            idError: 'mensaje-error-contrasenia',
+            idError: 'mensajeErrorContrasenia',
             validador: validarContraseniaCampo
         }
     ];
 
-    campos.forEach(({ idInput: idEntrada, idError, validador, evento }) => {
-        const campoEntrada = document.getElementById(idEntrada);
-        const mensajeError = document.getElementById(idError);
-        const tipoEvento = evento || 'input';
+    campos.forEach(({ idInput, idError, validador, evento = 'input' }) => {
+        const campoEntrada = document.getElementById(idInput);
+        
+        // Verificar si el campo existe
+        if (!campoEntrada) {
+            return;
+        }
 
-        campoEntrada.addEventListener(tipoEvento, () => {
+        // Buscar elemento de error o crear uno si no existe
+        let mensajeError = document.getElementById(idError);
+        if (!mensajeError) {
+            // Crear elemento para mostrar errores si no existe
+            mensajeError = document.createElement('div');
+            mensajeError.id = idError;
+            mensajeError.className = 'mensajeError';
+            // Insertar después del campo
+            campoEntrada.parentNode.insertBefore(mensajeError, campoEntrada.nextSibling);
+        }
+
+        // Configurar el evento para validación en tiempo real
+        campoEntrada.addEventListener(evento, () => {
             const valor = campoEntrada.value;
             
+            // Si el campo está vacío, quitar indicador de error
             if(valor.trim() === '') {
-                campoEntrada.classList.remove('input-error');
+                campoEntrada.classList.remove('inputError');
                 mensajeError.textContent = '';
                 return;
             }
 
+            // Validar el campo
             const mensaje = validador(valor);
 
             if (mensaje) {
-                campoEntrada.classList.add('input-error');
+                campoEntrada.classList.add('inputError');
                 mensajeError.textContent = mensaje;
             } else {
-                campoEntrada.classList.remove('input-error');
+                campoEntrada.classList.remove('inputError');
                 mensajeError.textContent = '';
             }
         });
     });
 }
 
+/**
+ * Valida que las contraseñas ingresadas coincidan.
+ * 
+ * @function validarCoincidenciaContrasenas
+ * @returns {void}
+ */
+function validarCoincidenciaContrasenas() {
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('passwordConfirmar');
+    
+    // Verificar si ambos campos existen
+    if (!passwordInput || !confirmPasswordInput) {
+        return;
+    }
+
+    // Crear o buscar el elemento para el mensaje de error
+    const idError = 'mensajeErrorConfirmacion';
+    let mensajeError = document.getElementById(idError);
+    if (!mensajeError) {
+        mensajeError = document.createElement('div');
+        mensajeError.id = idError;
+        mensajeError.className = 'mensajeError';
+        confirmPasswordInput.parentNode.insertBefore(mensajeError, confirmPasswordInput.nextSibling);
+    }
+
+    // Función para validar la coincidencia
+    const validarCoincidencia = () => {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        // Si el campo de confirmación está vacío, no mostrar error
+        if (confirmPassword.trim() === '') {
+            confirmPasswordInput.classList.remove('inputError');
+            mensajeError.textContent = '';
+            return;
+        }
+        
+        // Validar coincidencia
+        if (password !== confirmPassword) {
+            confirmPasswordInput.classList.add('inputError');
+            mensajeError.textContent = 'Las contraseñas no coinciden';
+        } else {
+            confirmPasswordInput.classList.remove('inputError');
+            mensajeError.textContent = '';
+        }
+    };
+
+    // Configurar eventos para validación en tiempo real
+    confirmPasswordInput.addEventListener('input', validarCoincidencia);
+    
+    // También validar cuando cambie la contraseña principal
+    passwordInput.addEventListener('input', () => {
+        if (confirmPasswordInput.value.trim() !== '') {
+            validarCoincidencia();
+        }
+    });
+}
 
 /**
  * Crea un nuevo usuario en el sistema.
@@ -610,14 +749,46 @@ async function crearUsuario() {
     const nombreInput = document.getElementById('username');
     const correoInput = document.getElementById('email');
     const contraseniaInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('passwordConfirmar');
     const rolInput = document.getElementById('rol');
 
     const nombre = nombreInput.value.trim();
     const correo = correoInput.value.trim();
     const contrasenia = contraseniaInput.value.trim();
+    const confirmContrasenia = confirmPasswordInput ? confirmPasswordInput.value.trim() : '';
     const idRolFK = parseInt(rolInput.value, 10);
 
-    if (!nombre || !correo || !contrasenia || isNaN(idRolFK)) {
+    // Verificar si hay mensajes de error visibles en el formulario
+    const mensajesError = document.querySelectorAll('.mensajeError');
+    let hayErroresVisibles = false;
+    
+    mensajesError.forEach(mensaje => {
+        if (mensaje.textContent.trim() !== '') {
+            hayErroresVisibles = true;
+        }
+    });
+    
+    if (hayErroresVisibles) {
+        return Swal2.fire({
+            title: 'Formulario con errores',
+            text: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+        });
+    }
+
+    // Verificar si las contraseñas coinciden (si existe el campo de confirmación)
+    if (confirmPasswordInput && contrasenia !== confirmContrasenia) {
+        return Swal2.fire({
+            title: 'Contraseñas no coinciden',
+            text: 'La contraseña y su confirmación deben ser iguales.',
+            icon: 'warning',
+            confirmButtonColor: '#3085d6',
+        });
+    }
+
+    // Verificar campos obligatorios
+    if (!nombre || !correo || !contrasenia || !confirmContrasenia || isNaN(idRolFK)) {
         return Swal2.fire({
             title: 'Datos incompletos',
             text: 'Por favor, completa todos los campos.',
@@ -625,6 +796,7 @@ async function crearUsuario() {
             confirmButtonColor: '#3085d6',
         });
     }
+
 
     if (listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correo.toLowerCase())) {
         await Swal2.fire({
@@ -687,9 +859,10 @@ async function crearUsuario() {
             nombreInput.value = '';
             correoInput.value = '';
             contraseniaInput.value = '';
+            confirmContrasenia.value = '';
             rolInput.value = '';
 
-            document.getElementById('columna-crear-usuario').style.display = 'none';
+            document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
             
             // Actualizar la vista para mostrar el nuevo usuario en la lista
             setTimeout(() => {
@@ -752,7 +925,7 @@ async function guardarRoles() {
  */
 function llenarSelectConRoles(selectRol) {
 
-    const rolPorDefecto = usuarioAEditar.rol;
+    const rolPorDefecto = usuarioAEditar ? usuarioAEditar.rol : null;
     
     if (!rolesCache || rolesCache.length === 0) {
         selectRol.innerHTML = '<option value="">No hay roles disponibles</option>';

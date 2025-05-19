@@ -27,6 +27,13 @@ function inicializarModuloAnalisis() {
 
   if (!contenedor) return;
 
+  document.getElementById('guardarPlantilla')
+          .addEventListener('click', async () => {
+            const nombre = await pedirNombrePlantilla();
+            if (!nombre) return;
+              window.guardarPlantilla(idContenedor, nombre);
+          });
+
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
   botonPDF.addEventListener('click', async () => {
@@ -46,12 +53,40 @@ function inicializarModuloAnalisis() {
     });
   });
 
+  const botonGuardarPlantilla = document.getElementById('guardarPlantilla');
+  document.getElementById('guardarPlantilla')
+          .addEventListener('click', async () => {
+            const nombre = await pedirNombrePlantilla();
+            if (!nombre) return;
+            window.guardarPlantilla(idContenedor, nombre);
+          });
+
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
     configurarGrafica(idContenedor, idContenedorPrevisualizacion);
   }
 }
+async function pedirNombrePlantilla() {
+    const { value: nombrePlantilla } = await Swal.fire({
+      title: 'Guardar plantilla',
+      input: 'text',
+      inputLabel: 'Nombre de la plantilla',
+      inputPlaceholder: 'Escribe un nombre para la plantilla',
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return '¡Necesitas ingresar un nombre!';
+        }
+        return null;
+      }
+    });
 
+  if (nombrePlantilla) {
+    return nombrePlantilla
+  }
+}
 /**
  * Carga los datos de Excel almacenados en localStorage.
  * 
@@ -178,3 +213,4 @@ async function descargarPDF() {
 
 window.inicializarModuloAnalisis = inicializarModuloAnalisis;
 window.cargarDatosExcel = cargarDatosExcel;
+window.guardarPlantilla          = guardarPlantilla;
