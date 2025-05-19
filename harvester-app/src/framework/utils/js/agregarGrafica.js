@@ -33,7 +33,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   // Inyectar HTML base
   tarjetaGrafica.innerHTML = `
-    <input class='titulo-grafica' placeholder='Nombre de la gráfica' />
+    <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='30'/>
     <div class='titulo-texto'>
       <select class='tipo-texto tipo-grafica'>
         <option value='line'>Línea</option>
@@ -54,6 +54,15 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>
+    <style>
+      .contador-caracteres {
+        font-size: 12px;
+        text-align: right;
+        color: #7f8c8d;
+        margin: 4px 0;
+        padding-right: 4px;
+      }
+    </style>
   `;
 
   // Datos disponibles para fórmulas
@@ -88,6 +97,16 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   tarjetaGrafica
     .querySelector('.titulo-grafica')
     .addEventListener('input', function () {
+      // Verificar si ya existe un contador
+      let contador = tarjetaGrafica.querySelector('.contador-caracteres');
+      if (!contador) {
+        contador = document.createElement('div');
+        contador.className = 'contador-caracteres';
+        tarjetaGrafica.insertBefore(contador, tarjetaGrafica.querySelector('.titulo-texto'));
+      }
+
+      contador.textContent = `${this.value.length}/30 caracteres`;
+
       const grafica = encontrarGrafica(nuevaId);
       if (grafica) {
         const ctx = grafica.querySelector('canvas').getContext('2d');
