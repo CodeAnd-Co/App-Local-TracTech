@@ -1,60 +1,118 @@
 const { HyperFormula } = require('hyperformula');
-const XLSX = require('xlsx');
-const path = require('path');
 
 const opciones = {
     licenseKey: 'gpl-v3',
 };
 
-const archivo = path.resolve(__dirname, '../../../RTEC FEBRERO.xlsx');
-
 function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
-    // Leer el archivo y obtener datos de la hoja especificada
-    const datosDesdeStorage = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
-    const { datos, nombreHojaUsada } = leerArchivo(archivo, nombreHoja);
-
-    // Obtener encabezados
-    const encabezados = datos[0];
-    
-    // Encontrar la primera columna vacía
-    const indiceColumnaVacio = encontrarColumnaVacia(datos);
-    
-    // Añadir un título a la columna de resultados
-    if (!nombreFormula || nombreFormula.trim() === '') {
-        nombreFormula = 'Resultado';
-    }
-    const nombreColumnaResultado = nombreFormula;
-    
-    const hyperFormula = HyperFormula.buildFromArray(datos, opciones);
-    
-    // Asignar nombre a la columna de resultados
-    hyperFormula.setCellContents({ row: 0, col: indiceColumnaVacio, sheet: 0 }, nombreColumnaResultado);
-    
-    // Aplicar la fórmula a cada fila de datos
-    let resultados = [];
-    for (let fila = 1; fila < datos.length; fila++) {
-        // Traducir fórmula estructurada a fórmula clásica para esta fila específica
-        const formulaTraducida = traducirFormulaEstructurada(formulaEstructurada, encabezados, fila);
+    try {
+        // Obtener datos del localStorage
+        let datosExcelStr = localStorage.getItem('datosExcel');
+        if (!datosExcelStr) {
+            throw new Error('No se encontraron datos en localStorage');
+        }
         
-        // Aplicar la fórmula a esta fila
-        hyperFormula.setCellContents({ row: fila, col: indiceColumnaVacio, sheet: 0 }, formulaTraducida);
-        const result = hyperFormula.getCellValue({ row: fila, col: indiceColumnaVacio, sheet: 0 });
-        resultados.push(result);
+        // Intentar reparar el JSON si está incompleto
+        if (!datosExcelStr.endsWith('}')) {
+            console.warn('El JSON parece estar incompleto, intentando reparar...');
+            datosExcelStr += '}}';
+        }
+        
+        let datosExcel;
+        try {
+            datosExcel = JSON.parse(datosExcelStr);
+        } catch (e) {
+            console.error('Error al parsear JSON:', e);
+            console.log('String problematico:', datosExcelStr);
+            throw new Error('Los datos en localStorage no son un JSON válido');
+        }
+        
+        // Estructura específica para el formato que has mencionado
+        let hojas = datosExcel;
+        
+        // Comprobar si tiene la estructura específica con propiedad "hojas"
+        if (datosExcel.hojas) {
+            hojas = datosExcel.hojas;
+        }
+        
+        // Si no se especifica hoja, usar la primera disponible
+        let datos = [];
+        let nombreHojaUsada = '';
+        
+        if (nombreHoja && hojas[nombreHoja]) {
+            datos = hojas[nombreHoja];
+            nombreHojaUsada = nombreHoja;
+        } else {
+            // Tomar la primera hoja disponible
+            nombreHojaUsada = Object.keys(hojas)[0];
+            datos = hojas[nombreHojaUsada];
+        }
+        
+        // Verificar que datos sea un array
+        if (!Array.isArray(datos)) {
+            console.error('Datos no es un array:', datos);
+            throw new Error('Formato de datos inválido: se esperaba un array');
+        }
+        
+        if (datos.length === 0) {
+            throw new Error('No hay datos disponibles en la hoja seleccionada');
+        }
+
+        // Obtener encabezados
+        const encabezados = datos[0];
+        
+        // Encontrar la primera columna vacía usando método seguro
+        const indiceColumnaVacio = encontrarColumnaVacia(datos);
+        
+        // Añadir un título a la columna de resultados
+        if (!nombreFormula || nombreFormula.trim() === '') {
+            nombreFormula = 'Resultado';
+        }
+        const nombreColumnaResultado = nombreFormula;
+        
+        const hyperFormula = HyperFormula.buildFromArray(datos, opciones);
+        
+        // Asignar nombre a la columna de resultados
+        hyperFormula.setCellContents({ row: 0, col: indiceColumnaVacio, sheet: 0 }, nombreColumnaResultado);
+        
+        // Aplicar la fórmula a cada fila de datos
+        let resultados = [];
+        for (let fila = 1; fila < datos.length; fila++) {
+            // Traducir fórmula estructurada a fórmula clásica para esta fila específica
+            const formulaTraducida = traducirFormulaEstructurada(formulaEstructurada, encabezados, fila);
+            
+            // Aplicar la fórmula a esta fila
+            hyperFormula.setCellContents({ row: fila, col: indiceColumnaVacio, sheet: 0 }, formulaTraducida);
+            const result = hyperFormula.getCellValue({ row: fila, col: indiceColumnaVacio, sheet: 0 });
+            resultados.push(result);
+        }
+        
+        // Obtener los datos actualizados con la nueva columna para devolverlos
+        const datosActualizados = hyperFormula.getSheetValues(0);
+        
+        return {
+            indiceColumna: indiceColumnaVacio,
+            nombreColumna: nombreColumnaResultado,
+            nombreHoja: nombreHojaUsada,
+            resultados: resultados,
+            datosActualizados: datosActualizados
+        };
+    } catch (error) {
+        console.error('Error en aplicarFormula:', error);
+        return {
+            error: error.message,
+            nombreHoja: nombreHoja || 'desconocida'
+        };
     }
-    
-    // Guardar cambios en el archivo Excel
-    guardarExcel(hyperFormula, archivo, nombreHojaUsada);
-    
-    return {
-        indiceColumna: indiceColumnaVacio,
-        nombreColumna: nombreColumnaResultado,
-        nombreHoja: nombreHojaUsada,
-        resultados: resultados
-    };
 }
 
 // Función para encontrar la primera columna vacía en los datos
 function encontrarColumnaVacia(datos) {
+    if (!Array.isArray(datos)) {
+        console.error('encontrarColumnaVacia: datos no es un array', datos);
+        return 0;
+    }
+    
     if (datos.length === 0) return 0;
     
     let maxColumnas = 0;
@@ -64,62 +122,6 @@ function encontrarColumnaVacia(datos) {
     });
     
     return maxColumnas;
-}
-
-function leerArchivo(filePath, nombreHoja = null) {
-    try {
-        const libro = XLSX.readFile(filePath);
-        
-        // Si no se especifica una hoja, usar la primera
-        let indiceHoja = 0;
-        let nombreHojaUsada = libro.SheetNames[0];
-        
-        // Si se especifica una hoja, buscarla por nombre
-        if (nombreHoja) {
-            const hojaEncontradaIndice = libro.SheetNames.indexOf(nombreHoja);
-            if (hojaEncontradaIndice !== -1) {
-                indiceHoja = hojaEncontradaIndice;
-                nombreHojaUsada = nombreHoja;
-            } else {
-                console.warn(`Hoja "${nombreHoja}" no encontrada. Usando la primera hoja: ${nombreHojaUsada}`);
-            }
-        }
-        
-        const hojaActiva = libro.Sheets[nombreHojaUsada];
-        const datos = XLSX.utils.sheet_to_json(hojaActiva, { header: 1 });
-        
-        console.log(`Usando hoja: ${nombreHojaUsada} (índice: ${indiceHoja})`);
-        
-        return { datos, indiceHoja, nombreHojaUsada };
-    } catch (error) {
-        console.error('Error de lectura: ', error);
-        throw error;
-    }
-}
-
-// Guardar los cambios en el archivo Excel
-function guardarExcel(hyperFormula, filePath, nombreHoja) {
-    try {
-        // Leer el libro existente para mantener todas las hojas
-        const libroExistente = XLSX.readFile(filePath);
-        
-        // Obtener los datos actualizados de HyperFormula
-        const datosActualizados = hyperFormula.getSheetValues(0);
-        
-        // Crear una hoja con los datos actualizados
-        const hojaActualizada = XLSX.utils.aoa_to_sheet(datosActualizados);
-        
-        // Reemplazar solo la hoja que modificamos en el libro existente
-        libroExistente.Sheets[nombreHoja] = hojaActualizada;
-        
-        // Escribir el libro actualizado (manteniendo todas las hojas)
-        XLSX.writeFile(libroExistente, filePath);
-        
-        console.log(`Archivo Excel actualizado correctamente en la hoja "${nombreHoja}", preservando todas las hojas`);
-    } catch (err) {
-        console.error('Error al guardar el archivo:', err);
-        throw err;
-    }
 }
 
 // Utilidad para traducir [@Columna] a letra de columna+fila
@@ -143,4 +145,6 @@ function indiceALetraColumna(indice) {
     return letra;
 }
 
-
+module.exports = {
+    aplicarFormula
+};
