@@ -105,7 +105,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         tarjetaGrafica.insertBefore(contador, tarjetaGrafica.querySelector('.titulo-texto'));
       }
 
-      contador.textContent = `${this.value.length}/30`;
+      contador.textContent = `${this.value.length}/30 caracteres`;
 
       const grafica = encontrarGrafica(nuevaId);
       if (grafica) {
