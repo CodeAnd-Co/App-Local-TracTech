@@ -87,7 +87,7 @@
   border: none;
   cursor: pointer;
   font-family: "SegoeUi-Regular", sans-serif;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  /* transition: background 0.3s ease, box-shadow 0.3s ease; */
 }
 
 /* HOVER STYLE */

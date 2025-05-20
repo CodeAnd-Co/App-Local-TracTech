@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
+const ejs = require('ejs')
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -22,7 +23,22 @@ const createWindow = () => {
   mainWindow.setMenuBarVisibility(false);
 
   // Cargar el archivo HTML de inicio de sesión.
-  mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
+  // mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
+
+  const pantallaCargaPath = path.join(__dirname, './framework/vistas/pantallaCarga.ejs');
+  console.log('basePath:', `file://${__dirname}`)
+  ejs.renderFile(pantallaCargaPath, {  basePath: `file://${__dirname}` }, (err, str) => {
+    if (err) {
+      console.error('Error al renderizar EJS:', err);
+      return;
+    }
+
+    // Guarda el HTML generado en un archivo temporal
+    const tempPath = path.join(app.getPath('userData'), 'pantallaCarga_temp.html');
+    fs.writeFileSync(tempPath, str);
+
+    mainWindow.loadFile(tempPath);
+  });
 
   // Poner la ventana en modo de pantalla completa.
   mainWindow.maximize();
@@ -33,6 +49,7 @@ const createWindow = () => {
 
 // Este método se llamará cuando Electron haya terminado de inicializar
 // y esté listo para crear ventanas del navegador.
+
 app.whenReady().then(() => {
   createWindow();
 
