@@ -20,7 +20,8 @@ function sanitizarEntrada({ nombre, correo, contrasenia, idRolFK }) {
     const nombreSanitizado = validador.escape(nombre);
     const correoSanitizado = validador.normalizeEmail(correo);
     const contraseniaSanitizada = validador.escape(contrasenia);
-    return { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRolFK };
+    const idRolFKSanitizada = Number(idRolFK);
+    return { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRolFKSanitizada };
 }
 
 /**
@@ -59,7 +60,7 @@ async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
     }
 
     // Sanitizar los datos de entrada
-    const { nombreSanitizado, correoSanitizado, contraseniaSanitizada } = sanitizarEntrada({
+    const { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRolFKSanitizada } = sanitizarEntrada({
         nombre,
         correo,
         contrasenia,
@@ -71,7 +72,7 @@ async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
             nombre: nombreSanitizado,
             correo: correoSanitizado,
             contrasenia: contraseniaSanitizada,
-            idRolFK,
+            idRol: idRolFKSanitizada,
         });
         return { ok: true, mensaje: respuesta.mensaje, id: respuesta.id };
     } catch (error) {
