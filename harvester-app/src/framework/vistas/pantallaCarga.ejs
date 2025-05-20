@@ -1,48 +1,6 @@
-<!DOCTYPE html>
-<html lang='es'>
-<head>
-  <meta charset='UTF-8' />
-  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-  <title>Harvester App</title>
-  <!-- <link href='../utils/css/topBar.css' rel='stylesheet' /> -->
-   <link href='<%= basePath %>/framework/utils/css/topBar.css' rel='stylesheet' />
-  <link href='<%= basePath %>/framework/utils/css/sideBar.css' rel='stylesheet' />
-  <link href='<%= basePath %>/framework/utils/css/FrameLayout.css' rel='stylesheet' />
-  <link href="<%= basePath %>/framework/utils/css/prueba.css" rel="stylesheet"/>
+<%- include('includes/menu.ejs') %> 
 
-</head>
-<body>
-  <div id="pantalla-bloqueo" class="pantalla-bloqueo oculto">
-  </div>
-  <div class='formulas-brillante'>
-    <div class='frame-10'>
-      <div class='sidebar-container'>
-        <div id='contenedorBarraLateral'> <%- include('includes/sideBar.ejs') %> </div>
-      </div>
+<link href="<%= basePath %>/framework/utils/css/prueba.css" rel="stylesheet"/>
+<h1 class = 'main-title'>Pruebaaa</h1>
 
-      <div class='main-container'>
-          <div id='contenedorBarraSuperior'> <%- include('includes/topBar.ejs') %> </div>
-        <div class='content-container'>
-
-          <div id='ventana-principal' class='ventana-principal'>
-
-            <h1 class = 'main-title'>Pruebaaa</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  
-  <script src='<%= basePath %>/framework/utils/js/sidebar.js'></script>
-  <script src='<%= basePath %>/framework/utils/js/framelayout.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'></script>
-  <script src='<%= basePath %>/framework/utils/js/moduloFormulas.js'></script>
-  <script src='<%= basePath %>/framework/utils/js/moduloAnalisis.js'></script>
-  <script src='<%= basePath %>/framework/utils/js/moduloPlantillas.js'></script>
-  <script src='<%= basePath %>/framework/utils/js/moduloUsuario.js'></script>
-  <script src='<%= basePath %>/framework/utils/js/moduloInicio.js'></script>
-
-  <script src="<%= basePath %>/framework/utils/js/moduloTractores.js"></script>
-</body>
-</html>
+<%- include('includes/footer.ejs') %> 
