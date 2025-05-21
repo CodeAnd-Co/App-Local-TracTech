@@ -4,7 +4,7 @@
  * Filtra los datos del excel por tractores y columnas seleccionadas
  * @function seleccionaDatosAComparar
  * @param {Object} datosExcel - JSON original del excel
- * @param {Object.<string, Array<string>} seleccion - Objeto donde las claves son los nombres de los tractores (hojas)
+ * @param {Object.<string, {seleccionado: boolean, columnas: Array<number>}>} seleccion - Objeto donde las claves son los nombres de los tractores (hojas)
  *                                                     y los valores son arreglos con los nombres de las columnas seleccionadas.
  * @returns {Object} JSON nuevo con los datos y columnas seleccionadas 
  */
@@ -17,31 +17,27 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 return;
             }
             // Obtener los datos completos del tractor desde el JSON original
-            const columnas = datosSeleccion.columnas;
+            const indicesColumnas = datosSeleccion.columnas;
             const datosTractor = datosExcel.hojas[nombreTractor];
     
-            if (!datosTractor || !Array.isArray(columnas) || columnas.length === 0) { 
-                return;
-            }
-
-            if (!datosTractor) {
+            if (!datosTractor || !Array.isArray(indicesColumnas) || indicesColumnas.length === 0) { 
                 console.warn(`No se encontró la hoja para el tractor: ${nombreTractor}`);
                 return;
-            }            
+            }       
     
-            // Para cada fila del tractor, creamos una nueva fila con solo las columnas seleccionadas
-            nuevoJSON.hojas[nombreTractor] = datosTractor.map(fila =>
-                columnas.reduce((nuevoFila, columna) => {
-                    // Agregamos la columna seleccionada a la nueva fila
-                    nuevoFila[columna] = fila[columna];
-                    return nuevoFila;
-                }, {})
-            );
+            const filasFiltradas = datosTractor.map(fila => {
+                indicesColumnas.map(iterador => { fila[iterador] ?? null })
+            });
+
+            // Guardar encabezados y filas
+            nuevoJSON.hojas[nombreTractor] = {
+                columnas: indicesColumnas,
+                filas: filasFiltradas
+            };
         });
     
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
-    
         return nuevoJSON;
     } catch (error) {
         console.error('Error verificando archivo:', error);
