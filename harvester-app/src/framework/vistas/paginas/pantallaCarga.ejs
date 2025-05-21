@@ -8,6 +8,11 @@
 </head>
     <body>
         <div class="loader"></div>
-        <script src="<%= basePath %>/framework/utils/js/pantallaCarga.js"></script>
+        <script>
+            console.log('caca')
+            const basePath = "<%= basePath %>";
+            console.log('basePath:', basePath)
+        </script>
+        <script src="<%= basePath %>/framework/utils/scripts/pantallaCarga.js">   </script>
     </body>
 </html>

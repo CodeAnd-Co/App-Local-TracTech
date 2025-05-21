@@ -22,7 +22,7 @@ const createWindow = () => {
 
   mainWindow.setMenuBarVisibility(false);
 
-  // Cargar el archivo HTML de inicio de sesión.
+  // Cargar el archivo ejs de pantalla de carga
   // mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
 
   const pantallaCargaPath = path.join(__dirname, './framework/vistas/paginas/pantallaCarga.ejs');

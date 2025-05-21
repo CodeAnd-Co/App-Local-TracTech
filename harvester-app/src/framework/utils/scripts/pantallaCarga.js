@@ -1,5 +1,7 @@
-const { verificarToken } = require("../../backend/servicios/verificarToken"); // Importar la función verificarToken
-const { verificarPermisos } = require("../../backend/servicios/verificarPermisos"); // Importar la función verificarPermisos
+console.log('basePath: ')
+console.log('basePath: ', basePath)
+const { verificarToken } = require('../../../backend/servicios/verificarToken'); // Importar la función verificarToken
+const { verificarPermisos } = require('../../../backend/servicios/verificarPermisos'); // Importar la función verificarPermisos
 
 /**
  * Evento que se dispara cuando el contenido del DOM ha sido completamente cargado.
@@ -10,7 +12,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         // Verificar si el token es válido
+        console.log('token')
         const tokenValido = await verificarToken(token);
+        console.log('token', tokenValido)
 
         if (tokenValido) {
             // Si el token es válido, obtener los permisos del usuario
