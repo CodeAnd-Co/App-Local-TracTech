@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <title>Harvester App</title>
+   <link href='/utils/css/topBar.css' rel='stylesheet' />
+  <link href='/utils/css/sideBar.css' rel='stylesheet' />
+  <link href='/utils/css/FrameLayout.css' rel='stylesheet' />
+
+</head>
+<body>
+  <div id="pantalla-bloqueo" class="pantalla-bloqueo oculto">
+  </div>
+  <div class='formulas-brillante'>
+    <div class='frame-10'>
+      <div class='sidebar-container'>
+        <div id='contenedorBarraLateral'> <%- include('sideBar.ejs') %> </div>
+      </div>
+
+      <div class='main-container'>
+          <div id='contenedorBarraSuperior'> <%- include('topBar.ejs') %> </div>
+        <div class='content-container'>
+
+          <div id='ventana-principal' class='ventana-principal'>
+

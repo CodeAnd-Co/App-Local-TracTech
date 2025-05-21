@@ -1,40 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
-const ejs = require('ejs');
-const http = require('http');
-const express = require('express');
-
-
-const expressApp = express();
-
-const PORT = 4850
-
-// Configurar vistas con EJS
-expressApp.set('view engine', 'ejs');
-expressApp.set('views', path.join(__dirname, 'framework/vistas'));
-
-// Middleware para archivos estáticos (CSS, JS, imágenes)
-expressApp.use('/utils', express.static(path.join(__dirname, 'framework/utils')));
-
-expressApp.use(function (req, res, next) {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-  next();
-});
-
-// Rutas
-expressApp.get('/pantallaCarga', (req, res) => {
-  res.render('pantallaCarga.ejs', {
-    basePath: `file://${__dirname}` // si usas rutas absolutas para assets
-  });
-});
-
-// Iniciar servidor
-const server = http.createServer(expressApp);
-server.listen(PORT, () => {
-  console.log(`Servidor Express corriendo en http://localhost:${PORT}`);
-});
-
+const ejs = require('ejs')
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -58,7 +25,20 @@ const createWindow = () => {
   // Cargar el archivo HTML de inicio de sesión.
   // mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
 
-  mainWindow.loadURL(`http://localhost:${PORT}/pantallaCarga`);
+  const pantallaCargaPath = path.join(__dirname, './framework/vistas/paginas/pantallaCarga.ejs');
+  console.log('basePath:', `file://${__dirname}`)
+  ejs.renderFile(pantallaCargaPath, {  basePath: `file://${__dirname}` }, (err, str) => {
+    if (err) {
+      console.error('Error al renderizar EJS:', err);
+      return;
+    }
+
+    // Guarda el HTML generado en un archivo temporal
+    const tempPath = path.join(app.getPath('userData'), 'pantallaCarga_temp.html');
+    fs.writeFileSync(tempPath, str);
+
+    mainWindow.loadFile(tempPath);
+  });
 
   // Poner la ventana en modo de pantalla completa.
   mainWindow.maximize();
