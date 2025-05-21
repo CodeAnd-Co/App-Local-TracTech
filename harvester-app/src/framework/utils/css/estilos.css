@@ -1,0 +1,147 @@
+.primario {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .75rem 1.5rem;
+    background: #a61930;
+    border: 2px solid rgba(255,255,255,.2);
+    border-radius: .5rem;
+    color: #fff;
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+.primario .mas { width: 3rem; height: 3rem; }
+
+.primario:hover, .terciario:hover {
+    opacity: 0.9;
+}
+.primario:disabled{
+    cursor: default;
+    background: #DADADB;
+}
+
+.secundario:hover {
+    background-color: #e8e8e8;
+}
+
+.secundario:disabled{
+    cursor: default;
+    background: #DADADB;
+    border-color: #DADADB;
+    color: #fff;
+}
+
+.secundario {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .75rem 1.5rem;
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: .5rem;
+    color: #000;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+.terciario {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .75rem 1.5rem;
+    background: #1f4281;
+    border: 2px solid rgba(255,255,255,.2);
+    border-radius: .5rem;
+    color: #fff;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.terciario:disabled{
+    cursor: default;
+    background: #DADADB;
+}
+
+.botonEliminar {
+  background: #a61930;
+  border-color: rgba(255,255,255,.15);
+}
+.botonEliminar:hover {
+    opacity: 0.9;
+}
+.botonEditar:hover {
+    background-color: #e8e8e8;
+}
+.botonEditar img,
+.botonEliminar img {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+}
+
+.botonEditar,
+.botonEliminar {
+  border: 2px solid #000;
+  border-radius: .5rem;
+  padding: .5rem;
+  cursor: pointer;
+}
+
+.campo {
+    background: var(--box-textoporllenar, #e8e8e8);
+    border-radius: 8px;
+    border-style: solid;
+    border-color: var(--bordenegro, rgba(0, 0, 0, 0.2));
+    border-width: 2px;
+    padding: 17px 10px 17px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex: 1;
+    position: relative;
+}
+
+.barraBusqueda {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: 1rem;
+    background: #e8e8e8;
+    border: 4px solid rgba(38,43,64,.1);
+    border-radius: .5rem;
+  }
+   .barraBusqueda .icon { width: 1.6rem; height: 1.6rem; }
+   .barraBusqueda .entrada {
+    flex: 1;
+    background: transparent; /* Fondo transparente para mostrar el fondo del contenedor */
+    border: none; /* Eliminar borde */
+    outline: none; /* Eliminar contorno al foco */
+    font-size: 1.125rem;
+    color: #000; /* Color de texto al escribir */
+   }
+  
+.tarjeta {
+    height: 100%;
+    flex: 1;
+    padding: 1rem;
+    background: #fff;
+    border: 1.5px solid #000;
+    border-radius: .4rem;
+    font-size: 1.125rem;
+    flex-direction: row;
+    font-family: "SegoeUi-Regular", sans-serif;
+   }
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: #fff;
+    border-radius: .5rem;
+    border: 2px solid rgba(0,0,0,.2);
+    cursor: pointer;
+}
