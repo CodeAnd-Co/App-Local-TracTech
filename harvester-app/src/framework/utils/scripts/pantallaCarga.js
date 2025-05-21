@@ -1,6 +1,4 @@
-console.log('basePath: ')
-console.log('basePath: ', basePath)
-const { verificarToken } = require('../../../backend/servicios/verificarToken'); // Importar la función verificarToken
+const { verificarToken } = require(`${basePath}/backend/servicios/verificarToken`); // Importar la función verificarToken
 const { verificarPermisos } = require('../../../backend/servicios/verificarPermisos'); // Importar la función verificarPermisos
 
 /**

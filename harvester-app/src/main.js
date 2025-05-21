@@ -26,8 +26,7 @@ const createWindow = () => {
   // mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
 
   const pantallaCargaPath = path.join(__dirname, './framework/vistas/paginas/pantallaCarga.ejs');
-  console.log('basePath:', `file://${__dirname}`)
-  ejs.renderFile(pantallaCargaPath, {  basePath: `file://${__dirname}` }, (err, str) => {
+  ejs.renderFile(pantallaCargaPath, {  basePath: `${__dirname}`.replace(/\\/g, '/') }, (err, str) => {
     if (err) {
       console.error('Error al renderizar EJS:', err);
       return;

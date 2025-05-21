@@ -9,9 +9,7 @@
     <body>
         <div class="loader"></div>
         <script>
-            console.log('caca')
-            const basePath = "<%= basePath %>";
-            console.log('basePath:', basePath)
+            const basePath = <%- JSON.stringify(basePath) %>;
         </script>
         <script src="<%= basePath %>/framework/utils/scripts/pantallaCarga.js">   </script>
     </body>
