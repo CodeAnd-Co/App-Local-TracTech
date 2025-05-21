@@ -1,14 +1,16 @@
 <div class="tarjeta-texto">
-    <%- include('../atomos/menuDesplegable.ejs', {
+    <%- include('../moleculas/menuDesplegable.ejs', {
         opciones: ['Titulo', 'Subtitulo' , 'Contenido' ],
         icono: basePath + '/framework/utils/iconos/Texto.svg',
     }) %>
-    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='1000'></textarea>
-    <div class='contador-caracteres'>0/1000</div>
+    <%- include('../moleculas/textareaContador.ejs', {
+        placeholder: 'Escribe aquí tu contenido...',
+        maxLength: 1000,
+    }) %>
     <div class='botones-editar-eliminar'>
-        <%- include('../atomos/boton.ejs', { icono: basePath + '/framework/utils/iconos/Basura.svg', texto: 'Eliminar' }) %>
+        <%- include('../atomos/botonTransparente.ejs', { icono: basePath + '/framework/utils/iconos/Basura.svg', texto: 'Eliminar' }) %>
         <div class='divisor'></div>
-        <%- include('../atomos/boton.ejs', { icono: basePath + '/framework/utils/iconos/Menu.svg', texto: 'Alinear' }) %>
+        <%- include('../atomos/botonTransparente.ejs', { icono: basePath + '/framework/utils/iconos/Menu.svg', texto: 'Alinear' }) %>
     </div>
 </div>
 
