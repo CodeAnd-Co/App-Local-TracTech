@@ -1,0 +1,29 @@
+<!-- Carga de fuente y estilos  -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/icono/icono.css' rel='stylesheet' />
+
+<!-- Ícono generado -->
+<i 
+  class="material-symbols-outlined <%= tamano || '' %> <%= color || '' %>" 
+>
+  <%= nombre || '' %>
+</i>
+
+<% /* 
+  Nombres de íconos válidos:
+  - home
+  - menu
+  - arrow_back
+  - signal_cellular_alt
+  - function
+  - account_circle
+  - create_new_folder
+  - database
+  - content_paste
+  - search
+
+  Parametros: 
+  - nombre: 'home'
+  - tamano: 'icono-lg'
+  - color: 'icono-azul'
+*/ %>
