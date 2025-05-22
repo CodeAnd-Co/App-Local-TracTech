@@ -1,6 +1,7 @@
 const { verificarToken } = require(`${rutaBase}/src/backend/servicios/verificarToken`); // Importar la función verificarToken
 const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`); // Importar la función verificarPermisos
 const {precargarEJS} = require(`${rutaBase}/src/framework/utils/scripts/middleware/precargarEJS`)
+const { ipcRenderer } = require('electron');
 
 /**
  * Evento que se dispara cuando el contenido del DOM ha sido completamente cargado.
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Si el token es válido, mostrar la pantalla de carga 2 segundos y luego redirigir a la página principal
             const rutaContenedorPrincipal = `${rutaBase}src/framework/vistas/paginas/contenedorPrincipal.ejs`;
             try {
-                const vista = await precargarEJS(rutaContenedorPrincipal);
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaContenedorPrincipal);
                 window.location.href = vista;
             } catch (err) {
                 console.error("Error al cargar vista:", err);

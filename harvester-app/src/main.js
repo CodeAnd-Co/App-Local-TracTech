@@ -86,8 +86,8 @@ ipcMain.on('guardar-pdf', async (evento, bufer) => {
   evento.sender.send('pdf-guardado', !cancelado);
 });
 
-ipcMain.handle('read-user-data', async (event, fileName) => {
-  const path = electron.app.getPath('userData');
-  const buf = await fs.promises.readFile(`${path}/${fileName}`);
-  return buf;
+
+ipcMain.handle('precargar-ejs', async (event, rutaEJS) => {
+  const { precargarEJS } = require('./framework/utils/scripts/middleware/precargarEJS');
+  return await precargarEJS(rutaEJS);
 });
