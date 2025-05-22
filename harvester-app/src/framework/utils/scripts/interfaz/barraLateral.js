@@ -3,12 +3,12 @@ const { ipcRenderer } = require('electron');
 // Diccionario que incluye la ruta de la vista de cada módulo, el nombre de la sección, y el nombre del ícono de la sección.
 const informacionModulos = {
   inicio:          [`${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`, 'Inicio', 'Casa'],
-  tractores:       [`${rutaBase}src/framework/vistas/paginas/analisis/seleccionarTractor.ejs`, 'Perfil', 'Casa'],
-  analisis:        [`${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`, 'Análisis', 'Casa'],
-  plantillas:      [`${rutaBase}src/framework/vistas/paginas/plantillas/listaPlantillas.ejs`, 'Plantillas', 'Casa'],
-  formulas:        [`${rutaBase}src/framework/vistas/paginas/formulas/listaFormulas.ejs`, 'Formulas', 'Casa'],
-  perfil:          [`${rutaBase}src/framework/vistas/paginas/usuarios/consultarPerfil.ejs`, 'Perfil', 'Casa'],
-  usuarios:        [`${rutaBase}src/framework/vistas/paginas/usuarios/listaUsuarios.ejs`, 'Perfil', 'Casa'],
+  tractores:       [`${rutaBase}src/framework/vistas/paginas/analisis/seleccionarTractor.ejs`, 'Tractores', 'Casa'],
+  analisis:        [`${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`, 'Análisis', 'GraficaBarras'],
+  plantillas:      [`${rutaBase}src/framework/vistas/paginas/plantillas/listaPlantillas.ejs`, 'Plantillas', 'Portapapeles'],
+  formulas:        [`${rutaBase}src/framework/vistas/paginas/formulas/listaFormulas.ejs`, 'Formulas', 'Funcion'],
+  perfil:          [`${rutaBase}src/framework/vistas/paginas/usuarios/consultarPerfil.ejs`, 'Perfil', 'Usuario'],
+  usuarios:        [`${rutaBase}src/framework/vistas/paginas/usuarios/listaUsuarios.ejs`, 'Usuarios', 'Usuario'],
 };
 
 async function cargarModulo(modulo){

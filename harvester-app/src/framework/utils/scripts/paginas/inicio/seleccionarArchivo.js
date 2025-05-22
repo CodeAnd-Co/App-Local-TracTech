@@ -2,9 +2,29 @@
 // RF45 Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
 // RF46 Usuario sustituye el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF46
 
+/* eslint-disable no-undef */
+
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 const { borrarExcel } = require(`${rutaBase}/src/backend/casosUso/excel/borrarExcel.js`);
 const { leerExcel } = require(`${rutaBase}/src/backend/casosUso/excel/cargarExcel.js`);
+
+
+inicializarBotones();
+
+/**
+ * Inicializa los botones principales en la página de inicio.
+ * Esta función configura los eventos y comportamientos para:
+ * - El botón de cargar archivos
+ * - El botón de borrar archivos o datos seleccionados
+ * - El botón para acceder a la sección de tractores
+ * @returns {void}
+ */
+function inicializarBotones() {
+    botonCargar();
+    botonBorrar();
+    botonTractores();
+}
+
 /**
  * Inicializa la funcionalidad del botón de borrar Excel.
  * Configura el evento click para eliminar el archivo Excel cargado
@@ -72,6 +92,8 @@ function botonCargar() {
             elementoNombreArchivo.textContent = localStorage.getItem('nombreArchivoExcel');
             // Habilitar el botón de borrar
             botonBorrar.style.display = 'block';
+            // Habilitar el botón de análisis
+            botonAnalisis.removeAttribute('disabled');
         }
 
         // Eliminar cualquier dato de sección activa al cargar el módulo inicio
@@ -150,39 +172,15 @@ function botonCargar() {
  * @returns {void}
  */
 function botonTractores() {
-    setTimeout(() => {
-        const botonTractores = document.querySelector('.avanzar-analisis');
-
-        if (localStorage.getItem('nombreArchivoExcel')) {
-            // Habilitar el botón de analisis
-            botonTractores.removeAttribute('disabled');
+    const botonTractores = document.querySelector('.avanzar-analisis');
+    botonTractores.addEventListener('click', async () => {
+        const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/seleccionarTractor.ejs`;
+        try {
+            var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Tractores', Icono : 'Casa'});
+            window.location.href = vista;
+            localStorage.setItem('seccion-activa', 'inicio');
+        } catch (err) {
+            console.error('Error al cargar vista:', err);
         }
-        
-        if (botonTractores) {
-            botonTractores.addEventListener('click', () => {
-                // Esperar un momento para que se procesen los datos antes de cambiar de módulo
-                setTimeout(() => {
-                    // Cargar el módulo de tractores
-                    const ventanaPrincipal = document.getElementById('ventana-principal');
-                    if (ventanaPrincipal) {
-                        fetch('../vistas/moduloTractores.html')
-                            .then(res => res.text())
-                            .then(html => {
-                                ventanaPrincipal.innerHTML = html;
-                                // Si el script de análisis ya está cargado, inicializarlo
-                                if (window.inicializarModuloTractores) {
-                                    window.inicializarModuloTractores();
-                                }
-                            })
-                            .catch(err => console.error("Error cargando módulo de tractores:", err));
-                    }
-                }, 500); // Esperar 500ms para asegurar que los datos se guarden correctamente
-            });
-        }
-    }, 100);
+    })
 }
-
-// Exponer las funciones al objeto window para que puedan ser utilizadas por otros módulos
-window.botonBorrar = botonBorrar;
-window.botonCargar = botonCargar;
-window.botonTractores = botonTractores;

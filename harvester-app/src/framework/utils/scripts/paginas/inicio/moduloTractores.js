@@ -1,5 +1,7 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
 
+inicializarModuloTractores();
+
 /**
  * Inicializa el módulo de tractores configurando los elementos del DOM y 
  * mostrando los datos cargados desde el almacenamiento local.
@@ -66,7 +68,8 @@ function iniciarDistribuidores(datosExcel) {
             // Crear checkbox
             const caja = document.createElement('img');
             caja.className = 'check-box';
-            caja.src = '../utils/iconos/check_box_outline_blank.svg';
+            
+            caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
     
             // Añadir elementos
             distribuidorDiv.appendChild(nombreDistribuidorDiv);
@@ -114,7 +117,7 @@ function inicializarTractores(datosExcel) {
         // Crear el cuadro de selección (checkbox) para el tractor
         const caja = document.createElement('img');
         caja.className = 'check-box';
-        caja.src = '../utils/iconos/check_box_outline_blank.svg'; // Imagen del checkbox vacío 
+        caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Imagen del checkbox vacío 
 
         
         // Añadir el nombre y el checkbox al div del tractor
@@ -203,7 +206,7 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
 
         const caja = document.createElement('img');
         caja.className = 'check-box';
-        caja.src = '../utils/iconos/check_box_outline_blank.svg';
+        caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
 
         // Agregar al DOM
         columnaDiv.appendChild(nombreColumnaDiv);
@@ -242,30 +245,18 @@ function manejarClickTractor(tractorNombre, datosExcel) {
  * @function botonReporte
  * @returns {void}
  */
-function botonReporte() {
-    setTimeout(() => {
-        const botonReporte = document.querySelector('.primario');
-        if (botonReporte) {
-            botonReporte.addEventListener('click', () => {
-                // Esperar un momento para que se procesen los datos antes de cambiar de módulo
-                setTimeout(() => {
-                    // Cargar el módulo de análisis
-                    const ventanaPrincipal = document.getElementById('ventana-principal');
-                    if (ventanaPrincipal) {
-                        fetch('../vistas/moduloAnalisis.html')
-                            .then(respuesta => respuesta.text())
-                            .then(html => {
-                                ventanaPrincipal.innerHTML = html;
-                                // Si el script de análisis ya está cargado, inicializarlo
-                                if (window.inicializarModuloAnalisis) {
-                                    window.inicializarModuloAnalisis();
-                                }
-                            }).catch(error => console.error('Error cargando módulo de análisis:', error))
-                    }
-                }, 500);
-            });
+async function botonReporte() {
+    const botonAnalisis = document.querySelector('.primario');
+    botonAnalisis.addEventListener('click', async () => {
+        const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
+        try {
+            var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras'});
+            window.location.href = vista;
+            localStorage.setItem('seccion-activa', 'analisis');
+        } catch (err) {
+            console.error('Error al cargar vista:', err);
         }
-    }, 100);
+    })
 }
 
 /**
@@ -390,9 +381,9 @@ function aplicarFiltrosCombinados() {
 function cambiarIconoMarcadoADesmarcado(icono) {
     // Verificar si el icono actual es el de desmarcado
     if (icono.src.includes('check_box_outline_blank.svg')) {
-        icono.src = '../utils/iconos/check_box.svg'; // Cambiar a marcado
+        icono.src = `${rutaBase}src/framework/utils/iconos/check_box.svg`; // Cambiar a marcado
     } else {
-        icono.src = '../utils/iconos/check_box_outline_blank.svg'; // Cambiar a desmarcado
+        icono.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Cambiar a desmarcado
     }
 }
 
@@ -413,6 +404,3 @@ function cambiarSeleccionVisualUnica(contenedor) {
     }
 
 }
-
-// Exportar funciones para uso global
-window.inicializarModuloTractores = inicializarModuloTractores;
