@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Si el token es válido, mostrar la pantalla de carga 2 segundos y luego redirigir a la página principal
             const rutaInicio = `${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`;
             try {
+                localStorage.setItem('seccion-activa', 'inicio');
                 const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Inicio', Icono : 'Casa'});
                 window.location.href = vista;
             } catch (err) {

@@ -1,7 +1,7 @@
 <%- include ('../../includes/encabezado.ejs')%>
 
 <head>
-  <link rel="stylesheet" href="../utils/css/moduloAnalisis.css">
+  <link rel="stylesheet" href="<%= rutaBase %>src/framework/utils/css/paginas/analisis/generarReporte.css">
 </head>
   <div class="frame-analisis">
 
@@ -10,11 +10,11 @@
       <div class="seccion-contenido" id="contenedorElementos"></div>
       <div class="contenedor-botones-acciones">
         <button id="descargarPDF" class="boton-agregar">
-          <img class="icono-agregar" src="../utils/iconos/PDF.svg" alt="PDF">
+          <img class="icono-agregar" src="<%= rutaBase %>src/framework/utils/iconos/PDF.svg" alt="PDF">
           <span>Descargar PDF</span>
         </button>
         <button id="guardarPlantilla" class="boton-agregar">
-          <img class="icono-agregar" src="../utils/iconos/Portapapeles.svg" alt="Plantilla">
+          <img class="icono-agregar" src="<%= rutaBase %>src/framework/utils/conos/Portapapeles.svg" alt="Plantilla">
           <span>Guardar plantilla</span>
         </button>
       </div>

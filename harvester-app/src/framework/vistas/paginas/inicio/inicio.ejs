@@ -1,28 +1,29 @@
 <%- include ('../../includes/encabezado.ejs')%>
 
 <head>
-    <link href="../utils/css/moduloInicio.css" rel="stylesheet" />
+    <link href='<%= rutaBase %>src/framework/utils/css/paginas/inicio/inicio.css' rel='stylesheet' />
 </head>
-  <div class="frame-principal-inicio">
-      <div class="frame-excel">
-          <div class="usar-excel">
-            <div class="texto-usar-excel">Usar Excel</div>
-            <img class="FolderPlusRojo" src="../utils/iconos/FolderMasRojo.svg" />
-            <div class="nombre-archivo">
-              <div class="texto-archivo">Sin Archivo Seleccionado</div>
-                <button id="boton-borrar" class="boton-borrar">
-                  <img class="borrar" src="../utils/iconos/X.svg" />
+  <div class='frame-principal-inicio'>
+      <div class='frame-excel'>
+          <div class='usar-excel'>
+            <div class='texto-usar-excel'>Usar Excel</div>
+            <img class='FolderPlusRojo' src='<%= rutaBase %>src/framework/utils/iconos/FolderMasRojo.svg' />
+            <div class='nombre-archivo'>
+              <div class='texto-archivo'>Sin Archivo Seleccionado</div>
+                <button id='boton-borrar' class='boton-borrar'>
+                  <img class='borrar' src='<%= rutaBase %>src/framework/utils/iconos/X.svg' />
                 </button>
             </div>
-            <label class="cargar">
-              <input type="file" accept=".xlsx" class="cargar-excel" />
-              <div class="texto-cargar">Cargar Archivo</div>
+            <label class='cargar'>
+              <input type='file' accept='.xlsx' class='cargar-excel' />
+              <div class='texto-cargar'>Cargar Archivo</div>
             </label>
-            <button disabled class="avanzar-analisis">
-              <div class="texto-avanzar">Analizar documento</div>
-              <img class="arrow-back" src="../utils/iconos/FlechaAtras.svg" />
+            <button disabled class='avanzar-analisis'>
+              <div class='texto-avanzar'>Analizar documento</div>
+              <img class='arrow-back' src='<%= rutaBase %>src/framework/utils/iconos/FlechaAtras.svg' />
             </button>
           </div>
       </div>
     </div>
+    <script src='<%= rutaBase %>src/framework/utils/script/paginas/inicio/seleccionarArchivo.js'></script>
 <%- include ('../../includes/piePagina.ejs')%>
