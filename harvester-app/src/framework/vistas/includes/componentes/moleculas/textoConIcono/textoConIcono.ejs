@@ -1,15 +1,31 @@
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/textoConIcono/textoConIcono.css' rel='stylesheet'/>
 <div class="texto-con-icono">
     <%- include('../../atomos/icono/icono.ejs', { 
-        nombre: 'home', 
-        tamano: 'icono-lg',
-        color: 'icono-negro'
+        nombre: icono?.nombre || 'home', 
+        tamanio: icono?.tamano || '',
+        color: icono?.color || '',
     }) %>
     <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { 
-        id: 'cuadroEjemplo',
-        label: '¡Inicio!',
-        tamanio: 'texto-lg',
-        color: 'texto-azul',
-        fuente: 'fuente-regular',
+        id: texto?.id || '',
+        label: texto?.label || '',
+        tamanio: texto?.tamano || '',
+        color: texto?.color || '',
+        fuente: texto?.fuente || '',
     }) %>
 </div>
+
+<% /*
+  Parámetros esperados (ejemplos):
+  - icono: {
+      nombre: 'home',
+      tamano: 'icono-lg',
+      color: 'icono-negro'
+    }
+  - texto: {
+      id: 'textoInicio',
+      label: 'Inicio',
+      tamano: 'texto-lg',
+      color: 'texto-negro',
+      fuente: 'fuente-regular'
+    }
+*/ %>

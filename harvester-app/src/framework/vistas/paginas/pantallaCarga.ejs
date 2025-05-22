@@ -7,7 +7,20 @@
     <link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/pantallaCarga.css'>
 </head>
     <body>
-        <%- include('../includes/componentes/moleculas/textoConIcono/textoConIcono.ejs') %>
+        <%- include('../includes/componentes/moleculas/textoConIcono/textoConIcono.ejs', {
+            icono: {
+                nombre: 'home',
+                tamanio: 'icono-lg',
+                color: 'icono-negro'
+              },
+              texto: {
+                id: 'textoInicio',
+                label: 'Inicio',
+                tamanio: 'texto-lg',
+                color: 'texto-negro',
+                fuente: 'fuente-regular'
+              }
+        }) %>
         <%- include('../includes/componentes/atomos/cuadroTexto/cuadroTexto.ejs', { 
             id: 'cuadroEjemplo',
             label: '¡Hola mundo!',
