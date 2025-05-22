@@ -1,0 +1,9 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/textoConIcono/textoConIcono.css' rel='stylesheet'/>
+<div class="texto-con-icono">
+    <%- include('../../atomos/icono/icono.ejs', { 
+        nombre: 'home', 
+        tamano: 'icono-lg',
+        color: 'icono-negro'
+    }) %>
+    <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { label: 'Inicio', type: 'texto', id: 'textoInicio'}) %>
+</div>
