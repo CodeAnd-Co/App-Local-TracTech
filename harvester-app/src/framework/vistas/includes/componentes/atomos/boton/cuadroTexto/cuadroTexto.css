@@ -1,0 +1,13 @@
+.texto,
+.texto * {
+  box-sizing: border-box;
+}
+.texto {
+  color: #000000;
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  font-weight: 400;
+  position: relative;
+}
