@@ -1,0 +1,27 @@
+<!-- <%- include('../componentes/atomos/campo-texto/campoTexto.ejs', { 
+  label: 'Nombre del usuario', 
+  type: 'text', 
+  id: 'username', 
+  name: 'username', 
+  placeholder: 'Nombre del nuevo usuario',
+  maxlength: '55',
+  required: true,
+  errorId: 'mensajeErrorNombre'
+}) %> -->
+
+<link href='campoTexto.css' rel='stylesheet' />
+
+<div class='campo'>
+  <label for='<%- id %>'><%- label %></label>
+  <input
+    type='<%- type %>'
+    id='<%- id %>'
+    name='<%- name %>'
+    placeholder='<%- placeholder %>'
+    <% if (required) { %>required<% } %>
+    <% if (maxlength) { %>maxlength="<%- maxlength %>"<% } %>
+  />
+  <% if (errorId) { %>
+    <small id='<%- errorId %>' class='mensajeError'></small>
+  <% } %>
+</div>
