@@ -191,7 +191,6 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
         columnas = datosHoja[0];
     }
     localStorage.setItem('columnas', JSON.stringify(columnas));
-    console.log(localStorage.getItem('columnas'));
     columnas.forEach(nombreColumna => {
         // Crear div para la columna
         const columnaDiv = document.createElement('div');

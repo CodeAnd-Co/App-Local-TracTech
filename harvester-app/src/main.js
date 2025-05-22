@@ -76,9 +76,7 @@ ipcMain.on('guardar-pdf', async (evento, bufer) => {
     fs.writeFile(ubicacion, bufer, (error) => {
       if (error) {
         console.error('Error al guardar PDF:', error);
-      } else {
-        console.log('PDF guardado en', ubicacion);
-      }
+      } 
     });
   }
 
