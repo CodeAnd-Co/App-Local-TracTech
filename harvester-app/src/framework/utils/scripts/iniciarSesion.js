@@ -6,9 +6,10 @@ const modalInfo = document.querySelector('#modalContacto');
 const botonAcceder = document.querySelector('.boton-acceder');
 const entradaCorreo = document.querySelector('.correo[type="email"]');
 const entradaContrasenia = document.querySelector('.contrasena');
-const { verificarPermisos } = require('../../backend/servicios/verificarPermisos');
-const { iniciarSesion } = require('../../backend/casosUso/sesion/iniciarSesion');
-const Swal = require('sweetalert2');
+const { ipcRenderer } = require('electron');
+const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`);
+const { iniciarSesion } = require(`${rutaBase}/src/backend/casosUso/sesion/iniciarSesion`);
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 /**
  * Maneja el evento de clic en el botón de acceso para iniciar sesión.
@@ -41,8 +42,13 @@ async function manejarInicioSesion() {
       localStorage.setItem('permisos', JSON.stringify(listaPermisos));
       const usuario = resultado.usuario;
       localStorage.setItem('nombreUsuario', usuario);
-      // Redirigir al usuario a la página principal
-      window.location.href = 'FrameLayout.html';
+      const rutaContenedorPrincipal = `${rutaBase}src/framework/vistas/paginas/contenedorPrincipal.ejs`;
+      try {
+          const vista = await ipcRenderer.invoke('precargar-ejs', rutaContenedorPrincipal);
+          window.location.href = vista;
+      } catch (err) {
+          console.error('Error al cargar vista:', err);
+      }
 
     } else {
       // Mostrar mensaje de error si las credenciales no son válidas
@@ -70,6 +76,7 @@ botonAcceder.addEventListener('click', manejarInicioSesion);
 [entradaCorreo, entradaContrasenia].forEach(entrada => {
   entrada.addEventListener('keydown', (evento) => {
     if (evento.key === 'Enter') {
+      evento.preventDefault();
       manejarInicioSesion();
     }
   });

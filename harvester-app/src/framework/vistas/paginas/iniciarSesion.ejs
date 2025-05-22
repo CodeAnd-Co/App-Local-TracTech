@@ -1,17 +1,10 @@
 <!DOCTYPE html>
 
 <link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/resetStyles.css'>
-<link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/styles.css'>
+<link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/iniciarSesion.css'>
 
 <body>
-  <div
-    class='iniciar-sesion'
-    style='
-      background: url(../utils/imagenes/iniciar-sesion.png) center;
-      background-size: cover;
-      background-repeat: no-repeat;
-    '
-  >
+  <div class='iniciar-sesion'>
     <div class='barra-lateral'>
       <div class='rectangulo-separacion'></div>
       <div class='frame-iniciar-sesion'>
@@ -58,7 +51,10 @@
     </form>
   </dialog>
 
-  <script src='../utils/js/inicioSesion.js' ></script>
+    <script>
+      const rutaBase = <%- JSON.stringify(rutaBase) %>;
+  </script>
+  <script src='<%= rutaBase %>src/framework/utils/scripts/iniciarSesion.js' ></script>
 
 </body>
 

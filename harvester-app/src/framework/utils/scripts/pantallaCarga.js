@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
         } else {
-            const rutaInicioSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
+            const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
             try {
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicioSesion);
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
                 window.location.href = vista;
             } catch (err) {
                 console.error("Error al cargar vista:", err);
@@ -42,9 +42,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Error al verificar el token:', error);
         // En caso de error, mostrar la pantalla de carga y luego redirigir a inicio de sesión
-        const rutaInicioSesion = `${rutaBase}src/framework/vistas/paginas/inicioSesion.ejs`;
+        const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
         try {
-            const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicioSesion);
+            const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
             window.location.href = vista;
         } catch (err) {
             console.error('Error al cargar vista:', err);

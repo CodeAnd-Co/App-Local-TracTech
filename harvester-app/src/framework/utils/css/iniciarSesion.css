@@ -91,7 +91,7 @@
   align-items: center;
   justify-content: center;
 }
-.iniciar-sesi-n {
+.iniciar-sesion {
   color: #ffffff;
   text-align: left;
   font-family: "SegoeUi-Regular", sans-serif;
@@ -99,6 +99,9 @@
   line-height: 100%;
   font-weight: 400;
   position: relative;
+  background: url(../imagenes/iniciar-sesion.png) center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 .acceso {
   display: flex;
