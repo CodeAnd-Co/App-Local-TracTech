@@ -35,10 +35,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             //     window.location.href = (`${rutaBase}src/framework/vistas/paginas/contenedorPrincipal.ejs`);
             // }, 2000); // 2 segundos
         } else {
-            // Si el token no es válido, mostrar la pantalla de carga 2 segundos y luego redirigir a inicio de sesión
-            setTimeout(() => {
-                window.location.href = "../vistas/inicioSesion.html";
-            }, 2000); // 2 segundos
+            const rutaContenedorPrincipal = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
+            try {
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaContenedorPrincipal);
+                window.location.href = vista;
+            } catch (err) {
+                console.error("Error al cargar vista:", err);
+            }
         }
     } catch (error) {
         console.error("Error al verificar el token:", error);
