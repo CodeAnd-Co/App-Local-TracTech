@@ -1,16 +1,4 @@
-<!-- <%- include('../componentes/atomos/campo-texto/campoTexto.ejs', { 
-  label: 'Nombre del usuario', 
-  type: 'text', 
-  id: 'username', 
-  name: 'username', 
-  placeholder: 'Nombre del nuevo usuario',
-  maxlength: '55',
-  required: true,
-  errorId: 'mensajeErrorNombre'
-}) %> -->
-
-<link href='campoTexto.css' rel='stylesheet' />
-
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/campoTexto/campoTexto.css' rel='stylesheet' />
 <div class='campo'>
   <label for='<%- id %>'><%- label %></label>
   <input
