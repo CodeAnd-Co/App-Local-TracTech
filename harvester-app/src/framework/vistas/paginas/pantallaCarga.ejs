@@ -8,7 +8,13 @@
 </head>
     <body>
         <%- include('../includes/componentes/moleculas/textoConIcono/textoConIcono.ejs') %>
-        <%- include('../includes/componentes/atomos/cuadroTexto/cuadroTexto.ejs', { label: 'Inicio', type: 'texto', id: 'texto1' })%>
+        <%- include('../includes/componentes/atomos/cuadroTexto/cuadroTexto.ejs', { 
+            id: 'cuadroEjemplo',
+            label: '¡Hola mundo!',
+            tamanio: 'texto-lg',
+            color: 'texto-azul',
+            fuente: 'fuente-regular',
+        })%>
         <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
         label: 'Nombre del usuario', 
         type: 'text', 
