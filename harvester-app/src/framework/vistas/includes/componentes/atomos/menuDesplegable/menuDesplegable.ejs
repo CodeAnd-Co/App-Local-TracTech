@@ -1,0 +1,8 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/menuDesplegable/menuDesplegable.css' rel='stylesheet' />
+
+<select class='<%- className %>'>
+  <option value="" disabled selected hidden><%= placeholder %></option>
+  <% opciones.forEach(function(opcion) { %>
+    <option value="<%= opcion %>"><%= opcion %></option>
+  <% }); %>
+</select>

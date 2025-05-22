@@ -7,16 +7,10 @@
     <link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/pantallaCarga.css'>
 </head>
     <body>
-        <%- include('../includes/componentes/atomos/cuadroTexto/cuadroTexto.ejs', { label: 'Inicio', type: 'texto', id: 'texto1' })%>
-        <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
-        label: 'Nombre del usuario', 
-        type: 'text', 
-        id: 'username', 
-        name: 'username', 
-        placeholder: 'Nombre del nuevo usuario',
-        maxlength: '55',
-        required: true,
-        errorId: 'mensajeErrorNombre'
-        }) %>    
+        <%- include('../includes/componentes/atomos/menuDesplegable/menuDesplegable.ejs', { 
+        opciones: ['Pay', 'Linea', 'Barras'],
+        placeholder: 'Selecciona una gráfica',
+        className: 'opcion-texto'
+        }) %>   
     </body>
 </html>
