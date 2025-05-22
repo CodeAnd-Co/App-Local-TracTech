@@ -1,0 +1,10 @@
+.cuadro-texto {
+  color: #000000;
+  box-sizing: border-box;
+  text-align: left;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  font-weight: 400;
+  position: relative;
+}
