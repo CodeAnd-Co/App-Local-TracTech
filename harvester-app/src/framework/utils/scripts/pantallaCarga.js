@@ -1,5 +1,6 @@
-const { verificarToken } = require(`${basePath}/backend/servicios/verificarToken`); // Importar la función verificarToken
-const { verificarPermisos } = require('../../../backend/servicios/verificarPermisos'); // Importar la función verificarPermisos
+const { verificarToken } = require(`${rutaBase}/src/backend/servicios/verificarToken`); // Importar la función verificarToken
+const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`); // Importar la función verificarPermisos
+const {precargarEJS} = require(`${rutaBase}/src/framework/utils/scripts/middleware/precargarEJS`)
 
 /**
  * Evento que se dispara cuando el contenido del DOM ha sido completamente cargado.
@@ -10,9 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         // Verificar si el token es válido
-        console.log('token')
         const tokenValido = await verificarToken(token);
-        console.log('token', tokenValido)
 
         if (tokenValido) {
             // Si el token es válido, obtener los permisos del usuario
@@ -22,9 +21,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             localStorage.setItem("permisos", JSON.stringify(permisos.permisos));
 
             // Si el token es válido, mostrar la pantalla de carga 2 segundos y luego redirigir a la página principal
-            setTimeout(() => {
-                window.location.href = "../vistas/FrameLayout.html";
-            }, 2000); // 2 segundos
+            const rutaContenedorPrincipal = `${rutaBase}src/framework/vistas/paginas/contenedorPrincipal.ejs`;
+            try {
+                const vista = await precargarEJS(rutaContenedorPrincipal);
+                window.location.href = vista;
+            } catch (err) {
+                console.error("Error al cargar vista:", err);
+            }
+
+            // setTimeout(() => {
+            //     const vista = await precargarEJS(pantallaCargaPath);
+            //     window.location.href = (`${rutaBase}src/framework/vistas/paginas/contenedorPrincipal.ejs`);
+            // }, 2000); // 2 segundos
         } else {
             // Si el token no es válido, mostrar la pantalla de carga 2 segundos y luego redirigir a inicio de sesión
             setTimeout(() => {

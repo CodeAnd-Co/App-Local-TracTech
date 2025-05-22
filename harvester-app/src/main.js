@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
-const ejs = require('ejs')
+const {precargarEJS} = require('./framework/utils/scripts/middleware/precargarEJS')
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -9,7 +9,7 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = async () => {
   // Crear la ventana del navegador.
   const mainWindow = new BrowserWindow({
     width: 1920,
@@ -26,18 +26,15 @@ const createWindow = () => {
   // mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
 
   const pantallaCargaPath = path.join(__dirname, './framework/vistas/paginas/pantallaCarga.ejs');
-  ejs.renderFile(pantallaCargaPath, {  basePath: `${__dirname}`.replace(/\\/g, '/') }, (err, str) => {
-    if (err) {
-      console.error('Error al renderizar EJS:', err);
-      return;
-    }
 
-    // Guarda el HTML generado en un archivo temporal
-    const tempPath = path.join(app.getPath('userData'), 'pantallaCarga_temp.html');
-    fs.writeFileSync(tempPath, str);
+  try {
+    const vista = await precargarEJS(pantallaCargaPath);
+    console.log("Vista cargada:", vista);
+    await mainWindow.loadFile(vista);
+  } catch (err) {
+    console.error("Error al cargar vista:", err);
+  }
 
-    mainWindow.loadFile(tempPath);
-  });
 
   // Poner la ventana en modo de pantalla completa.
   mainWindow.maximize();
@@ -87,4 +84,10 @@ ipcMain.on('guardar-pdf', async (evento, bufer) => {
   }
 
   evento.sender.send('pdf-guardado', !cancelado);
+});
+
+ipcMain.handle('read-user-data', async (event, fileName) => {
+  const path = electron.app.getPath('userData');
+  const buf = await fs.promises.readFile(`${path}/${fileName}`);
+  return buf;
 });

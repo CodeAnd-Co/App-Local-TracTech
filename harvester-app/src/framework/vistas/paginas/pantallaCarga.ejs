@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargando...</title>
-    <link rel="stylesheet" href="<%= basePath %>/framework/utils/css/pantallaCarga.css">
+    <link rel="stylesheet" href="<%= rutaBase %>src/framework/utils/css/pantallaCarga.css">
 </head>
     <body>
         <div class="loader"></div>
         <script>
-            const basePath = <%- JSON.stringify(basePath) %>;
+            const rutaBase = <%- JSON.stringify(rutaBase) %>;
         </script>
-        <script src="<%= basePath %>/framework/utils/scripts/pantallaCarga.js">   </script>
+        <script src="<%= rutaBase %>src/framework/utils/scripts/pantallaCarga.js">   </script>
     </body>
 </html>
