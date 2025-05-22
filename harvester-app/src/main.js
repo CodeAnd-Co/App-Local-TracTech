@@ -84,7 +84,7 @@ ipcMain.on('guardar-pdf', async (evento, bufer) => {
 });
 
 
-ipcMain.handle('precargar-ejs', async (event, rutaEJS) => {
+ipcMain.handle('precargar-ejs', async (event, rutaEJS, parametros) => {
   const { precargarEJS } = require('./framework/utils/scripts/middleware/precargarEJS');
-  return await precargarEJS(rutaEJS);
+  return await precargarEJS(rutaEJS, parametros);
 });

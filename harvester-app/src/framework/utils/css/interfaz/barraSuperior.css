@@ -95,3 +95,85 @@
   background: #f0f0f0;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+
+
+/* Estilos del Frame Layout */
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "SegoeUi-Regular", sans-serif;
+}
+
+.formulas-brillante {
+  background: #dbdce0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.frame-10 {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.sidebar-container {
+  background: #ffffff;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.main-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.topbar-container {
+  flex-shrink: 0;
+  padding-bottom: 10px;
+}
+
+.content-container {
+  background: #ffffff;
+  border-radius: 8px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;         /* Centra horizontalmente */
+}
+
+/* ===== GENERAL ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.pantalla-bloqueo {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.0);
+  z-index: 99999; /* Muy alto para estar encima de todo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+}
+
+.oculto {
+  display: none;
+}

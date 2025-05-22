@@ -22,9 +22,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.setItem('permisos', JSON.stringify(permisos.permisos));
 
             // Si el token es válido, mostrar la pantalla de carga 2 segundos y luego redirigir a la página principal
-            const rutaContenedorPrincipal = `${rutaBase}src/framework/vistas/paginas/contenedorPrincipal.ejs`;
+            const rutaInicio = `${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`;
             try {
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaContenedorPrincipal);
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Inicio', Icono : 'Casa'});
                 window.location.href = vista;
             } catch (err) {
                 console.error('Error al cargar vista:', err);

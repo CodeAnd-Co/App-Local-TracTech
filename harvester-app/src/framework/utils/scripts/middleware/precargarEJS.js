@@ -9,14 +9,20 @@ const fs = require('fs');
  * @returns {Promise<string>} Promesa que resuelve a la ruta del archivo HTML temporal generado.
  * @throws {Error} Si hay un error durante el renderizado del archivo EJS.
  */
-function precargarEJS(ruta){
+function precargarEJS(ruta, parametros = {}){
     return new Promise((resolver, rechazar) => {
       // Obtenemos la ruta absoluta -> harvester-app/
       const rutaBase = `${__dirname}`.replace(/\\/g, '/').split('src/')[0]
 
       // Guardar la vista renderizada en AppData
       const rutaTemporal = path.join(app.getPath('userData'), 'temp.html');
-      ejs.renderFile(ruta, { rutaBase }, (error, archivo) => {
+
+      const datos = {
+        rutaBase,
+        ...parametros
+      };
+
+      ejs.renderFile(ruta, datos, (error, archivo) => {
         if (error) {
           rechazar(error);
           return;

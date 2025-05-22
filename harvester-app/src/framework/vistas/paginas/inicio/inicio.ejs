@@ -1,26 +1,28 @@
-<!DOCTYPE html>
-<html lang='es'>
+<%- include ('../../includes/encabezado.ejs')%>
+
 <head>
-  <meta charset='UTF-8' />
-  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-  <title>Harvester App</title>
-   <link href='/utils/css/topBar.css' rel='stylesheet' />
-  <link href='/utils/css/sideBar.css' rel='stylesheet' />
-  <link href='/utils/css/FrameLayout.css' rel='stylesheet' />
-
+    <link href="../utils/css/moduloInicio.css" rel="stylesheet" />
 </head>
-<body>
-  <div id="pantalla-bloqueo" class="pantalla-bloqueo oculto">
-  </div>
-  <div class='formulas-brillante'>
-    <div class='frame-10'>
-      <div class='sidebar-container'>
-        <div id='contenedorBarraLateral'> <%- include('sideBar.ejs') %> </div>
+  <div class="frame-principal-inicio">
+      <div class="frame-excel">
+          <div class="usar-excel">
+            <div class="texto-usar-excel">Usar Excel</div>
+            <img class="FolderPlusRojo" src="../utils/iconos/FolderMasRojo.svg" />
+            <div class="nombre-archivo">
+              <div class="texto-archivo">Sin Archivo Seleccionado</div>
+                <button id="boton-borrar" class="boton-borrar">
+                  <img class="borrar" src="../utils/iconos/X.svg" />
+                </button>
+            </div>
+            <label class="cargar">
+              <input type="file" accept=".xlsx" class="cargar-excel" />
+              <div class="texto-cargar">Cargar Archivo</div>
+            </label>
+            <button disabled class="avanzar-analisis">
+              <div class="texto-avanzar">Analizar documento</div>
+              <img class="arrow-back" src="../utils/iconos/FlechaAtras.svg" />
+            </button>
+          </div>
       </div>
-
-      <div class='main-container'>
-          <div id='contenedorBarraSuperior'> <%- include('topBar.ejs') %> </div>
-        <div class='content-container'>
-
-          <div id='ventana-principal' class='ventana-principal'>
-
+    </div>
+<%- include ('../../includes/piePagina.ejs')%>
