@@ -8,15 +8,9 @@
 </head>
     <body>
         <%- include('../includes/componentes/atomos/cuadroTexto/cuadroTexto.ejs', { label: 'Inicio', type: 'texto', id: 'texto1' })%>
-        <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
-        label: 'Nombre del usuario', 
-        type: 'text', 
-        id: 'username', 
-        name: 'username', 
-        placeholder: 'Nombre del nuevo usuario',
-        maxlength: '55',
-        required: true,
-        errorId: 'mensajeErrorNombre'
-        }) %>    
+        <%- include('../includes/componentes/atomos/cajaValidacion/cajaValidacion.ejs', {
+          id: 'terminos',
+          name: 'terminos'
+        }) %>  
     </body>
 </html>
