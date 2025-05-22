@@ -20,7 +20,6 @@ function precargarEJS(ruta){
                 reject(err);
                 return;
             }
-
         
             // Guarda el HTML generado en un archivo temporal
             const rutaTemporal = path.join(app.getPath('userData'), 'temp.html');
