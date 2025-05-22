@@ -1,0 +1,44 @@
+/* HTML: <div class="loader"></div> */
+.carga {
+    width: 50px;
+    aspect-ratio: 1;
+    color: #A61930; /* Cambiado a A61930 */
+    position: absolute; /* Cambiado a absolute para centrar */
+    top: 50%; /* Centrado verticalmente */
+    left: 50%; /* Centrado horizontalmente */
+    transform: translate(-50%, -50%); /* Ajuste para centrar completamente */
+    animation: l40 .5s infinite alternate;
+}
+.carga:before,
+.carga:after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-size: 25px 25px;
+    background-position: 0 0,100% 0,100% 100%,0 100%;
+    background-repeat: no-repeat;
+}
+.carga:before {
+    background-image:
+      radial-gradient(farthest-side at top    left ,currentColor 96%,#0000),
+      radial-gradient(farthest-side at top    right,currentColor 96%,#0000),
+      radial-gradient(farthest-side at bottom right,currentColor 96%,#0000),
+      radial-gradient(farthest-side at bottom left ,currentColor 96%,#0000);
+    animation: l40-1 1s infinite;
+}
+.carga:after {
+    background-image: 
+      radial-gradient(farthest-side at top    left ,#0000 94%,currentColor 96%),
+      radial-gradient(farthest-side at top    right,#0000 94%,currentColor 96%),
+      radial-gradient(farthest-side at bottom right,#0000 94%,currentColor 96%),
+      radial-gradient(farthest-side at bottom left ,#0000 94%,currentColor 96%);
+    animation: l40-2 1s infinite;
+}
+@keyframes l40-1 {
+    0%,10%,90%,100% {inset:0}
+    40%,60% {inset:-10px}
+}
+@keyframes l40-2 {
+    0%,40%  {transform: rotate(0)}
+    60%,100%{transform: rotate(90deg)}
+}
