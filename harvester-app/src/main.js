@@ -29,7 +29,6 @@ const createWindow = async () => {
 
   try {
     const vista = await precargarEJS(pantallaCargaPath);
-    console.log("Vista cargada:", vista);
     await mainWindow.loadFile(vista);
   } catch (err) {
     console.error("Error al cargar vista:", err);
