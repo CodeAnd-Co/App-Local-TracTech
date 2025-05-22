@@ -7,10 +7,15 @@
     <link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/pantallaCarga.css'>
 </head>
     <body>
-        <div class='loader'></div>
-        <script>
-            const rutaBase = <%- JSON.stringify(rutaBase) %>;
-        </script>
-        <script src='<%= rutaBase %>src/framework/utils/scripts/pantallaCarga.js'>   </script>
+        <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
+        label: 'Nombre del usuario', 
+        type: 'text', 
+        id: 'username', 
+        name: 'username', 
+        placeholder: 'Nombre del nuevo usuario',
+        maxlength: '55',
+        required: true,
+        errorId: 'mensajeErrorNombre'
+        }) %>    
     </body>
 </html>
