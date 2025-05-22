@@ -2,10 +2,9 @@
 // RF45 Usuario elimina el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF45
 // RF46 Usuario sustituye el Excel cargado - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF46
 
-const Swal = require('sweetalert2');
-const { borrarExcel } = require('../../backend/casosUso/excel/borrarExcel.js');
-const { leerExcel } = require('../../backend/casosUso/excel/cargarExcel.js');
-
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+const { borrarExcel } = require(`${rutaBase}/src/backend/casosUso/excel/borrarExcel.js`);
+const { leerExcel } = require(`${rutaBase}/src/backend/casosUso/excel/cargarExcel.js`);
 /**
  * Inicializa la funcionalidad del botón de borrar Excel.
  * Configura el evento click para eliminar el archivo Excel cargado
