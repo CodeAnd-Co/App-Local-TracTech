@@ -4,9 +4,9 @@
   <meta charset='UTF-8' />
   <meta name='viewport' content='width=device-width, initial-scale=1.0' />
   <title>Harvester App</title>
-   <link href='<%= rutaBase %>src/framework/utils/css/topBar.css' rel='stylesheet' />
-  <link href='<%= rutaBase %>src/framework/utils/css/sideBar.css' rel='stylesheet' />
-  <link href='<%= rutaBase %>src/framework/utils/css/FrameLayout.css' rel='stylesheet' />
+   <link href='<%= rutaBase %>src/framework/utils/css/interfaz/barraSuperior.css' rel='stylesheet' />
+  <link href='<%= rutaBase %>src/framework/utils/css/interfaz/barraLateral.css' rel='stylesheet' />
+  <link href='<%= rutaBase %>src/framework/utils/css/interfaz/FrameLayout.css' rel='stylesheet' />
 
 </head>
 <body>
@@ -15,11 +15,11 @@
   <div class='formulas-brillante'>
     <div class='frame-10'>
       <div class='sidebar-container'>
-        <div id='contenedorBarraLateral'> <%- include('sideBar.ejs') %> </div>
+        <div id='contenedorBarraLateral'> <%- include('barraLateral.ejs') %> </div>
       </div>
 
       <div class='main-container'>
-          <div id='contenedorBarraSuperior'> <%- include('topBar.ejs') %> </div>
+          <div id='contenedorBarraSuperior'> <%- include('barraSuperior.ejs') %> </div>
         <div class='content-container'>
 
           <div id='ventana-principal' class='ventana-principal'>
