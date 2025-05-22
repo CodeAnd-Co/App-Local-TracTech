@@ -1,35 +1,33 @@
-  /**
- * Convierte la vista en ejs a un archivo de html ya renderizado.
- * @returns {rutaTemporal<string>} Ruta del html procesado.
- */
-  
-const {app, ipcRenderer} = require('electron');
+const {app} = require('electron');
 const ejs = require('ejs');
 const path = require('node:path');
 const fs = require('fs');
  
-
-
-
+/**
+ * Convierte la vista en EJS a un archivo HTML ya renderizado.
+ * @param {string} ruta - Ruta del archivo EJS a renderizar.
+ * @returns {Promise<string>} Promesa que resuelve a la ruta del archivo HTML temporal generado.
+ * @throws {Error} Si hay un error durante el renderizado del archivo EJS.
+ */
 function precargarEJS(ruta){
-    return new Promise((resolve, reject) => {
-        const rutaBase = `${__dirname}`.replace(/\\/g, '/').split('src/')[0]
+    return new Promise((resolver, rechazar) => {
+      // Obtenemos la ruta absoluta -> harvester-app/
+      const rutaBase = `${__dirname}`.replace(/\\/g, '/').split('src/')[0]
 
-        ejs.renderFile(ruta, {  rutaBase: rutaBase }, (err, archivo) => {
-            if (err) {
-                reject(err);
-                return;
-            }
+      // Guardar la vista renderizada en AppData
+      const rutaTemporal = path.join(app.getPath('userData'), 'temp.html');
+      ejs.renderFile(ruta, { rutaBase }, (error, archivo) => {
+        if (error) {
+          rechazar(error);
+          return;
+        }
 
-        
-            // Guarda el HTML generado en un archivo temporal
-            const rutaTemporal = path.join(app.getPath('userData'), 'temp.html');
-            fs.writeFileSync(rutaTemporal, archivo);
-            resolve(rutaTemporal);
-
-      });
+      // Guarda el HTML generado en un archivo temporal
+      fs.writeFileSync(rutaTemporal, archivo);
+      resolver(rutaTemporal);
     });
+  });
+}
 
-  }
 
-  module.exports = {precargarEJS}
+module.exports = {precargarEJS}
