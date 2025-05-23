@@ -55,7 +55,7 @@ function cerrarBarraLateral() {
 
   // Actualizar el nombre del usuario en la barra lateral
   const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Nombre Usuario';
-  const elementosNombreUsuario = document.querySelectorAll('.sidebar-inferior .boton-sidebar[data-seccion="usuario"] span');
+  const elementosNombreUsuario = document.querySelectorAll('.sidebar-inferior .boton-sidebar[data-seccion="perfil"] span');
   elementosNombreUsuario.forEach(elemento => {
     elemento.textContent = nombreUsuario;
   });
