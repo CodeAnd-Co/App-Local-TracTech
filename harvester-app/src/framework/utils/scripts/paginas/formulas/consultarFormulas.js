@@ -5,6 +5,7 @@ const { inicializarCrearFormula } = require(`${rutaBase}src/framework/utils/scri
 const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/eliminarFormula.js`);
 const { inicializarModificarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/modificarFormula.js`);
 /* eslint-disable no-undef */
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 async function consultarFormulas() {
     const respuesta = await consultaFormulasCasoUso();
