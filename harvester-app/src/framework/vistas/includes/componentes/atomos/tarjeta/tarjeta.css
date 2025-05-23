@@ -1,18 +1,13 @@
 .tarjeta{
     padding: 15px;
-    align-items: center;
     display: flex;
     flex-direction: row;
 }
 
-.tarjeta-blanco {
-    background-color: #fafafa;
-}
+.tarjeta-blanco { background-color: #fafafa; }
+.tarjeta-gris { background-color: #ededed; }
+.tarjeta-azul { background-color: #262b40; }
 
-.tarjeta-gris {
-    background-color: #ededed;
-}
-
-.tarjeta-azul {
-    background-color: #262b40;
-}
+.derecha { justify-content: flex-end; }
+.centro{ justify-content: center; }
+.izquierda{ justify-content: flex-start; }

@@ -1,7 +1,7 @@
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/tarjeta/tarjeta.css' rel='stylesheet' />
-<div class="tarjeta tarjeta-<%= color%>" id="<%= id %>">
-    <% elementos.forEach((elemento)=> { %>
-        <%-include(elemento.ruta, elemento.parametros)%>
+<div class="tarjeta tarjeta-<%= color%> <%= alinear %>" id="<%= id %>">
+    <% elementos.forEach((elemento) => { %>
+        <%-include(elemento.ruta, elemento?.parametros)%>
     <% }) %>
 </div>
 
@@ -13,10 +13,15 @@ Nombres de colores válidos:
 
 Parámetros:
     - id: 'tarjeta'
-    - color: color de la tarjeta (gris o blanco)
+    - color: 'gris'
+    - alinear: 'centro'
     - elementos: [{
-        ruta: ''
-        parametros: {}
+        ruta: '../../atomos/boton/boton.ejs'
+        parametros: {
+            etiqueta: 'Enviar',
+            tipo: 'primario',
+            id: 'boton'
+        }
     }]
 
 */ %>
