@@ -1,0 +1,28 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/tarjetaMenusDesplegables/tarjetaMenusDesplegables.css' rel='stylesheet'/>
+
+<div class='tarjeta-menus-desplegables <%= orientacion === "vertical" ? "grupo-vertical" : "grupo-horizontal" %>'>
+    <%- include('../../atomos/tarjeta/tarjeta.ejs', {
+        id: idTarjeta || '',
+        color: colorTarjeta || 'gris',
+        elementos: dropdowns.map(dropdown => ({
+            ruta: '../../atomos/menuDesplegable/menuDesplegable.ejs',
+            parametros: {
+                opciones: dropdown.opciones || [],
+                placeholder: dropdown.placeholder || '',
+                className: dropdown.className || 'opcion-texto',
+            }
+        })),
+        orientacion: orientacion || 'horizontal',
+    }) %>
+</div>
+
+<% /*
+  Parámetros esperados (ejemplos):
+  - idTarjeta: 'miTarjeta'
+  - colorTarjeta: 'gris', 'blanco' o 'azul'
+    - orientacion: 'horizontal' (default) o 'vertical'
+  - dropdowns: [
+      { opciones: [...], placeholder: 'Selecciona...', className: 'opcion-texto' },
+      ...
+    ]
+*/ %>

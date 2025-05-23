@@ -1,0 +1,13 @@
+.tarjeta-menus-desplegables {
+  width: 100%;
+}
+
+.orientacion-vertical .tarjeta {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.orientacion-horizontal .tarjeta {
+  flex-direction: row;
+  gap: 12px;
+}
