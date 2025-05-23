@@ -77,7 +77,6 @@ function botonBorrar() {
  * @returns {void}
  */
 function botonCargar() {
-    console.log("cargando archivo")
     setTimeout(() => {
         const entradaArchivo = document.querySelector('.cargar-excel');
         const elementoNombreArchivo = document.querySelector('.texto-archivo');
