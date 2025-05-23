@@ -58,6 +58,7 @@
         required: true,
         errorId: 'mensajeErrorNombre'
         }) %>    
+        
         <!-- Botón agregado -->  
         <%- include('../includes/componentes/atomos/boton/boton.ejs', { 
             label: 'Enviar', 
@@ -74,5 +75,14 @@
             maxlength: '55',
             required: true,
         }) %>
+        
+        <%- include('../includes/componentes/atomos/campoAreaTexto/campoAreatexto.ejs', {
+            id: 'descripcion',
+            name: 'descripcion',
+            textoInterior: 'Escribe una descripción...',
+            maxlength: '255',
+            required: true
+        }) %>
+
     </body>
 </html>
