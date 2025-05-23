@@ -2,13 +2,11 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 const { LONGITUD_MAXIMA_FORMULA,
     LONGITUD_MAXIMA_NOMBRE_FORMULA,} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
+    
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
-
-if (typeof Swal === 'undefined'){
-    const Swal = require('sweetalert2');
-}
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 const { guardarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/crearFormula.js`);
 /**
@@ -716,24 +714,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCancelar = document.getElementById('btnCancelar');
     const formulaContainer = document.getElementById('formula-container');
     
-    // Crear la estructura principal de selección de funciones
-    if (formulaContainer) {
-        formulaContainer.innerHTML = `
-            <div class='bloqueFormula'>
-                <label for='main-function'>Seleccione una función:</label>
-                <select id='main-function'>
-                    <option value=''>Seleccionar función</option>
-                    <option value='IF'>SI</option>
-                    <option value='COUNTIF'>CONTAR.SI</option>
-                    <option value='COUNTIFS'>CONTAR.SI.CONJUNTO</option>
-                    <option value='IFERROR'>SI.ERROR</option>
-                    <option value='VLOOKUP'>BUSCARV</option>
-                    <option value='ARITHMETIC'>Operación Aritmética</option>
-                </select>
-                <div id='function-arguments'></div>
-            </div>
-        `;
-    }
     
     // Configurar eventos para los botones
         btnGuardar.addEventListener('click', async () => {

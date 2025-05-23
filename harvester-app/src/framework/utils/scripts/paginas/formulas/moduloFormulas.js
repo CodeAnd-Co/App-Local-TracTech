@@ -19,7 +19,7 @@ async function inicializarModuloFormulas(){
     } catch(error){
       
       console.error('Error al consultar las fórmulas:', error);
-      document.getElementById('frameFormulas').innerHTML  
+      document.getElementById('frame-formulas').innerHTML  
       = `<div class='error-carga'>Error al cargar las fórmulas</div>`;
     }
 

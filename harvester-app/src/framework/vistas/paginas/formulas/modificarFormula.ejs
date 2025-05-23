@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Modificador de Fórmulas</title>
+    <link href='<%= rutaBase %>src/framework/utils/css/paginas/formulas/moduloFormulas.css' rel='stylesheet' />
+
+</head>
+<body>
+    <%- include ('../../includes/encabezado.ejs')%>
+    <div class='formula-container'>
+        <div class='formula-encabezado'>
+            <h2>Modificar Fórmula</h2>
+            <div class='formula-entrada-nombre'>
+                <label for='nombreFormula'>Nombre de la fórmula</label>
+                <input type='text' id='nombreFormula' placeholder='Ingrese un nombre descriptivo' />
+            </div>
+        </div>
+
+            <div class='formula-entrada-nombre'>
+                <label for='resultado'>Fórmula a modificar:</label>
+                <input class='resultado' id='resultado' style='width: -webkit-fill-available;'></input>
+            </div>
+        </div>
+
+        <div class='formula-acciones'>
+            <div class='botonesDerecha'>
+                <button id='btnGuardar' class='formula-boton primario'> 
+                    <span>Guardar fórmula</span>
+                </button>
+                <button id='btnCancelar' class='formula-boton secundario'> 
+                    <span>Cancelar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+<script src='<%= rutaBase %>src/framework/utils/scripts/paginas/formulas/moduloFormulas.js'></script>
+<script src='<%= rutaBase %>src/framework/utils/scripts/paginas/formulas/consultarFormulas.js'></script>
+</body>
+</html>
