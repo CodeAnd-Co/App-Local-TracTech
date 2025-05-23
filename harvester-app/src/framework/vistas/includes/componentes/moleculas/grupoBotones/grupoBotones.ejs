@@ -4,8 +4,8 @@
     <% botones.forEach(boton => { %>
         <%- include('../../atomos/boton/boton.ejs', { 
             id: boton.id || '', 
-            label: boton.label || '', 
-            type: boton.type || '', 
+            etiqueta: boton.etiqueta || '', 
+            tipo: boton.tipo || '', 
             tamanio: boton.tamanio || '',
             colorTexto: boton.colorTexto || '',
         }) %>

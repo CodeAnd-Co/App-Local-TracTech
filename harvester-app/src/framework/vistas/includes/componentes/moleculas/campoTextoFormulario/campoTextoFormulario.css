@@ -17,6 +17,12 @@
 .campo-formulario .campoTexto {
   width: 100%;
   margin: 0;
+  color: #000000; /* Texto en negro cuando se escribe */
+}
+
+/* Placeholder en gris */
+.campo-formulario .campoTexto::placeholder {
+  color: rgba(0, 0, 0, 0.33);
 }
 
 /* El mensaje de error se oculta por defecto */
@@ -34,4 +40,5 @@
 .campo-formulario .campoTexto.input-error {
   border-color: #A5182F !important;
   background-color: #ffeaea !important;
+  color: #000000; /* Mantener texto negro incluso en error */
 }
