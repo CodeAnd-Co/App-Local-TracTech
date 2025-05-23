@@ -1,16 +1,2 @@
-<!-- include('../componentes/atomos/boton/boton.ejs', { label: 'Enviar', type: 'primario', id: 'boton1' }) -->
-
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/boton/boton.css' rel='stylesheet' />
-<button 
-    id='<%- id %>' class='btn btn-<%= type %> <%= tamanio || "" %> <%= colorTexto || "" %>'>
-    <%= label %>
-</button>
-
-<% /*
-  Parámetros esperados:
-  - id: 'btnAceptar'
-  - label: 'Aceptar'
-  - tipo: 'primario' | 'secundario' | 'terciario'
-  - tamanio: 'btn-sm', 'btn-lg', etc. (opcional)
-  - colorTexto: 'texto-rojo', etc. (opcional)
-*/ %>
+<button id='<%- id %>' class='btn btn-<%= type %>'><%= label %></button>
