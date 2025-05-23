@@ -1,1 +1,21 @@
-<%- include('../components/button', { label: 'Enviar', type: 'primario', id: 'boton1' }) %>
+<%- include ('../../includes/encabezado.ejs')%>
+<head>
+  <link href='<%= rutaBase %>src/framework/utils/css/paginas/usuarios/moduloUsuario.css' rel='stylesheet' />
+</head>
+
+  <div class='frame-usuario'>
+    <div class='frame-perfil'>
+      <div class='frame-informacion-usuario'>
+        <div class='texto-usuario'>Usuario</div>
+        <img class='icono-usuario' src='<%= rutaBase %>src/framework/utils/iconos/IU-Usuario.svg' />
+      </div>
+      <div class='frame-gestion-cerrar-sesion'>
+        <button class='boton-cerrar-sesion'>
+          <div class='cerrar-sesi-n'>Cerrar Sesión</div>
+        </button>
+      </div>
+    </div>
+  </div>
+<script src='<%= rutaBase %>src/framework/utils/scripts/paginas/usuarios/moduloPerfil.js'></script>
+
+<%- include ('../../includes/piePagina.ejs')%>
