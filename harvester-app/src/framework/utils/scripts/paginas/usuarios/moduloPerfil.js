@@ -5,14 +5,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
-const { cerrarSesion } = require('../../backend/casosUso/sesion/cerrarSesion');
-const { verificarPermisos, PERMISOS } = require('../utils/js/auth.js');
+const { cerrarSesion } = require(`${rutaBase}src/backend/casosUso/sesion/cerrarSesion.js`);
+const { verificarPermisos, PERMISOS } = require(`${rutaBase}src/framework/utils/scripts/middleware/auth.js`);
 if (typeof Swal === 'undefined'){
-  const Swal = require('sweetalert2');
+  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 }
 
-// Flag para evitar cargar dos veces el mismo script de gestión de usuarios
-let moduloGestionDeUsuariosIniciado = false;
+
+inicializarModuloUsuario();
 
 /**
  * Inicializa el módulo de usuario, incluyendo gestión de usuarios y cierre de sesión.
@@ -26,44 +26,7 @@ let moduloGestionDeUsuariosIniciado = false;
  */
 function inicializarModuloUsuario() {
   actualizarNombreUsuario();
-  if (verificarPermisos(PERMISOS.ADMIN)){
-    const botonGestion = document.querySelector('#botonGestion');
-    botonGestion.style.display = 'flex';
-    if (botonGestion) {
-      botonGestion.addEventListener('click', async () => {
-        localStorage.setItem('seccion-activa', 'gestionUsuarios');
-        const ventanaPrincipal = document.getElementById('ventana-principal');
-        if (!ventanaPrincipal) return;
 
-        try {
-          // Carga el HTML del módulo de gestión de usuarios
-          const html = await fetch('../vistas/moduloGestionUsuarios.html')
-          .then(response => response.text());
-          ventanaPrincipal.innerHTML = html;
-
-          // Añade el script de gestión de usuarios al HTML la primera vez
-          if (!moduloGestionDeUsuariosIniciado) {
-            moduloGestionDeUsuariosIniciado = true;
-
-            const cargadorGestionUsuarios = document.createElement('script');
-            cargadorGestionUsuarios.src = '../utils/js/moduloGestionUsuario.js';
-            document.body.appendChild(cargadorGestionUsuarios);
-
-            cargadorGestionUsuarios.onload = () => {
-              window.inicializarModuloGestionUsuarios?.();
-            };
-          } else {
-            window.inicializarModuloGestionUsuarios?.();
-          }
-
-        } catch (error) {
-          console.error('Error cargando módulo de gestión de usuarios:', error);
-        }
-      });
-    }
-  } else {
-    console.warn('No se encontró el botón #botonGestion en el DOM.');
-  }
 
   // Botón de Cerrar Sesión
   const botonCerrarSesion = document.querySelector('.boton-cerrar-sesion');
@@ -80,11 +43,12 @@ function inicializarModuloUsuario() {
 
       try {
         const respuesta = await Promise.race([cerrarSesion(), timeoutPromise]);
-
+        const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
         if (respuesta.ok) {
           localStorage.removeItem('token');
           localStorage.removeItem('nombreUsuario');
-          window.location.href = './inicioSesion.html';
+          const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
+          window.location.href = vista;
         } else {
           throw new Error('La respuesta del servidor no fue exitosa');
         }
@@ -128,6 +92,3 @@ function actualizarNombreUsuario() {
     console.warn('No se encontró el elemento .texto-usuario en el DOM');
   }
 }
-
-// Exponer la función para que pueda ser llamada desde el navegador
-window.inicializarModuloUsuario = inicializarModuloUsuario;
