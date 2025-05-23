@@ -15,7 +15,7 @@ const { URL_BASE } = require(`${rutaBase}src/framework/utils/scripts/constantes.
  * @throws {Error} Si no se pudo guardar la fórmula.
  */
 async function guardarFormula(nombre, formula, token) {
-    const respuesta = await fetch(`${URL_BASE}/formulas/guardarFormula.js`, {
+    const respuesta = await fetch(`${URL_BASE}/formulas/guardarFormula`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
