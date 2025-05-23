@@ -44,6 +44,10 @@
                 { id: 'btnDesabilitado1', label: 'Desabilitado', type: 'terciario', tamanio: 'btn-lg' },
             ]
         })%>
+        <%- include('../includes/componentes/moleculas/barraBusqueda/barraBusqueda.ejs', { 
+            id: 'barraBusqueda',
+            placeholder: 'Escribe aquí...',
+        }) %>
         <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
         label: 'Nombre del usuario', 
         type: 'text', 

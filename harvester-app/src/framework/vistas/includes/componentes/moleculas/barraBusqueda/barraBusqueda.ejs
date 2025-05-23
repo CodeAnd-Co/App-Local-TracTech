@@ -1,0 +1,14 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/barraBusqueda/barraBusqueda.css' rel='stylesheet'/>
+
+<div class='barra-busqueda'> 
+    <%- include('../../atomos/campoBusqueda/campoBusqueda.ejs', {
+        id: 'barraBusqueda',
+        placeholder: 'Escribe aquí...',
+    }) %>
+    <%- include('../../atomos/icono/icono.ejs', {
+        nombre: 'search',
+        tamanio: 'icono-lg',
+        color: 'icono-negro'
+    }) %>
+</div>
+   
