@@ -1,5 +1,5 @@
 /* === Campo de búsqueda modular (átomo) === */
-.campoBusqueda {
+.campo-busqueda {
   flex: 1;
   padding: 1rem;
   background: #e8e8e8;
@@ -11,7 +11,7 @@
   outline: none;
 }
 
-.campoBusqueda::placeholder {
+.campo-busqueda::placeholder {
   color: rgba(0,0,0,.33);
   font-size: 1.125rem;
   font-family: Arial, sans-serif;

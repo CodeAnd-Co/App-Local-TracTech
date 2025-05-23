@@ -1,0 +1,18 @@
+.tarjeta{
+    padding: 15px;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
+
+.tarjeta-blanco {
+    background-color: #fafafa;
+}
+
+.tarjeta-gris {
+    background-color: #ededed;
+}
+
+.tarjeta-azul {
+    background-color: #262b40;
+}

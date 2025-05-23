@@ -1,5 +1,6 @@
 // RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
 // RF3 Usuario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
+/* eslint-disable-next-line no-undef */
 const { URL_BASE } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);	
 
 /**
