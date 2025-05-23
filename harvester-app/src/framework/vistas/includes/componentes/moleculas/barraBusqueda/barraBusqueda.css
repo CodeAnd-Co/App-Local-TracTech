@@ -1,0 +1,17 @@
+.barra-busqueda {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.barra-busqueda .campo-busqueda {
+  width: 100%;
+  padding-right: 3rem; /* Deja espacio para el ícono a la derecha */
+}
+
+.barra-busqueda .material-symbols-outlined {
+  position: absolute;
+  right: 1rem;
+  pointer-events: none;
+}

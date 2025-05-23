@@ -7,68 +7,10 @@
     <link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/pantallaCarga.css'>
 </head>
     <body>
-        <%- include('../includes/componentes/moleculas/textoConIcono/textoConIcono.ejs', {
-            icono: {
-                nombre: 'home',
-                tamanio: 'icono-lg',
-                color: 'icono-negro'
-              },
-              texto: {
-                id: 'textoInicio',
-                textoInterior: 'Inicio',
-                tamanio: 'texto-lg',
-                color: 'texto-negro',
-                fuente: 'fuente-regular'
-              }
-        }) %>
-        <%- include('../includes/componentes/atomos/cuadroTexto/cuadroTexto.ejs', { 
-            id: 'cuadroEjemplo',
-            textoInterior: '¡Hola mundo!',
-            tamanio: 'texto-lg',
-            color: 'texto-azul',
-            fuente: 'fuente-regular',
-        })%>
-        <%- include('../includes/componentes/moleculas/grupoBotones/grupoBotones.ejs', { 
-            orientacion: 'horizontal',
-            botones: [
-                { id: 'btnAceptar', label: 'Aceptar', type: 'primario', tamanio: 'btn-lg' },
-                { id: 'btnCancelar', label: 'Cancelar', type: 'secundario', tamanio: 'btn-lg' },
-                { id: 'btnDesabilitado', label: 'Desabilitado', type: 'terciario', tamanio: 'btn-lg' },
-            ]
-        })%>
-        <%- include('../includes/componentes/moleculas/grupoBotones/grupoBotones.ejs', { 
-            orientacion: 'vertical',
-            botones: [
-                { id: 'btnAceptar1', label: 'Aceptar', type: 'primario', tamanio: 'btn-lg' },
-                { id: 'btnCancelar1', label: 'Cancelar', type: 'secundario', tamanio: 'btn-lg' },
-                { id: 'btnDesabilitado1', label: 'Desabilitado', type: 'terciario', tamanio: 'btn-lg' },
-            ]
-        })%>
-        <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
-        label: 'Nombre del usuario', 
-        type: 'text', 
-        id: 'username', 
-        name: 'username', 
-        placeholder: 'Nombre del nuevo usuario',
-        maxlength: '55',
-        required: true,
-        errorId: 'mensajeErrorNombre'
-        }) %>    
-        <!-- Botón agregado -->  
-        <%- include('../includes/componentes/atomos/boton/boton.ejs', { 
-            label: 'Enviar', 
-            type: 'primario', 
-            id: 'botonEnviar' 
-        }) %>
-
-        <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
-            label: 'Nombre del usuario', 
-            type: 'text', 
-            id: 'username',
-            name: 'username', 
-            placeholder: 'Nombre del nuevo usuario',
-            maxlength: '55',
-            required: true,
-        }) %>
+        <%- include('../includes/componentes/atomos/menuDesplegable/menuDesplegable.ejs', { 
+        opciones: ['Pay', 'Linea', 'Barras'],
+        placeholder: 'Selecciona una gráfica',
+        className: 'opcion-texto'
+        }) %>   
     </body>
 </html>
