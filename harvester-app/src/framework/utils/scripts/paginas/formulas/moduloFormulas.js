@@ -1,4 +1,4 @@
-const { renderizarFormulas } = require('../utils/js/consultarFormulas');
+const { renderizarFormulas } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/consultarFormulas.js`);
 
 
 /**
@@ -25,4 +25,4 @@ async function inicializarModuloFormulas(){
 
 }
 
-window.inicializarModuloFormulas = inicializarModuloFormulas;
+inicializarModuloFormulas()

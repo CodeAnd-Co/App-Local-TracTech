@@ -1,7 +1,7 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 const { LONGITUD_MAXIMA_FORMULA,
-    LONGITUD_MAXIMA_NOMBRE_FORMULA,} = require('../../../framework/utils/js/constantes');
+    LONGITUD_MAXIMA_NOMBRE_FORMULA,} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
@@ -10,7 +10,7 @@ if (typeof Swal === 'undefined'){
     const Swal = require('sweetalert2');
 }
 
-const { guardarFormula } = require('../../../backend/casosUso/formulas/crearFormula');
+const { guardarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/crearFormula.js`);
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -34,56 +34,55 @@ function cancelarVista(){
  * @throws {Error} Si el botón de creación de fórmulas no se encuentra en el DOM.
  */
 async function inicializarCrearFormula() {
-            localStorage.setItem('seccion-activa', 'crearFormula');
-            const ventanaPrincipal = document.getElementById('ventana-principal');
-            if (ventanaPrincipal) {
-                fetch('../vistas/crearFormula.html')
-                    .then(res => res.text())
-                    .then(html => {
-                        const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
-                        ventanaPrincipal.innerHTML = html;
-                        const ejecutable = document.createElement('script');
-                        ejecutable.src = '../utils/js/crearFormula.js';
-                        document.body.appendChild(ejecutable);
-                        document.getElementById('btnCancelar').addEventListener('click', () => {
-                            window.cargarModulo('formulas');
+    localStorage.setItem('seccion-activa', 'crearFormula');
+    const ventanaPrincipal = document.getElementById('ventana-principal');
+    const rutaInicio = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`;
+    try {
+        const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio,{Seccion: 'Formulas', Icono: 'Funcion'});
+        window.location.href = vista;
+        const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
+                ventanaPrincipal.innerHTML = html;
+                const ejecutable = document.createElement('script');
+                ejecutable.src = `${rutaBase}src/framework/utils/scripts/paginas/formulas/crearFormula.js`;
+                document.body.appendChild(ejecutable);
+                document.getElementById('btnCancelar').addEventListener('click', () => {
+                    window.cargarModulo('formulas');
+                });
+                document.getElementById('btnGuardar').addEventListener('click', async () => {
+                    procesarFormula();
+                });
+                document.getElementById('btnGenerar').addEventListener('click', () => {
+                    const contenedor = document.getElementById('function-arguments');
+                    if (contenedor) {
+                        generarFormulaCompleja();
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se ha podido generar la fórmula.',
+                            icon: 'error',
+                            confirmButtonColor: '#1F4281',
                         });
-                        document.getElementById('btnGuardar').addEventListener('click', async () => {
-                            procesarFormula();
-                        });
-                        document.getElementById('btnGenerar').addEventListener('click', () => {
-                            const contenedor = document.getElementById('function-arguments');
-                            if (contenedor) {
-                                generarFormulaCompleja();
-                            } else {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'No se ha podido generar la fórmula.',
-                                    icon: 'error',
-                                    confirmButtonColor: '#1F4281',
-                                });
-                            }
-                        });
+                    }
+                });
 
-                        if (nombreArchivo === null || nombreArchivo === undefined) {
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'No hay un archivo cargado.',
-                                icon: 'error',
-                                confirmButtonColor: '#1F4281',
-                            });
-                            document.getElementById('btnGuardar').disabled = true;
-                            document.getElementById('btnGenerar').disabled = true;
+                if (nombreArchivo === null || nombreArchivo === undefined) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No hay un archivo cargado.',
+                        icon: 'error',
+                        confirmButtonColor: '#1F4281',
+                    });
+                    document.getElementById('btnGuardar').disabled = true;
+                    document.getElementById('btnGenerar').disabled = true;
 
-                            return;
-                        }
-
-                        
-
-                    })
-                    .catch(err => console.error('Error cargando módulo de creación de fórmulas:', err));
-            }
-    };
+                    return;
+                }
+    } catch (err) {
+        console.error('Error al cargar vista:', err);
+    }
+        
+}
+    
 
 /**
  * @function procesarFormula
