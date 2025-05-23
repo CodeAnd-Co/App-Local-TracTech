@@ -3,9 +3,9 @@
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-if (typeof Swal === 'undefined') {
-    const Swal = require('sweetalert2');
-}
+// if (typeof Swal === 'undefined') {
+    const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+// }
 const { agregarTexto } = require('./agregarTexto');
 const { agregarGrafica } = require('./agregarGrafica');
 
@@ -58,9 +58,9 @@ function abrirMenuAgregar(idContenedor, idContenedorPrevisualizacion, tarjeta, u
         showCancelButton: true,
         showDenyButton: true,
         confirmButtonText:
-            '<img src="../utils/iconos/Texto.svg" class="icono-agregar"/> Texto',
+            `<img src="${rutaBase}/src/framework/utils/iconos/Texto.svg" class="icono-agregar"/> Texto`,
         denyButtonText:
-            '<img src="../utils/iconos/GraficaBarras.svg" class="icono-agregar"/> Gráfica',
+            `<img src="${rutaBase}/src/framework/utils/iconos/GraficaBarras.svg" class="icono-agregar"/> Gráfica`,
         cancelButtonText: '✕',
         target: tarjeta,
         buttonsStyling: false,

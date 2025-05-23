@@ -2,8 +2,8 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 // RF76 Consultar Fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 // RF71 Eliminar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF71
-const { URL_BASE } = require('../../../framework/utils/js/constantes');
 
+const { URL_BASE } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 /**
  * 
  * @module formulaApi
@@ -15,7 +15,7 @@ const { URL_BASE } = require('../../../framework/utils/js/constantes');
  * @throws {Error} Si no se pudo guardar la fórmula.
  */
 async function guardarFormula(nombre, formula, token) {
-    const respuesta = await fetch(`${URL_BASE}/formulas/guardarFormula`, {
+    const respuesta = await fetch(`${URL_BASE}/formulas/guardarFormula.js`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

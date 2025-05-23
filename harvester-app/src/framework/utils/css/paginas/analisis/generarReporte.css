@@ -1,9 +1,9 @@
 :root {
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --radius: 8px;
+  --spacing-xs: 0.33em;
+  --spacing-sm: 0.5em;
+  --spacing-md: 0.75em;
+  --spacing-lg: 1em;
+  --radius: 0.33em;
   --color-border: #e0e0e0;
   --color-bg: #ffffff;
   --color-text: #333333;
@@ -15,14 +15,19 @@ body,
   font-family: var(--font-base, 'Inter', sans-serif) !important;
 }
 .frame-analisis {
-  height: 90vh;
+  max-height: 80vh;
+  height: 100%;
   align-items: stretch;
   display: flex;
   flex-direction: row;
   gap: var(--spacing-lg);         
   align-items: flex-start;
   justify-content: flex-start;
+  overflow-y: hidden;
   overflow-x: auto;
+}
+.content-container{
+  overflow-y: none;
 }
 .seccion-elemento-reporte {
   display: grid;
@@ -30,10 +35,10 @@ body,
   background: #ededed;
   border-radius: var(--radius);
   padding: var(--spacing-lg);
-  flex: 0 0 360px;             
+  flex: 0 0 40%;             
   display: flex;
   flex-direction: column;
-  height: 650px;
+  height: 100%;
   align-items: center;
 }
 .contenedor-botones-agregar {
@@ -41,7 +46,7 @@ body,
   flex-direction: row;
   gap: 15px;
   margin-bottom: 20px;
-  justify-content: center;
+  justify-content: left;
   width: 100%;
 }
 .boton-agregar {
@@ -82,7 +87,7 @@ body,
 .seccion-previsualizacion-grafica {
   flex: 1;
   height: 100%;
-  width: auto;
+  width: 100%+5em;
   display: flex;
   flex-direction: column;
   overflow-y: scroll; 
@@ -92,7 +97,7 @@ body,
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   padding: var(--spacing-lg);
   gap: var(--spacing-md);
-  max-height: 650px;
+  max-height: 100%;
   align-items: center;
 }
 .previsualizacion-grafica {
@@ -106,7 +111,7 @@ body,
   flex-shrink: 0;
   width: 645px;
   position: relative;
-  height: 340px;
+  height: 25em;
   padding: 10px 10px;
 }
 .bar-chart {
