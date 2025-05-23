@@ -2,13 +2,13 @@
 
 <div class="texto-con-icono-derecha">
     <%- include('../../atomos/icono/icono.ejs', { 
-        nombre: icono?.nombre || 'home', 
+        nombre: icono?.nombre || '', 
         tamanio: icono?.tamano || '',
         color: icono?.color || '',
     }) %>
     <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { 
         id: texto?.id || '',
-        textoInterior: texto?.label || '',
+        textoInterior: texto?.textoInterior || '',
         tamanio: texto?.tamano || '',
         color: texto?.color || '',
         fuente: texto?.fuente || '',

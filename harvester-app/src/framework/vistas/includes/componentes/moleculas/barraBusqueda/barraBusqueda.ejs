@@ -2,13 +2,19 @@
 
 <div class='barra-busqueda'> 
     <%- include('../../atomos/campoBusqueda/campoBusqueda.ejs', {
-        id: 'barraBusqueda',
-        placeholder: 'Escribe aquí...',
+        id,
+        placeholder,
     }) %>
     <%- include('../../atomos/icono/icono.ejs', {
         nombre: 'search',
         tamanio: 'icono-lg',
-        color: 'icono-negro'
+        color: 'icono-gris'
     }) %>
 </div>
-   
+
+
+<% /*
+  Parámetros esperados:
+  - id: 'barraBusqueda'
+  - placeholder: 'Escribe aquí...'
+*/ %>

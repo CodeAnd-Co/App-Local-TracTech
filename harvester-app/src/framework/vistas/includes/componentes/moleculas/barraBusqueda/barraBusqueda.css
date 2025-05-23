@@ -1,17 +1,17 @@
-
 .barra-busqueda {
-    box-sizing: border-box;
-  background: var(--box-textoporllenar, #e8e8e8);
-  border-radius: 8px;
-  border-style: solid;
-  border-color: var(--bordenegro, rgba(0, 0, 0, 0.2));
-  border-width: 2px;
-  padding: 17px 10px 17px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex: 1;
   position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.barra-busqueda .campo-busqueda {
+  width: 100%;
+  padding-right: 3rem; /* Deja espacio para el ícono a la derecha */
+}
+
+.barra-busqueda .material-symbols-outlined {
+  position: absolute;
+  right: 1rem;
+  pointer-events: none;
 }
