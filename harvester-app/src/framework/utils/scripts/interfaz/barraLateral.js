@@ -13,7 +13,7 @@ const informacionModulos = {
 
 async function cargarModulo(modulo){
   try {
-        var vista = await ipcRenderer.invoke('precargar-ejs', informacionModulos[modulo][0], { Seccion: informacionModulos[modulo][1], Icono : informacionModulos[modulo][2]});
+        const vista = await ipcRenderer.invoke('precargar-ejs', informacionModulos[modulo][0], { Seccion: informacionModulos[modulo][1], Icono : informacionModulos[modulo][2]});
         window.location.href = vista;
         localStorage.setItem('seccion-activa', modulo);
     } catch (err) {
@@ -55,7 +55,7 @@ function cerrarBarraLateral() {
 
   // Actualizar el nombre del usuario en la barra lateral
   const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Nombre Usuario';
-  const elementosNombreUsuario = document.querySelectorAll('.sidebar-inferior .boton-sidebar[data-seccion="usuario"] span');
+  const elementosNombreUsuario = document.querySelectorAll('.sidebar-inferior .boton-sidebar[data-seccion="perfil"] span');
   elementosNombreUsuario.forEach(elemento => {
     elemento.textContent = nombreUsuario;
   });

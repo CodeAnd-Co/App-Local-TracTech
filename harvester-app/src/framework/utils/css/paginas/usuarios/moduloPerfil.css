@@ -19,12 +19,8 @@
 
 .frame-perfil {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 111px;
-  align-items: center;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  position: relative;
 }
 .frame-informacion-usuario {
   display: flex;

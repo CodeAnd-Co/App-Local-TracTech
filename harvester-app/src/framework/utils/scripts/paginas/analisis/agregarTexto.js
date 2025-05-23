@@ -5,9 +5,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
-  const Swal = require('sweetalert2');
+  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 }
-const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
+const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 
 /**
  * Crea y agrega una tarjeta de texto al contenedor de edición y su correspondiente
@@ -64,7 +64,7 @@ function agregarTexto(
         <option value='subtitulo'>Subtítulo</option>
         <option value='contenido'>Contenido</option>
       </select>
-      <img class='type' src='../utils/iconos/Texto.svg' alt='Icono Texto' />
+      <img class='type' src='${rutaBase}/src/framework/utils/iconos/Texto.svg' alt='Icono Texto' />
     </div>
     <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='1000'></textarea>
     <style>
@@ -78,7 +78,7 @@ function agregarTexto(
     </style>
     <div class='botones-editar-eliminar'>
       <div class='eliminar'>
-        <img class='eliminar-icono' src='../utils/iconos/Basura.svg' alt='Eliminar' />
+        <img class='eliminar-icono' src='${rutaBase}/src/framework/utils/iconos/Basura.svg' alt='Eliminar' />
         <div class='texto-eliminar'>Eliminar</div>
       </div>
       <div class='divisor'></div>

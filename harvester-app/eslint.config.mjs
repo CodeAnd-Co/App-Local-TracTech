@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist', 'node_modules', 'forge.config.js'] },
+  { ignores: ['dist', 'node_modules', 'forge.config.js', '**/*.ejs'] },
 
   // Reglas comunes para todo el proyecto
   {

@@ -4,11 +4,11 @@
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
-const { ElementoNuevo, Contenedores } = require('../../../backend/data/analisisModelos/elementoReporte');
+const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
-  const Swal = require('sweetalert2');
+  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 }
 
 /**
@@ -62,14 +62,14 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         <option value='radar'>Radar</option>
         <option value='polarArea'>Polar</option>
       </select>
-      <img class='type' src='../utils/iconos/GraficaBarras.svg' alt='Icono Gráfica' />
+      <img class='type' src='${rutaBase}/src/framework/utils/iconos/GraficaBarras.svg' alt='Icono Gráfica' />
     </div>
     <div class='boton-formulas'>
       <div class='formulas'>Fórmulas</div>
     </div>
     <div class='botones-eliminar' style='display: flex; justify-content: flex-end;'>
       <div class='eliminar'>
-        <img class='eliminar-icono' src='../utils/iconos/Basura.svg' />
+        <img class='eliminar-icono' src='${rutaBase}/src/framework/utils/iconos/Texto.svg' />
         <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>

@@ -4,15 +4,18 @@
 // RF41 Administrador consulta usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41 
 // RF39 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF39
 
-const { modificarUsuario } = require('../../backend/casosUso/usuarios/modificarUsuario.js');
-const { crearUsuario: crearUsuarioCU } = require('../../backend/casosUso/usuarios/crearUsuario');
-const { obtenerUsuarios } = require('../../backend/casosUso/usuarios/consultarUsuarios.js');
-const { eliminarUsuario: eliminarUsuarioCU } = require('../../backend/casosUso/usuarios/eliminarUsuario');
-const { consultarRoles: consultarRolesCU } = require('../../backend/casosUso/usuarios/consultarRoles.js');
-const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require('../utils/js/validacionesCompartidas.js');
+const { modificarUsuario } = require(`${rutaBase}src/backend/casosUso/usuarios/modificarUsuario.js`);
+const { crearUsuario: crearUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/crearUsuario`);
+const { obtenerUsuarios } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarUsuarios.js`);
+const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/eliminarUsuario`);
+const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarRoles.js`);
+const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
-const Swal2 = require('sweetalert2');
-const validator = require('validator');
+
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+
+console.log("swal: ", Swal, typeof Swal)
+const validator = require(`${rutaBase}/node_modules/validator/validator.min.js`);
 
 const usuariosPorPagina = 6;
 const modoFormulario = Object.freeze({
@@ -192,7 +195,7 @@ async function eliminarUsuario(id) {
         const respuesta = await eliminarUsuarioCU(id);
 
         if (!respuesta.ok) {
-            return Swal2.fire({
+            return Swal.fire({
                 title: 'Error',
                 text: 'Error al eliminar el usuario.',
                 icon: 'error',
@@ -200,7 +203,7 @@ async function eliminarUsuario(id) {
             });
         }
         
-        return Swal2.fire({
+        return Swal.fire({
             title: 'Eliminación exitosa',
             text: 'El usuario ha sido eliminado.',
             icon: 'success',
@@ -208,7 +211,7 @@ async function eliminarUsuario(id) {
         });
     } catch (error) {
         console.error('Error al eliminar el usuario:', error);
-        return Swal2.fire({
+        return Swal.fire({
                 title: 'Error de conexión',
                 text: 'Verifica tu conexión e inténtalo de nuevo.',
                 icon: 'error',
@@ -334,10 +337,10 @@ function mostrarUsuarios(usuarios) {
                 <div class='texto-usuario'>${nombre}</div>
             </div>
                 <button class='boton-editar' data-id='${id}'>
-                  <img src='../utils/iconos/Editar2.svg' alt='Editar'/>
+                  <img src='${rutaBase}src/framework/utils/iconos/Editar2.svg' alt='Editar'/>
                 </button>
                 <button class='boton-eliminar' data-id='${id}'>
-                  <img src='../utils/iconos/BasuraBlanca.svg' alt='Eliminar'/>
+                  <img src='${rutaBase}src/framework/utils/iconos/BasuraBlanca.svg' alt='Eliminar'/>
                 </button>
         `;
         fragmento.appendChild(div);
@@ -353,7 +356,7 @@ function mostrarUsuarios(usuarios) {
         boton.addEventListener('click', async evento => {
             evento.preventDefault();
             const id = boton.getAttribute('data-id');
-            Swal2.fire({
+            Swal.fire({
                 title: '¿Eliminar usuario?',
                 text: 'Esta acción no se puede deshacer.',
                 icon: 'warning',
@@ -448,7 +451,7 @@ async function editarUsuario() {
     });
     
     if (hayErroresVisibles) {
-        return Swal2.fire({
+        return Swal.fire({
             title: 'Formulario con errores',
             text: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
             icon: 'warning',
@@ -465,7 +468,7 @@ async function editarUsuario() {
     // Verificar que las contraseñas coincidan si se está cambiando la contraseña
     if (contraseniaIngresada !== '') {
         if (contraseniaIngresada !== contraseniaConfirmada) {
-            return Swal2.fire({
+            return Swal.fire({
                 title: 'Contraseñas no coinciden',
                 text: 'La contraseña y su confirmación deben ser iguales.',
                 icon: 'warning',
@@ -483,7 +486,7 @@ async function editarUsuario() {
     });
 
     if (error) {
-        Swal2.fire({
+        Swal.fire({
             title: 'Error',
             text: error,
             icon: 'warning',
@@ -496,7 +499,7 @@ async function editarUsuario() {
     try {
         const resultado = await modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol);
         if (resultado.ok) {
-            Swal2.fire({
+            Swal.fire({
                 title: 'Usuario modificado',
                 text: resultado.mensaje || 'El usuario fue modificado correctamente.',
                 icon: 'success',
@@ -518,7 +521,7 @@ async function editarUsuario() {
             // Ocultar el formulario tras una modificación exitosa
             document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
         } else {
-            Swal2.fire({
+            Swal.fire({
                 title: 'Error al modificar usuario',
                 text: resultado.mensaje || 'No se pudo modificar el usuario.',
                 icon: 'error',
@@ -526,7 +529,7 @@ async function editarUsuario() {
             });
         }
     } catch (error) {
-        Swal2.fire({
+        Swal.fire({
             title: 'Error de red',
             text: error.message || 'Hubo un problema al conectar con el servidor.',
             icon: 'error',
@@ -769,7 +772,7 @@ async function crearUsuario() {
     });
     
     if (hayErroresVisibles) {
-        return Swal2.fire({
+        return Swal.fire({
             title: 'Formulario con errores',
             text: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
             icon: 'warning',
@@ -779,7 +782,7 @@ async function crearUsuario() {
 
     // Verificar si las contraseñas coinciden (si existe el campo de confirmación)
     if (confirmPasswordInput && contrasenia !== confirmContrasenia) {
-        return Swal2.fire({
+        return Swal.fire({
             title: 'Contraseñas no coinciden',
             text: 'La contraseña y su confirmación deben ser iguales.',
             icon: 'warning',
@@ -789,7 +792,7 @@ async function crearUsuario() {
 
     // Verificar campos obligatorios
     if (!nombre || !correo || !contrasenia || !confirmContrasenia || isNaN(idRolFK)) {
-        return Swal2.fire({
+        return Swal.fire({
             title: 'Datos incompletos',
             text: 'Por favor, completa todos los campos.',
             icon: 'warning',
@@ -799,7 +802,7 @@ async function crearUsuario() {
 
 
     if (listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correo.toLowerCase())) {
-        await Swal2.fire({
+        await Swal.fire({
             title: 'Correo ya registrado',
             text: 'El correo ingresado ya existe. Por favor, usa otro correo.',
             icon: 'error',
@@ -808,7 +811,7 @@ async function crearUsuario() {
     }
 
     if (nombre.length > 55) {
-        await Swal2.fire({
+        await Swal.fire({
             title: 'Nombre demasiado largo',
             text: 'El nombre no puede tener más de 55 caracteres.',
             icon: 'error',
@@ -817,7 +820,7 @@ async function crearUsuario() {
     }
 
     if (correo.length > 55) {
-        await Swal2.fire({ 
+        await Swal.fire({ 
             title: 'Correo demasiado largo',
             text: 'El correo no puede tener más de 55 caracteres.',
             icon: 'error',
@@ -826,8 +829,9 @@ async function crearUsuario() {
 
     }
 
+
     if (contrasenia.length < 5) {
-        await Swal2.fire({
+        await Swal.fire({
             title: 'Contraseña demasiado corta',
             text: 'La contraseña debe de tener más de 5 caracteres.',
             icon: 'error',
@@ -836,7 +840,7 @@ async function crearUsuario() {
     }
 
     if (contrasenia.length > 55) {
-        await Swal2.fire({
+        await Swal.fire({
             title: 'Contraseña demasiado larga',
             text: 'La contraseña no puede tener más de 55 caracteres.',
             icon: 'error',
@@ -848,7 +852,7 @@ async function crearUsuario() {
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
         if (resultado.ok) {
-            Swal2.fire({
+            Swal.fire({
                 title: 'Usuario creado',
                 text: resultado.mensaje || 'El usuario fue registrado correctamente.',
                 icon: 'success',
@@ -869,7 +873,7 @@ async function crearUsuario() {
                 inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
             }, 500);
         } else {
-            Swal2.fire({
+            Swal.fire({
                 title: 'Error al crear usuario',
                 text: resultado.mensaje || 'No se pudo registrar el usuario.',
                 icon: 'error',
@@ -878,7 +882,7 @@ async function crearUsuario() {
         }
     } catch (error) {
         console.error('Error al crear usuario:', error);
-        Swal2.fire({
+        Swal.fire({
             title: 'Error de red',
             text: 'Hubo un problema al conectar con el servidor.',
             icon: 'error',
@@ -968,4 +972,4 @@ function cargarRoles() {
 
 
 // Expone la función de inicialización al objeto window
-window.inicializarModuloGestionUsuarios = inicializarModuloGestionUsuarios;
+inicializarModuloGestionUsuarios()

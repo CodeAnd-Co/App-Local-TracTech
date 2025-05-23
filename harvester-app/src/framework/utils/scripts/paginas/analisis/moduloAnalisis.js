@@ -1,12 +1,15 @@
 // RF25 - Usuario descarga reporte en PDF - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf25/
 
 /* eslint-disable no-unused-vars */
-const { jsPDF: JSPDF } = window.jspdf;
+const { jsPDF } = require(`${rutaBase}/node_modules/jspdf/dist/jspdf.umd.min.js`);
 if (typeof Swal === 'undefined') {
-  const Swal = require('sweetalert2');
+  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 }
-const { ipcRenderer } = require('electron');
-const { configurarTexto, configurarGrafica } = require('../utils/js/botonesAgregar');
+
+if (typeof ipcRenderer === 'undefined') {
+  const { ipcRenderer } = require('electron');
+}
+const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
 
 /**
  * Inicializa la interfaz de análisis:
@@ -176,5 +179,5 @@ async function descargarPDF() {
   ipcRenderer.send('guardar-pdf', Buffer.from(pdfBufer));
 }
 
-window.inicializarModuloAnalisis = inicializarModuloAnalisis;
-window.cargarDatosExcel = cargarDatosExcel;
+inicializarModuloAnalisis();
+cargarDatosExcel()
