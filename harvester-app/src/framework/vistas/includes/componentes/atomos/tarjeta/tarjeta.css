@@ -2,7 +2,7 @@
     padding: 15px;
     align-items: center;
     display: flex;
-    flex-direction: row;
+    gap: 12px;
 }
 
 .tarjeta-blanco {
@@ -15,4 +15,15 @@
 
 .tarjeta-azul {
     background-color: #262b40;
+}
+
+/* Orientación horizontal por defecto */
+.tarjeta-horizontal {
+    flex-direction: row;
+  }
+  
+/* Orientación vertical */
+.tarjeta-vertical {
+    flex-direction: column;
+    align-items: flex-start;
 }

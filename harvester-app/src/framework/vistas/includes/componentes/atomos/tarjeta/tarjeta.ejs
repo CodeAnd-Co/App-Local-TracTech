@@ -1,5 +1,5 @@
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/tarjeta/tarjeta.css' rel='stylesheet' />
-<div class="tarjeta tarjeta-<%= color%>" id="<%= id %>">
+<div class="tarjeta tarjeta-<%= color%> tarjeta-<%= orientacion || '' %>" id="<%= id %>">
     <% elementos.forEach((elemento)=> { %>
         <%-include(elemento.ruta, elemento.parametros)%>
     <% }) %>

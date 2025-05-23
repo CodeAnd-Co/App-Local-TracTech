@@ -1,13 +1,14 @@
 .tarjeta-menus-desplegables {
   width: 100%;
+  display: flex;
 }
 
-.orientacion-vertical .tarjeta {
+.grupo-vertical {
   flex-direction: column;
   gap: 12px;
 }
 
-.orientacion-horizontal .tarjeta {
+.grupo-horizontal {
   flex-direction: row;
   gap: 12px;
 }
