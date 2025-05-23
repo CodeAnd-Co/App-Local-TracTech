@@ -1,15 +1,2 @@
-<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/campoTexto/campoTexto.css' rel='stylesheet' />
-<div class='campo'>
-  <label for='<%- id %>'><%- label %></label>
-  <input
-    type='<%- type %>'
-    id='<%- id %>'
-    name='<%- name %>'
-    placeholder='<%- placeholder %>'
-    <% if (required) { %>required<% } %>
-    <% if (maxlength) { %>maxlength="<%- maxlength %>"<% } %>
-  />
-  <% if (errorId) { %>
-    <small id='<%- errorId %>' class='mensajeError'></small>
-  <% } %>
-</div>
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/campoTexto/campoTexto.css' rel='stylesheet' />
+<input type='<%= type %>' id='<%= id %>' class='campoTexto' name='<%= name %>' placeholder='<%= placeholder %>' maxlength='<%= maxlength %>' required='<%= required %>'>
