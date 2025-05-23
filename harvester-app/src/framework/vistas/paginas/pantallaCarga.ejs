@@ -28,6 +28,22 @@
             color: 'texto-azul',
             fuente: 'fuente-regular',
         })%>
+        <%- include('../includes/componentes/moleculas/grupoBotones/grupoBotones.ejs', { 
+            orientacion: 'horizontal',
+            botones: [
+                { id: 'btnAceptar', label: 'Aceptar', type: 'primario', tamanio: 'btn-lg' },
+                { id: 'btnCancelar', label: 'Cancelar', type: 'secundario', tamanio: 'btn-lg' },
+                { id: 'btnDesabilitado', label: 'Desabilitado', type: 'terciario', tamanio: 'btn-lg' },
+            ]
+        })%>
+        <%- include('../includes/componentes/moleculas/grupoBotones/grupoBotones.ejs', { 
+            orientacion: 'vertical',
+            botones: [
+                { id: 'btnAceptar1', label: 'Aceptar', type: 'primario', tamanio: 'btn-lg' },
+                { id: 'btnCancelar1', label: 'Cancelar', type: 'secundario', tamanio: 'btn-lg' },
+                { id: 'btnDesabilitado1', label: 'Desabilitado', type: 'terciario', tamanio: 'btn-lg' },
+            ]
+        })%>
         <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
         label: 'Nombre del usuario', 
         type: 'text', 
