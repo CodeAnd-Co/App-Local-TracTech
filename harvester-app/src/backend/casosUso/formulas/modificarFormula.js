@@ -1,7 +1,8 @@
 // RF68 Modificar fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF68 
-const { modificarFormula } = require('../../domain/formulasAPI/formulaApi');
+const { modificarFormula } = require(`${rutaBase}src/backend/domain/formulasAPI/formulaAPI.js`);
+
 const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
-    LONGITUD_MAXIMA_FORMULA} = require('../../../framework/utils/js/constantes');
+    LONGITUD_MAXIMA_FORMULA} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 const Swal = require('sweetalert2');
 
 /**

@@ -1,9 +1,9 @@
 // RF 76 - Consultar fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 
-const { consultaFormulasCasoUso } = require('../../../backend/casosUso/formulas/consultaFormulas');
-const { inicializarCrearFormula } = require('../../utils/js/crearFormula');
-const { manejarEliminarFormula } = require('../../utils/js/eliminarFormula');
-const { inicializarModificarFormula } = require('../../../backend/casosUso/formulas/modificarFormula');
+const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`); 
+const { inicializarCrearFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/crearFormula.js`);
+const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/eliminarFormula.js`);
+const { inicializarModificarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/modificarFormula.js`);
 /* eslint-disable no-undef */
 
 async function consultarFormulas() {
@@ -78,10 +78,10 @@ async function renderizarFormulas() {
                     <div class='texto-usuario'>${formula.Datos}</div>
                 </div>
                 <button class='editar' data-id='${formula.idFormula}'>
-                    <img class='editar-icono' src='../utils/iconos/Editar.svg' />
+                    <img class='editar-icono' src='${rutaBase}src/framework/utils/iconos/Editar.svg' />
                 </button>
                 <button class='eliminar' data-id='${formula.idFormula}'>
-                    <img class='eliminar-icono' src='../utils/iconos/BasuraBlanca.svg' />
+                    <img class='eliminar-icono' src='${rutaBase}src/framework/utils/iconos/BasuraBlanca.svg' />
                 </button>
                 </div>
             `;
