@@ -1,0 +1,63 @@
+<!-- Molécula: Campo Texto Formulario -->
+<!-- Carga de estilos del componente -->
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/campoTextoFormulario/campoTextoFormulario.css' rel='stylesheet' />
+
+<div class='campo-formulario'>
+  
+  <!-- Átomo: Cuadro de texto para el label -->
+  <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { 
+    id: id + '-label',
+    textoInterior: label,
+    tamanio: ' texto-md',
+    color: ' texto-negro',
+    fuente: ' fuente-regular'
+  }) %>
+  
+  <!-- Átomo: Campo de texto -->
+  <%- include('../../atomos/campoTexto/campoTexto.ejs', { 
+    type: type || 'text',
+    id: id,
+    name: name,
+    placeholder: placeholder,
+    maxlength: maxlength,
+    required: required
+  }) %>
+  
+  <!-- Átomo: Cuadro de texto para errores (si se proporciona errorId) -->
+  <% if (errorId) { %>
+    <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { 
+      id: errorId,
+      textoInterior: '',
+      tamanio: ' texto-sm',
+      color: ' texto-rojo',
+      fuente: ' fuente-regular'
+    }) %>
+  <% } %>
+  
+</div>
+
+<% /* 
+  Parámetros obligatorios:
+  - label: 'Nombre del campo'        // Texto del label
+  - id: 'campo-unico'                // ID único
+  - name: 'nombreFormulario'         // Name para el formulario
+
+  Parámetros opcionales:
+  - type: 'text'                     // Tipo de input
+  - placeholder: 'Texto de ayuda'    // Placeholder
+  - maxlength: '50'                  // Límite de caracteres
+  - required: true                   // Si es requerido
+  - errorId: 'mensaje-error'         // ID para mensajes de error
+
+  Ejemplo de uso:
+  <%- include('campoTextoFormulario.ejs', { 
+    label: 'Nombre completo', 
+    type: 'text', 
+    id: 'nombre', 
+    name: 'nombre', 
+    placeholder: 'Ingresa tu nombre completo', 
+    maxlength: '50', 
+    required: true, 
+    errorId: 'errorNombre' 
+  }) %>
+*/ %>

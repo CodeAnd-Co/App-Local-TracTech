@@ -3,14 +3,18 @@
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Cargando...</title>
-    <link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/pantallaCarga.css'>
+    <title>Prueba Campo Formulario</title>
 </head>
-    <body>
-        <%- include('../includes/componentes/atomos/menuDesplegable/menuDesplegable.ejs', { 
-        opciones: ['Pay', 'Linea', 'Barras'],
-        placeholder: 'Selecciona una gráfica',
-        className: 'opcion-texto'
-        }) %>   
-    </body>
+<body>
+    <%- include('../componentes/moleculas/campoTextoFormulario/campoTextoFormulario.ejs', { 
+        label: 'Nombre completo', 
+        type: 'text', 
+        id: 'nombre', 
+        name: 'nombre', 
+        placeholder: 'Ingresa tu nombre completo', 
+        maxlength: '50', 
+        required: true, 
+        errorId: 'errorNombre' 
+    }) %>
+</body>
 </html>

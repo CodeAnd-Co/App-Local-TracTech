@@ -1,2 +1,14 @@
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/cuadroTexto/cuadroTexto.css' rel='stylesheet' />
-<div id='<%= id %>' class='cuadro-<%= type %>'><%= label %></div>
+<div 
+    id='<%= id %>' 
+    class='cuadro-texto<%= tamanio || "" %> <%= color || "" %> <%= fuente || "" %>'><%= textoInterior %>
+</div>
+
+<% /*
+    Parámetros opcionales:
+    - id: 'miCuadro'
+    - textoInterior: 'El texto que quieres dentro'
+    - tamanio: 'texto-md'
+    - color: 'texto-negro'
+    - fuente: 'fuente-bold'
+*/ %>

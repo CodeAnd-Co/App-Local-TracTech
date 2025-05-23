@@ -1,7 +1,91 @@
-btn-primario{
-    color : rojo;
+.btn-primario{
+  background: #a61930;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.2);
+  border-width: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 140px;
+  height: 55px;
+  position: relative;
+  color: #ffffff;
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-btn-secundario{
-    
+.btn-primario:hover {
+  background: #7d1425;
+  cursor: pointer;
+  transform: scale(1.04);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn-secundario{
+  background: #ffffff;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: #262b40;
+  border-width: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 140px;
+  height: 55px;
+  position: relative;
+  color: #262b40;
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secundario:hover {
+  background: #f2f2f2;
+  cursor: pointer;
+  transform: scale(1.04);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn-terciario{
+  background: #dadadb;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.94);
+  border-width: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 140px;
+  height: 55px;
+  position: relative;
+  color: rgba(38, 43, 64, 0.7);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

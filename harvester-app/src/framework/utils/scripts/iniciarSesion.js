@@ -7,8 +7,11 @@ const botonAcceder = document.querySelector('.boton-acceder');
 const entradaCorreo = document.querySelector('.correo[type="email"]');
 const entradaContrasenia = document.querySelector('.contrasena');
 const { ipcRenderer } = require('electron');
+/* eslint-disable-next-line no-undef */
 const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`);
+/* eslint-disable-next-line no-undef */
 const { iniciarSesion } = require(`${rutaBase}/src/backend/casosUso/sesion/iniciarSesion`);
+/* eslint-disable-next-line no-undef */
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 /**
@@ -42,6 +45,7 @@ async function manejarInicioSesion() {
       localStorage.setItem('permisos', JSON.stringify(listaPermisos));
       const usuario = resultado.usuario;
       localStorage.setItem('nombreUsuario', usuario);
+      /* eslint-disable-next-line no-undef */
       const rutaContenedorPrincipal = `${rutaBase}src/framework/vistas/paginas/contenedorPrincipal.ejs`;
       try {
           const vista = await ipcRenderer.invoke('precargar-ejs', rutaContenedorPrincipal);
