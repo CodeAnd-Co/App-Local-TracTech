@@ -7,7 +7,7 @@
     }) %>
     <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { 
         id: texto?.id || '',
-        label: texto?.label || '',
+        textoInterior: texto?.textoInterior || '',
         tamanio: texto?.tamano || '',
         color: texto?.color || '',
         fuente: texto?.fuente || '',
@@ -23,7 +23,7 @@
     }
   - texto: {
       id: 'textoInicio',
-      label: 'Inicio',
+      textoInterior: 'Inicio',
       tamano: 'texto-lg',
       color: 'texto-negro',
       fuente: 'fuente-regular'
