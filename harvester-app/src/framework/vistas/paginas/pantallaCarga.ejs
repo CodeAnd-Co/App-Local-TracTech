@@ -15,7 +15,7 @@
               },
               texto: {
                 id: 'textoInicio',
-                label: 'Inicio',
+                textoInterior: 'Inicio',
                 tamanio: 'texto-lg',
                 color: 'texto-negro',
                 fuente: 'fuente-regular'
@@ -23,10 +23,26 @@
         }) %>
         <%- include('../includes/componentes/atomos/cuadroTexto/cuadroTexto.ejs', { 
             id: 'cuadroEjemplo',
-            label: '¡Hola mundo!',
+            textoInterior: '¡Hola mundo!',
             tamanio: 'texto-lg',
             color: 'texto-azul',
             fuente: 'fuente-regular',
+        })%>
+        <%- include('../includes/componentes/moleculas/grupoBotones/grupoBotones.ejs', { 
+            orientacion: 'horizontal',
+            botones: [
+                { id: 'btnAceptar', label: 'Aceptar', type: 'primario', tamanio: 'btn-lg' },
+                { id: 'btnCancelar', label: 'Cancelar', type: 'secundario', tamanio: 'btn-lg' },
+                { id: 'btnDesabilitado', label: 'Desabilitado', type: 'terciario', tamanio: 'btn-lg' },
+            ]
+        })%>
+        <%- include('../includes/componentes/moleculas/grupoBotones/grupoBotones.ejs', { 
+            orientacion: 'vertical',
+            botones: [
+                { id: 'btnAceptar1', label: 'Aceptar', type: 'primario', tamanio: 'btn-lg' },
+                { id: 'btnCancelar1', label: 'Cancelar', type: 'secundario', tamanio: 'btn-lg' },
+                { id: 'btnDesabilitado1', label: 'Desabilitado', type: 'terciario', tamanio: 'btn-lg' },
+            ]
         })%>
         <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
         label: 'Nombre del usuario', 
@@ -38,5 +54,21 @@
         required: true,
         errorId: 'mensajeErrorNombre'
         }) %>    
+        <!-- Botón agregado -->  
+        <%- include('../includes/componentes/atomos/boton/boton.ejs', { 
+            label: 'Enviar', 
+            type: 'primario', 
+            id: 'botonEnviar' 
+        }) %>
+
+        <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', { 
+            label: 'Nombre del usuario', 
+            type: 'text', 
+            id: 'username',
+            name: 'username', 
+            placeholder: 'Nombre del nuevo usuario',
+            maxlength: '55',
+            required: true,
+        }) %>
     </body>
 </html>

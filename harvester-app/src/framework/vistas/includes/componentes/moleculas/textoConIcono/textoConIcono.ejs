@@ -1,5 +1,6 @@
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/textoConIcono/textoConIcono.css' rel='stylesheet'/>
-<div class="texto-con-icono">
+
+<div class="texto-con-icono-derecha">
     <%- include('../../atomos/icono/icono.ejs', { 
         nombre: icono?.nombre || 'home', 
         tamanio: icono?.tamano || '',
@@ -8,6 +9,21 @@
     <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { 
         id: texto?.id || '',
         label: texto?.label || '',
+        tamanio: texto?.tamano || '',
+        color: texto?.color || '',
+        fuente: texto?.fuente || '',
+    }) %>
+</div>
+
+<div class="texto-con-icono-izquierda">
+    <%- include('../../atomos/icono/icono.ejs', { 
+        nombre: icono?.nombre || 'home', 
+        tamanio: icono?.tamano || '',
+        color: icono?.color || '',
+    }) %>
+    <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { 
+        id: texto?.id || '',
+        textoInterior: texto?.textoInterior || '',
         tamanio: texto?.tamano || '',
         color: texto?.color || '',
         fuente: texto?.fuente || '',
@@ -23,7 +39,7 @@
     }
   - texto: {
       id: 'textoInicio',
-      label: 'Inicio',
+      textoInterior: 'Inicio',
       tamano: 'texto-lg',
       color: 'texto-negro',
       fuente: 'fuente-regular'
