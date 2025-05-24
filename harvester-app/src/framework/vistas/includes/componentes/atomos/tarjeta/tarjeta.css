@@ -1,7 +1,7 @@
 .tarjeta{
     padding: 15px;
     display: flex;
-    flex-direction: row;
+    gap: 12px;
 }
 
 .tarjeta-blanco { background-color: #fafafa; }
@@ -11,3 +11,11 @@
 .derecha { justify-content: flex-end; }
 .centro{ justify-content: center; }
 .izquierda{ justify-content: flex-start; }
+
+.tarjeta.direccion-horizontal {
+    flex-direction: row;
+  }
+
+.tarjeta.direccion-vertical {
+    flex-direction: column;
+  }

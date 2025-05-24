@@ -8,9 +8,24 @@
 </head>
     <body>
         <%- include('../includes/componentes/atomos/menuDesplegable/menuDesplegable.ejs', { 
+            textoAyuda: 'Selecciona una opción',
         opciones: ['Pay', 'Linea', 'Barras'],
         placeholder: 'Selecciona una gráfica',
         className: 'opcion-texto'
         }) %>   
+        <%- include('../includes/componentes/moleculas/barraBusqueda/barraBusqueda.ejs', {
+            id: 'barraBusqueda',
+            placeholder: 'Escribe aquí...',
+        }) %>
+        <%- include('../includes/componentes/moleculas/tarjetaMenusDesplegables/tarjetaMenusDesplegables.ejs', {
+            idTarjeta: 'miTarjetaConMenusDesplegables',
+            colorTarjeta: 'gris',
+            alinear: 'centro',
+            orientacion: 'horizontal',
+            dropdowns: [
+                { textoAyuda: 'Selecciona una opción', opciones: ['Opción 1', 'Opción 2'], placeholder: 'Selecciona una opción', className: 'opcion-texto' },
+                { textoAyuda: 'Selecciona una opción', opciones: ['Opción A', 'Opción B'], placeholder: 'Selecciona otra opción', className: 'opcion-texto' }
+            ],
+        }) %>
     </body>
 </html>
