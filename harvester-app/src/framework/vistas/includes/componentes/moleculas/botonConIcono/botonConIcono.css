@@ -1,0 +1,35 @@
+.boton-con-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  padding: 10px;
+}
+
+/* Tamaños */
+.btn-sm {
+  padding: 6px;
+}
+
+.btn-lg {
+  padding: 12px;
+}
+
+/* Tipos */
+.primario {
+  background-color: white;
+  border: 3px solid black;
+}
+
+.secundario {
+  background-color: #A61930;
+  border: 3px solid #A61930;
+}
+
+/* Elimina margen por defecto en íconos */
+.boton-con-icono .material-symbols-outlined {
+  margin: 0;
+}
