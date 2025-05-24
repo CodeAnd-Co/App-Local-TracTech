@@ -4,9 +4,11 @@
     <%- include('../../atomos/tarjeta/tarjeta.ejs', {
         id: idTarjeta || '',
         color: colorTarjeta || 'gris',
+        alinear: alinear || '',
         elementos: dropdowns.map(dropdown => ({
             ruta: '../../atomos/menuDesplegable/menuDesplegable.ejs',
             parametros: {
+                textoAyuda: dropdown.textoAyuda || '',
                 opciones: dropdown.opciones || [],
                 placeholder: dropdown.placeholder || '',
                 className: dropdown.className || 'opcion-texto',

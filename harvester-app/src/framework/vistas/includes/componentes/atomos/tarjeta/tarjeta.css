@@ -1,29 +1,21 @@
 .tarjeta{
     padding: 15px;
-    align-items: center;
     display: flex;
     gap: 12px;
 }
 
-.tarjeta-blanco {
-    background-color: #fafafa;
-}
+.tarjeta-blanco { background-color: #fafafa; }
+.tarjeta-gris { background-color: #ededed; }
+.tarjeta-azul { background-color: #262b40; }
 
-.tarjeta-gris {
-    background-color: #ededed;
-}
+.derecha { justify-content: flex-end; }
+.centro{ justify-content: center; }
+.izquierda{ justify-content: flex-start; }
 
-.tarjeta-azul {
-    background-color: #262b40;
-}
-
-/* Orientación horizontal por defecto */
-.tarjeta-horizontal {
+.tarjeta.direccion-horizontal {
     flex-direction: row;
   }
-  
-/* Orientación vertical */
-.tarjeta-vertical {
+
+.tarjeta.direccion-vertical {
     flex-direction: column;
-    align-items: flex-start;
-}
+  }
