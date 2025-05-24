@@ -29,6 +29,10 @@
   border: 3px solid #A61930;
 }
 
+.terciario {
+  background-color: transparent;
+}
+
 /* Elimina margen por defecto en íconos */
 .boton-con-icono .material-symbols-outlined {
   margin: 0;
