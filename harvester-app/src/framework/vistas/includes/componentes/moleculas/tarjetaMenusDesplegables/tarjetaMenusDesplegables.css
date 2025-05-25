@@ -1,0 +1,14 @@
+.tarjeta-menus-desplegables {
+  width: 100%;
+  display: flex;
+}
+
+.grupo-vertical {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.grupo-horizontal {
+  flex-direction: row;
+  gap: 12px;
+}
