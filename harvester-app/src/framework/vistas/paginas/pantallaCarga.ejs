@@ -5,12 +5,85 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Cargando...</title>
     <link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/pantallaCarga.css'>
+    <link rel="stylesheet" href="<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/tarjeta/tarjeta.css">
 </head>
-    <body>
-        <%- include('../includes/componentes/atomos/menuDesplegable/menuDesplegable.ejs', { 
-        opciones: ['Pay', 'Linea', 'Barras'],
-        placeholder: 'Selecciona una gráfica',
-        className: 'opcion-texto'
-        }) %>   
-    </body>
+<body> 
+    <%- include('../includes/componentes/atomos/boton/boton.ejs', { 
+        etiqueta: 'Enviar', 
+        tipo: 'primario', 
+        id: 'botonEnviar' 
+    }) %>
+
+    <%- include('../includes/componentes/moleculas/campoTextoFormulario/campoTextoFormulario.ejs', {
+        label: 'Nombre completo',
+        type: 'text',
+        id: 'nombreTarjeta',
+        name: 'nombreTarjeta',
+        placeholder: 'Ingresa tu nombre completo',
+        maxlength: '50',
+        required: true,
+        errorId: 'errorNombreTarjeta'
+    }) %>
+
+    <%- include('../includes/componentes/atomos/campoTexto/campoTexto.ejs', {
+        tipo: 'campoTexto',
+        id: 'miCampoTexto',
+        nombre: 'miCampoTexto',
+        textoAyuda: 'Escribe aquí...',
+        longitudMaxima: 100,
+        requerido: true
+    }) %>
+
+    <%- include('../includes/componentes/atomos/tarjeta/tarjeta.ejs', {
+        id: 'tarjeta',
+        color: 'gris',
+        alinear: 'centro',
+        orientacion: 'columna',
+        elementos: [
+            {
+                ruta: '../../atomos/cuadroTexto/cuadroTexto.ejs',
+                parametros: {
+                    id: 'cuadroTextoSuperior',
+                    textoInterior: 'Bienvenido a la pantalla de carga',
+                    tamanio: 'texto-lg',
+                    color: 'texto-negro',
+                    fuente: 'fuente-regular'
+                }
+            },
+            
+            {
+                ruta: '../../atomos/campoTexto/campoTexto.ejs',
+                parametros: {
+                    tipo: 'campoTexto',
+                    id: 'campoTextoCarga',
+                    nombre: 'campoTextoCarga',
+                    textoAyuda: 'Cargando...',
+                    longitudMaxima: 100,
+                    requerido: true
+                }
+            },
+            {
+                ruta: '../../moleculas/grupoBotones/grupoBotones.ejs',
+                parametros: {
+                    orientacion: 'horizontal',
+                    botones: [
+                        {
+                            id: 'botonCancelar',
+                            etiqueta: 'Cancelar',
+                            tipo: 'secundario',
+                            tamanio: 'grande',
+                            colorTexto: 'rojo'
+                        },
+                        {
+                            id: 'botonContinuar',
+                            etiqueta: 'Continuar',
+                            tipo: 'primario',
+                            tamanio: 'grande'
+                        }
+                    ]
+                }
+            }
+        ]
+    }) %>
+</body>
 </html>
