@@ -1,9 +1,10 @@
 // RF 76 - Consultar fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 
 const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`); 
-const { inicializarCrearFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/crearFormula.js`);
 const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/eliminarFormula.js`);
-const { inicializarModificarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/modificarFormula.js`);
+const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/modificarFormula.js`);
+const { ipcRenderer } = require('electron');
+
 /* eslint-disable no-undef */
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
@@ -89,25 +90,49 @@ async function renderizarFormulas() {
             contenedor.appendChild(formulaDiv);
         });
 
-        // Agregar event listeners para los botones de editar y eliminar
         document.querySelectorAll('.editar').forEach(btn => {
-            btn.addEventListener('click', (evento) => {
-                 
+            btn.addEventListener('click', async (evento) => {
                 const formulaId = evento.currentTarget.getAttribute('data-id');
-                // Implementar lógica para editar fórmula
-                formulas.forEach((formula) => {
-                    if (formula.idFormula == formulaId) {
-                        const nombre = formula.Nombre;
-                        const formulaTexto = formula.Datos;
-                        inicializarModificarFormula(formulaId, nombre, formulaTexto);
+                console.log('Botón clickeado, data-id:', formulaId);
+
+                if (!formulaId) {
+                    console.warn('No se encontró data-id en el botón.');
+                    return;
+                }
+
+                const formulaSeleccionada = formulas.find(f => f.idFormula == formulaId);
+
+                if (formulaSeleccionada) {
+                    const { idFormula, Nombre, Datos } = formulaSeleccionada;
+                    console.log('Datos encontrados:', idFormula, Nombre, Datos);
+                    localStorage.setItem('modificarFormulaId', idFormula);
+                    localStorage.setItem('modificarFormulaNombre', Nombre);
+                    localStorage.setItem('modificarFormulaDatos', Datos);
+                    try {
+                        const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
+                        const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion'});
+                        window.location.href = vista;
+                        localStorage.setItem('seccion-activa', 'formulas');
+                    } catch (err) {
+                        console.error('Error al cargar vista:', err);
                     }
-                })
+                    inicializarModificarFormula(idFormula, Nombre, Datos);
+                } else {
+                    console.warn('No se encontró una fórmula con id:', formulaId);
+                }
             });
         });
 
         document.getElementById('crearFormula')
-            .addEventListener('click', () => {
-                inicializarCrearFormula();
+            .addEventListener('click', async () => {
+                try {
+                    const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`
+                    const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono : 'Funcion'});
+                    window.location.href = vista;
+                    localStorage.setItem('seccion-activa', 'formulas');
+                } catch (err) {
+                    console.error('Error al cargar vista:', err);
+                }
             });
 
         document.querySelectorAll('.eliminar').forEach(btn => {

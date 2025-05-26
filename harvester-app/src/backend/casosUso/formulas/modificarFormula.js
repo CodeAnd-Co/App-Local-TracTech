@@ -89,49 +89,6 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     }
 }
 
-/**
- * @function inicializarModificarFormula
- * @param {string} id - ID de la fórmula a modificar.
- * @param {string} nombre - Nombre de la fórmula a modificar.
- * @param {string} formula - Fórmula a modificar.
- */
-async function inicializarModificarFormula(id, nombre, formula) {
-    localStorage.setItem('secccion-activa', 'modificarFormula');
-    const ventanaPrincipal = document.querySelector('.ventana-principal');
-    const rutaInicio = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`;
-    try {
-        localStorage.setItem('seccion-activa', 'inicio');
-        const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Formula', Icono : 'Funcion'});
-        window.location.href = vista;
-        ventanaPrincipal.innerHTML = html;
-        const botonGuardar = document.getElementById('btnGuardar');
-        const nombreInput = document.getElementById('nombreFormula');
-        const formulaInput = document.getElementById('resultado');
-        nombreInput.value = nombre;
-        formulaInput.value = formula;
-        document.getElementById('btnCancelar').addEventListener('click', () => {
-            window.cargarModulo('formulas');
-        });
-        botonGuardar.addEventListener('click', () => {
-            const nombreInput = document.getElementById('nombreFormula').value;
-            const formulaInput = document.getElementById('resultado').value;
-            if (nombreInput === nombre && formulaInput === formula) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No se han realizado cambios en la fórmula.',
-                    icon: 'error',
-                    confirmButtonColor: '#1F4281',
-                });
-                return;
-            }
-            
-            modificarFormulaCasoUso(id, nombreInput, formulaInput, nombre);
-        });
-    } catch (err) {
-        console.error('Error al cargar vista:', err);
-    }
-}
-
 module.exports = {
-    inicializarModificarFormula
-};
+    modificarFormulaCasoUso
+}

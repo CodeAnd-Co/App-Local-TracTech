@@ -6,9 +6,16 @@ const { LONGITUD_MAXIMA_FORMULA,
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 
+// if (typeof Swal === undefined){
+//     const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+// }
+
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 const { guardarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/crearFormula.js`);
+
+inicializarCrearFormula();
+
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
@@ -32,17 +39,7 @@ function cancelarVista(){
  * @throws {Error} Si el botón de creación de fórmulas no se encuentra en el DOM.
  */
 async function inicializarCrearFormula() {
-    localStorage.setItem('seccion-activa', 'crearFormula');
-    const ventanaPrincipal = document.getElementById('ventana-principal');
-    const rutaInicio = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`;
-    try {
-        const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio,{Seccion: 'Formulas', Icono: 'Funcion'});
-        window.location.href = vista;
         const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
-                ventanaPrincipal.innerHTML = html;
-                const ejecutable = document.createElement('script');
-                ejecutable.src = `${rutaBase}src/framework/utils/scripts/paginas/formulas/crearFormula.js`;
-                document.body.appendChild(ejecutable);
                 document.getElementById('btnCancelar').addEventListener('click', () => {
                     window.cargarModulo('formulas');
                 });
@@ -75,11 +72,8 @@ async function inicializarCrearFormula() {
 
                     return;
                 }
-    } catch (err) {
-        console.error('Error al cargar vista:', err);
-    }
+    } 
         
-}
     
 
 /**
@@ -708,46 +702,44 @@ function popularDropdown(elementoSeleccionado) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {    
-    const btnGuardar = document.getElementById('btnGuardar');
-    const btnGenerar = document.getElementById('btnGenerar');
-    const btnCancelar = document.getElementById('btnCancelar');
-    const formulaContainer = document.getElementById('formula-container');
-    
-    
-    // Configurar eventos para los botones
-        btnGuardar.addEventListener('click', async () => {
-            procesarFormula();
-    });
+function activarBotonesCrear(){
 
-    btnGenerar.addEventListener('click', () => {
-        const contenedor = document.getElementById('function-arguments');
-        if (contenedor) {
-            generarFormulaCompleja();
-        } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'No se ha podido generar la fórmula.',
-                icon: 'error',
-                confirmButtonColor: '#1F4281',
+    document.addEventListener('DOMContentLoaded', () => {    
+        const btnGuardar = document.getElementById('btnGuardar');
+        const btnGenerar = document.getElementById('btnGenerar');
+        const btnCancelar = document.getElementById('btnCancelar');
+        const formulaContainer = document.getElementById('formula-container');
+        
+        
+        // Configurar eventos para los botones
+            btnGuardar.addEventListener('click', async () => {
+                procesarFormula();
+        });
+    
+        btnGenerar.addEventListener('click', () => {
+            const contenedor = document.getElementById('function-arguments');
+            if (contenedor) {
+                generarFormulaCompleja();
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se ha podido generar la fórmula.',
+                    icon: 'error',
+                    confirmButtonColor: '#1F4281',
+                });
+            }
+        });
+        
+        btnCancelar.addEventListener('click', () => {
+            cancelarVista();
+        });
+        // Agregar el evento al selector de función principal
+        const seleccionFuncion = document.getElementById('main-function');
+        if (seleccionFuncion) {
+            seleccionFuncion.addEventListener('change', () => {
+                const contenedor = document.getElementById('function-arguments');
+                definirEstructura(seleccionFuncion, contenedor);
             });
         }
     });
-    
-    btnCancelar.addEventListener('click', () => {
-        cancelarVista();
-    });
-    // Agregar el evento al selector de función principal
-    const seleccionFuncion = document.getElementById('main-function');
-    if (seleccionFuncion) {
-        seleccionFuncion.addEventListener('change', () => {
-            const contenedor = document.getElementById('function-arguments');
-            definirEstructura(seleccionFuncion, contenedor);
-        });
-    }
-});
-
-module.exports ={
-    inicializarCrearFormula
 }
-

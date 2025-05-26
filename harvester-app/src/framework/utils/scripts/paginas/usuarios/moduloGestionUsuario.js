@@ -14,7 +14,6 @@ const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validar
 
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
-console.log("swal: ", Swal, typeof Swal)
 const validator = require(`${rutaBase}/node_modules/validator/validator.min.js`);
 
 const usuariosPorPagina = 6;

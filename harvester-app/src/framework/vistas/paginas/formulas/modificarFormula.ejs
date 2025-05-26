@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang='es'>
+
 <head>
-    <meta charset='UTF-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>Modificador de Fórmulas</title>
     <link href='<%= rutaBase %>src/framework/utils/css/paginas/formulas/moduloFormulas.css' rel='stylesheet' />
-
 </head>
-<body>
-    <%- include ('../../includes/encabezado.ejs')%>
+<%- include ('../../includes/encabezado.ejs')%>
     <div class='formula-container'>
         <div class='formula-encabezado'>
             <h2>Modificar Fórmula</h2>
@@ -35,6 +30,5 @@
             </div>
         </div>
     </div>
-<script src='<%= rutaBase %>src/framework/utils/scripts/paginas/formulas/moduloFormulas.js'></script>
-</body>
-</html>
+    <script src='<%= rutaBase %>src/framework/utils/scripts/paginas/formulas/modificarFormula.js'></script>
+<%- include ('../../includes/piePagina.ejs')%>
