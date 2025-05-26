@@ -11,12 +11,13 @@
     textoInterior: label,
     tamanio: 'texto-md',
     color: 'texto-negro',
-    fuente: 'fuente-regular'
+    fuente: 'fuente-regular',
+    alinear: 'izquierda',
   }) %>
 
   <!-- Átomo: Campo de texto -->
   <%- include('../../atomos/campoTexto/campoTexto.ejs', { 
-    tipo: type || 'text',
+    tipo: 'campoTexto',
     id: id,
     class: 'campo-texto',
     nombre: name,
