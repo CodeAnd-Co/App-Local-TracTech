@@ -66,7 +66,7 @@ function agregarTexto(
       </select>
       <img class='type' src='${rutaBase}/src/framework/utils/iconos/Texto.svg' alt='Icono Texto' />
     </div>
-    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='1000'></textarea>
+    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='500'></textarea>
     <style>
       .contador-caracteres {
         font-size: 12px;
@@ -110,7 +110,7 @@ function agregarTexto(
 
   areaEscritura.addEventListener('input', () => {
     actualizarTexto(vistaPrevia, areaEscritura);
-    actualizarCaracteres(areaEscritura, tarjetaTexto);
+    actualizarCaracteres(tarjetaTexto, areaEscritura);
   });
 
   botonAlinear.addEventListener('click', () => {

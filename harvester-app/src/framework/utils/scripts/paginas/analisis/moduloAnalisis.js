@@ -2,9 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 const { jsPDF } = require(`${rutaBase}/node_modules/jspdf/dist/jspdf.umd.min.js`);
-if (typeof Swal === 'undefined') {
-  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-}
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 if (typeof ipcRenderer === 'undefined') {
   const { ipcRenderer } = require('electron');
@@ -88,7 +86,7 @@ function cargarDatosExcel() {
  * @throws {Error} Si jsPDF no está cargado o falla la extracción de previsualización.
  */
 async function descargarPDF() {
-  if (!window.jspdf || !window.jspdf.jsPDF) {
+  if (!jsPDF) {
     Swal.fire({
       title: 'Error al descargar reporte',
       text: 'Ha courrido un error, contacta a soporte',
@@ -98,7 +96,7 @@ async function descargarPDF() {
   }
 
   // Configuración básica del documento
-  const documentoPDF = new JSPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
   const margen = 40;
   const anchoPagina = documentoPDF.internal.pageSize.getWidth() - margen * 2;
   const altoPagina = documentoPDF.internal.pageSize.getHeight() - margen * 2;
