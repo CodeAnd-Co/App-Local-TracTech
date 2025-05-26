@@ -13,6 +13,10 @@ export default [
         ecmaFeatures: { jsx: false },
         sourceType: 'module',
       },
+      
+      globals: {
+        rutaBase: 'readonly', // 👈 aquí se declara como global
+      },
     },
     rules: {
       ...js.configs.recommended.rules,
