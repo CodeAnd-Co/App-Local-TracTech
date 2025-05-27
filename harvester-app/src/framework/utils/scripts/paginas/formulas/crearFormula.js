@@ -2,14 +2,8 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 const { LONGITUD_MAXIMA_FORMULA,
     LONGITUD_MAXIMA_NOMBRE_FORMULA,} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
-    
-/* eslint-disable no-unused-vars */
- 
 
-// if (typeof Swal === undefined){
-//     const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-// }
-
+const { abrirAyudaExterna } = require(`${rutaBase}src/framework/utils/scripts/middleware/ayudaExterna.js`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 const { guardarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/crearFormula.js`);
@@ -43,9 +37,15 @@ async function inicializarCrearFormula() {
                 document.getElementById('btnCancelar').addEventListener('click', () => {
                     window.cargarModulo('formulas');
                 });
+
                 document.getElementById('btnGuardar').addEventListener('click', async () => {
                     procesarFormula();
                 });
+
+                document.getElementById('btnAyuda').addEventListener('click', async () => {
+                    await abrirAyudaExterna('https://docs.google.com/document/d/14tKDIFsQO1i_32oEwaGaE7u8hHv3pcdb3frWU7vJ9M8/edit?tab=t.0#heading=h.ldire7zbv2f')
+                });
+
                 document.getElementById('btnGenerar').addEventListener('click', () => {
                     const contenedor = document.getElementById('function-arguments');
                     if (contenedor) {
@@ -702,44 +702,47 @@ function popularDropdown(elementoSeleccionado) {
     });
 }
 
-function activarBotonesCrear(){
+// /* eslint-disable-next-line no-unused-vars */
+// function activarBotonesCrear(){
+//     document.addEventListener('DOMContentLoaded', () => {    
+//         const btnGuardar = document.getElementById('btnGuardar');
+//         const btnGenerar = document.getElementById('btnGenerar');
+//         const btnCancelar = document.getElementById('btnCancelar');
+        
+//         /* eslint-disable-next-line no-unused-vars */
+//         const formulaContainer = document.getElementById('formula-container');
+        
+        
 
-    document.addEventListener('DOMContentLoaded', () => {    
-        const btnGuardar = document.getElementById('btnGuardar');
-        const btnGenerar = document.getElementById('btnGenerar');
-        const btnCancelar = document.getElementById('btnCancelar');
-        const formulaContainer = document.getElementById('formula-container');
-        
-        
-        // Configurar eventos para los botones
-            btnGuardar.addEventListener('click', async () => {
-                procesarFormula();
-        });
+//         // Configurar eventos para los botones
+//             btnGuardar.addEventListener('click', async () => {
+//                 procesarFormula();
+//         });
     
-        btnGenerar.addEventListener('click', () => {
-            const contenedor = document.getElementById('function-arguments');
-            if (contenedor) {
-                generarFormulaCompleja();
-            } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No se ha podido generar la fórmula.',
-                    icon: 'error',
-                    confirmButtonColor: '#1F4281',
-                });
-            }
-        });
+//         btnGenerar.addEventListener('click', () => {
+//             const contenedor = document.getElementById('function-arguments');
+//             if (contenedor) {
+//                 generarFormulaCompleja();
+//             } else {
+//                 Swal.fire({
+//                     title: 'Error',
+//                     text: 'No se ha podido generar la fórmula.',
+//                     icon: 'error',
+//                     confirmButtonColor: '#1F4281',
+//                 });
+//             }
+//         });
         
-        btnCancelar.addEventListener('click', () => {
-            cancelarVista();
-        });
-        // Agregar el evento al selector de función principal
-        const seleccionFuncion = document.getElementById('main-function');
-        if (seleccionFuncion) {
-            seleccionFuncion.addEventListener('change', () => {
-                const contenedor = document.getElementById('function-arguments');
-                definirEstructura(seleccionFuncion, contenedor);
-            });
-        }
-    });
-}
+//         btnCancelar.addEventListener('click', () => {
+//             cancelarVista();
+//         });
+//         // Agregar el evento al selector de función principal
+//         const seleccionFuncion = document.getElementById('main-function');
+//         if (seleccionFuncion) {
+//             seleccionFuncion.addEventListener('change', () => {
+//                 const contenedor = document.getElementById('function-arguments');
+//                 definirEstructura(seleccionFuncion, contenedor);
+//             });
+//         }
+//     });
+// }
