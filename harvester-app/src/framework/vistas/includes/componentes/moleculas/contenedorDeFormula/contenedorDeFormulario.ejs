@@ -28,6 +28,13 @@
                     parametros: campo
                 }
             })),
+            // Menús desplegables dinámicos (mover aquí)
+            ...((menusDesplegables || []).map(function(menu) {
+                return {
+                    ruta: '../../moleculas/menuDesplegableFormulario/menuDesplegableFormulario.ejs',
+                    parametros: menu
+                }
+            })),
             // Línea divisora después de los campos
             {
                 ruta: '../../atomos/lineaDivisora/lineaDivisora.ejs'
