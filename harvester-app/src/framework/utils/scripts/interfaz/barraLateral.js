@@ -23,6 +23,18 @@ async function cargarModulo(modulo){
 
 configurarBotonesLaterales()
 function configurarBotonesLaterales(){
+  const estadoBarraLateral = localStorage.getItem('estado-barra-lateral');
+  if(!estadoBarraLateral){
+    localStorage.setItem('estado-barra-lateral', 'expandida');
+  } else {
+    if(estadoBarraLateral == 'contraida'){
+      console.log("contraida2")
+      const barraLateralExpandida = document.getElementById('barraLateralExpandida');
+      const barraLateralColapsada = document.getElementById('barraLateralColapsada');
+      barraLateralExpandida.style.display = 'none';
+      barraLateralColapsada.style.display = 'flex';
+    }
+  }
 
   const botonesBarraLateral = document.querySelectorAll('.boton-sidebar');
   botonesBarraLateral.forEach(boton => {
@@ -31,8 +43,8 @@ function configurarBotonesLaterales(){
       if (!modulo) return;
 
       // Determinar cuál botón mostrar como activo visualmente
-      const seccionVisual = modulo === 'gestionUsuarios' ? 'usuario' : modulo;
-
+      const seccionVisual = modulo === 'gestionUsuarios' ? 'usuarios' : modulo;
+      
       // Desactivar todos los botones
       botonesBarraLateral.forEach(boton => boton.classList.remove('activo'));
       cargarModulo(modulo);
@@ -64,10 +76,12 @@ function cerrarBarraLateral() {
     botonColapsar.addEventListener('click', () => {
       barraLateralExpandida.style.display = 'none';
       barraLateralColapsada.style.display = 'flex';
+      localStorage.setItem('estado-barra-lateral', 'contraida');
     });
     botonExpandir.addEventListener('click', () => {
       barraLateralColapsada.style.display = 'none';
       barraLateralExpandida.style.display = 'flex';
+      localStorage.setItem('estado-barra-lateral', 'expandida');
     });
   }
 }
@@ -85,7 +99,7 @@ function aplicarActivoDesdeAlmacenamiento() {
   botonesSidebarTodos.forEach(botonItem => botonItem.classList.remove('activo'));
   if (!seccion || seccion === 'tema') return;
 
-  const seccionVisual = seccion === 'gestionUsuarios' ? 'usuario' : seccion;
+  const seccionVisual = seccion === 'gestionUsuarios' ? 'usuarios' : seccion;
   document
     .querySelectorAll(`.boton-sidebar[data-seccion='${seccionVisual}']`)
     .forEach(botonItem => botonItem.classList.add('activo'));
