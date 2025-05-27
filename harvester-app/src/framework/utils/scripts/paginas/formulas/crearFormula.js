@@ -17,11 +17,13 @@ inicializarCrearFormula();
  * @returns {void}
  * @throws {Error} Si el elemento no se puede eliminar.
  */
+// eslint-disable-next-line no-unused-vars
 function eliminarElemento(boton) {
             const elementoABorrar = boton.parentNode.parentNode;
             elementoABorrar.remove();
 }
 
+// eslint-disable-next-line no-unused-vars
 function cancelarVista(){
     window.cargarModulo('formulas');
 }
@@ -183,7 +185,7 @@ async function procesarFormula() {
     } catch (error) {
         Swal.fire({
             title: 'Error',
-            text: 'Hubo un error en la conexión.',
+            text: `Hubo un error en la conexión: ${error}`,
             icon: 'error',
             confirmButtonColor: '#1F4281',
         });
@@ -316,6 +318,7 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
  * @returns {void} - No devuelve nada.
  * @throws {Error} Si el contenedor no se puede encontrar o no es un elemento HTML válido.
  */
+// eslint-disable-next-line no-unused-vars
 function agregarFuncionAnidada(boton) {
     // Buscar el contenedor anidado dentro del contenido del argumento
     const argumentoContenido = boton.closest('.argumentoContenido');
@@ -417,6 +420,7 @@ function agregarArgumentoCountIf(contenedor, prefijo = '') {
  * @returns {void} - No devuelve nada.
  * @throws {Error} Si el contenedor no se puede encontrar o no es un elemento HTML válido.
  */
+// eslint-disable-next-line no-unused-vars
 function masArgumentosCountif(contenedor) {
     const contadorArgumentos = contenedor.querySelectorAll('.argumento').length + 1;
     const nuevoArgumento = document.createElement('div');

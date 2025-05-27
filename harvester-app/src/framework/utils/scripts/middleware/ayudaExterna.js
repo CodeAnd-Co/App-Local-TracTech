@@ -1,11 +1,17 @@
 const { shell } = require('electron');
 const { mostrarAlertaConfirmacion,
     mostrarAlerta
- } = require(`${rutaBase}src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
+  } = require(`${rutaBase}src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 
 /**
  * Debes utilizar la URL del encabezado del manual de usuario.
  * Se obtiene haciendo clic derecho en el encabezado del manual de usuario y seleccionando "Copiar vínculo del encabezado".
+ * ES MUY IMPORTANTE UTILIZAR UNA FUNCION ASÍNCRONA PARA QUE SÍ ESPERE LA RESPUESTA DEL USUARIO.
+ * 
+ * Un ejemplo de su uso es:
+ * document.getElementById('btnAyuda').addEventListener('click', async () => {
+     await abrirAyudaExterna('https://docs.google.com/document/d/14tKDIFsQO1i_32oEwaGaE7u8hHv3pcdb3frWU7vJ9M8/edit?tab=t.0#heading=h.ldire7zbv2f')
+ * });
  */
 
 /**
