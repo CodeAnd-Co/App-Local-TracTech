@@ -25,9 +25,10 @@
 .fuente-bold { font-family: "SegoeUi-Bold", sans-serif; font-weight: 700; }
 .fuente-light { font-family: "SegoeUi-Light", sans-serif; font-weight: 300; }
 
-.texto-izquierda { justify-content: left; }
+.texto-izquierda { text-align: left; }
 .texto-centro { text-align:  center; }
-.texto-derecha { justify-content: right; }
+.texto-derecha { text-align: right; }
+.texto-justificado { text-align: justify; }
 
 .mb-0   { margin-bottom: 0; }
 .mb-8   { margin-bottom: 8px; }
