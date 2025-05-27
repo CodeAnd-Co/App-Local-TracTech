@@ -1,8 +1,9 @@
 // RF68 Modificar fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF68 
-const { modificarFormula } = require('../../domain/formulasAPI/formulaApi');
+const { modificarFormula } = require(`${rutaBase}src/backend/domain/formulasAPI/formulaAPI.js`);
+
 const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
-    LONGITUD_MAXIMA_FORMULA} = require('../../../framework/utils/js/constantes');
-const Swal = require('sweetalert2');
+    LONGITUD_MAXIMA_FORMULA} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 /**
  * @async
@@ -88,50 +89,6 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     }
 }
 
-/**
- * @function inicializarModificarFormula
- * @param {string} id - ID de la fórmula a modificar.
- * @param {string} nombre - Nombre de la fórmula a modificar.
- * @param {string} formula - Fórmula a modificar.
- */
-function inicializarModificarFormula(id, nombre, formula) {
-    localStorage.setItem('secccion-activa', 'modificarFormula');
-    const ventanaPrincipal = document.querySelector('.ventana-principal');
-    if (ventanaPrincipal){
-        fetch('../vistas/modificarFormula.html')
-            .then(res => res.text())
-            .then(html => {
-                ventanaPrincipal.innerHTML = html;
-                const botonGuardar = document.getElementById('btnGuardar');
-                const nombreInput = document.getElementById('nombreFormula');
-                const formulaInput = document.getElementById('resultado');
-                nombreInput.value = nombre;
-                formulaInput.value = formula;
-                document.getElementById('btnCancelar').addEventListener('click', () => {
-                    window.cargarModulo('formulas');
-                });
-                botonGuardar.addEventListener('click', () => {
-                    const nombreInput = document.getElementById('nombreFormula').value;
-                    const formulaInput = document.getElementById('resultado').value;
-                    if (nombreInput === nombre && formulaInput === formula) {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'No se han realizado cambios en la fórmula.',
-                            icon: 'error',
-                            confirmButtonColor: '#1F4281',
-                        });
-                        return;
-                    }
-                    
-                    modificarFormulaCasoUso(id, nombreInput, formulaInput, nombre);
-                });
-            });
-    }
-    
-
-   
-}
-
 module.exports = {
-    inicializarModificarFormula
-};
+    modificarFormulaCasoUso
+}

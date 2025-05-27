@@ -1,4 +1,4 @@
-const { URL_BASE } = require('../../framework/utils/js/constantes');
+const { URL_BASE } = require('../../framework/utils/scripts/constantes');
 
 
 /**

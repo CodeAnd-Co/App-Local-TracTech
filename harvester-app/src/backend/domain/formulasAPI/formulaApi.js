@@ -2,8 +2,8 @@
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 // RF76 Consultar Fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 // RF71 Eliminar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF71
-const { URL_BASE } = require('../../../framework/utils/js/constantes');
 
+const { URL_BASE } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 /**
  * 
  * @module formulaApi

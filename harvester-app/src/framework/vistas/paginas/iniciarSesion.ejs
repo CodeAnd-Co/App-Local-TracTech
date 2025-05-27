@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/reseteoEstilos.css'>
+<link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/iniciarSesion.css'>
+
+<body>
+  <div class='iniciar-sesion'>
+    <div class='barra-lateral'>
+      <div class='rectangulo-separacion'></div>
+      <div class='frame-iniciar-sesion'>
+        <div class='harvester'>
+          <img class='harvester2' src='<%= rutaBase %>src/framework/utils/imagenes/HarvesterLogo.png' />
+          <div class='harvester3'>HARVESTER</div>
+        </div>
+        <div class='iniciar-sesi-n'>Iniciar Sesión</div>
+        <div class='acceso'>
+          <div class='acceder-con-tu-correo'>Acceder con tu correo</div>
+          <input type='email' class='correo' placeholder='ejemplo@correo.com' />
+          <input type='password' class='contrasena' placeholder='contraseña...' />
+        </div>
+        
+        <button class='boton-acceder'>
+          <div class='acceder'>Acceder</div>
+        </button>
+        <div class='no-tienes-cuenta-cont-ctanos'>
+          <span>
+            <span class='no-tienes-cuenta-cont-ctanos-span'>
+              ¿No tienes cuenta?
+              <br />
+              
+            </span>
+            <span class='no-tienes-cuenta-cont-ctanos-span2' id='btn-abrir-info'>¡Contáctanos!</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <dialog id='modalContacto'>
+    <form method='dialog'>
+      <div class='modal-informacion'>
+        <div class='titulo-informacion'>Mas información</div>
+        <div class='informacion-contacto'>
+          Comunícate con el call center al 0800 266 1374 (gratuito) o por WhatsApp
+          al 54 9 11 2034-1408 para consultar solicitudes o información.
+        </div>
+        <button class='boton-acceder' id='btn-cerrar-info'>
+          <div class='cerrar'>Cerrar</div>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+    <script>
+      const rutaBase = <%- JSON.stringify(rutaBase) %>;
+  </script>
+  <script src='<%= rutaBase %>src/framework/utils/scripts/iniciarSesion.js' ></script>
+
+</body>
+

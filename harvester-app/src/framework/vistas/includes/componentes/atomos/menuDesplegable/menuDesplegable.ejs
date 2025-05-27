@@ -1,0 +1,33 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/menuDesplegable/menuDesplegable.css' rel='stylesheet' />
+
+<select class='opcion-texto'>
+  <option disabled selected hidden><%= textoAyuda %></option>
+  <% opciones.forEach(function(opcion) { %>
+    <option valor="<%= opcion %>"><%= opcion %></option>
+  <% }); %>
+</select>
+
+<% /* 
+  Clases CSS disponibles:
+  - opcion-texto (estilo principal)
+  - Puedes agregar clases adicionales para tamaños específicos
+
+  Parámetros obligatorios:
+  - opciones: ['Opción 1', 'Opción 2']  // Array de opciones para mostrar
+  - placeholder: '-- Selecciona --'     // Texto inicial (no seleccionable)
+  - className: 'opcion-texto'           // Clase CSS para estilos
+
+  Parámetros opcionales:
+  - Ninguno por ahora
+
+  Ejemplo de uso:
+    include('menuDesplegable.ejs', { 
+    opciones: ['JavaScript', 'Python', 'Java', 'C#'],
+    placeholder: '-- Selecciona un lenguaje --',
+    className: 'opcion-texto'
+  }) 
+
+  Nota: El placeholder se oculta automáticamente una vez que 
+  se selecciona una opción y no se puede volver a seleccionar.
+  Para resetear, usar JavaScript: select.value = '';
+*/ %>
