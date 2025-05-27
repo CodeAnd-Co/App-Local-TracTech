@@ -1,0 +1,30 @@
+.previsualizacion {
+  background: var(--box-light, #ffffff);
+  border-radius: 8px;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  height: 700px;
+  width: 645px;
+  position: relative;
+  overflow: hidden;
+}
+
+.previsualizacionPlantilla {
+  border-radius: 8px;
+  border-style: solid;
+  border-color: #000000;
+  border-width: 2px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  justify-content: flex-start;
+  flex: 1;
+  position: relative;
+}
