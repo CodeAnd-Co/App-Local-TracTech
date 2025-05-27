@@ -74,9 +74,9 @@ describe('obtenerUsuarios (use-case)', () => {
     expect(usuarios.length).toBe(2);
     expect(usuarios[0]).toBeInstanceOf(Usuario);
     expect(usuarios[0]).toMatchObject({
-      idUsuario: 1,
-      Nombre: 'Juan',
-      Correo: 'juan@example.com'
+      id: 1,
+      nombre: 'Juan',
+      correo: 'juan@example.com'
     });
   });
 
