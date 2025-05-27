@@ -9,6 +9,10 @@ const entradaContrasenia = document.querySelector('.contrasena');
 const { ipcRenderer } = require('electron');
 const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`);
 const { iniciarSesion } = require(`${rutaBase}/src/backend/casosUso/sesion/iniciarSesion`);
+const { mostrarAlerta,
+  mostrarAlertaBorrado,
+  mostrarAlertaConfirmacion
+ } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 /**
@@ -21,11 +25,7 @@ async function manejarInicioSesion() {
 
   // Validar que ambos campos estén completos
   if (!correo || !contrasenia) {
-    Swal.fire({
-      title: 'Campos faltantes',
-      text: 'Por favor, completa todos los campos.',
-      icon: 'warning'
-    });
+    mostrarAlerta('Campos incompletos', 'Por favor, completa todos los campos.', 'warning');
     return;
   }
 
@@ -51,12 +51,8 @@ async function manejarInicioSesion() {
       }
 
     } else {
-      // Mostrar mensaje de error si las credenciales no son válidas
-      Swal.fire({
-        title: 'Verifica tus datos',
-        text: respuesta.mensaje,
-        icon: 'warning'
-      });
+      mostrarAlerta('Verifica tus datos', respuesta.mensaje, 'warning');
+
     }
   } catch (error) {
     console.error('Error al conectar con el backend:', error);
