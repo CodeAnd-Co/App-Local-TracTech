@@ -1,7 +1,6 @@
 const { shell } = require('electron');
 const { mostrarAlertaConfirmacion,
-    mostrarAlerta
-  } = require(`${rutaBase}src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
+    mostrarAlerta} = require(`${rutaBase}src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 
 /**
  * Debes utilizar la URL del encabezado del manual de usuario.
