@@ -1,8 +1,10 @@
 /* Contenedor del cuadro */
 .cuadro-texto {
+  display: flex;
   box-sizing: border-box;
   text-align: left;
   position: relative;
+  width: 100%;
 }
 
 /* Tamaños de texto */
@@ -23,3 +25,8 @@
 .fuente-regular { font-family: "SegoeUi-Regular", sans-serif; font-weight: 400; }
 .fuente-bold { font-family: "SegoeUi-Bold", sans-serif; font-weight: 700; }
 .fuente-light { font-family: "SegoeUi-Light", sans-serif; font-weight: 300; }
+
+/* Alineaciones */
+.derecha { justify-content: flex-end; }
+.centro{ justify-content: center; }
+.izquierda{ justify-content: flex-start; }
