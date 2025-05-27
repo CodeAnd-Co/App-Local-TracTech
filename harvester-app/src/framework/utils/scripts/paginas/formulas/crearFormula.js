@@ -4,7 +4,7 @@ const { LONGITUD_MAXIMA_FORMULA,
     LONGITUD_MAXIMA_NOMBRE_FORMULA,} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
     
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+ 
 
 // if (typeof Swal === undefined){
 //     const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);

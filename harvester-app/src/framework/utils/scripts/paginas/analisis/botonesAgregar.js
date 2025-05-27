@@ -1,11 +1,9 @@
 // RF17 - Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf17/
 // RF36 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
 
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-// if (typeof Swal === 'undefined') {
-    const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-// }
+
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+
 const { agregarTexto } = require('./agregarTexto');
 const { agregarGrafica } = require('./agregarGrafica');
 

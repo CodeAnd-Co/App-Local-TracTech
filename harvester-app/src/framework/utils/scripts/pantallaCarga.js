@@ -1,4 +1,4 @@
-/* eslint-disable no-undef*/
+ 
 const { verificarToken } = require(`${rutaBase}/src/backend/servicios/verificarToken`); // Importar la función verificarToken
 const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`); // Importar la función verificarPermisos
 const { ipcRenderer } = require('electron');

@@ -5,7 +5,7 @@ const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scrip
 const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/modificarFormula.js`);
 const { ipcRenderer } = require('electron');
 
-/* eslint-disable no-undef */
+ 
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 async function consultarFormulas() {

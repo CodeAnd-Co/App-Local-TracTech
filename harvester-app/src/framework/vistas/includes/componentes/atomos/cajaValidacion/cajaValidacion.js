@@ -1,10 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
   const cajas = document.querySelectorAll('.contenedor-caja input[type="checkbox"]');
   
-  cajas.forEach(function(caja) {
+  cajas.forEach((caja) => {
     const etiqueta = caja.closest('.contenedor-caja');
     
-    caja.addEventListener('change', function() {
+    caja.addEventListener('change', () => {
       if (caja.checked) {
         etiqueta.classList.add('marcada');
       } else {
