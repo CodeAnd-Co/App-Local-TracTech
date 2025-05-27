@@ -60,8 +60,8 @@ describe('obtenerUsuarios (use-case)', () => {
     const respuestaPrueba = {
       ok: true,
       usuarios: [
-        { id: 1, nombre: 'Juan', correo: 'juan@example.com' },
-        { id: 2, nombre: 'Ana',  correo: 'ana@example.com' }
+        { idUsuario: 1, Nombre: 'Juan', Correo: 'juan@example.com' },
+        { idUsuario: 2, Nombre: 'Ana',  Correo: 'ana@example.com' }
       ]
     };
     obtenerUsuariosAPIPrueba.mockResolvedValue(respuestaPrueba);
@@ -74,9 +74,9 @@ describe('obtenerUsuarios (use-case)', () => {
     expect(usuarios.length).toBe(2);
     expect(usuarios[0]).toBeInstanceOf(Usuario);
     expect(usuarios[0]).toMatchObject({
-      id: 1,
-      nombre: 'Juan',
-      correo: 'juan@example.com'
+      idUsuario: 1,
+      Nombre: 'Juan',
+      Correo: 'juan@example.com'
     });
   });
 
