@@ -1,5 +1,7 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
 
+/* eslint-disable no-undef*/
+
 inicializarModuloTractores();
 
 /**
