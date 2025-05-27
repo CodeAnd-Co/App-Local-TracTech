@@ -15,20 +15,20 @@
  * @see https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF25
  * 
  * @module pruebas/reportes/descargarPDF.test.js
- * @see módulo {@link ../../framework/utils/js/moduloAnalisis}
+ * @see módulo {@link ../../framework/utils/scripts/paginas/analisis/moduloAnalisis}
  */
 
 /*  1. ───── Importaciones ──────────────────────────────────────────────── */
-const { descargarPDF } = require('../../framework/utils/js/moduloAnalisis');
+const { descargarPDF } = require('../../framework/utils/scripts/paginas/analisis/moduloAnalisis');
 const Swal = require('sweetalert2');
 const { ipcRenderer } = require('electron');
 
-/*  2. ───── Mocks de módulos ──────────────────────────── */
+/*  2. ───── Mocks ──────────────────────────────────────────────────────── */
 jest.mock('electron', () => ({
     ipcRenderer: {
       send: jest.fn(),
-    },
-  }));
+  },
+}));
 
 jest.mock('sweetalert2', () => ({
     fire: jest.fn()
@@ -55,44 +55,191 @@ const jsPDFMock = jest.fn().mockImplementation(() => ({
   })
 }));
 
-global.window = {};
 window.jspdf = { jsPDF: jsPDFMock };
 
 /*  4. ───── Setup de pruebas ──────────────────────────── */
 beforeEach(() => {
     jest.clearAllMocks();
-
-    document.body.innerHTML = `
-        <div id='contenedor-elementos-previsualizacion'>
-        <div class='previsualizacion-texto preview-titulo'>
-            <div>Este es un título</div>
-        </div>
-        <div class='previsualizacion-texto'>
-            <div>Este es un párrafo</div>
-        </div>
-        <div class='previsualizacion-grafica'>
-            <canvas id='grafica1'></canvas>
-        </div>
-        </div>
-    `;
+    document.body.innerHTML = '';
 })
 
 /*  5. ───── Tests ──────────────────────────────────────────────────────── */
-test('Generar y enviar un PDF correctamente', async () => {
-    await descargarPDF();
+test('Descargar un PDF con contenido correcto', async () => {
+  const contenido = 'Contenido de prueba para el PDF';
+  document.body.innerHTML = `
+    <div id='contenedor-elementos-previsualizacion'>
+    <div class='previsualizacion-texto preview-titulo'>
+      <div>${contenido}</div>
+    </div>
+    </div>
+  `;
 
-    expect(jsPDFMock).toHaveBeenCalled();
-    expect(ipcRenderer).toHaveBeenCalledWith(expect.any(String), expect.any(Buffer));
-})
+  await descargarPDF();
 
-test('Descargar un PDF en menos de 10 segundos', async () => {
-    const tiempoDeInicio = Date.now();
+  expect(jsPDFMock).toHaveBeenCalled();
+  expect(jsPDFMock().text).toHaveBeenCalledWith(
+    expect.arrayContaining([contenido]),
+    expect.any(Number),
+    expect.any(Number)
+  );
+});
 
-    await descargarPDF();
+test('Descargar un PDF con caracteres especiales', async () => {
+  const contenido = '¡Hola, mundo! ¿Cómo estás? 😊';
+  document.body.innerHTML = `
+    <div id='contenedor-elementos-previsualizacion'>
+    <div class='previsualizacion-texto preview-titulo'>
+      <div>${contenido}</div>
+    </div>
+    </div>
+  `;
 
-    const tiempoDeFin = Date.now();
-    const duracion = tiempoDeFin - tiempoDeInicio;
+  await descargarPDF();
 
-    expect(duracion).toBeLessThan(10000);
-    expect(ipcRenderer.send).toHaveBeenCalled();
-})
+  expect(jsPDFMock).toHaveBeenCalled();
+  expect(jsPDFMock().text).toHaveBeenCalledWith(
+    expect.arrayContaining([contenido]),
+    expect.any(Number),
+    expect.any(Number)
+  );
+});
+
+test('Descargar un PDF con contenido muy largo', async () => {
+  const contenidoLargo = 'a'.repeat(10001);
+  document.body.innerHTML = `
+    <div id='contenedor-elementos-previsualizacion'>
+    <div class='previsualizacion-texto preview-titulo'>
+      <div>${contenidoLargo}</div>
+    </div>
+    </div>
+  `;
+
+  await descargarPDF();
+
+  expect(jsPDFMock).toHaveBeenCalled();
+  expect(jsPDFMock().text).toHaveBeenCalledWith(
+    expect.arrayContaining([contenidoLargo]),
+    expect.any(Number),
+    expect.any(Number)
+  );
+});
+
+test('Descargar un PDF sin conexión', async () => {
+  ipcRenderer.send.mockImplementation(() => {
+    throw new Error('Sin conexión');
+  });
+
+  await expect(descargarPDF()).rejects.toThrow('Sin conexión');
+  expect(Swal.fire).toHaveBeenCalledWith(
+    expect.objectContaining({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo descargar el PDF debido a problemas de conexión.'
+    })
+  );
+});
+
+test('Fallo controlado al no descargar el PDF', async () => {
+  jsPDFMock().output.mockImplementation(() => {
+    throw new Error('Error al generar el PDF');
+  });
+
+  await expect(descargarPDF()).rejects.toThrow('Error al generar el PDF');
+  expect(Swal.fire).toHaveBeenCalledWith(
+    expect.objectContaining({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo generar el PDF.'
+    })
+  );
+});
+
+
+test('Descargar un PDF con múltiples elementos de texto', async () => {
+  const tituloReporte = 'Título del reporte caracteres especiales';
+  const parrafoReporte = 'Este es un párrafo de prueba: ¡Hola, mundo! ¿Cómo estás? 😊';
+  document.body.innerHTML = HTML = `
+    <div id='contenedor-elementos-previsualizacion'>
+      <div class='previsualizacion-texto preview-titulo'><div>${tituloReporte}</div></div>
+      <div class='previsualizacion-texto'><div>${parrafoReporte}</div></div>
+    </div>
+    `;
+
+  await descargarPDF();
+  expect(jsPDFMock().text).toHaveBeenCalledWith(
+    expect.arrayContaining([tituloReporte, parrafoReporte]),
+    expect.any(Number),
+    expect.any(Number)
+  );
+});
+
+test('Descargar un PDF con gráficos incluidos', async () => {
+  const canvasId = 'grafica1';
+  document.body.innerHTML = `
+    <div id='contenedor-elementos-previsualizacion'>
+      <div class='previsualizacion-grafica'>
+        <canvas id='${canvasId}'></canvas>
+      </div>
+    </div>
+  `;
+
+  const canvas = document.getElementById(canvasId);
+  canvas.getContext = jest.fn(() => ({
+    drawImage: jest.fn(),
+  }));
+  
+  await descargarPDF();
+  expect(jsPDFMock().addImage).toHaveBeenCalled();
+});
+
+test('Descargar un PDF con contenido vacío', async () => {
+  document.body.innerHTML = `
+    <div id='contenedor-elementos-previsualizacion'></div>
+  `;
+
+  await descargarPDF();
+
+  expect(jsPDFMock().text).not.toHaveBeenCalled();
+  expect(jsPDFMock().addImage).not.toHaveBeenCalled();
+  expect(Swal.fire).toHaveBeenCalledWith(
+    expect.objectContaining({
+      icon: 'warning',
+      title: 'Advertencia',
+      text: 'No hay contenido para generar el PDF.'
+    })
+  );
+});
+
+test('Descargar un PDF con contenido dinámico', async () => {
+  const contenidoDinamico = 'Contenido dinámico generado en tiempo de ejecución';
+  document.body.innerHTML = `
+    <div id='contenedor-elementos-previsualizacion'>
+      <div class='previsualizacion-texto preview-titulo'>
+        <div>${contenidoDinamico}</div>
+      </div>
+    </div>
+  `;
+
+  await descargarPDF();
+
+  expect(jsPDFMock().text).toHaveBeenCalledWith(
+    expect.arrayContaining([contenidoDinamico]),
+    expect.any(Number),
+    expect.any(Number)
+  );
+});
+
+test('Descargar un PDF con múltiples páginas', async () => {
+  const contenidoLargo = 'a'.repeat(50000); // Contenido extenso para generar múltiples páginas
+  document.body.innerHTML = `
+    <div id='contenedor-elementos-previsualizacion'>
+      <div class='previsualizacion-texto preview-titulo'>
+        <div>${contenidoLargo}</div>
+      </div>
+    </div>
+  `;
+
+  await descargarPDF();
+
+  expect(jsPDFMock().addPage).toHaveBeenCalled();
+});
