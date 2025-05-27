@@ -93,7 +93,6 @@ async function renderizarFormulas() {
         document.querySelectorAll('.editar').forEach(btn => {
             btn.addEventListener('click', async (evento) => {
                 const formulaId = evento.currentTarget.getAttribute('data-id');
-                console.log('Botón clickeado, data-id:', formulaId);
 
                 if (!formulaId) {
                     console.warn('No se encontró data-id en el botón.');
@@ -104,7 +103,6 @@ async function renderizarFormulas() {
 
                 if (formulaSeleccionada) {
                     const { idFormula, Nombre, Datos } = formulaSeleccionada;
-                    console.log('Datos encontrados:', idFormula, Nombre, Datos);
                     localStorage.setItem('modificarFormulaId', idFormula);
                     localStorage.setItem('modificarFormulaNombre', Nombre);
                     localStorage.setItem('modificarFormulaDatos', Datos);
