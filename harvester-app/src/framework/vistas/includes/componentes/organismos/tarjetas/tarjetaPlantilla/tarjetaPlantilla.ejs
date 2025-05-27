@@ -1,0 +1,45 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/organismos/tarjetas/tarjetaPlantilla/tarjetaPlantilla.css' rel='stylesheet' />
+
+<div class="plantilla">
+  <div class="menu-opciones" dato-id="<%= idPlantillaReporte %>" id="menuOpciones">
+    <div class="nombre-de-plantilla"><%= titulo %></div>
+
+    <%- include(`${rutaBase}src/framework/vistas/includes/componentes/moleculas/botonConIcono/botonConIcono.ejs`, {
+      id: 'botonExpandir',
+      tipo: 'terciario',
+      tamanio: 'btn-sm',
+      icono: {
+        nombre: 'fullscreen',
+        tamano: 'icono-md',
+        color: 'icono-negro'
+      }
+    }) %>
+
+    <%- include(`${rutaBase}src/framework/vistas/includes/componentes/moleculas/botonConIcono/botonConIcono.ejs`, {
+      id: 'botonModificar',
+      tipo: 'terciario',
+      tamanio: 'btn-sm',
+      icono: {
+        nombre: 'edit',
+        tamano: 'icono-md',
+        color: 'icono-negro'
+      }
+    }) %>
+
+    <%- include(`${rutaBase}src/framework/vistas/includes/componentes/moleculas/botonConIcono/botonConIcono.ejs`, {
+      id: 'botonEliminar',
+      tipo: 'terciario',
+      tamanio: 'btn-sm',
+      icono: {
+        nombre: 'delete',
+        tamano: 'icono-md',
+        color: 'icono-rojo'
+      }
+    }) %>
+  </div>
+
+  <img src="<%= rutaBase %>src/framework/utils/iconos/divisorPlantilla.svg" class="divisorPlantilla" />
+
+  <scroll-container>
+  </scroll-container>
+</div>

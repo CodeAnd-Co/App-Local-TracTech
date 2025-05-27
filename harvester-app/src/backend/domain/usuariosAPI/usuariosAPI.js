@@ -1,6 +1,7 @@
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
+// RF41 Administrador modifica usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41
 // RF43 Administrador elimina usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF43
-
+const { URL_BASE } = require(`${rutaBase}src/framework/utils/scripts/constantes`);
 
 const token = localStorage.getItem('token');
 
@@ -11,7 +12,7 @@ const token = localStorage.getItem('token');
  * @throws {Error} Si hay un error en la comunicación con el servidor
  */
 async function obtenerUsuarios() {
-    const respuesta = await fetch(`${process.env.URL_BASE}/usuarios/consultarUsuarios`, {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/consultarUsuarios`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -22,6 +23,45 @@ async function obtenerUsuarios() {
     const datos = await respuesta.json();
 
     return { ok: respuesta.ok, ...datos };
+}
+
+/**
+ * Esta función se utiliza para actualizar los datos de un usuario ya existente
+ * en la base de datos. Incluye el token JWT en la cabecera para verificar
+ * permisos del usuario autenticado.
+ *
+ * @async
+ * @function modificarUsuario
+ * @param {number} idUsuario - ID del usuario a modificar
+ * @param {string} nombre - Nuevo nombre del usuario
+ * @param {string} correo - Nuevo correo electrónico del usuario
+ * @param {string} contrasenia - Nueva contraseña del usuario (se enviará en texto plano y será hasheada en el backend)
+ * @returns {Promise<{ok: boolean, [key: string]: any}>}
+ * Objeto con `ok` indicando éxito o fallo, y propiedades adicionales como `mensaje`.
+ *
+ * @throws {Error} Si ocurre un problema de red o el servidor no responde.
+ */
+async function modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol) {
+    try {
+        const respuesta = await fetch(`${URL_BASE}/usuarios/modificarUsuario`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ idUsuario, nombre, correo, contrasenia, idRol }),
+        });
+        
+        const datos = await respuesta.json();
+    
+        return { ok: respuesta.ok, ...datos };
+    } catch (error) {
+        if (error instanceof TypeError) {
+            return { ok: false, mensaje: 'Error de conexión con el servidor' };
+        } else {
+            return { ok: false, mensaje: error.message || 'Error desconocido' };
+        }
+    }
 }
 
 /**
@@ -36,7 +76,7 @@ async function obtenerUsuarios() {
  * @returns {Promise<{ok: boolean, mensaje?: string}>} Objeto con el estado de la operación y un posible mensaje del servidor.
  */
 async function eliminarUsuario(id) {
-    const respuesta = await fetch(`${process.env.URL_BASE}/usuarios/eliminarUsuario/${id}`, {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/eliminarUsuario/${id}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -67,7 +107,7 @@ async function eliminarUsuario(id) {
 async function crearUsuario(datos) {
     const token = localStorage.getItem('token');
 
-    const respuesta = await fetch(`${process.env.URL_BASE}/usuarios/crearUsuario`, {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/crearUsuario`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -87,7 +127,7 @@ async function crearUsuario(datos) {
  * @throws {Error} Si hay un error en la comunicación con el servidor
  */
 async function consultarRoles() {
-    const respuesta = await fetch(`${process.env.URL_BASE}/usuarios/consultarRolesUsuarios`, {
+    const respuesta = await fetch(`${URL_BASE}/usuarios/consultarRolesUsuarios`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -102,6 +142,7 @@ async function consultarRoles() {
 
 module.exports = {
     obtenerUsuarios,
+    modificarUsuario,
     eliminarUsuario,
     crearUsuario,
     consultarRoles

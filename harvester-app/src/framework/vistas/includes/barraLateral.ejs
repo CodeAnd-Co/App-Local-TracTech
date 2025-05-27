@@ -1,0 +1,83 @@
+<div id='sidebar-wrapper'>
+  <div class='state-default' id='barraLateralExpandida'>
+    <div>
+      <button class='boton-sidebar sidebar-logo' id='botonColapsar'>
+        <img src='<%= rutaBase %>src/framework/utils/imagenes/HarvesterAppIcon.ico' alt='Logo Harvester' />
+        <span>HARVESTER</span>
+        <img class='flecha-atras' src='<%= rutaBase %>src/framework/utils/iconos/FlechaAtras.svg' alt='Colapsar' />
+      </button>
+
+      <div class='sidebar-navegacion'>
+        <button class='boton-sidebar' data-seccion='inicio'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/Casa.svg' alt='Inicio' />
+          <span>Inicio</span>
+        </button>
+        <button class='boton-sidebar' data-seccion='analisis'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/GraficaBarras.svg' alt='Análisis' />
+          <span>Análisis</span>
+        </button>
+        <button class='boton-sidebar' data-seccion='plantillas'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/Portapapeles.svg' alt='Plantillas' />
+          <span>Plantillas</span>
+        </button>
+        <button class='boton-sidebar' data-seccion='formulas'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/Funcion.svg' alt='Fórmulas' />
+          <span>Fórmulas</span>
+        </button>
+        <!--
+        <button class='boton-sidebar' data-seccion='envios'>
+          <img src='../utils/iconos/Correo.svg' alt='Envíos' />
+          <span>Envíos</span>
+        </button>
+        -->
+        <button class='boton-sidebar' data-seccion='usuarios'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Gestión Usuarios' />
+          <span>Gestión Usuarios</span>
+        </button>
+      </div>
+    </div>
+
+    <div class='sidebar-inferior'>
+      <button class='boton-sidebar' data-seccion='perfil'>
+        <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Usuario' />
+        <span>Nombre Usuario</span>
+      </button>
+    </div>
+  </div>
+
+  <div class='state-collapsed' id='barraLateralColapsada' style='display: none;'>
+    <div>
+      <button class='boton-sidebar sidebar-logo' id='botonExpandir'>
+        <img src='<%= rutaBase %>src/framework/utils/iconos/Menu.svg' alt='Expandir menú' />
+        <span>HARVESTER</span>
+      </button>
+      <div class='sidebar-navegacion'>
+        <button class='boton-sidebar' data-seccion='inicio'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/Casa.svg' alt='Inicio' />
+        </button>
+        <button class='boton-sidebar' data-seccion='analisis'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/GraficaBarras.svg' alt='Análisis' />
+        </button>
+        <button class='boton-sidebar' data-seccion='plantillas'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/Portapapeles.svg' alt='Plantillas' />
+        </button>
+        <button class='boton-sidebar' data-seccion='formulas'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/Funcion.svg' alt='Fórmulas' />
+        </button>
+        <button class='boton-sidebar' data-seccion='usuarios'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Gestión Usuarios' />
+        </button>
+        <!---
+        <button class='boton-sidebar' data-seccion='envios'>
+          <img src='../utils/iconos/Correo.svg' alt='Envíos' />
+        </button>
+        -->
+      </div>
+    </div>
+    <div class='sidebar-inferior'>
+      <button class='boton-sidebar' data-seccion='perfil'>
+        <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Perfil' />
+      </button>
+    </div>
+  </div>
+</div>

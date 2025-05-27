@@ -1,3 +1,5 @@
+const { URL_BASE } = require('../../framework/utils/scripts/constantes');
+
 
 /**
  * Verifica la validez de un token JWT enviando una solicitud al servidor.
@@ -13,7 +15,7 @@ async function verificarToken(token) {
 
   try {
       // Enviar solicitud GET al servidor para verificar el token
-      const respuesta = await fetch(`${process.env.URL_BASE}`, {
+      const respuesta = await fetch(`${URL_BASE}`, {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json',

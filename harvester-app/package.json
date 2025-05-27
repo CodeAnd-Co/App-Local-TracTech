@@ -1,8 +1,8 @@
 {
-  "name": "harvester-app",
-  "productName": "harvester-app",
+  "name": "harvester",
+  "productName": "Harvester",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Harvester es una aplicación de escritorio para la gestión de datos",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -13,8 +13,7 @@
     "lint": "echo \"No linting configured\"",
     "build": "electron-builder"
   },
-
-  "build":{
+  "build": {
     "appId": "com.tractech.harvester",
     "win": {
       "target": [
@@ -28,14 +27,12 @@
       "uninstallerIcon": "src/framework/utils/imagenes/HarvesterAppIcon.ico",
       "uninstallDisplayName": "Desinstalador Harvester App",
       "license": "LICENSE",
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": false
     }
   },
-
   "keywords": [],
   "author": {
-    "name": "DanielContrerasCh",
-    "email": "danicontreras0409@gmail.com"
+    "name": "Code&Co - Tractech"
   },
   "license": "MIT",
   "dependencies": {
@@ -43,9 +40,12 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
+    "ejs-electron": "^3.0.0",
     "electron-squirrel-startup": "^1.0.1",
     "eslint": "^9.24.0",
+    "express": "^5.1.0",
     "html2canvas": "^1.4.1",
+    "hyperformula": "^3.0.0",
     "jspdf": "^3.0.1",
     "sweetalert2": "^11.19.1",
     "validator": "^13.15.0",

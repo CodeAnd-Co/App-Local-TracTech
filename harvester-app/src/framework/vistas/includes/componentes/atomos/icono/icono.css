@@ -1,0 +1,17 @@
+.material-symbols-outlined {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+/* Tamaños personalizados */
+.icono-xs { font-size: 16px; }
+.icono-sm { font-size: 20px; }
+.icono-md { font-size: 24px; }
+.icono-lg { font-size: 32px; }
+.icono-xl { font-size: 40px; }
+
+/* Colores de ejemplo */
+.icono-rojo { color: #A5182F; }
+.icono-gris { color: #B4B4B4; }
+.icono-negro { color: #000000; }
+.icono-blanco { color: #FFFFFF; }

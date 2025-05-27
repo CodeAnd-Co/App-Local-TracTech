@@ -1,8 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
-
-require('dotenv').config();
+const {precargarEJS} = require('./framework/utils/scripts/middleware/precargarEJS')
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -10,7 +9,7 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = async () => {
   // Crear la ventana del navegador.
   const mainWindow = new BrowserWindow({
     width: 1920,
@@ -23,8 +22,18 @@ const createWindow = () => {
 
   mainWindow.setMenuBarVisibility(false);
 
-  // Cargar el archivo HTML de inicio de sesión.
-  mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
+  // Cargar el archivo ejs de pantalla de carga
+  // mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
+
+  const pantallaCargaPath = path.join(__dirname, './framework/vistas/paginas/pantallaCarga.ejs');
+
+  try {
+    const vista = await precargarEJS(pantallaCargaPath);
+    await mainWindow.loadFile(vista);
+  } catch (err) {
+    console.error("Error al cargar vista:", err);
+  }
+
 
   // Poner la ventana en modo de pantalla completa.
   mainWindow.maximize();
@@ -35,6 +44,7 @@ const createWindow = () => {
 
 // Este método se llamará cuando Electron haya terminado de inicializar
 // y esté listo para crear ventanas del navegador.
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -66,11 +76,15 @@ ipcMain.on('guardar-pdf', async (evento, bufer) => {
     fs.writeFile(ubicacion, bufer, (error) => {
       if (error) {
         console.error('Error al guardar PDF:', error);
-      } else {
-        console.log('PDF guardado en', ubicacion);
-      }
+      } 
     });
   }
 
   evento.sender.send('pdf-guardado', !cancelado);
+});
+
+
+ipcMain.handle('precargar-ejs', async (event, rutaEJS, parametros) => {
+  const { precargarEJS } = require('./framework/utils/scripts/middleware/precargarEJS');
+  return await precargarEJS(rutaEJS, parametros);
 });

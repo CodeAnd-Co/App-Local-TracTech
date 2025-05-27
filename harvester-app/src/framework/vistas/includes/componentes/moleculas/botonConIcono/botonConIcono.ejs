@@ -1,0 +1,22 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/botonConIcono/botonConIcono.css' rel='stylesheet' />
+
+<button id="<%= id || '' %>" class="boton-con-icono <%= tipo || '' %> <%= tamanio || '' %>">
+  <%- include('../../atomos/icono/icono.ejs', {
+    nombre: icono?.nombre || 'editar',
+    tamanio: icono?.tamano || 'icono-md',
+    color: icono?.color || ''
+  }) %>
+</button>
+
+<% /*
+Parámetros esperados:
+- id: 'btnEditar'
+- tipo: 'primario', 'secundario', 'terciario' (clase para color y estilo,
+  primario tiene fondo blanco con borde negro, secundario fondo y borde rojos, terciario fondo transparente)
+- tamanio: 'btn-lg', 'btn-sm'.
+- icono: {
+    nombre: 'edit',
+    tamano: 'icono-xl',
+    color: 'icono-blanco'
+  }
+*/ %>
