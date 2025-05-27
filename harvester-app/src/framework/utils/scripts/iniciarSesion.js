@@ -9,10 +9,7 @@ const entradaContrasenia = document.querySelector('.contrasena');
 const { ipcRenderer } = require('electron');
 const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`);
 const { iniciarSesion } = require(`${rutaBase}/src/backend/casosUso/sesion/iniciarSesion`);
-const { mostrarAlerta,
-  mostrarAlertaBorrado,
-  mostrarAlertaConfirmacion
- } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 /**
