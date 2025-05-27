@@ -15,7 +15,7 @@ export default [
       },
       
       globals: {
-        rutaBase: 'readonly', // 👈 aquí se declara como global
+        rutaBase: 'readonly',
       },
     },
     rules: {
