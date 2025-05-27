@@ -1,13 +1,13 @@
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.js`);
 
 
-
 function mostrarAlerta(titulo, texto, icono) {
   Swal.fire({
     title: titulo,
     text: texto,
     icon: icono,
-    confirmButtonText: 'Aceptar'
+    confirmButtonText: 'Aceptar',
+    confirmButtonColor: '#a61930',
   });
   return;
 }
@@ -20,6 +20,7 @@ async function mostrarAlertaConfirmacion(titulo, texto, icono) {
     showCancelButton: true,
     confirmButtonText: 'Confirmar',
     cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#a61930',
   });
   return resultado.isConfirmed;
 }
@@ -32,6 +33,7 @@ async function mostrarAlertaBorrado(){
         showCancelButton: true,
         confirmButtonText: 'Confirmar',
         cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#a61930',
     });
     return resultado.isConfirmed;
 }

@@ -10,8 +10,6 @@ const { ipcRenderer } = require('electron');
 const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`);
 const { iniciarSesion } = require(`${rutaBase}/src/backend/casosUso/sesion/iniciarSesion`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-
 /**
  * Maneja el evento de clic en el botón de acceso para iniciar sesión.
  */
@@ -53,12 +51,7 @@ async function manejarInicioSesion() {
     }
   } catch (error) {
     console.error('Error al conectar con el backend:', error);
-    // Mostrar alerta si ocurre un error de conexión
-    Swal.fire({
-      title: 'Error de conexión',
-      text: 'Verifica tu conexión e inténtalo de nuevo.',
-      icon: 'error'
-    });
+    mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
   }
 }
 
