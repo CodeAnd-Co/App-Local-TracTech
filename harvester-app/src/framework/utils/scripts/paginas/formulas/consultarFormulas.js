@@ -100,7 +100,7 @@ async function renderizarFormulas() {
                     return;
                 }
 
-                const formulaSeleccionada = formulas.find(f => f.idFormula == formulaId);
+                const formulaSeleccionada = formulas.find(formula => formula.idFormula == formulaId);
 
                 if (formulaSeleccionada) {
                     const { idFormula, Nombre, Datos } = formulaSeleccionada;
