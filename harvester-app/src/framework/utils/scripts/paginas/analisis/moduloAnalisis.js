@@ -27,6 +27,13 @@ function inicializarModuloAnalisis() {
   const contenedor = document.getElementById(idContenedor);
   
   if (!contenedor) return;
+
+  document.getElementById('guardarPlantilla')
+          .addEventListener('click', async () => {
+            const nombre = await pedirNombrePlantilla();
+            if (!nombre) return;
+              window.guardarPlantilla(idContenedor, nombre);
+          });
   
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
@@ -47,6 +54,14 @@ function inicializarModuloAnalisis() {
     });
   });
   
+  const botonGuardarPlantilla = document.getElementById('guardarPlantilla');
+  document.getElementById('guardarPlantilla')
+          .addEventListener('click', async () => {
+            const nombre = await pedirNombrePlantilla();
+            if (!nombre) return;
+            window.guardarPlantilla(idContenedor, nombre);
+          });
+
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
     configurarGrafica(idContenedor, idContenedorPrevisualizacion);
