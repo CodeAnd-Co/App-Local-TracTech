@@ -22,7 +22,7 @@ jest.mock('../../backend/domain/usuariosAPI/usuariosAPI', () => ({
 }));
 
 /*  3. ───── Tests ──────────────────────────────────────────────────────── */
-describe('crearUsuario (use-case)', () => {
+describe('crearUsuario (caso de uso)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -30,7 +30,7 @@ describe('crearUsuario (use-case)', () => {
   it('crea usuario exitosamente (camino feliz)', async () => {
     const datosEntrada = {
       nombre: 'Juan Pérez',
-      correo: 'juan@example.com',
+      correo: 'juan@ejemplo.com',
       contrasenia: '12345678',
       idRolFK: 2
     };
@@ -91,7 +91,7 @@ describe('crearUsuario (use-case)', () => {
 
     const datos = {
       nombre: 'Ana',
-      correo: 'ana@example.com',
+      correo: 'ana@ejemplo.com',
       contrasenia: 'abcdef1234',
       idRolFK: 3
     };
