@@ -80,9 +80,9 @@ async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
             return { ok: false, mensaje: respuesta.mensaje || 'Error al crear el usuario' };
         }
         return { ok: true, mensaje: respuesta.mensaje, id: respuesta.id };
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
-        console.error('Error al crear el usuario:', error);
-        return { ok: false, mensaje: 'Error al crear el usuario' };
+        return { ok: false, mensaje: 'Error al crear el usuario'};
     }
 }
 
