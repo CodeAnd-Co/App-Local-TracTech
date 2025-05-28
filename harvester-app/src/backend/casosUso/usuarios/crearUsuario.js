@@ -20,7 +20,8 @@ function sanitizarEntrada({ nombre, correo, contrasenia, idRolFK }) {
     const nombreSanitizado = validador.escape(nombre);
     const correoSanitizado = validador.normalizeEmail(correo);
     const contraseniaSanitizada = validador.escape(contrasenia);
-    return { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRolFK };
+    const idRolFKSanitizada = Number(idRolFK);
+    return { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRolFKSanitizada };
 }
 
 /**
@@ -59,20 +60,25 @@ async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
     }
 
     // Sanitizar los datos de entrada
-    const { nombreSanitizado, correoSanitizado, contraseniaSanitizada } = sanitizarEntrada({
+    const { nombreSanitizado, correoSanitizado, contraseniaSanitizada, idRolFKSanitizada } = sanitizarEntrada({
         nombre,
         correo,
         contrasenia,
         idRolFK,
     });
+    const datosApi = {
+        nombre: nombreSanitizado,
+        correo: correoSanitizado,
+        contrasenia: contraseniaSanitizada,
+        idRolFK: idRolFKSanitizada,
+    };
+    console.log('Datos sanitizados para crear usuario:', datosApi);
 
     try {
-        const respuesta = await crearUsuarioAPI({
-            nombre: nombreSanitizado,
-            correo: correoSanitizado,
-            contrasenia: contraseniaSanitizada,
-            idRolFK,
-        });
+        const respuesta = await crearUsuarioAPI(datosApi);
+        if (!respuesta.ok) {
+            return { ok: false, mensaje: respuesta.mensaje || 'Error al crear el usuario' };
+        }
         return { ok: true, mensaje: respuesta.mensaje, id: respuesta.id };
     } catch (error) {
         console.error('Error al crear el usuario:', error);
