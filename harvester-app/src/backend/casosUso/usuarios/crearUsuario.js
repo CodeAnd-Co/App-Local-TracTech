@@ -66,14 +66,19 @@ async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
         contrasenia,
         idRolFK,
     });
+    const datosApi = {
+        nombre: nombreSanitizado,
+        correo: correoSanitizado,
+        contrasenia: contraseniaSanitizada,
+        idRolFK: idRolFKSanitizada,
+    };
+    console.log('Datos sanitizados para crear usuario:', datosApi);
 
     try {
-        const respuesta = await crearUsuarioAPI({
-            nombre: nombreSanitizado,
-            correo: correoSanitizado,
-            contrasenia: contraseniaSanitizada,
-            idRol: idRolFKSanitizada,
-        });
+        const respuesta = await crearUsuarioAPI(datosApi);
+        if (!respuesta.ok) {
+            return { ok: false, mensaje: respuesta.mensaje || 'Error al crear el usuario' };
+        }
         return { ok: true, mensaje: respuesta.mensaje, id: respuesta.id };
     } catch (error) {
         console.error('Error al crear el usuario:', error);
