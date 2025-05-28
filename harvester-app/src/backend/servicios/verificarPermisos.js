@@ -1,4 +1,4 @@
-const { URL_BASE } = require('../../framework/utils/js/constantes');
+const { URL_BASE } = require('../../framework/utils/scripts/constantes');
 
 /**
  * Función para verificar los permisos de un token enviando una solicitud al servidor.
