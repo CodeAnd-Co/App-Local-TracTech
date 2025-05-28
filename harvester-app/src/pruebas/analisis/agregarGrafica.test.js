@@ -63,8 +63,8 @@ describe('agregarGrafica', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <div id="contenedorElementos"></div>
-          <div id="contenedor-elementos-previsualizacion"></div>
+          <div id='contenedorElementos'></div>
+          <div id='contenedor-elementos-previsualizacion'></div>
         </body>
       </html>
     `);
