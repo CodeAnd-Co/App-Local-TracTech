@@ -36,6 +36,7 @@ describe('crearUsuario (caso de uso)', () => {
     };
 
     const respuestaMock = {
+      ok: true,
       mensaje: 'Usuario creado exitosamente',
       id: 123
     };
