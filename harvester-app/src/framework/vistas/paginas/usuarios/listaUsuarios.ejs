@@ -37,7 +37,7 @@
             name='username'
             placeholder='Nombre del nuevo usuario'
             required
-            maxlength="51"
+            maxlength="50"
           />
           <div class="info-error-contador">
             <small id='mensajeErrorNombre' class='mensajeError'></small>
@@ -53,7 +53,7 @@
             name='email'
             placeholder='Correo del nuevo contacto'
             required
-            maxlength="51"
+            maxlength="50"
           />
           <div class="info-error-contador">
             <small id='mensajeErrorCorreo' class='mensajeError'></small>
@@ -69,7 +69,7 @@
             name='password'
             placeholder='Contraseña'
             required
-            maxlength="51"
+            maxlength="50"
           />
           <div class="info-error-contador">
             <small id='mensajeErrorContrasenia' class='mensajeError'></small>
@@ -85,10 +85,10 @@
             name='passwordConfirmar'
             placeholder='Confirmar contraseña'
             required
-            maxlength="51"
+            maxlength="50"
           />
           <div class="info-error-contador">
-            <small id='mensajeErrorConfirmarContrasenia' class='mensajeError'></small>
+            <small id='mensajeErrorConfirmacion' class='mensajeError'></small>
             <div class='contador-caracteres'>0/51 caracteres</div>
           </div>
         </div>
@@ -103,10 +103,7 @@
           <select id='rol' name='rol' required>
             <option value="" disabled selected>Selecciona rol</option>
           </select>
-          <div class="info-error-contador">
-            <small id='mensaje-error-rol' class='mensaje-error'></small>
-            <div class='contador-caracteres'>0/51 caracteres</div>
-          </div>
+          <small id='mensaje-error-rol' class='mensaje-error'></small>
         </div>
       
         <div class='line-1'></div>

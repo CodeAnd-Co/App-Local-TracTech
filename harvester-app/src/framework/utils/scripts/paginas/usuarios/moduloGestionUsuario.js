@@ -93,6 +93,8 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('passwordConfirmar').value = '';
         document.getElementById('rol').value = '';
 
+        actualizarTodosContadores();
+
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
         listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
@@ -104,6 +106,7 @@ async function inicializarModuloGestionUsuarios() {
     botonCancelar.parentNode.replaceChild(nuevoBotonCancelar, botonCancelar);
     nuevoBotonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
+        actualizarTodosContadores();
         columnaCrear.style.display = 'none';
     });
 
@@ -113,6 +116,7 @@ async function inicializarModuloGestionUsuarios() {
     botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
+        actualizarTodosContadores();
         if (modoActual === modoFormulario.CREAR) {
             // Deshabilitar el botón para evitar múltiples envíos
             nuevoBotonGuardar.disabled = true;
@@ -392,6 +396,7 @@ function escucharEventoBotonesEditar(listaDeUsuarios) {
             evento.preventDefault();
             modoEditar(boton.dataset.id);
             cargarRoles();
+            actualizarTodosContadores();
         });
     });
 }
@@ -1000,6 +1005,17 @@ document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
 });
 }  
 
+/**
+ * Recalcula TODOS los contadores a partir del valor actual de cada input.
+ */
+function actualizarTodosContadores() {
+    document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
+      const maximoCaracteres = input.getAttribute('maxlength');
+      const contador = input.parentNode.querySelector('.contador-caracteres');
+      if (!contador) return;
+      actualizarContador(input, contador, maximoCaracteres);
+    });
+}  
 
 // Expone la función de inicialización al objeto window
 inicializarModuloGestionUsuarios()
