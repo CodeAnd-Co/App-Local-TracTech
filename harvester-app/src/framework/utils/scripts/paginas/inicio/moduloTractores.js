@@ -2,7 +2,8 @@
 // RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
 let tractoresSeleccionados = {};
-const { seleccionaDatosAComparar } = require('../../backend/casosUso/excel/seleccionaDatosAComparar.js');
+const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
+const { seleccionaDatosAComparar } = require(`${rutaBase}/src/backend/casosUso/excel/seleccionaDatosAComparar.js`);
 
 /* eslint-disable no-undef*/
 
@@ -20,7 +21,7 @@ function inicializarModuloTractores() {
     if (window.actualizarBarraSuperior) {
         window.actualizarBarraSuperior('tractores');
     }
-    const datosExcel = cargarDatosDeExcel();
+    const datosExcel = cargarDatosExcel();
     if (!datosExcel) {
         console.warn('No hay datos disponibles para análisis');
     }
@@ -29,27 +30,6 @@ function inicializarModuloTractores() {
     busquedaTractores();
     botonesFiltrosTractores()
     botonReporte(datosExcel);
-}
-
-/** 
- * Cargamos los datos de excel que se encuentran en localStorage
- * 
- * @function cargarDatosDeExcel
- * @returns {object|null} - objeto con las hojas de excel parseadas
-*/
-function cargarDatosDeExcel() {
-    try {
-        const datosExcelJSON = localStorage.getItem('datosExcel');
-        if (!datosExcelJSON) {
-            alert('No hay datos de Excel disponibles');
-            return null;
-        }
-        const datosExcel = JSON.parse(datosExcelJSON);
-        return datosExcel;
-    } catch (error) {
-        console.error('Error al cargar datos de Excel:', error);
-        return null;
-    }
 }
 
 /**
