@@ -1,0 +1,41 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/botonTextoConIcono/botonTextoConIcono.css' rel='stylesheet'/>
+<div id='<%= idBoton %>' class='boton boton-<%= color %>'>
+    <% let colorContenido = 'negro'; %>
+    <% if (color == 'rojo') {
+        colorContenido = 'blanco'
+    } %>
+
+    <%- include('../../moleculas/textoConIcono/textoConIcono.ejs', {
+                icono: {
+                    nombre: configElementos.nombreIcono,
+                    tamano: 'icono-' + configElementos.tamano,
+                    color: 'icono-' + colorContenido
+                },
+                texto: {
+                    id: 'texto-boton-' + idBoton,
+                    textoInterior: configElementos.textoInterior ,
+                    tamano: 'texto-' + configElementos.tamano,
+                    color: 'texto-' + colorContenido,
+                    fuente: 'fuente-regular',
+                },
+                direccion: configElementos.direccion,
+            })%>
+</div>
+
+<% /*
+
+Parámetros:
+Colores admitidos
+- blanco
+- rojo
+
+- idBoton: 'botonRegresar'
+- color: ''
+- configElementos: {
+    nombreIcono: ''
+    textoInterior: 'Regresar'
+    direccion: 'derecha'
+    tamano: 'lg'
+}
+
+*/%>

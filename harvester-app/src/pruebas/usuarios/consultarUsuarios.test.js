@@ -36,7 +36,7 @@ jest.mock('../../backend/domain/usuariosAPI/usuariosAPI', () => ({
 }));
 
 /*  3. ───── Tests ──────────────────────────────────────────────────────── */
-describe('obtenerUsuarios (use-case)', () => {
+describe('obtenerUsuarios (caso de uso)', () => {
   let monitorDeError;
 
   // Suprime errores en consola durante las pruebas que los provocan
@@ -60,8 +60,8 @@ describe('obtenerUsuarios (use-case)', () => {
     const respuestaPrueba = {
       ok: true,
       usuarios: [
-        { id: 1, nombre: 'Juan', correo: 'juan@example.com' },
-        { id: 2, nombre: 'Ana',  correo: 'ana@example.com' }
+        { idUsuario: 1, Nombre: 'Juan', Correo: 'juan@example.com' },
+        { idUsuario: 2, Nombre: 'Ana',  Correo: 'ana@example.com' }
       ]
     };
     obtenerUsuariosAPIPrueba.mockResolvedValue(respuestaPrueba);

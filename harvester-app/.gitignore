@@ -92,4 +92,5 @@ typings/
 out/
 
 # Constantes
-src/framework/utils/js/constantes.js
+/src/framework/utils/scripts/constantes.js
+/src/framework/utils/js/constantes.js

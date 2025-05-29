@@ -1,0 +1,137 @@
+.frame-usuario,
+.frame-usuario * {
+  box-sizing: border-box;
+}
+.frame-usuario {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 25px;
+  display: flex;
+  flex-direction: row;
+  gap: 111px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 100%;
+  margin: 0 auto;
+}
+
+
+.frame-perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 111px;
+}
+.frame-informacion-usuario {
+  display: flex;
+  flex-direction: column;
+  gap: 45px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.texto-usuario {
+  color: #000000;
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 52px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icono-usuario {
+  display: flex;
+  flex-direction: row;
+  gap: 31.14px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 250px;
+  height: 250px;
+  position: relative;
+  overflow: visible;
+  aspect-ratio: 1;
+}
+.frame-gestion-cerrar-sesion {
+  display: flex;
+  flex-direction: column;
+  gap: 36.94px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  height: 153.82px;
+  position: relative;
+}
+.boton-gestion-usuario {
+  border-radius: 8px;
+  border-style: solid;
+  border-color: #000000;
+  border-width: 2px;
+  padding: 18.7px;
+  display: none;
+  flex-direction: row;
+  gap: 18.7px;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.boton-gestion-usuario:hover {
+  background-color: #A9A9A9;  /* Gris oscuro cuando pasa el mouse */
+  border-color: #808080; /* Gris medio para el borde */
+  color: white;  /* Cambio a texto blanco */
+  cursor: pointer; /* Cambio de cursor */
+}
+
+.gesti-n-de-usuarios {
+  color: #000000;
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.boton-cerrar-sesion {
+  background: #a61930;
+  border-radius: 6.72px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.15);
+  border-width: 1.68px;
+  padding: 23px 141px 23px 141px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.cerrar-sesi-n {
+  color: #ffffff;
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  width: 332.47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

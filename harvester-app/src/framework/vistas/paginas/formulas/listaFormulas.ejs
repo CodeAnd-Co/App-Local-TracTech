@@ -1,0 +1,21 @@
+<%- include ('../../includes/encabezado.ejs')%>
+<head>
+  <link href='<%= rutaBase %>src/framework/utils/css/paginas/formulas/moduloFormulas.css' rel='stylesheet' />
+</head>
+<div class='lista'>
+  <div class='buscar-y-agregar'>
+    <input class='barra-busqueda' id='busqueda-formulas' placeholder='Nombre de la fórmula' type='text'/>
+    <button class='primario' id='crearFormula'>
+      <img class='mas' src='<%= rutaBase %>src/framework/utils/iconos/AgregarBlanco.svg' />
+    </button>
+  </div>
+  <div class='frame-listado-formulas' id='frame-formulas'>
+    <div class='tabla-columnas'>
+      <div class='nombre'>Nombre</div>
+      <div class='par-metros'>Parámetros</div>
+    </div>
+  </div>
+</div>
+<script src='<%= rutaBase %>src/framework/utils/scripts/paginas/formulas/moduloFormulas.js'></script>
+<script src='<%= rutaBase %>src/framework/utils/scripts/paginas/formulas/eliminarFormula.js'></script>
+<%- include ('../../includes/piePagina.ejs')%>

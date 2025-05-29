@@ -11,6 +11,7 @@ function borrarExcel() {
         // Limpiar el nombre del archivo de localStorage
         localStorage.removeItem('datosExcel');
         localStorage.removeItem('nombreArchivoExcel');
+        localStorage.removeItem('datosExcelDisponibles');
         
         // Actualizar la interfaz de usuario si es necesario
         const elementoNombreArchivo = document.querySelector('.texto-archivo');
