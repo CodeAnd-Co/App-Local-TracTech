@@ -48,35 +48,9 @@ function iniciarDistribuidores(datosExcel) {
     distribuidoresContenedor.innerHTML = '';
 
     const hojaExcel = datosExcel.hojas.Distribuidor;
-    
-    if (!hojaExcel || !Array.isArray(hojaExcel) || hojaExcel.length === 0) {
-        console.warn('No se encontraron distribuidores');
-    } else {
-        distribuidorContenedor.style.visibility = 'visible';
-        hojaExcel.forEach(fila => {
-            const nombreDistribuidor = fila.Distribuidor || fila.Nombre || fila.NombreDistribuidor;
-            if (!nombreDistribuidor) return;
-    
-            // Crear div para distribuidor
-            const distribuidorDiv = document.createElement('div');
-            distribuidorDiv.className = 'rancho';
-    
-            // Crear nombre del distribuidor
-            const nombreDistribuidorDiv = document.createElement('div');
-            nombreDistribuidorDiv.className = 'rancho-texto';
-            nombreDistribuidorDiv.textContent = nombreDistribuidor;
-    
-            // Crear checkbox
-            const caja = document.createElement('img');
-            caja.className = 'check-box';
-            
-            caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
-    
-            // Añadir elementos
-            distribuidorDiv.appendChild(nombreDistribuidorDiv);
-            distribuidorDiv.appendChild(caja);
-            distribuidoresContenedor.appendChild(distribuidorDiv);
-        });
+
+    if (!Array.isArray(hojaExcel) || hojaExcel.length === 0) {
+        return console.warn('No se encontraron distribuidores');
     }
 
     distribuidorContenedor.style.visibility = 'visible';
@@ -134,26 +108,9 @@ function iniciarTractores(datosExcel) {
         return;
     } 
 
+    // Iterar sobre los tractores asumiendo que cada hoja es un tractor
     nombresTractores.forEach(tractorNombre => {
         const tractorDiv = crearElementoTractor(tractorNombre, datosExcel);
-        // Crear el nombre del tractor
-        const nombreTractorDiv = document.createElement('div');
-        nombreTractorDiv.className = 'rancho-texto';
-        nombreTractorDiv.textContent = tractorNombre; // Nombre del tractor
-
-        tractorDivTexto.appendChild(nombreTractorDiv);
-
-        // Crear el cuadro de selección (checkbox) para el tractor
-        const caja = document.createElement('img');
-        caja.className = 'check-box';
-        caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Imagen del checkbox vacío 
-
-        
-        // Añadir el nombre y el checkbox al div del tractor
-        tractorDiv.appendChild(tractorDivTexto);
-        tractorDiv.appendChild(caja);
-        
-        // Añadir el div del tractor al contenedor
         tractoresContenedor.appendChild(tractorDiv);
     })
 }
@@ -245,25 +202,8 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
         tractoresSeleccionados[nombreTractor] = { eleccionado: false, columnas: [] };
     }
     console.log(tractoresSeleccionados);
-    localStorage.setItem('columnas', JSON.stringify(columnas));
-    
     columnas.forEach(nombreColumna => {
-        // Crear div para la columna
-        const columnaDiv = document.createElement('div');
-        columnaDiv.className = 'columna-nombre';
-
-        // Texto del nombre
-        const nombreColumnaDiv = document.createElement('div');
-        nombreColumnaDiv.className = 'rancho-texto';
-        nombreColumnaDiv.textContent = nombreColumna;
-
-        const caja = document.createElement('img');
-        caja.className = 'check-box';
-        caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
-
-        // Agregar al DOM
-        columnaDiv.appendChild(nombreColumnaDiv);
-        columnaDiv.appendChild(caja);
+        const columnaDiv = crearElementoColumna(nombreTractor, nombreColumna);
         columnasContenedor.appendChild(columnaDiv);
     });
 }
@@ -460,7 +400,7 @@ function botonesFiltrosTractores() {
  * @returns {void} 
  */
 function aplicarFiltrosCombinados() {
-    const datosExcel = cargarDatosDeExcel();
+    const datosExcel = cargarDatosExcel();
     if (!datosExcel) return;
 
     const entradaBusqueda = document.getElementById('buscadorTractor');
