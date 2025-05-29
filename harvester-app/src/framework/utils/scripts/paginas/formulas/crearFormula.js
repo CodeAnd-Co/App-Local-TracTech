@@ -94,6 +94,9 @@ async function procesarFormula() {
     const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
     const nombreFormula = nombreFormulaSinProcesar.trim();
     const formulasGuardadas = localStorage.getItem('nombresFormulas');
+
+    console.log(`Nombre de la fórmula: ${nombreFormula}`);
+    console.log(`Formulas guardadas: ${formulasGuardadas}`);
  
     if (nombreFormula === '' || nombreFormula.length >= LONGITUD_MAXIMA_NOMBRE_FORMULA) {
         Swal.fire({
@@ -320,18 +323,26 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
  */
 // eslint-disable-next-line no-unused-vars
 function agregarFuncionAnidada(boton) {
-    // Buscar el contenedor anidado dentro del contenido del argumento
+    // Deshabilitar el botón inmediatamente para evitar múltiples clics
+    boton.disabled = true;
+    boton.textContent = 'Función añadida';
+    
     const argumentoContenido = boton.closest('.argumentoContenido');
     const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
     
-    // Crear un contenedor para esta función anidada específica
+    // Deshabilitar el input de texto del argumento padre y agregar carácter invisible
+    const inputPadre = argumentoContenido.querySelector('input[type="text"]');
+    if (inputPadre) {
+        inputPadre.value = '\u200B'; // Zero-width space
+        inputPadre.disabled = true;
+        inputPadre.style.backgroundColor = '#f0f0f0';
+    }
+    
     const filaAnidada = document.createElement('div');
     filaAnidada.classList.add('fila-anidada');
     
-    // Crear el selector de función anidada
     const seleccionarFuncion = document.createElement('select');
     seleccionarFuncion.classList.add('selectorFuncionAnidada');
-    // Agrega un selector de función anidada al contenedor
     seleccionarFuncion.innerHTML = `
         <option value=''>Seleccionar función anidada</option>
         <option value='IF'>SI</option>
@@ -343,16 +354,23 @@ function agregarFuncionAnidada(boton) {
     filaAnidada.appendChild(seleccionarFuncion);
     contenedorAnidado.appendChild(filaAnidada);
 
-    // Verificar si ya existe un botón de eliminar en esta fila
     let eliminarBotonAnidado = filaAnidada.querySelector('.botonEliminarAnidado');
 
     if (!eliminarBotonAnidado) {
-        // Si no existe, crear uno nuevo
         eliminarBotonAnidado = document.createElement('button');
         eliminarBotonAnidado.textContent = 'Eliminar función';
         eliminarBotonAnidado.classList.add('botonEliminarAnidado');
         eliminarBotonAnidado.onclick = () => {
-            filaAnidada.remove(); // Elimina toda la fila anidada
+            // Rehabilitar el input padre cuando se elimina la función anidada
+            if (inputPadre) {
+                inputPadre.value = '';
+                inputPadre.disabled = false;
+                inputPadre.style.backgroundColor = '';
+            }
+            // Rehabilitar el botón "Anidar Función" cuando se elimina la función anidada
+            boton.disabled = false;
+            boton.textContent = 'Anidar Función';
+            filaAnidada.remove();
         };
         filaAnidada.appendChild(eliminarBotonAnidado);
     }
@@ -360,20 +378,16 @@ function agregarFuncionAnidada(boton) {
     seleccionarFuncion.onchange = (evento) => {
         const valorSeleccionado = evento.target.value;
         if (valorSeleccionado) {
-            // Buscar si ya existe un div anidado en esta fila y eliminarlo
             const divAnidadoExistente = filaAnidada.querySelector('.funciones-anidadas');
             if (divAnidadoExistente) {
                 divAnidadoExistente.remove();
             }
             
-            // Si se selecciona una función, se crea un nuevo contenedor para los argumentos de la función anidada
             const divAnidado = document.createElement('div');
             divAnidado.classList.add('funciones-anidadas');
             filaAnidada.appendChild(divAnidado);
             
-            // Se define la estructura de la función anidada
             definirEstructura(evento.target, divAnidado);
-            
         }
     };
 }
@@ -706,47 +720,3 @@ function popularDropdown(elementoSeleccionado) {
     });
 }
 
-// /* eslint-disable-next-line no-unused-vars */
-// function activarBotonesCrear(){
-//     document.addEventListener('DOMContentLoaded', () => {    
-//         const btnGuardar = document.getElementById('btnGuardar');
-//         const btnGenerar = document.getElementById('btnGenerar');
-//         const btnCancelar = document.getElementById('btnCancelar');
-        
-//         /* eslint-disable-next-line no-unused-vars */
-//         const formulaContainer = document.getElementById('formula-container');
-        
-        
-
-//         // Configurar eventos para los botones
-//             btnGuardar.addEventListener('click', async () => {
-//                 procesarFormula();
-//         });
-    
-//         btnGenerar.addEventListener('click', () => {
-//             const contenedor = document.getElementById('function-arguments');
-//             if (contenedor) {
-//                 generarFormulaCompleja();
-//             } else {
-//                 Swal.fire({
-//                     title: 'Error',
-//                     text: 'No se ha podido generar la fórmula.',
-//                     icon: 'error',
-//                     confirmButtonColor: '#1F4281',
-//                 });
-//             }
-//         });
-        
-//         btnCancelar.addEventListener('click', () => {
-//             cancelarVista();
-//         });
-//         // Agregar el evento al selector de función principal
-//         const seleccionFuncion = document.getElementById('main-function');
-//         if (seleccionFuncion) {
-//             seleccionFuncion.addEventListener('change', () => {
-//                 const contenedor = document.getElementById('function-arguments');
-//                 definirEstructura(seleccionFuncion, contenedor);
-//             });
-//         }
-//     });
-// }
