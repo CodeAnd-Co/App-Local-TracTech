@@ -65,109 +65,124 @@ async function renderizarFormulas() {
         const nombresFormulas = formulas.map((formula) => formula.Nombre);
         localStorage.setItem('nombresFormulas', JSON.stringify(nombresFormulas));
 
-
         // Renderizar las fórmulas en el contenedor correspondiente
         const contenedor = document.getElementById('frame-formulas');
 
-        formulas.forEach((formula) => {
-            const formulaDiv = document.createElement('div');
-            formulaDiv.innerHTML = `
-                <div id='frameFormulas-${formula.idFormula}'  class='frame-f-rmulas'>
-                <div class='nombre-usuario'>
-                    <div class='texto-usuario'>${formula.Nombre}</div>
-                </div>
-                <div class='nombre-usuario'>
-                    <div class='texto-usuario'>${formula.Datos}</div>
-                </div>
-                <button class='editar' data-id='${formula.idFormula}'>
-                    <img class='editar-icono' src='${rutaBase}src/framework/utils/iconos/Editar.svg' />
-                </button>
-                <button class='eliminar' data-id='${formula.idFormula}'>
-                    <img class='eliminar-icono' src='${rutaBase}src/framework/utils/iconos/BasuraBlanca.svg' />
-                </button>
-                </div>
-            `;
-            contenedor.appendChild(formulaDiv);
-        });
+        // Solo renderizar fórmulas si existen
+        if (formulas && formulas.length > 0) {
+            formulas.forEach((formula) => {
+                const formulaDiv = document.createElement('div');
+                formulaDiv.innerHTML = `
+                    <div id='frameFormulas-${formula.idFormula}'  class='frame-f-rmulas'>
+                    <div class='nombre-usuario'>
+                        <div class='texto-usuario'>${formula.Nombre}</div>
+                    </div>
+                    <div class='nombre-usuario'>
+                        <div class='texto-usuario'>${formula.Datos}</div>
+                    </div>
+                    <button class='editar' data-id='${formula.idFormula}'>
+                        <img class='editar-icono' src='${rutaBase}src/framework/utils/iconos/Editar.svg' />
+                    </button>
+                    <button class='eliminar' data-id='${formula.idFormula}'>
+                        <img class='eliminar-icono' src='${rutaBase}src/framework/utils/iconos/BasuraBlanca.svg' />
+                    </button>
+                    </div>
+                `;
+                contenedor.appendChild(formulaDiv);
+            });
 
-        document.querySelectorAll('.editar').forEach(btn => {
-            btn.addEventListener('click', async (evento) => {
-                const formulaId = evento.currentTarget.getAttribute('data-id');
+            // Registrar event listeners para editar solo si hay fórmulas
+            document.querySelectorAll('.editar').forEach(btn => {
+                btn.addEventListener('click', async (evento) => {
+                    const formulaId = evento.currentTarget.getAttribute('data-id');
 
-                if (!formulaId) {
-                    console.warn('No se encontró data-id en el botón.');
-                    return;
-                }
-
-                const formulaSeleccionada = formulas.find(formula => formula.idFormula == formulaId);
-
-                if (formulaSeleccionada) {
-                    const { idFormula, Nombre, Datos } = formulaSeleccionada;
-                    localStorage.setItem('modificarFormulaId', idFormula);
-                    localStorage.setItem('modificarFormulaNombre', Nombre);
-                    localStorage.setItem('modificarFormulaDatos', Datos);
-                    try {
-                        const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
-                        const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion'});
-                        window.location.href = vista;
-                        localStorage.setItem('seccion-activa', 'formulas');
-                    } catch (err) {
-                        console.error('Error al cargar vista:', err);
+                    if (!formulaId) {
+                        console.warn('No se encontró data-id en el botón.');
+                        return;
                     }
-                    inicializarModificarFormula(idFormula, Nombre, Datos);
-                } else {
-                    console.warn('No se encontró una fórmula con id:', formulaId);
-                }
-            });
-        });
 
-        document.getElementById('crearFormula')
-            .addEventListener('click', async () => {
-                try {
-                    const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`
-                    const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono : 'Funcion'});
-                    window.location.href = vista;
-                    localStorage.setItem('seccion-activa', 'formulas');
-                } catch (err) {
-                    console.error('Error al cargar vista:', err);
-                }
-            });
+                    const formulaSeleccionada = formulas.find(formula => formula.idFormula == formulaId);
 
-        document.querySelectorAll('.eliminar').forEach(btn => {
-            btn.addEventListener('click', (evento) => {
-                 
-                const formulaId = evento.currentTarget.getAttribute('data-id');
-                try {
-                    Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: 'Esta acción no se puede deshacer.',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Sí, eliminar',
-                        cancelButtonText: 'Cancelar',
-                        confirmButtonColor: '#1F4281',
-                        cancelButtonColor: '#A61930'
-                        
-                    }).then((resultado) => {
-                        if (resultado.isConfirmed) {
-                            eliminarFormula(formulaId);
-                            window.cargarModulo('formulas');
+                    if (formulaSeleccionada) {
+                        const { idFormula, Nombre, Datos } = formulaSeleccionada;
+                        localStorage.setItem('modificarFormulaId', idFormula);
+                        localStorage.setItem('modificarFormulaNombre', Nombre);
+                        localStorage.setItem('modificarFormulaDatos', Datos);
+                        try {
+                            const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
+                            const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion'});
+                            window.location.href = vista;
+                            localStorage.setItem('seccion-activa', 'formulas');
+                        } catch (err) {
+                            console.error('Error al cargar vista:', err);
                         }
-                    });
-                } catch (error) {
-                    console.error('Error al eliminar la fórmula:', error);
-                    Swal.fire({
-                        title: 'Error de conexión',
-                        text: 'Verifica tu conexión e inténtalo de nuevo.',
-                        icon: 'error'
-                    });
-                }
+                        inicializarModificarFormula(idFormula, Nombre, Datos);
+                    } else {
+                        console.warn('No se encontró una fórmula con id:', formulaId);
+                    }
+                });
             });
-        });
+
+            // Registrar event listeners para eliminar solo si hay fórmulas
+            document.querySelectorAll('.eliminar').forEach(btn => {
+                btn.addEventListener('click', (evento) => {
+                     
+                    const formulaId = evento.currentTarget.getAttribute('data-id');
+                    try {
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: 'Esta acción no se puede deshacer.',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonColor: '#1F4281',
+                            cancelButtonColor: '#A61930'
+                            
+                        }).then((resultado) => {
+                            if (resultado.isConfirmed) {
+                                eliminarFormula(formulaId);
+                                window.cargarModulo('formulas');
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Error al eliminar la fórmula:', error);
+                        Swal.fire({
+                            title: 'Error de conexión',
+                            text: 'Verifica tu conexión e inténtalo de nuevo.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            });
+        } else {
+            // Mostrar mensaje cuando no hay fórmulas
+            contenedor.innerHTML += `<div class='mensaje-sin-formulas'>No hay fórmulas creadas</div>`;
+            localStorage.setItem('nombresFormulas', JSON.stringify([]));
+        }
 
     } catch (error) {
         console.error('Error al consultar las fórmulas:', error);
-        document.getElementById('frame-formulas').innerHTML = `<div class='error-carga'>Error al cargar las fórmulas</div>`;
+        document.getElementById('frame-formulas').innerHTML += `<div class='error-carga'>Error al cargar las fórmulas</div>`;
+        // Asegurar que el array esté vacío en caso de error
+        localStorage.setItem('nombresFormulas', JSON.stringify([]));
+    }
+
+    // MOVER EL EVENT LISTENER DE CREAR FÓRMULA AQUÍ - SIEMPRE SE EJECUTA
+    const btnCrearFormula = document.getElementById('crearFormula');
+    if (btnCrearFormula && !btnCrearFormula.hasAttribute('data-listener-added')) {
+        btnCrearFormula.addEventListener('click', async () => {
+            try {
+                const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono : 'Funcion'});
+                window.location.href = vista;
+                localStorage.setItem('seccion-activa', 'formulas');
+            } catch (err) {
+                console.error('Error al cargar vista:', err);
+            }
+        });
+        // Marcar que ya se agregó el listener para evitar duplicados
+        btnCrearFormula.setAttribute('data-listener-added', 'true');
     }
 }
 
