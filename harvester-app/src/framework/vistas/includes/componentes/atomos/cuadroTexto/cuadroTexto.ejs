@@ -1,7 +1,7 @@
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/cuadroTexto/cuadroTexto.css' rel='stylesheet' />
 <div 
     id='<%= id %>' 
-    class='cuadro-texto<%= tamanio || "" %> <%= color || "" %> <%= fuente || "" %>'><%= textoInterior %>
+    class='cuadro-texto <%= tamanio || "" %> <%= color || "" %> <%= fuente || "" %> <%= alinear || ""%>'><%= textoInterior %>
 </div>
 
 <% /*
@@ -11,4 +11,5 @@
     - tamanio: 'texto-md'
     - color: 'texto-negro'
     - fuente: 'fuente-bold'
+    - alinear: 'centro'
 */ %>
