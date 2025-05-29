@@ -16,11 +16,14 @@ function filtrarFormulas(textoBusqueda) {
         if (textosUsuario.length >= 2) {
             const textoNombre = textosUsuario[0].textContent.toLowerCase();
             
+            // Obtener el contenedor padre (el div que contiene .frame-f-rmulas)
+            const contenedorPadre = fila.parentElement;
+            
             // Buscar solo en el nombre
             if (textoBusqueda === '' || textoNombre.includes(textoBusqueda)) {
-                fila.style.display = 'flex';
+                contenedorPadre.style.display = 'block';
             } else {
-                fila.style.display = 'none';
+                contenedorPadre.style.display = 'none';
             }
         }
     });
