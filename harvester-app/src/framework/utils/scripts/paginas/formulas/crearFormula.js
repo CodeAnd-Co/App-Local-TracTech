@@ -93,11 +93,7 @@ async function procesarFormula() {
     generarFormulaCompleja();
     const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
     const nombreFormula = nombreFormulaSinProcesar.trim();
-    const formulasGuardadas = localStorage.getItem('nombresFormulas');
-
-    console.log(`Nombre de la fórmula: ${nombreFormula}`);
-    console.log(`Formulas guardadas: ${formulasGuardadas}`);
- 
+    const formulasGuardadas = localStorage.getItem('nombresFormulas'); 
     if (nombreFormula === '' || nombreFormula.length >= LONGITUD_MAXIMA_NOMBRE_FORMULA) {
         Swal.fire({
             title: 'Error',

@@ -18,8 +18,7 @@ async function guardarFormula (nombre, formula){
         const respuesta = await guardarFormulaAPI(nombre, formula, localStorage.getItem('token'));
         return respuesta;
     } catch(error){
-        console.error('Error al guardar la fórmula:', error);
-        throw new Error('No se pudo guardar la fórmula');
+        throw new Error('No se pudo guardar la fórmula: ' + error.message);
     }
 }
 module.exports = {
