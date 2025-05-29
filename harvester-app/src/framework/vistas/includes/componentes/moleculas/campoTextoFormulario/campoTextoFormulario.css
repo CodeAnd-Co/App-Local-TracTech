@@ -42,3 +42,7 @@
   background-color: #ffeaea !important;
   color: #000000; /* Mantener texto negro incluso en error */
 }
+
+.texto-izquierda { text-align: left; }
+.texto-centro { text-align: center; }
+.texto-derecha { text-align: right; }
