@@ -1,8 +1,10 @@
 /* Contenedor del cuadro */
 .cuadro-texto {
+  display: flex;
   box-sizing: border-box;
   text-align: left;
   position: relative;
+  width: 100%;
 }
 
 /* Tamaños de texto */

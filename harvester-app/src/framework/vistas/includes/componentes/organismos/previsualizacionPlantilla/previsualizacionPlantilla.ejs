@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="<%= rutaBase %>src/framework/vistas/includes/componentes/organismos/previsualizacionPlantilla/previsualizacionPlantilla.css">
+<div class="previsualizacion">
+    <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', {
+        id: 'miCuadro',
+        textoInterior: 'El texto que quieres dentro',
+        tamanio: 'texto-xl',
+        color: 'texto-negro',
+        fuente: 'fuente-bold',
+        alinear: 'centro'
+    }) %>
+    <div class="previsualizacionPlantilla">
+        <div>Titulo</div>
+        <div>
+            Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto, Texto.
+        </div>
+        <div>
+            Grafica
+        </div>
+    </div>
+    <%- include('../../moleculas/grupoBotones/grupoBotones.ejs', {
+        botones: [
+            {
+                id: 'boton-regresar',
+                etiqueta: 'regresar',
+                tipo: 'secundario',
+            },
+            { 
+                id: 'boton-modificar',
+                etiqueta: 'modificar',
+                tipo: 'primario',
+            }
+        ],
+        orientacion: 'horizontal',
+    }) %>
+</div>
