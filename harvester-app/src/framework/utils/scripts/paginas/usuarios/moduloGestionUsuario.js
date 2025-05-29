@@ -62,7 +62,8 @@ async function inicializarModuloGestionUsuarios() {
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
 
-        configurarValidacionesCampos()
+        configurarValidacionesCampos();
+        configurarContadoresCampos();
         
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
@@ -968,6 +969,36 @@ function cargarRoles() {
     }
     return
 }
+
+/**
+ * Actualiza el texto de un contador dado el input, su contenedor de contador y el maxlength.
+ * @param {HTMLInputElement} input
+ * @param {HTMLElement} contador
+ * @param {number|string} maximoCaracteres
+ */
+function actualizarContador(input, contador, maximoCaracteres) {
+    contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
+}
+  
+/**
+ * Actualiza los contadores de caracteres que ya existen en el HTML.
+ * No inserta nada, solo los inicializa y los mantiene al día.
+ */
+function configurarContadoresCampos() {
+document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
+    const maximoCaracteres = input.getAttribute('maxlength');
+    const contador = input.parentNode.querySelector('.contador-caracteres');
+    if (!contador) return;
+
+    // Inicializa una sola llamada a la función extraída
+    actualizarContador(input, contador, maximoCaracteres);
+
+    // Y vuelve a usar la misma función como callback
+    input.addEventListener('input', () => {
+    actualizarContador(input, contador, maximoCaracteres);
+    });
+});
+}  
 
 
 // Expone la función de inicialización al objeto window
