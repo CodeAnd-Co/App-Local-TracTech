@@ -15,7 +15,7 @@ function consultaFormulasCasoUso() {
         return respuesta;
     } catch(error){
         
-        throw new Error('No se obtuvo ninguna fórmula: ' + error.message);
+        throw new Error(`No se obtuvo ninguna fórmula: ${error.mensaje}`);
     }
 }
 

@@ -42,9 +42,13 @@ async function eliminarFormula(id) {
             });
         }
     } catch (error) {
+        let errorMensaje = error.message || 'Error al consultar las fórmulas';
+        if (error == undefined || error == null) {
+            errorMensaje = 'Error desconocido.';
+        }
         Swal.fire({
             title: 'Error de conexión',
-            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            text: `Verifica tu conexión e inténtalo de nuevo. ${errorMensaje}`,
             icon: 'error'
         });
     }
@@ -114,7 +118,7 @@ async function renderizarFormulas() {
                             window.location.href = vista;
                             localStorage.setItem('seccion-activa', 'formulas');
                         } catch (err) {
-                            mostrarAlerta('Error al cargar vista', 'Verifica tu conexión e inténtalo de nuevo: '+ err, 'error');
+                            mostrarAlerta('Error al cargar vista', `Verifica tu conexión e inténtalo de nuevo: ${err}`, 'error');
                         }
                         inicializarModificarFormula(idFormula, Nombre, Datos);
                     } else {
@@ -162,7 +166,7 @@ async function renderizarFormulas() {
         }
 
     } catch (error) {
-        mostrarAlerta('Error al cargar las fórmulas', 'Verifica tu conexión e inténtalo de nuevo: ' + error.mensaje, 'error');
+        mostrarAlerta('Error al cargar las fórmulas', `Verifica tu conexión e inténtalo de nuevo: ${error.mensaje}`, 'error');
         document.getElementById('frame-formulas').innerHTML += `<div class='error-carga'>Error al cargar las fórmulas</div>`;
         // Asegurar que el array esté vacío en caso de error
         localStorage.setItem('nombresFormulas', JSON.stringify([]));
