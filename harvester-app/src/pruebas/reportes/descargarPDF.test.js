@@ -19,6 +19,9 @@
  */
 
 /*  1. ───── Importaciones ──────────────────────────────────────────────── */
+// Configurar la ruta base global ANTES de los mocks
+global.rutaBase = `${__dirname}`.replace(/\\/g, '/').split('src/')[0];
+const { JSDOM } = require('jsdom');
 const { descargarPDF } = require('../../framework/utils/scripts/paginas/analisis/moduloAnalisis');
 const Swal = require('sweetalert2');
 const { ipcRenderer } = require('electron');
@@ -56,6 +59,22 @@ const jsPDFMock = jest.fn().mockImplementation(() => ({
 }));
 
 window.jspdf = { jsPDF: jsPDFMock };
+
+// Usar jest.doMock para mocks que dependen de rutaBase
+jest.doMock(`${global.rutaBase}src/backend/data/analisisModelos/elementoReporte.js`, () => ({
+  ElementoNuevo: class {
+    constructor(tarjeta, previsualizacion) {
+      this.tarjeta = tarjeta;
+      this.previsualizacion = previsualizacion;
+    }
+  },
+  Contenedores: class {
+    constructor(contenedorTarjeta, contenedorPrevisualizacion) {
+      this.contenedorTarjeta = contenedorTarjeta;
+      this.contenedorPrevisualizacion = contenedorPrevisualizacion;
+    }
+  }
+}));
 
 /*  4. ───── Setup de pruebas ──────────────────────────── */
 beforeEach(() => {
