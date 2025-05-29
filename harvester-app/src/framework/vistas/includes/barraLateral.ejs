@@ -1,3 +1,9 @@
+<% { verificarPermisos } = require('../../utils/scripts/middleware/auth.js')%>
+<% let administrar = false%>
+
+<% if (verificarPermisos("ADMIN")){ administrar = true } %>
+
+
 <div id='sidebar-wrapper'>
   <div class='state-default' id='barraLateralExpandida'>
     <div>
@@ -30,10 +36,12 @@
           <span>Envíos</span>
         </button>
         -->
+        <% if (administrar == true) { %>
         <button class='boton-sidebar' data-seccion='usuarios'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Gestión Usuarios' />
           <span>Gestión Usuarios</span>
         </button>
+        <% } %>
       </div>
     </div>
 
@@ -58,15 +66,19 @@
         <button class='boton-sidebar' data-seccion='analisis'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/GraficaBarras.svg' alt='Análisis' />
         </button>
+        
         <button class='boton-sidebar' data-seccion='plantillas'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Portapapeles.svg' alt='Plantillas' />
         </button>
         <button class='boton-sidebar' data-seccion='formulas'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Funcion.svg' alt='Fórmulas' />
         </button>
+         <ul class="menu-links">
+        <% if (administrar == true) { %>
         <button class='boton-sidebar' data-seccion='usuarios'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Gestión Usuarios' />
         </button>
+        <% } %>
         <!---
         <button class='boton-sidebar' data-seccion='envios'>
           <img src='../utils/iconos/Correo.svg' alt='Envíos' />

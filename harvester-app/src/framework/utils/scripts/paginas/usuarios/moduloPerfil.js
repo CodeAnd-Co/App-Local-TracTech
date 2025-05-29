@@ -6,7 +6,7 @@
 /* eslint-disable no-undef */
 
 const { cerrarSesion } = require(`${rutaBase}src/backend/casosUso/sesion/cerrarSesion.js`);
-const { verificarPermisos, PERMISOS } = require(`${rutaBase}src/framework/utils/scripts/middleware/auth.js`);
+// const { verificarPermisos, PERMISOS } = require(`${rutaBase}src/framework/utils/scripts/middleware/auth.js`);
 if (typeof Swal === 'undefined'){
   const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 }
