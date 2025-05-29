@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/menuDesplegableFormulario/menuDesplegableFormulario.css">
+
+<div class="menuDesplegable">
+  <!-- Texto superior -->
+  <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', {
+    id: idTexto || '',
+    textoInterior: textoSuperior || '',
+    tamanio: 'texto-md',
+    color: 'texto-negro',
+    fuente: 'fuente-regular',
+    alinear: 'izquierda'
+  }) %>
+
+  <!-- Menú desplegable -->
+  <%- include('../../atomos/menuDesplegable/menuDesplegable.ejs', {
+    textoAyuda: textoAyuda || '-- Selecciona --',
+    opciones: opciones || [],
+    placeholder: placeholder || '-- Selecciona --',
+    className: className || 'menuDesplegable'
+  }) %>
+</div>
+
+<% /*
+  Parámetros esperados:
+  - idTexto: id para el texto superior (opcional)
+  - textoSuperior: texto que aparece arriba del menú
+  - textoAyuda: texto del placeholder del menú
+  - opciones: array de opciones para el menú desplegable
+  - placeholder: texto del placeholder (opcional)
+  - className: clase CSS extra para el select (opcional)
+*/ %>
