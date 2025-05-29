@@ -1,0 +1,12 @@
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+  position: relative;
+}
+
+.contenedor-formulario-molecula{
+  gap: 8px;
+}
