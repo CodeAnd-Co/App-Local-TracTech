@@ -326,16 +326,17 @@ function manejarClickTractor(tractorNombre, datosExcel) {
  * @param {Object} datosExcel - Los datos del excel
  * @returns {void}
  */
-async function botonReporte() {
+async function botonReporte(datosExcel) {
     const botonAnalisis = document.querySelector('.primario');
     botonAnalisis.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
+        const datosFiltrados = seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
         try {
             var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras'});
             window.location.href = vista;
             localStorage.setItem('seccion-activa', 'analisis');
-        } catch (err) {
-            console.error('Error al cargar vista:', err);
+        } catch (error) {
+            console.error('Error al cargar vista:', error);
         }
     })
 }
