@@ -14,7 +14,7 @@ async function eliminarFormula(id) {
         const respuesta = await eliminarFormulaAPI(id, localStorage.getItem('token'));
         return respuesta;
     } catch (error) {
-        throw new Error('No se pudo eliminar la fórmula: ' + error.message);
+        throw new Error(`No se pudo eliminar la fórmula: ${error.mensaje}`);
     }
 }
 
