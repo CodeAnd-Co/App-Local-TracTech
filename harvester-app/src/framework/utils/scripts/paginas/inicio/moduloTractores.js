@@ -83,7 +83,7 @@ function crearElementoDistribuidor(nombreDistribuidor) {
 
     const casillaVerificacion = document.createElement('img');
     casillaVerificacion.className = 'check-box';
-    casillaVerificacion.src = '../utils/iconos/check_box_outline_blank.svg';
+    casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
 
     // Añadir elementos
     distribuidorDiv.appendChild(nombreDistribuidorDiv);
@@ -139,7 +139,7 @@ function crearElementoTractor(nombreTractor, datosExcel) {
 
     const casillaVerificacion = document.createElement('img');
     casillaVerificacion.className = 'check-box';
-    casillaVerificacion.src = '../utils/iconos/check_box_outline_blank.svg';
+    casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
     tractorDiv.appendChild(casillaVerificacion);
     
     casillaVerificacion.addEventListener('click', () => cambiarSeleccionTractor(nombreTractor, casillaVerificacion));
@@ -244,11 +244,11 @@ function crearElementoColumna(nombreTractor, nombreColumna) {
 
     const casillaVerificacion = document.createElement('img');
     casillaVerificacion.className = 'check-box';
-    casillaVerificacion.src = '../utils/iconos/check_box_outline_blank.svg';
+    casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
 
     // Verificar si la columna ya está seleccionada
     if (tractoresSeleccionados[nombreTractor].columnas.includes(nombreColumna)) {
-        casillaVerificacion.src = '../utils/iconos/check_box.svg';
+        casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
     }
     columnaDiv.addEventListener('click', () => {
         seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion);
@@ -460,7 +460,7 @@ function aplicarFiltrosCombinados() {
  * @returns {void}
  */
 function cambiarIconoMarcadoADesmarcado(icono) {
-    const rutaBase = '../utils/iconos/';
+    const rutaIcono = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
     const iconoMarcado = 'check_box.svg';
     const iconoDesmarcado = 'check_box_outline_blank.svg';
 
