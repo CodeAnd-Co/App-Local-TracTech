@@ -819,7 +819,7 @@ async function crearUsuario() {
         return;
     }
 
-    if (nombre.length > 55) {
+    if (nombre.length > 45) {
         await Swal.fire({
             title: 'Nombre demasiado largo',
             text: 'El nombre no puede tener más de 55 caracteres.',
@@ -828,7 +828,7 @@ async function crearUsuario() {
         return;
     }
 
-    if (correo.length > 55) {
+    if (correo.length > 50) {
         await Swal.fire({ 
             title: 'Correo demasiado largo',
             text: 'El correo no puede tener más de 55 caracteres.',
@@ -839,7 +839,7 @@ async function crearUsuario() {
     }
 
 
-    if (contrasenia.length < 5) {
+    if (contrasenia.length < 8) {
         await Swal.fire({
             title: 'Contraseña demasiado corta',
             text: 'La contraseña debe de tener más de 5 caracteres.',
@@ -848,7 +848,7 @@ async function crearUsuario() {
         return
     }
 
-    if (contrasenia.length > 55) {
+    if (contrasenia.length > 512) {
         await Swal.fire({
             title: 'Contraseña demasiado larga',
             text: 'La contraseña no puede tener más de 55 caracteres.',
