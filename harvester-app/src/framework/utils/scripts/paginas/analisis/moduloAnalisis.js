@@ -33,24 +33,42 @@ function inicializarModuloAnalisis() {
 
   if (!contenedor) return;
 
-  const botonPDF = document.getElementById('descargarPDF')
+  const botonPDF = document.getElementById('descargarPDF');
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
+  
   botonPDF.addEventListener('click', async () => {
 
     const anterior = botonPDF.textContent;
     botonPDF.disabled = true;
-    const contenedorTexto = botonPDF.children[1]
+    const contenedorTexto = botonPDF.children[1];
     contenedorTexto.textContent = 'Descargando...';
     pantallaBloqueo.classList.remove('oculto');
 
-    descargarPDF()
+    descargarPDF();
 
     ipcRenderer.once('pdf-guardado', (event, exito) => {
       botonPDF.disabled = false;
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
+      
+      if (exito) {
+        Swal.fire({
+          title: 'Éxito',
+          text: 'El reporte PDF se ha guardado correctamente.',
+          icon: 'success',
+          confirmButtonColor: '#1F4281',
+        });
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al guardar el archivo PDF.',
+          icon: 'error',
+          confirmButtonColor: '#1F4281',
+        });
+      }
     });
-  });
+
+  }); // Cierre del addEventListener
 
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
