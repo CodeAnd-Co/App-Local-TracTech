@@ -54,6 +54,7 @@ function agregarTexto(
     nuevoId = 1;
   }
 
+  const limite = 1000;
   const tarjetaTexto = document.createElement('div');
   tarjetaTexto.classList.add('tarjeta-texto');
   tarjetaTexto.id = `${nuevoId}`;
@@ -66,16 +67,8 @@ function agregarTexto(
       </select>
       <img class='type' src='${rutaBase}/src/framework/utils/iconos/Texto.svg' alt='Icono Texto' />
     </div>
-    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='1000'></textarea>
-    <style>
-      .contador-caracteres {
-        font-size: 12px;
-        text-align: right;
-        color: #7f8c8d;
-        margin: 4px 0;
-        padding-right: 4px;
-      }
-    </style>
+    <textarea class='area-escritura' placeholder='Escribe aquí tu contenido...' maxlength='${limite}'></textarea>
+    <div class='contador-caracteres'>0/${limite} caracteres</div>
     <div class='botones-editar-eliminar'>
       <div class='eliminar'>
         <img class='eliminar-icono' src='${rutaBase}/src/framework/utils/iconos/Basura.svg' alt='Eliminar' />
@@ -164,12 +157,7 @@ function actualizarCaracteres(tarjetaTexto, areaEscritura) {
   const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
   const caracteresRestantes = limite - caracteresUsados;
 
-  let contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
-  if (!contadorCaracteres) {
-    contadorCaracteres = document.createElement('div');
-    contadorCaracteres.className = 'contador-caracteres';
-    tarjetaTexto.insertBefore(contadorCaracteres, tarjetaTexto.querySelector('.botones-editar-eliminar'));
-  }
+  const contadorCaracteres = tarjetaTexto.querySelector('.contador-caracteres');
 
   contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
 

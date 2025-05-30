@@ -50,9 +50,11 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     nuevaId = 1;
   }
   
+  const limite = 30;
   tarjetaGrafica.id = nuevaId;
   tarjetaGrafica.innerHTML = `
-    <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='30'/>
+    <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='${limite}'/>
+    <div class='contador-caracteres'>0/${limite} caracteres</div>
     <div class='titulo-texto'>
       <select class='tipo-texto tipo-grafica'>
         <option value='line'>Línea</option>
@@ -376,14 +378,19 @@ function generarDegradadoHaciaBlanco(rgb, pasos) {
  * @param {HTMLDivElement} tarjetaGrafica - Tarjeta de gráfica donde se encuentra el campo de texto.
  */
 function modificarTitulo(grafica, entradaTexto, tarjetaGrafica) {
-  let contador = tarjetaGrafica.querySelector('.contador-caracteres');
-  if (!contador) {
-    contador = document.createElement('div');
-    contador.className = 'contador-caracteres';
-    tarjetaGrafica.insertBefore(contador, tarjetaGrafica.querySelector('.titulo-texto'));
-  }
+  const caracteresUsados = entradaTexto.value.length;
+  const limite = parseInt(entradaTexto.getAttribute('maxlength'), 10);
+  const caracteresRestantes = limite - caracteresUsados;
+  
+  const contadorCaracteres = tarjetaGrafica.querySelector('.contador-caracteres');
 
-  contador.textContent = `${entradaTexto.value.length}/30 caracteres`;
+  contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
+  
+  if (caracteresRestantes < 10) {
+    contadorCaracteres.style.color = '#e74c3c';
+  } else {
+    contadorCaracteres.style.color = '#7f8c8d';
+  }
 
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');
