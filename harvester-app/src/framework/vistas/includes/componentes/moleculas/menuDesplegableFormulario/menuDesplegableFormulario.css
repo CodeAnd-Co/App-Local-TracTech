@@ -1,0 +1,29 @@
+.menuDesplegable {
+  display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+    width: 100%;
+    position: relative;
+}
+
+/* Ajustes para que los átomos funcionen bien juntos */
+.campo-formulario .cuadro-texto {
+  margin: 0;
+  padding: 0;
+}
+
+.campo-formulario .campoTexto {
+  width: 100%;
+  margin: 0;
+  color: #000000; /* Texto en negro cuando se escribe */
+}
+
+/* Placeholder en gris */
+.campo-formulario .campoTexto::placeholder {
+  color: rgba(0, 0, 0, 0.33);
+}
+
+.texto-izquierda { text-align: left; }
+.texto-centro { text-align: center; }
+.texto-derecha { text-align: right; }

@@ -1,6 +1,6 @@
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/grupoBotones/grupoBotones.css' rel='stylesheet'/>
 
-<div class='grupo-botones <%= orientacion === "vertical" ? "grupo-vertical" : "grupo-horizontal" %>'>
+<div class='grupo-botones <%= orientacion === "vertical" ? "grupo-vertical" : "grupo-horizontal" %> <%= espaciado ? "grupo-botones-separados" : "grupo-botones-pegados" %>'>
     <% botones.forEach(boton => { %>
         <%- include('../../atomos/boton/boton.ejs', { 
             id: boton.id || '', 

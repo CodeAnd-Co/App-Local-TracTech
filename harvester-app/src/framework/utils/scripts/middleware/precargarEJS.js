@@ -2,6 +2,7 @@ const {app} = require('electron');
 const ejs = require('ejs');
 const path = require('node:path');
 const fs = require('fs');
+const { verificarPermisos } = require('../../scripts/middleware/auth');
  
 /**
  * Convierte la vista en EJS a un archivo HTML ya renderizado.
@@ -19,7 +20,8 @@ function precargarEJS(ruta, parametros = {}){
 
       const datos = {
         rutaBase,
-        ...parametros
+        ...parametros,
+        verificarPermisos, // Pasar la función de verificación de permisos
       };
 
       ejs.renderFile(ruta, datos, (error, archivo) => {

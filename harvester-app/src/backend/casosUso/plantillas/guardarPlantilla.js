@@ -66,18 +66,15 @@ async function guardarPlantillaCasoUso(contenedor, nombrePlantilla, opcionesEnvi
     const tarjetasTexto = contenedor.querySelectorAll('.tarjeta-texto');
     tarjetasTexto.forEach(node => {
       try {
-        const texto = node.querySelector('textarea')?.value?.trim() || 
-                     node.textContent?.trim() || '';
+        const texto = node.querySelector('textarea')?.value?.trim() || node.textContent?.trim() || '';
         
         if (!texto) {
           console.warn('Texto vacío, omitiendo...');
           return;
         }
 
-        const tipoTexto = node.querySelector('.tipo-texto')?.value || 
-                         node.getAttribute('data-tipo') || 'Parrafo';
-        const alineacion = node.querySelector('.alineacion-texto')?.value || 
-                          node.getAttribute('data-alineacion') || 'Izquierda';
+        const tipoTexto = node.querySelector('.tipo-texto')?.value || node.getAttribute('data-tipo') || 'Parrafo';
+        const alineacion = node.querySelector('.alineacion-texto')?.value || node.getAttribute('data-alineacion') || 'Izquierda';
 
         const textoContenido = new TextoContenido({
           ordenContenido: ordenGlobal++,

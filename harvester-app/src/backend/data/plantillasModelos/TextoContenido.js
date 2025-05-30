@@ -8,7 +8,7 @@ class TextoContenido extends ContenidoBase {
    * @param {string} props.alineacion
    * @param {string} props.contenidoTexto
    */
-  constructor({ ordenContenido, tipoTexto = 'Parrafo', alineacion = 'Izquierda', contenidoTexto }) {
+  constructor({ ordenContenido, tipoTexto = 'Contenido', alineacion = 'Izquierda', contenidoTexto }) {
     super({ ordenContenido, tipoContenido: 'Texto' });
     
     // Validaciones
@@ -16,9 +16,18 @@ class TextoContenido extends ContenidoBase {
       throw new Error('El contenido del texto es requerido');
     }
 
-    // Validar tipos de texto permitidos
+    const mapeoTipos = {
+      'Titulo': 'Titulo',
+      'Subtitulo': 'Subtitulo',
+      'Contenido': 'Contenido',
+      'Parrafo': 'Contenido'  // ← Mapear Parrafo a Contenido
+    };
+
+    const tipoMapeado = mapeoTipos[tipoTexto] || 'Contenido';
+    
+    // Validar tipos de texto permitidos (después del mapeo)
     const tiposPermitidos = ['Titulo', 'Subtitulo', 'Contenido'];
-    if (!tiposPermitidos.includes(tipoTexto)) {
+    if (!tiposPermitidos.includes(tipoMapeado)) {
       throw new Error(`Tipo de texto no válido. Permitidos: ${tiposPermitidos.join(', ')}`);
     }
 
@@ -28,7 +37,7 @@ class TextoContenido extends ContenidoBase {
       throw new Error(`Alineación no válida. Permitidas: ${alineacionesPermitidas.join(', ')}`);
     }
 
-    this.tipoTexto      = tipoTexto;
+    this.tipoTexto      = tipoMapeado;  // ← Usar el tipo mapeado
     this.alineacion     = alineacion;
     this.contenidoTexto = contenidoTexto.trim();
   }
