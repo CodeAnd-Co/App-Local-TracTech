@@ -2,6 +2,9 @@
 
 const { modificarFormulaCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/modificarFormula.js`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+
+const { mostrarAlerta} = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
+
 const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
     LONGITUD_MAXIMA_FORMULA} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 
@@ -40,11 +43,13 @@ async function inicializarModificarFormula(id, nombre, formula) {
         formulaInput.value = formula;
 
         nombreInput.setAttribute('maxlength', LONGITUD_MAXIMA_NOMBRE_FORMULA)
+        actualizarCaracteres(nombreInput)
         nombreInput.addEventListener('input', () => {
             actualizarCaracteres(nombreInput);
         });
 
         formulaInput.setAttribute('maxlength', LONGITUD_MAXIMA_FORMULA)
+        actualizarCaracteres(formulaInput)
         formulaInput.addEventListener('input', () => {
             actualizarCaracteres(formulaInput);
         });
@@ -54,8 +59,11 @@ async function inicializarModificarFormula(id, nombre, formula) {
             window.cargarModulo('formulas');
         });
         botonGuardar.addEventListener('click', () => {
-            const nombreInput = document.getElementById('nombreFormula').value;
-            const formulaInput = document.getElementById('resultado').value;
+            const nombre =  document.getElementById('nombreFormula')
+            const nombreInput = nombre.value.trim();
+
+            const formula =  document.getElementById('resultado')
+            const formulaInput = formula.value.trim();
             if (nombreInput === nombre && formulaInput === formula) {
                 Swal.fire({
                     title: 'Error',
@@ -81,36 +89,47 @@ module.exports = {
  * @returns {void}
  */
 function actualizarCaracteres(areaEscritura) {
-  const caracteresUsados = areaEscritura.value.length;
-  const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
 
-  const selector = `[maxlength_placeholder='${areaEscritura.getAttribute('maxlength')}']`;
-  const elementosContador = document.querySelectorAll(selector);
+  const contador = areaEscritura.parentElement.querySelector('.contador-caracteres');
 
-  if (elementosContador.length === 0) {
-    const nuevoContador = document.createElement('div');
-    nuevoContador.className = 'contador-caracteres';
-    nuevoContador.setAttribute('maxlength_placeholder', areaEscritura.getAttribute('maxlength'));
-    actualizarContador(nuevoContador, caracteresUsados, limite);
-    areaEscritura.after(nuevoContador);
+  if (!contador) {
+    console.warn('No se encontró el elemento con clase .contador-caracteres');
     return;
   }
 
-  elementosContador.forEach((elemento) => {
-    actualizarContador(elemento, caracteresUsados, limite);
-  });
+  const caracteresUsados = areaEscritura.value.length;
+  const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
+
+
+  const caracteresRestantes = limite - caracteresUsados;
+  contador.textContent = `${caracteresUsados}/${limite} caracteres`;
+  contador.style.color = caracteresRestantes < 5 ? '#e74c3c' : '#7f8c8d';
+  validador(areaEscritura);
 }
 
-/**
- * Actualiza el contenido y color del contador de caracteres.
- *
- * @param {HTMLElement} elemento - Elemento del DOM que muestra el contador.
- * @param {number} caracteresUsados - Cantidad de caracteres utilizados.
- * @param {number} limite - Límite total de caracteres permitido.
- * @returns {void}
- */
-function actualizarContador(elemento, caracteresUsados, limite) {
-  const caracteresRestantes = limite - caracteresUsados;
-  elemento.textContent = `${caracteresUsados}/${limite} caracteres`;
-  elemento.style.color = caracteresRestantes < 5 ? '#e74c3c' : '#7f8c8d';
+
+function validador(areaEscritura) {
+    const mensajeError = areaEscritura.parentElement?.querySelector('.mensajeError');
+
+    const valor = areaEscritura.value;
+    const mensaje = validarContenido(valor);
+
+    if (mensaje) {
+        areaEscritura.classList.add('inputError');
+        mensajeError.textContent = mensaje;
+    } else {
+        areaEscritura.classList.remove('inputError');
+        mensajeError.textContent = '';
+    }
 }
+
+function validarContenido(texto) {
+    // Ejemplo adicional: mínimo 5 caracteres útiles
+    if (texto.trim().length == 0) {
+        return 'Debe contener al menos 1 caracteres válidos';
+    }
+
+    return null;
+}
+
+
