@@ -1,7 +1,7 @@
 /* === Layout de dos columnas === */
 .container {
   display: flex;         /* activa Flexbox */
-  gap: 130px;            /* espacio entre columnas */
+  gap: 65px;            /* espacio entre columnas */
 }
 
 /* Ajuste de anchos: puedes cambiar 2/1 por la proporción que necesites */
@@ -79,7 +79,7 @@
 
 .frame-usuario {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: .75rem;
 }
 
@@ -117,7 +117,7 @@
   display: flex;
   gap: .5rem;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 1.75rem;
 }
 .paginacion button,
 .paginacion span {
@@ -134,11 +134,13 @@
   background: transparent !important;
   border: none !important;
   padding: 4px 8px;
+  font-size: 1.125rem;
   color: inherit;
   cursor: pointer;
 }
 .boton-pagina.pagina-actual {
   text-decoration: underline;
+  font-size: 1.75rem;
   font-weight: bold;
 }
 .puntos-paginacion {
