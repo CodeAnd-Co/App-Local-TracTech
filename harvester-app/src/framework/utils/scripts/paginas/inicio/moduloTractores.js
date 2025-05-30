@@ -1,7 +1,7 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
 // RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
-let tractoresSeleccionados = {};
+const tractoresSeleccionados = {};
 const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
 const { seleccionaDatosAComparar } = require(`${rutaBase}/src/backend/casosUso/excel/seleccionaDatosAComparar.js`);
 
@@ -203,7 +203,7 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
     }
 
     // Obtener las columnas del primer objeto
-    let columnas = obtenerColumnas(datosHoja);
+    const columnas = obtenerColumnas(datosHoja);
     if (!columnas.length) {
         mostrarMensaje(columnasContenedor, 'Formato de datos no reconocido')
         return;
@@ -354,7 +354,7 @@ async function botonReporte(datosExcel) {
     const botonAnalisis = document.querySelector('.primario');
     botonAnalisis.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
-        const datosFiltrados = seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
+        seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
         try {
             var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras'});
             window.location.href = vista;
@@ -485,12 +485,6 @@ function aplicarFiltrosCombinados() {
  * @returns {void}
  */
 function cambiarIconoMarcadoADesmarcado(icono) {
-    const rutaIcono = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
-    const iconoMarcado = 'check_box.svg';
-    const iconoDesmarcado = 'check_box_outline_blank.svg';
-
-    const nombreArchivo = icono.src.split('/').pop();
-
     // Verificar si el icono actual es el de desmarcado
     if (icono.src.includes('check_box_outline_blank.svg')) {
         icono.src = `${rutaBase}src/framework/utils/iconos/check_box.svg`; // Cambiar a marcado

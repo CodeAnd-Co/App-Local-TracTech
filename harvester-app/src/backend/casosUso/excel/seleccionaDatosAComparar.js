@@ -36,18 +36,18 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                     console.warn(`Columna "${nombreColumna}" no encontrada en ${nombreTractor}`);
                 }
                 return indiceColumna;
-            }).filter(i => i !== -1);
+            }).filter(identador => identador !== -1);
 
             // Procesar las filas y agregar solo las columnas seleccionadas
             const nuevasFilas = Object.keys(datosTractor)
                 .filter(key => key !== "0") // Ignorar encabezados
                 .map(key => {
                     const fila = datosTractor[key];
-                    return indicesSeleccionados.map(i => fila[i] ?? null); // Solo datos seleccionados
+                    return indicesSeleccionados.map(identador => fila[identador] ?? null); // Solo datos seleccionados
                 });
 
             // Agregar encabezados seleccionados como la primera fila
-            const encabezadosSeleccionados = indicesSeleccionados.map(i => encabezadosOriginales[i]);
+            const encabezadosSeleccionados = indicesSeleccionados.map(identador => encabezadosOriginales[identador]);
             nuevoJSON.hojas[nombreTractor] = [
                 encabezadosSeleccionados, // Solo los encabezados seleccionados
                 ...nuevasFilas // Filas procesadas sin el nombre del tractor
