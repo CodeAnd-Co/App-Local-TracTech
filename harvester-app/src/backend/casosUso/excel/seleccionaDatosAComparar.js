@@ -15,7 +15,6 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
 
             const datosHoja = datosExcel.hojas[nombreHoja];
             if (!Array.isArray(datosHoja) || configuracionSeleccion.columnas.length === 0) {
-                console.warn(`Hoja inválida o columnas vacías: ${nombreHoja}`);
                 continue;
             }
 
@@ -23,10 +22,7 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
             const columnasDeseadas = configuracionSeleccion.columnas;
 
             const indicesValidos = obtenerIndicesDeColumnas(encabezados, columnasDeseadas);
-            if (indicesValidos.length === 0) {
-                console.warn(`No se encontraron columnas válidas para la hoja: ${nombreHoja}`);
-                continue;
-            }
+            
 
             const filasFiltradas = obtenerFilasFiltradas(datosHoja, indicesValidos);
             const encabezadosFiltrados = indicesValidos.map(indice => encabezados[indice]);
@@ -56,9 +52,6 @@ function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
     return columnasDeseadas.map(nombre => {
         // Buscar la posicion del encabezado
         const indice = encabezados.indexOf(nombre);
-        if (indice === -1) {
-            console.warn(`Columna no encontrada: "${nombre}"`);
-        }
         return indice;
     }).filter(indice => indice !== -1); // Filtrar los indices que se encontraron
 }

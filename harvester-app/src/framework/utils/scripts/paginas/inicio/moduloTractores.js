@@ -4,6 +4,8 @@
 const tractoresSeleccionados = {};
 const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
 const { seleccionaDatosAComparar } = require(`${rutaBase}/src/backend/casosUso/excel/seleccionaDatosAComparar.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
+
 
 /* eslint-disable no-undef*/
 
@@ -22,9 +24,7 @@ function inicializarModuloTractores() {
         window.actualizarBarraSuperior('tractores');
     }
     const datosExcel = cargarDatosExcel();
-    if (!datosExcel) {
-        console.warn('No hay datos disponibles para análisis');
-    }
+    
     iniciarDistribuidores(datosExcel);
     iniciarTractores(datosExcel);
     busquedaTractores();
@@ -50,7 +50,8 @@ function iniciarDistribuidores(datosExcel) {
     const hojaExcel = datosExcel.hojas.Distribuidor;
 
     if (!Array.isArray(hojaExcel) || hojaExcel.length === 0) {
-        return console.warn('No se encontraron distribuidores');
+        mostrarAlerta('Ocurrió un problema', 'No se encontraron distribuidores.', 'warning');
+        return;
     }
 
     distribuidorContenedor.style.visibility = 'visible';
@@ -178,7 +179,6 @@ function cambiarSeleccionTractor(nombreTractor, casillaVerificacion) {
     // Actualizar el ícono en el DOM
     cambiarIconoMarcadoADesmarcado(casillaVerificacion);
 
-    console.log('Estado actualizado de tractoresSeleccionados:', tractoresSeleccionados);
 }
 
 /**
@@ -215,7 +215,6 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
             seleccionado: false, columnas: [] 
         };
     }
-    console.log(tractoresSeleccionados);
     columnas.forEach(nombreColumna => {
         const columnaDiv = crearElementoColumna(nombreTractor, nombreColumna);
         columnasContenedor.appendChild(columnaDiv);
@@ -316,7 +315,6 @@ function seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion) {
     seleccion.columnas.sort();
 
     cambiarIconoMarcadoADesmarcado(casillaVerificacion)
-    console.log(tractoresSeleccionados);
 }
 
 /**
@@ -354,13 +352,13 @@ async function botonReporte(datosExcel) {
     const botonAnalisis = document.querySelector('.primario');
     botonAnalisis.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
-        seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
         try {
+            seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
             var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
             window.location.href = vista;
             localStorage.setItem('seccion-activa', 'analisis');
         } catch (error) {
-            console.error('Error al cargar vista:', error);
+            mostrarAlerta('Ocurrió un problema', 'No se pudo cargar el módulo de análisis.', 'error');
         }
     })
 }

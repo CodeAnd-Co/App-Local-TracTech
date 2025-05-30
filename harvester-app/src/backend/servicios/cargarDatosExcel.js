@@ -10,11 +10,10 @@ function cargarDatosExcel() {
         const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
         const datosExcelJSON = localStorage.getItem('datosExcel');
         if (datosDisponibles !== 'true' || !datosExcelJSON) {
-        throw new Error('No hay datos de Excel disponibles');
+            throw new Error('No hay datos de Excel disponibles');
         }
         
         const datosExcel = JSON.parse(datosExcelJSON);
-        console.log('Datos de Excel cargados:', datosExcel);
         return datosExcel;
         
     } catch {
