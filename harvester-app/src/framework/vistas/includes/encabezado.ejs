@@ -12,7 +12,6 @@
   const rutaBase = <%- JSON.stringify(rutaBase) %>;
   const { obtenerPermisos } = require(`${rutaBase}src/framework/utils/scripts/middleware/auth`);
   const permisos = obtenerPermisos();
-  console.log('Permisos del usuario:', permisos);
 </script>
 <body>
   <div id='pantalla-bloqueo' class='pantalla-bloqueo oculto'>
