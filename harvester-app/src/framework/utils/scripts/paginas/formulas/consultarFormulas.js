@@ -40,8 +40,7 @@ async function eliminarFormula(id) {
                 icon: 'error'
             });
         }
-    } catch (error) {
-        console.error('Error al eliminar la fórmula:', error);
+    } catch {
         Swal.fire({
             title: 'Error de conexión',
             text: 'Verifica tu conexión e inténtalo de nuevo.',
@@ -95,7 +94,6 @@ async function renderizarFormulas() {
                 const formulaId = evento.currentTarget.getAttribute('data-id');
 
                 if (!formulaId) {
-                    console.warn('No se encontró data-id en el botón.');
                     return;
                 }
 
@@ -112,11 +110,9 @@ async function renderizarFormulas() {
                         window.location.href = vista;
                         localStorage.setItem('seccion-activa', 'formulas');
                     } catch (err) {
-                        console.error('Error al cargar vista:', err);
+                        return ('Error al cargar vista:', err);
                     }
                     inicializarModificarFormula(idFormula, Nombre, Datos);
-                } else {
-                    console.warn('No se encontró una fórmula con id:', formulaId);
                 }
             });
         });
@@ -129,7 +125,7 @@ async function renderizarFormulas() {
                     window.location.href = vista;
                     localStorage.setItem('seccion-activa', 'formulas');
                 } catch (err) {
-                    console.error('Error al cargar vista:', err);
+                    return ('Error al cargar vista:', err);
                 }
             });
 
@@ -152,8 +148,7 @@ async function renderizarFormulas() {
                             window.cargarModulo('formulas');
                         }
                     });
-                } catch (error) {
-                    console.error('Error al eliminar la fórmula:', error);
+                } catch {
                     Swal.fire({
                         title: 'Error de conexión',
                         text: 'Verifica tu conexión e inténtalo de nuevo.',
@@ -163,8 +158,7 @@ async function renderizarFormulas() {
             });
         });
 
-    } catch (error) {
-        console.error('Error al consultar las fórmulas:', error);
+    } catch {
         document.getElementById('frame-formulas').innerHTML = `<div class='error-carga'>Error al cargar las fórmulas</div>`;
     }
 }

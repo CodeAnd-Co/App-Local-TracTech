@@ -31,8 +31,7 @@ async function verificarEstado(token, dispositivoId) {
             estado: datos.estado,
             mensaje: datos.mensaje,
         };
-    } catch (error) {
-        console.error('Error al verificar estado de la aplicación:', error);
+    } catch {
         return { estado: false, mensaje: 'Error de conexión' };
     }
 }

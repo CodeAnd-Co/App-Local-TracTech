@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Inicio', Icono : 'Casa'});
                 window.location.href = vista;
             } catch (err) {
-                console.error('Error al cargar vista:', err);
+                return ('Error al cargar vista:', err);
             }
 
         } else {
@@ -37,18 +37,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
                 window.location.href = vista;
             } catch (err) {
-                console.error("Error al cargar vista:", err);
+                return ("Error al cargar vista:", err);
             }
         }
-    } catch (error) {
-        console.error('Error al verificar el token:', error);
+    } catch {
         // En caso de error, mostrar la pantalla de carga y luego redirigir a inicio de sesión
         const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
         try {
             const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
             window.location.href = vista;
         } catch (err) {
-            console.error('Error al cargar vista:', err);
+            return ('Error al cargar vista:', err);
         } 
     }
 });

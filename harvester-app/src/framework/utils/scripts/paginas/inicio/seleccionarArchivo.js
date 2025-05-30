@@ -83,7 +83,7 @@ function botonCargar() {
         const botonBorrar = document.getElementById('boton-borrar');
 
         if (!entradaArchivo || !elementoNombreArchivo) {
-            return console.error('No se encontraron los elementos necesarios');
+            return ('No se encontraron los elementos necesarios');
         }
         
         if (localStorage.getItem('nombreArchivoExcel')) {
@@ -138,9 +138,7 @@ function botonCargar() {
                         entradaArchivo.value = '';
                     }
                 } catch (error) {
-                    // En caso de error durante el proceso
-                    console.error('Error procesando el archivo:', error);
-                    
+                  
                     // Actualizar UI
                     elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
                     botonAnalisis.setAttribute('disabled', 'true');
@@ -179,7 +177,7 @@ function botonTractores() {
             window.location.href = vista;
             localStorage.setItem('seccion-activa', 'inicio');
         } catch (err) {
-            console.error('Error al cargar vista:', err);
+            return ('Error al cargar vista:', err);
         }
     })
 }

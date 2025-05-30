@@ -65,8 +65,7 @@ async function inicializarModuloGestionUsuarios() {
 
         configurarValidacionesCampos()
         
-    } catch (error) {
-        console.error('Error al obtener usuarios:', error);
+    } catch {
         document.getElementById('lista-usuarios').innerHTML
         = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
@@ -209,8 +208,7 @@ async function eliminarUsuario(id) {
             icon: 'success',
             confirmButtonColor: '#a61930',
         });
-    } catch (error) {
-        console.error('Error al eliminar el usuario:', error);
+    } catch {
         return Swal.fire({
                 title: 'Error de conexión',
                 text: 'Verifica tu conexión e inténtalo de nuevo.',
@@ -317,7 +315,6 @@ function cargarPagina(pagina) {
 function mostrarUsuarios(usuarios) {
     const listaUsuariosElemento = document.getElementById('lista-usuarios');
     if (!listaUsuariosElemento) {
-        console.error('No se encontró el elemento de la lista de usuarios en el DOM.');
         return;
     }
 
@@ -437,7 +434,6 @@ function modoEditar(idUsuario) {
     // Precargar los datos del usuario
     const usuario = listaUsuarios.find(usuario => usuario.id === Number(idUsuario));
     if (!usuario) {
-        console.error('Usuario no encontrado');
         return;
     }
 
@@ -909,8 +905,7 @@ async function crearUsuario() {
                 confirmButtonColor: '#a61930',
             });
         }
-    } catch (error) {
-        console.error('Error al crear usuario:', error);
+    } catch {
         Swal.fire({
             title: 'Error de red',
             text: 'Hubo un problema al conectar con el servidor.',
@@ -938,14 +933,12 @@ async function guardarRoles() {
         
 
         if (!roles || roles.length === 0) {
-            console.warn('No hay roles disponibles para guardar.');
             rolesCache = []; // Vacía la caché si no hay roles
             return;
         }
 
         rolesCache = roles; // Guarda los roles en la variable global
-    } catch (error) {
-        console.error('Error al cargar y guardar los roles:', error);
+    } catch {
         rolesCache = []; // Vacía la caché en caso de error
     }
 }
@@ -993,8 +986,6 @@ function cargarRoles() {
             // Llenar el <select> con los roles guardados
             llenarSelectConRoles(selectRol);
         });
-    } else {
-        console.error('No se encontró el elemento <select> con id="rol".');
     }
     return
 }
@@ -1026,8 +1017,7 @@ async function deshabilitarDispositivoUsuario(idUsuario) {
                 confirmButtonColor: '#a61930',
             });
         }
-    } catch (error) {
-        console.error('Error al deshabilitar el dispositivo:', error);
+    } catch {
         Swal.fire({
             title: 'Error de conexión',
             text: 'Verifica tu conexión e inténtalo de nuevo.',

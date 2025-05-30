@@ -5,7 +5,6 @@ const {precargarEJS} = require('./framework/utils/scripts/middleware/precargarEJ
 const { verificarEstado } = require('./backend/servicios/verificarEstado');
 const { obtenerID } = require('./backend/servicios/generadorID');
 const { PERMISOS } = require('./framework/utils/scripts/middleware/auth');
-const { mostrarAlerta } = require('./framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal');
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -37,7 +36,7 @@ const createWindow = async () => {
     const vista = await precargarEJS(pantallaCargaPath);
     await mainWindow.loadFile(vista);
   } catch  {
-    mostrarAlerta('Error al cargar la pantalla de carga', 'No se pudo cargar la pantalla de carga.', 'error');
+    return ('Error al cargar la pantalla de carga', 'No se pudo cargar la pantalla de carga.', 'error');
   }
 
 
@@ -90,7 +89,7 @@ async function verificarYManejarEstado() {
             deshabilitarAplicacion('Aplicación deshabilitada por seguridad');
         }
     } catch {
-        mostrarAlerta('Error de conexión', 'No se pudo verificar el estado de la aplicación. Por favor, inténtalo de nuevo más tarde.', 'error');
+        return ('Error de conexión', 'No se pudo verificar el estado de la aplicación. Por favor, inténtalo de nuevo más tarde.', 'error');
     }
 }
 

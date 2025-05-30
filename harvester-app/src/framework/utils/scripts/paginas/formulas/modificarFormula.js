@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (id && nombre && formula) {
         inicializarModificarFormula(id, nombre, formula);
     } else {
-        console.warn('Datos incompletos para modificar la fórmula');
+        return ('Datos incompletos para modificar la fórmula');
     }
 });
 

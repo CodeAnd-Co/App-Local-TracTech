@@ -151,7 +151,6 @@ async function inicializarModuloPlantillas() {
                                                 });
                                             }
                                         } catch (error) {
-                                            console.error('Error al eliminar la plantilla:', error);
                                             Swal.fire({
                                                 title: 'Error',
                                                 text: 'Hubo un error al eliminar la platilla.',
@@ -170,7 +169,6 @@ async function inicializarModuloPlantillas() {
                             icon: 'error',
                             confirmButtonColor: '#a61930',
                             });
-                        console.error(`No se pudo conectar con el servidor, error: ${error}`);
                     }
                 });
             });
@@ -234,7 +232,6 @@ async function inicializarModuloPlantillas() {
                                     });
                                 }
                             } catch (error) {
-                                console.error('Error al eliminar la plantilla:', error);
                                 Swal.fire({
                                     title: 'Error',
                                     text: 'Hubo un error al eliminar la platilla.',
@@ -253,7 +250,6 @@ async function inicializarModuloPlantillas() {
             contenedor?.appendChild(tarjetaTexto);
         }
     } catch (error) {
-        console.error('Error al cargar las plantillas:', error);
         Swal.fire({
             title: 'Error',
             text: 'Hubo un error de conexión.',

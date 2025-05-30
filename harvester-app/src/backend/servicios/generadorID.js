@@ -15,7 +15,7 @@ function obtenerID() {
         try {
             return fs.readFileSync(dispositivoIdPath, 'utf8').trim();
         } catch (error) {
-            console.error('Error al leer ID:', error);
+            return ('Error al leer ID:', error);
         }
     }
     
@@ -39,7 +39,7 @@ function obtenerID() {
     try {
         fs.writeFileSync(dispositivoIdPath, dispositivoId);
     } catch (error) {
-        console.error('Error al guardar dispositivo ID:', error);
+        return ('Error al guardar dispositivo ID:', error);
     }
     
     return dispositivoId;

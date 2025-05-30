@@ -36,7 +36,6 @@ async function manejarInicioSesion() {
       // Obtener permisos del usuario primero
       const resultado = await verificarPermisos(respuesta.token);
       const listaPermisos = resultado.permisos || [];
-      console.log('Permisos del usuario:', listaPermisos);
       localStorage.setItem('permisos', JSON.stringify(listaPermisos));
       const usuario = resultado.usuario;
       localStorage.setItem('nombreUsuario', usuario);
@@ -61,14 +60,13 @@ async function manejarInicioSesion() {
           const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio,{Seccion: 'Inicio', Icono: 'Casa'});
           window.location.href = vista;
       } catch (err) {
-          console.error('Error al cargar vista:', err);
+          return ('Error al cargar vista:', err);
       }
 
     } else {
       mostrarAlerta('Verifica tus datos', respuesta.mensaje, 'warning');
     }
-  } catch (error) {
-    console.error('Error al conectar con el backend:', error);
+  } catch  {
     mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
   }
 }

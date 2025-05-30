@@ -22,7 +22,7 @@ function inicializarModuloTractores() {
     
     // Si hay datos, inicializar la visualización aquí
     if (!datosExcel) {
-        console.warn('No hay datos disponibles para análisis');
+        return ('No hay datos disponibles para análisis');
     }
 
     iniciarDistribuidores(datosExcel);
@@ -51,7 +51,7 @@ function iniciarDistribuidores(datosExcel) {
     const hojaExcel = datosExcel.hojas.Distribuidor;
     
     if (!hojaExcel || !Array.isArray(hojaExcel) || hojaExcel.length === 0) {
-        console.warn('No se encontraron distribuidores');
+        return ('No se encontraron distribuidores');
     } else {
         distribuidorContenedor.style.visibility = 'visible';
         hojaExcel.forEach(fila => {
@@ -155,8 +155,7 @@ function cargarDatosDeExcel() {
         // Parsear los datos JSON
         const datosExcel = JSON.parse(datosExcelJSON);
         return datosExcel;
-    } catch (error) {
-        console.error('Error al cargar datos de Excel:', error);
+    } catch {
         return null;
     }
 }
@@ -256,7 +255,7 @@ async function botonReporte() {
             window.location.href = vista;
             localStorage.setItem('seccion-activa', 'analisis');
         } catch (err) {
-            console.error('Error al cargar vista:', err);
+            return ('Error al cargar vista:', err);
         }
     })
 }
