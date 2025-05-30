@@ -142,11 +142,15 @@ function crearElementoTractor(nombreTractor, datosExcel) {
     casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
     tractorDiv.appendChild(casillaVerificacion);
     
+    // Solo la casilla de verificación cambia el estado de seleccionado
     casillaVerificacion.addEventListener('click', () => cambiarSeleccionTractor(nombreTractor, casillaVerificacion));
+
+    // El texto del tractor solo muestra las columnas
     tractorTextoDiv.addEventListener('click', () => {
         cambiarSeleccionVisualUnica(tractorDiv);
         manejarClickTractor(nombreTractor, datosExcel);
     });
+
     return tractorDiv;
 }
 
@@ -310,9 +314,6 @@ function seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion) {
         seleccion.columnas.splice(indice, 1);
     }
     seleccion.columnas.sort();
-
-    // Si hay al menos una columna seleccionada, marcar el tractor como seleccionado
-    seleccion.seleccionado = seleccion.columnas.length > 0;
 
     cambiarIconoMarcadoADesmarcado(casillaVerificacion)
     console.log(tractoresSeleccionados);
