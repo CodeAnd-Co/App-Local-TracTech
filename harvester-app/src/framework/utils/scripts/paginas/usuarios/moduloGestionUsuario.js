@@ -63,11 +63,11 @@ async function inicializarModuloGestionUsuarios() {
         cargarPagina(1);
 
         configurarValidacionesCampos()
-        
+
     } catch (error) {
         console.error('Error al obtener usuarios:', error);
         document.getElementById('lista-usuarios').innerHTML
-        = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
+            = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
 
     const botonAgregar = document.querySelector('.primario');
@@ -173,8 +173,8 @@ function filtrarUsuarios() {
     if (terminoBusqueda === '') {
         usuariosFiltrados = [...listaUsuarios];
     } else {
-        usuariosFiltrados = listaUsuarios.filter(usuario => 
-            usuario.nombre.toLowerCase().includes(terminoBusqueda) 
+        usuariosFiltrados = listaUsuarios.filter(usuario =>
+            usuario.nombre.toLowerCase().includes(terminoBusqueda)
             || (usuario.correo && usuario.correo.toLowerCase().includes(terminoBusqueda)));
     }
     paginaActual = 1; // Reiniciar la página actual al filtrar
@@ -201,7 +201,7 @@ async function eliminarUsuario(id) {
                 confirmButtonColor: '#3085d6',
             });
         }
-        
+
         return Swal.fire({
             title: 'Eliminación exitosa',
             text: 'El usuario ha sido eliminado.',
@@ -211,11 +211,11 @@ async function eliminarUsuario(id) {
     } catch (error) {
         console.error('Error al eliminar el usuario:', error);
         return Swal.fire({
-                title: 'Error de conexión',
-                text: 'Verifica tu conexión e inténtalo de nuevo.',
-                icon: 'error',
-                confirmButtonColor: '#3085d6',
-            });
+            title: 'Error de conexión',
+            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+        });
     }
 }
 
@@ -364,7 +364,7 @@ function mostrarUsuarios(usuarios) {
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Confirmar',
                 cancelButtonText: 'Cancelar'
-              }).then(async (resultado) => { // Cambiar el callback a async
+            }).then(async (resultado) => { // Cambiar el callback a async
                 if (resultado.isConfirmed) {
                     await eliminarUsuario(id); // Ahora puedes usar await aquí
                     setTimeout(() => {
@@ -420,13 +420,13 @@ function modoEditar(idUsuario) {
     document.querySelector('.btn-guardar').textContent = 'Modificar';
     document.getElementById('columna-crear-modificar-usuario').style.display = 'block';
 
-    
+
     document.getElementById('username').value = usuario.nombre;
     document.getElementById('email').value = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
     document.getElementById('passwordConfirmar').value = '';
     document.getElementById('rol').value = usuario.rol;
-    
+
 }
 
 /**
@@ -442,13 +442,13 @@ async function editarUsuario() {
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
     let hayErroresVisibles = false;
-    
+
     mensajesError.forEach(mensaje => {
         if (mensaje.textContent.trim() !== '') {
             hayErroresVisibles = true;
         }
     });
-    
+
     if (hayErroresVisibles) {
         return Swal.fire({
             title: 'Formulario con errores',
@@ -494,6 +494,7 @@ async function editarUsuario() {
     }
 
     const { idUsuario, nombre, correo, contrasenia, idRol } = datos;
+    console.log('Datos a enviar para modificar usuario:', datos);
 
     try {
         const resultado = await modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol);
@@ -516,7 +517,7 @@ async function editarUsuario() {
             setTimeout(() => {
                 inicializarModuloGestionUsuarios();
             }, 500);
-            
+
             // Ocultar el formulario tras una modificación exitosa
             document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
         } else {
@@ -549,7 +550,7 @@ async function editarUsuario() {
  * @returns {{ error: string|null, datos: Object|null }}
  */
 function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
-    
+
     const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
     // TODO: Utilizar estructuras de control en lugar de operadores ternarios
@@ -573,6 +574,8 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error, datos: null };
         }
         datos.nombre = validator.escape(nombre.trim());
+    } else { 
+        datos.nombre = usuarioAEditar.nombre;
     }
 
     // Validar correo
@@ -588,6 +591,8 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
         }
         datos.correo = correoNormalizado;
+    } else {
+        datos.correo = usuarioAEditar.correo;
     }
 
     // Validar contraseña
@@ -597,6 +602,8 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error, datos: null };
         }
         datos.contrasenia = contrasenia.trim();
+    } else {
+        datos.contrasenia = contrasenia;
     }
 
     // Validar rol
@@ -606,7 +613,10 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error, datos: null };
         }
         datos.idRol = idRol;
+    } else {
+        datos.idRol = idRolUsuarioAEditar;
     }
+    console.log("Datos:", datos)
 
     return { error: null, datos };
 }
@@ -639,7 +649,7 @@ function configurarValidacionesCampos() {
 
     campos.forEach(({ idInput, idError, validador, evento = 'input' }) => {
         const campoEntrada = document.getElementById(idInput);
-        
+
         // Verificar si el campo existe
         if (!campoEntrada) {
             return;
@@ -659,9 +669,9 @@ function configurarValidacionesCampos() {
         // Configurar el evento para validación en tiempo real
         campoEntrada.addEventListener(evento, () => {
             const valor = campoEntrada.value;
-            
+
             // Si el campo está vacío, quitar indicador de error
-            if(valor.trim() === '') {
+            if (valor.trim() === '') {
                 campoEntrada.classList.remove('inputError');
                 mensajeError.textContent = '';
                 return;
@@ -690,7 +700,7 @@ function configurarValidacionesCampos() {
 function validarCoincidenciaContrasenas() {
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('passwordConfirmar');
-    
+
     // Verificar si ambos campos existen
     if (!passwordInput || !confirmPasswordInput) {
         return;
@@ -710,14 +720,14 @@ function validarCoincidenciaContrasenas() {
     const validarCoincidencia = () => {
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
-        
+
         // Si el campo de confirmación está vacío, no mostrar error
         if (confirmPassword.trim() === '') {
             confirmPasswordInput.classList.remove('inputError');
             mensajeError.textContent = '';
             return;
         }
-        
+
         // Validar coincidencia
         if (password !== confirmPassword) {
             confirmPasswordInput.classList.add('inputError');
@@ -730,7 +740,7 @@ function validarCoincidenciaContrasenas() {
 
     // Configurar eventos para validación en tiempo real
     confirmPasswordInput.addEventListener('input', validarCoincidencia);
-    
+
     // También validar cuando cambie la contraseña principal
     passwordInput.addEventListener('input', () => {
         if (confirmPasswordInput.value.trim() !== '') {
@@ -763,13 +773,13 @@ async function crearUsuario() {
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
     let hayErroresVisibles = false;
-    
+
     mensajesError.forEach(mensaje => {
         if (mensaje.textContent.trim() !== '') {
             hayErroresVisibles = true;
         }
     });
-    
+
     if (hayErroresVisibles) {
         return Swal.fire({
             title: 'Formulario con errores',
@@ -819,7 +829,7 @@ async function crearUsuario() {
     }
 
     if (correo.length > 55) {
-        await Swal.fire({ 
+        await Swal.fire({
             title: 'Correo demasiado largo',
             text: 'El correo no puede tener más de 55 caracteres.',
             icon: 'error',
@@ -846,7 +856,7 @@ async function crearUsuario() {
         });
         return
     }
-    
+
 
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
@@ -866,7 +876,7 @@ async function crearUsuario() {
             rolInput.value = '';
 
             document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
-            
+
             // Actualizar la vista para mostrar el nuevo usuario en la lista
             setTimeout(() => {
                 inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
@@ -902,10 +912,10 @@ let rolesCache = [];
  * @returns {Promise<void>}
  */
 async function guardarRoles() {
-    
+
     try {
         const roles = await consultarRolesCU(); // Llama a la función de consultarRoles.js
-        
+
 
         if (!roles || roles.length === 0) {
             console.warn('No hay roles disponibles para guardar.');
@@ -929,7 +939,7 @@ async function guardarRoles() {
 function llenarSelectConRoles(selectRol) {
 
     const rolPorDefecto = usuarioAEditar ? usuarioAEditar.rol : null;
-    
+
     if (!rolesCache || rolesCache.length === 0) {
         selectRol.innerHTML = '<option value="">No hay roles disponibles</option>';
         return;
@@ -937,7 +947,7 @@ function llenarSelectConRoles(selectRol) {
 
     // Limpiar el contenido previo del <select>
     selectRol.innerHTML = `
-        <option value="" disabled ${rolPorDefecto===null ? 'selected' : ''}>
+        <option value="" disabled ${rolPorDefecto === null ? 'selected' : ''}>
         Selecciona rol
         </option>
     `;
@@ -948,7 +958,7 @@ function llenarSelectConRoles(selectRol) {
         option.value = rol.idRol;
         option.textContent = rol.Nombre;
         if (rol.Nombre === rolPorDefecto) {
-          option.selected = true;
+            option.selected = true;
         }
         selectRol.appendChild(option);
     });
