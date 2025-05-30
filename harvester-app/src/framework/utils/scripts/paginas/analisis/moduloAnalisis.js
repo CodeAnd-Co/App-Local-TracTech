@@ -16,14 +16,13 @@ if (typeof ipcRenderer === 'undefined') {
 const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
 
 /**
- * Inicializa la interfaz de análisis:
- * - Oculta los botones globales.
- * - Configura el listener de descarga de PDF.
- * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío.
- * - Configura delegación de eventos para mostrar/ocultar botones flotantes en tarjetas.
-*
-* @returns {void}
-*/
+ * Inicializa la interfaz del módulo de análisis:
+ * - Configura el listener de descarga de PDF con manejo de estados de carga
+ * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío
+ * - Gestiona la pantalla de bloqueo durante la descarga
+ * 
+ * @returns {void}
+ */
 /* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
   
@@ -60,10 +59,11 @@ function inicializarModuloAnalisis() {
 }
 
 /**
- * Carga los datos de Excel almacenados en localStorage.
+ * Carga los datos de Excel almacenados en localStorage y los valida.
+ * Muestra un mensaje de error si los datos no están disponibles o son inválidos.
  * 
- * @returns {Object|null} Datos parseados o null si falla.
-*/
+ * @returns {Object|null} Datos de Excel parseados desde JSON, o null si hay error
+ */
 function cargarDatosExcel() {
   try {
     const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
@@ -88,9 +88,12 @@ function cargarDatosExcel() {
 
 /**
  * Genera y descarga el reporte en PDF usando jsPDF.
-*
-* @throws {Error} Si jsPDF no está cargado o falla la extracción de previsualización.
-*/
+ * Procesa elementos de texto y gráficas del contenedor de previsualización,
+ * aplicando estilos y paginación automática según el contenido.
+ * 
+ * @returns {Promise<void>} Promesa que se resuelve cuando el PDF es enviado para guardar
+ * @throws {Error} Si jsPDF no está cargado o no se encuentra el contenedor de previsualización
+ */
 async function descargarPDF() {
   if (!jsPDF) {
     Swal.fire({
