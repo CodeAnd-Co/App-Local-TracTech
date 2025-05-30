@@ -94,6 +94,7 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('rol').value = '';
 
         actualizarTodosContadores();
+        limpiarMensajesError();
 
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
@@ -107,6 +108,7 @@ async function inicializarModuloGestionUsuarios() {
     nuevoBotonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
         actualizarTodosContadores();
+        limpiarMensajesError();
         columnaCrear.style.display = 'none';
     });
 
@@ -117,6 +119,7 @@ async function inicializarModuloGestionUsuarios() {
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
         actualizarTodosContadores();
+        limpiarMensajesError();
         if (modoActual === modoFormulario.CREAR) {
             // Deshabilitar el botón para evitar múltiples envíos
             nuevoBotonGuardar.disabled = true;
@@ -397,6 +400,7 @@ function escucharEventoBotonesEditar(listaDeUsuarios) {
             modoEditar(boton.dataset.id);
             cargarRoles();
             actualizarTodosContadores();
+            limpiarMensajesError();
         });
     });
 }
@@ -1015,7 +1019,21 @@ function actualizarTodosContadores() {
       if (!contador) return;
       actualizarContador(input, contador, maximoCaracteres);
     });
-}  
+}
+
+/**
+ * Limpia todos los mensajes de error y quita la clase de error de los inputs.
+ */
+function limpiarMensajesError() {
+    // Borra el texto de todos los <small class="mensajeError">…
+    document.querySelectorAll('.mensajeError').forEach(el => {
+      el.textContent = '';
+    });
+    // Quita la clase .inputError de cualquier input que la tuviera
+    document.querySelectorAll('.inputError').forEach(input => {
+      input.classList.remove('inputError');
+    });
+  }  
 
 // Expone la función de inicialización al objeto window
 inicializarModuloGestionUsuarios()
