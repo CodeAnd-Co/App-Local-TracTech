@@ -6,7 +6,6 @@
  * @param {Object} datosExcel - JSON original del excel
  * @param {Object.<string, {seleccionado: boolean, columnas: Array<number>}>} seleccion - Objeto donde las claves son los nombres de los tractores (hojas)
  *                                                     y los valores son arreglos con los nombres de las columnas seleccionadas.
- * @returns {Object} JSON nuevo con los datos y columnas seleccionadas 
  */
 function seleccionaDatosAComparar(datosExcel, seleccion) {
     try {
@@ -14,56 +13,70 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
         console.log('Datos Excel:', datosExcel);
         console.log('Selección:', seleccion);
 
-        Object.entries(seleccion).forEach(([nombreTractor, datosSeleccion]) => {
-            console.log(`Procesando tractor: ${nombreTractor}`, datosSeleccion);
-            if (!datosSeleccion.seleccionado) {
-                return;
+        for (const [nombreHoja, configSeleccion] of Object.entries(seleccion)) {
+            if (!configSeleccion.seleccionado) continue;
+
+            const datosHoja = datosExcel.hojas[nombreHoja];
+            if (!Array.isArray(datosHoja) || configSeleccion.columnas.length === 0) {
+                console.warn(`Hoja inválida o columnas vacías: ${nombreHoja}`);
+                continue;
             }
 
-            // Obtener los datos completos del tractor desde el JSON original
-            const columnasSeleccionadas = datosSeleccion.columnas;
-            const datosTractor = datosExcel.hojas[nombreTractor];
+            const encabezados = datosHoja[0];
+            const columnasDeseadas = configSeleccion.columnas;
 
-            if (!Array.isArray(datosTractor) || columnasSeleccionadas.length === 0) {
-                console.warn(`No se encontró la hoja o columnas vacías para el tractor: ${nombreTractor}`);
-                return;
+            const indicesValidos = obtenerIndicesDeColumnas(encabezados, columnasDeseadas);
+            if (indicesValidos.length === 0) {
+                console.warn(`No se encontraron columnas válidas para la hoja: ${nombreHoja}`);
+                continue;
             }
 
-            const encabezadosOriginales = datosTractor[0];
-            const indicesSeleccionados = columnasSeleccionadas.map(nombreColumna => {
-                const indiceColumna = encabezadosOriginales.indexOf(nombreColumna);
-                if (indiceColumna === -1) {
-                    console.warn(`Columna "${nombreColumna}" no encontrada en ${nombreTractor}`);
-                }
-                return indiceColumna;
-            }).filter(identador => identador !== -1);
+            const filasFiltradas = obtenerFilasFiltradas(datosHoja, indicesValidos);
+            const encabezadosFiltrados = indicesValidos.map(i => encabezados[i]);
 
-            // Procesar las filas y agregar solo las columnas seleccionadas
-            const nuevasFilas = Object.keys(datosTractor)
-                .filter(key => key !== "0") // Ignorar encabezados
-                .map(key => {
-                    const fila = datosTractor[key];
-                    return indicesSeleccionados.map(identador => fila[identador] ?? null); // Solo datos seleccionados
-                });
-
-            // Agregar encabezados seleccionados como la primera fila
-            const encabezadosSeleccionados = indicesSeleccionados.map(identador => encabezadosOriginales[identador]);
-            nuevoJSON.hojas[nombreTractor] = [
-                encabezadosSeleccionados, // Solo los encabezados seleccionados
-                ...nuevasFilas // Filas procesadas sin el nombre del tractor
+            nuevoJSON.hojas[nombreHoja] = [
+                encabezadosFiltrados,
+                ...filasFiltradas
             ];
-
-            console.log(`Filtrado de ${nombreTractor}:`, nuevoJSON.hojas[nombreTractor]);
-        });
+        }
 
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
         console.log('Nuevo JSON guardado en localStorage:', nuevoJSON);
-        return nuevoJSON;
     } catch (error) {
         console.error('Error verificando archivo:', error);
         throw new Error('Error al comparar datos');
     }
+}
+
+/**
+ * Obtiene los índices de las columnas seleccionadas según los encabezados originales.
+ * @param {Array<string>} encabezados - Encabezados de la hoja.
+ * @param {Array<string>} columnasDeseadas - Nombres de columnas a buscar.
+ * @returns {Array<number>} Índices válidos encontrados.
+ */
+function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
+    return columnasDeseadas.map(nombre => {
+        const indice = encabezados.indexOf(nombre);
+        if (indice === -1) {
+            console.warn(`Columna no encontrada: "${nombre}"`);
+        }
+        return indice;
+    }).filter(indice => indice !== -1);
+}
+
+/**
+ * Filtra las filas de una hoja dejando solo las columnas seleccionadas (por índice).
+ * Ignora la primera fila (encabezados).
+ * 
+ * @param {Array<Array<any>>} hoja - Datos de la hoja, incluyendo encabezados.
+ * @param {Array<number>} indices - Índices de columnas a conservar.
+ * @returns {Array<Array<any>>} Filas filtradas.
+ */
+function obtenerFilasFiltradas(hoja, indices) {
+    return hoja.slice(1).map(fila =>
+        indices.map(indice => fila?.[indice] ?? null)
+    );
 }
 
 module.exports = {
