@@ -37,9 +37,12 @@
             name='username'
             placeholder='Nombre del nuevo usuario'
             required
-            maxlength="55"
+            maxlength="45"
           />
-          <small id='mensajeErrorNombre' class='mensajeError'></small>
+          <div class="info-error-contador">
+            <small id='mensajeErrorNombre' class='mensajeError'></small>
+            <div class='contador-caracteres'>0/45 caracteres</div>
+          </div>
         </div>
       
         <div class='campo'>
@@ -50,9 +53,12 @@
             name='email'
             placeholder='Correo del nuevo contacto'
             required
-            maxlength="55"
+            maxlength="50"
           />
-          <small id='mensajeErrorCorreo' class='mensajeError'></small>
+          <div class="info-error-contador">
+            <small id='mensajeErrorCorreo' class='mensajeError'></small>
+            <div class='contador-caracteres'>0/50 caracteres</div>
+          </div>
         </div>
       
         <div class='campo'>
@@ -63,9 +69,12 @@
             name='password'
             placeholder='Contraseña'
             required
-            maxlength="55"
+            maxlength="512"
           />
-          <small id='mensajeErrorContrasenia' class='mensajeError'></small>
+          <div class="info-error-contador">
+            <small id='mensajeErrorContrasenia' class='mensajeError'></small>
+            <div class='contador-caracteres'>0/512 caracteres</div>
+          </div>
         </div>
 
         <div class='campo'>
@@ -76,9 +85,12 @@
             name='passwordConfirmar'
             placeholder='Confirmar contraseña'
             required
-            maxlength="55"
+            maxlength="512"
           />
-          <small id='mensajeErrorConfirmarContrasenia' class='mensajeError'></small>
+          <div class="info-error-contador">
+            <small id='mensajeErrorConfirmacion' class='mensajeError'></small>
+            <div class='contador-caracteres'>0/512 caracteres</div>
+          </div>
         </div>
 
         <div class='verContraseniaInput'>
