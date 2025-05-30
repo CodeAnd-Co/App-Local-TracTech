@@ -13,17 +13,17 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
         console.log('Datos Excel:', datosExcel);
         console.log('Selección:', seleccion);
 
-        for (const [nombreHoja, configSeleccion] of Object.entries(seleccion)) {
-            if (!configSeleccion.seleccionado) continue;
+        for (const [nombreHoja, configuracionSeleccion] of Object.entries(seleccion)) {
+            if (!configuracionSeleccion.seleccionado) continue;
 
             const datosHoja = datosExcel.hojas[nombreHoja];
-            if (!Array.isArray(datosHoja) || configSeleccion.columnas.length === 0) {
+            if (!Array.isArray(datosHoja) || configuracionSeleccion.columnas.length === 0) {
                 console.warn(`Hoja inválida o columnas vacías: ${nombreHoja}`);
                 continue;
             }
 
             const encabezados = datosHoja[0];
-            const columnasDeseadas = configSeleccion.columnas;
+            const columnasDeseadas = configuracionSeleccion.columnas;
 
             const indicesValidos = obtenerIndicesDeColumnas(encabezados, columnasDeseadas);
             if (indicesValidos.length === 0) {
@@ -32,8 +32,9 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
             }
 
             const filasFiltradas = obtenerFilasFiltradas(datosHoja, indicesValidos);
-            const encabezadosFiltrados = indicesValidos.map(i => encabezados[i]);
+            const encabezadosFiltrados = indicesValidos.map(indice => encabezados[indice]);
 
+            // Guardar la hoja filtrada en el nuevo JSON
             nuevoJSON.hojas[nombreHoja] = [
                 encabezadosFiltrados,
                 ...filasFiltradas
@@ -57,12 +58,13 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
  */
 function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
     return columnasDeseadas.map(nombre => {
+        // Buscar la posicion del encabezado
         const indice = encabezados.indexOf(nombre);
         if (indice === -1) {
             console.warn(`Columna no encontrada: "${nombre}"`);
         }
         return indice;
-    }).filter(indice => indice !== -1);
+    }).filter(indice => indice !== -1); // Filtrar los indices que se encontraron
 }
 
 /**
