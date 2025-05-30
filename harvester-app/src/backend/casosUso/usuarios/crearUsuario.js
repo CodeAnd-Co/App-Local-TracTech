@@ -72,8 +72,7 @@ async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
         contrasenia: contraseniaSanitizada,
         idRolFK: idRolFKSanitizada,
     };
-    console.log('Datos sanitizados para crear usuario:', datosApi);
-
+    
     try {
         const respuesta = await crearUsuarioAPI(datosApi);
         if (!respuesta.ok) {

@@ -62,8 +62,9 @@ async function inicializarModuloGestionUsuarios() {
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
 
-        configurarValidacionesCampos()
-
+        configurarValidacionesCampos();
+        configurarContadoresCampos();
+        
     } catch {
         document.getElementById('lista-usuarios').innerHTML
             = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
@@ -91,6 +92,9 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('passwordConfirmar').value = '';
         document.getElementById('rol').value = '';
 
+        actualizarTodosContadores();
+        limpiarMensajesError();
+
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
         listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
@@ -102,6 +106,8 @@ async function inicializarModuloGestionUsuarios() {
     botonCancelar.parentNode.replaceChild(nuevoBotonCancelar, botonCancelar);
     nuevoBotonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
+        actualizarTodosContadores();
+        limpiarMensajesError();
         columnaCrear.style.display = 'none';
     });
 
@@ -111,6 +117,8 @@ async function inicializarModuloGestionUsuarios() {
     botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
+        actualizarTodosContadores();
+        limpiarMensajesError();
         if (modoActual === modoFormulario.CREAR) {
             // Deshabilitar el botón para evitar múltiples envíos
             nuevoBotonGuardar.disabled = true;
@@ -389,6 +397,8 @@ function escucharEventoBotonesEditar(listaDeUsuarios) {
             evento.preventDefault();
             modoEditar(boton.dataset.id);
             cargarRoles();
+            actualizarTodosContadores();
+            limpiarMensajesError();
         });
     });
 }
@@ -814,7 +824,7 @@ async function crearUsuario() {
         return;
     }
 
-    if (nombre.length > 55) {
+    if (nombre.length > 45) {
         await Swal.fire({
             title: 'Nombre demasiado largo',
             text: 'El nombre no puede tener más de 55 caracteres.',
@@ -823,8 +833,8 @@ async function crearUsuario() {
         return;
     }
 
-    if (correo.length > 55) {
-        await Swal.fire({
+    if (correo.length > 50) {
+        await Swal.fire({ 
             title: 'Correo demasiado largo',
             text: 'El correo no puede tener más de 55 caracteres.',
             icon: 'error',
@@ -834,7 +844,7 @@ async function crearUsuario() {
     }
 
 
-    if (contrasenia.length < 5) {
+    if (contrasenia.length < 8) {
         await Swal.fire({
             title: 'Contraseña demasiado corta',
             text: 'La contraseña debe de tener más de 5 caracteres.',
@@ -843,7 +853,7 @@ async function crearUsuario() {
         return
     }
 
-    if (contrasenia.length > 55) {
+    if (contrasenia.length > 512) {
         await Swal.fire({
             title: 'Contraseña demasiado larga',
             text: 'La contraseña no puede tener más de 55 caracteres.',
@@ -971,6 +981,61 @@ function cargarRoles() {
     return
 }
 
+/**
+ * Actualiza el texto de un contador dado el input, su contenedor de contador y el maxlength.
+ * @param {HTMLInputElement} input
+ * @param {HTMLElement} contador
+ * @param {number|string} maximoCaracteres
+ */
+function actualizarContador(input, contador, maximoCaracteres) {
+    contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
+}
+  
+/**
+ * Actualiza los contadores de caracteres que ya existen en el HTML.
+ * No inserta nada, solo los inicializa y los mantiene al día.
+ */
+function configurarContadoresCampos() {
+document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
+    const maximoCaracteres = input.getAttribute('maxlength');
+    const contador = input.parentNode.querySelector('.contador-caracteres');
+    if (!contador) return;
+
+    // Inicializa una sola llamada a la función extraída
+    actualizarContador(input, contador, maximoCaracteres);
+
+    // Y vuelve a usar la misma función como callback
+    input.addEventListener('input', () => {
+    actualizarContador(input, contador, maximoCaracteres);
+    });
+});
+}  
+
+/**
+ * Recalcula TODOS los contadores a partir del valor actual de cada input.
+ */
+function actualizarTodosContadores() {
+    document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
+      const maximoCaracteres = input.getAttribute('maxlength');
+      const contador = input.parentNode.querySelector('.contador-caracteres');
+      if (!contador) return;
+      actualizarContador(input, contador, maximoCaracteres);
+    });
+}
+
+/**
+ * Limpia todos los mensajes de error y quita la clase de error de los inputs.
+ */
+function limpiarMensajesError() {
+    // Borra el texto de todos los <small class="mensajeError">…
+    document.querySelectorAll('.mensajeError').forEach(el => {
+      el.textContent = '';
+    });
+    // Quita la clase .inputError de cualquier input que la tuviera
+    document.querySelectorAll('.inputError').forEach(input => {
+      input.classList.remove('inputError');
+    });
+  }  
 
 // Expone la función de inicialización al objeto window
 inicializarModuloGestionUsuarios()

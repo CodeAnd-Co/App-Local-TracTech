@@ -30,10 +30,12 @@
           <span>Envíos</span>
         </button>
         -->
+        <% if (permisos.includes('ADMIN')) { %>
         <button class='boton-sidebar' data-seccion='usuarios'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Gestión Usuarios' />
           <span>Gestión Usuarios</span>
         </button>
+        <% } %>
       </div>
     </div>
 
@@ -64,9 +66,11 @@
         <button class='boton-sidebar' data-seccion='formulas'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Funcion.svg' alt='Fórmulas' />
         </button>
+        <% if (permisos.includes('ADMIN')) { %>
         <button class='boton-sidebar' data-seccion='usuarios'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Gestión Usuarios' />
         </button>
+        <% } %>
         <!---
         <button class='boton-sidebar' data-seccion='envios'>
           <img src='../utils/iconos/Correo.svg' alt='Envíos' />
