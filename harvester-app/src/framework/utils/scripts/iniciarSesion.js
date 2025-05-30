@@ -47,17 +47,13 @@ async function manejarInicioSesion() {
       // Solo verificar estado del dispositivo si NO es superadministrador
       if (!esSuperAdmin) {
         const dispositivoID = obtenerID();
-        console.log('Verificando estado para dispositivo:', dispositivoID);
         
         const verificacion = await verificarEstado(respuesta.token, dispositivoID);
-        console.log('Estado de la aplicación:', verificacion);
         if (!verificacion.estado) {
           mostrarAlerta('Aplicación deshabilitada', 'La aplicación ha sido deshabilitada por el administrador. Por favor, contacta al soporte técnico.', 'error');
           localStorage.clear();
           return;
         }
-      } else {
-        console.log('Usuario superadministrador detectado - omitiendo verificación de dispositivo');
       }
       
       const rutaInicio = `${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`;

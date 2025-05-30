@@ -52,9 +52,7 @@ async function iniciarSesion(correo, contrasenia) {
     const respuesta = await iniciarSesionAPI(correoSanitizado, contraseniaSanitizada);
     return respuesta;
 
-  } catch (error) {
-
-    console.error('Error al iniciar sesión:', error);
+  } catch  {
 
     // Lanzar un mensaje genérico para otros errores
     return { ok: false, mensaje: 'Error al iniciar sesión' };

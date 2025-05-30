@@ -44,8 +44,7 @@ function botonBorrar() {
                 text: 'No podrás recuperar el archivo eliminado.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#1F4281',
-                cancelButtonColor: '#A61930',
+                confirmButtonColor: '#a61930',
                 confirmButtonText: 'Eliminar',
                 cancelButtonText: 'Cancelar'
               }).then((result) => {
@@ -54,7 +53,7 @@ function botonBorrar() {
                     title: 'Eliminado',
                     text: 'El archivo ha sido eliminado.',
                     icon: 'success',
-                    confirmButtonColor: '#1F4281',
+                    confirmButtonColor: '#a61930',
                   });
                   borrarExcel();
                   botonAnalisis.setAttribute('disabled', 'true');
@@ -131,7 +130,7 @@ function botonCargar() {
                             title: 'Archivo no válido',
                             text: resultado.mensaje,
                             icon: 'error',
-                            confirmButtonColor: '#1F4281',
+                            confirmButtonColor: '#a61930',
                             confirmButtonText: 'Entendido'
                         });
                         
@@ -153,7 +152,7 @@ function botonCargar() {
                         title: 'Error al procesar archivo',
                         text: error.mensaje || 'Ha ocurrido un error al procesar el archivo.',
                         icon: 'error',
-                        confirmButtonColor: '#1F4281',
+                        confirmButtonColor: '#a61930',
                         confirmButtonText: 'Aceptar'
                     });
                     

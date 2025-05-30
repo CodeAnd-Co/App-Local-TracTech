@@ -99,6 +99,7 @@
 }
 
 .boton-editar,
+.boton-deshabilitar,
 .boton-eliminar {
   background: #fff;
   border: 2px solid #000;
@@ -106,11 +107,16 @@
   padding: .5rem;
   cursor: pointer;
 }
+.boton-deshabilitar {
+  background: #a61930;
+  border-color: rgba(255,255,255,.15);
+}
 .boton-eliminar {
   background: #a61930;
   border-color: rgba(255,255,255,.15);
 }
 .boton-editar img,
+.boton-deshabilitar img,
 .boton-eliminar img {
   display: block;
   width: 3rem;

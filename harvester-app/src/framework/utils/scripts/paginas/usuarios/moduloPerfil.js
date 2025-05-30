@@ -59,7 +59,7 @@ function inicializarModuloUsuario() {
           title: 'Error',
           text: 'Hubo un error al cerrar sesión.',
           icon: 'error',
-          confirmButtonColor: '#1F4281',
+          confirmButtonColor: '#a61930',
         });
 
         botonCerrarSesion.innerHTML = contenidoOriginal;

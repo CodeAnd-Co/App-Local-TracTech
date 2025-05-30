@@ -55,7 +55,7 @@ async function inicializarCrearFormula() {
                             title: 'Error',
                             text: 'No se ha podido generar la fórmula.',
                             icon: 'error',
-                            confirmButtonColor: '#1F4281',
+                            confirmButtonColor: '#a61930',
                         });
                     }
                 });
@@ -65,7 +65,7 @@ async function inicializarCrearFormula() {
                         title: 'Error',
                         text: 'No hay un archivo cargado.',
                         icon: 'error',
-                        confirmButtonColor: '#1F4281',
+                        confirmButtonColor: '#a61930',
                     });
                     document.getElementById('btnGuardar').disabled = true;
                     document.getElementById('btnGenerar').disabled = true;
@@ -98,7 +98,7 @@ async function procesarFormula() {
             title: 'Error',
             text: `Verifica que la formula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         return;
     }
@@ -109,7 +109,7 @@ async function procesarFormula() {
                 title: 'Error',
                 text: 'Ya existe una fórmula con ese nombre.',
                 icon: 'error',
-                confirmButtonColor: '#1F4281',
+                confirmButtonColor: '#a61930',
             });
             return;
         }
@@ -132,7 +132,7 @@ async function procesarFormula() {
             title: 'Error',
             text: 'Verifica que la fórmula ha sido generada.',
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         // Restaurar el botón en caso de error
         btnGuardar.innerHTML = contenidoOriginal;
@@ -143,7 +143,7 @@ async function procesarFormula() {
             title: 'Error',
             text: 'Verifica que la fórmula esté completa.',
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         // Restaurar el botón en caso de error
         btnGuardar.innerHTML = contenidoOriginal;
@@ -156,7 +156,7 @@ async function procesarFormula() {
             title: 'Error',
             text: `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`,
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
@@ -173,7 +173,7 @@ async function procesarFormula() {
                 title: 'Error',
                 text: 'Hubo un error al guardar la fórmula.',
                 icon: 'error',
-                confirmButtonColor: '#1F4281',
+                confirmButtonColor: '#a61930',
             });
             
             // Restaurar el botón en caso de error
@@ -185,7 +185,7 @@ async function procesarFormula() {
             title: 'Error',
             text: 'Hubo un error en la conexión.',
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         
         // Restaurar el botón en caso de error
@@ -196,7 +196,7 @@ async function procesarFormula() {
         title: 'Fórmula guardada',
         text: 'La fórmula ha sido guardada exitosamente.',
         icon: 'success',
-        confirmButtonColor: '#1F4281',
+        confirmButtonColor: '#a61930',
     });
 }
 
@@ -490,7 +490,7 @@ function validarCamposFormula(contenedor) {
             title: 'Error',
             text: mensajeError,
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
     }
     
@@ -513,7 +513,7 @@ function generarFormulaCompleja() {
             title: 'Error',
             text: 'Por favor, selecciona una función principal.',
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         return;
     }
@@ -689,7 +689,7 @@ function popularDropdown(elementoSeleccionado) {
             title: 'Error',
             text: 'El archivo seleccionado no tiene parámetros.',
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         return;
     }
@@ -725,7 +725,7 @@ function activarBotonesCrear(){
                     title: 'Error',
                     text: 'No se ha podido generar la fórmula.',
                     icon: 'error',
-                    confirmButtonColor: '#1F4281',
+                    confirmButtonColor: '#a61930',
                 });
             }
         });

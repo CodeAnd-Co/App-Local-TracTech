@@ -13,8 +13,7 @@ function consultaFormulasCasoUso() {
     try{
         const respuesta = consultarFormulas(token);
         return respuesta;
-    } catch(error){
-        console.error('Error al consultar las fórmulas:', error);
+    } catch{
         throw new Error('No se obtuvo ninguna fórmula');
     }
 }

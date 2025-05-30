@@ -5,6 +5,7 @@ const {precargarEJS} = require('./framework/utils/scripts/middleware/precargarEJ
 const { verificarEstado } = require('./backend/servicios/verificarEstado');
 const { obtenerID } = require('./backend/servicios/generadorID');
 const { PERMISOS } = require('./framework/utils/scripts/middleware/auth');
+const { mostrarAlerta } = require('./framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal');
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -35,8 +36,8 @@ const createWindow = async () => {
   try {
     const vista = await precargarEJS(pantallaCargaPath);
     await mainWindow.loadFile(vista);
-  } catch (err) {
-    console.error("Error al cargar vista:", err);
+  } catch  {
+    mostrarAlerta('Error al cargar la pantalla de carga', 'No se pudo cargar la pantalla de carga.', 'error');
   }
 
 
@@ -52,13 +53,13 @@ const createWindow = async () => {
 // y esté listo para crear ventanas del navegador.
 
 function iniciarVerificacionPeriodica() {
-    // Verificar cada 5 minutos
+    // Verificar cada 2 minutos
     const verificacionIntervalo = setInterval(async () => {
         await verificarYManejarEstado();
-    }, 0.5 * 60 * 1000);
+    }, 2 * 60 * 1000);
 
     // Verificación inicial
-    setTimeout(verificarYManejarEstado, 15000); // 2 segundos después del inicio
+    setTimeout(verificarYManejarEstado, 15000); // 15 segundos después del inicio
     
     // Guardar el intervalo para poder limpiarlo si es necesario
     app.verificacionIntervalo = verificacionIntervalo;
@@ -72,7 +73,6 @@ async function verificarYManejarEstado() {
     const dispositivoId = obtenerID();
     
     if (!token) {
-        console.log('No hay token disponible para verificación');
         return;
     }
     
@@ -81,23 +81,16 @@ async function verificarYManejarEstado() {
     const esSuperAdmin = permisos.includes(PERMISOS.SUPERADMIN);
     
     if (esSuperAdmin) {
-        console.log('Usuario superadministrador detectado - omitiendo verificación periódica de dispositivo');
         return;
     }
     
     try {
-        console.log('Verificando estado del dispositivo:', dispositivoId);
         const verificacion = await verificarEstado(token, dispositivoId);
-        console.log('Estado recibido:', verificacion);
         if (!verificacion.estado) {
-            console.log('Aplicación deshabilitada');
             deshabilitarAplicacion('Aplicación deshabilitada por seguridad');
-        } else {
-            console.log('Aplicación activa');
         }
-    } catch (error) {
-        console.error('Error en verificación de estado:', error);
-        // No deshabilitar por errores de red, solo registrar
+    } catch {
+        mostrarAlerta('Error de conexión', 'No se pudo verificar el estado de la aplicación. Por favor, inténtalo de nuevo más tarde.', 'error');
     }
 }
 
@@ -132,9 +125,7 @@ async function deshabilitarAplicacion(mensaje) {
             // Limpiar datos sensibles
             await limpiarDatosSensibles();
             
-        } catch (err) {
-            console.error("Error al cargar pantalla de bloqueo:", err);
-            // Como último recurso, cerrar la aplicación
+        } catch  {
             app.quit();
         }
     }
@@ -150,6 +141,7 @@ async function limpiarDatosSensibles() {
                 localStorage.clear();
             `);
         } catch (error) {
+
             console.error('Error al limpiar datos sensibles:', error);
         }
     }
@@ -228,8 +220,7 @@ ipcMain.handle('verificar-estado-aplicacion', async () => {
     
     try {
         return await verificarEstado(token, dispositivoId);
-    } catch (error) {
-        console.error('Error en verificación manual:', error);
+    } catch  {
         return { estado: false, mensaje: 'Error de conexión' };
     }
 });

@@ -112,8 +112,7 @@ async function inicializarModuloPlantillas() {
                                         text: 'No podrás recuperar la plantilla eliminada.',
                                         icon: 'warning',
                                         showCancelButton: true,
-                                        confirmButtonColor: '#1F4281',
-                                        cancelButtonColor: '#A61930',
+                                        confirmButtonColor: '#a61930',
                                         confirmButtonText: 'Eliminar',
                                         cancelButtonText: 'Cancelar'
                                     });
@@ -148,7 +147,7 @@ async function inicializarModuloPlantillas() {
                                                     title: 'Error',
                                                     text: 'Hubo un error al eliminar la platilla.',
                                                     icon: 'error',
-                                                    confirmButtonColor: '#1F4281',
+                                                    confirmButtonColor: '#a61930',
                                                 });
                                             }
                                         } catch (error) {
@@ -157,7 +156,7 @@ async function inicializarModuloPlantillas() {
                                                 title: 'Error',
                                                 text: 'Hubo un error al eliminar la platilla.',
                                                 icon: 'error',
-                                                confirmButtonColor: '#1F4281',
+                                                confirmButtonColor: '#a61930',
                                             });
                                         }
                                     }
@@ -169,7 +168,7 @@ async function inicializarModuloPlantillas() {
                             title: 'Error',
                             text: 'Hubo un error de conexión.',
                             icon: 'error',
-                            confirmButtonColor: '#1F4281',
+                            confirmButtonColor: '#a61930',
                             });
                         console.error(`No se pudo conectar con el servidor, error: ${error}`);
                     }
@@ -200,8 +199,7 @@ async function inicializarModuloPlantillas() {
                             text: 'No podrás recuperar la plantilla eliminada.',
                             icon: 'warning',
                             showCancelButton: true,
-                            confirmButtonColor: '#1F4281',
-                            cancelButtonColor: '#A61930',
+                            confirmButtonColor: '#a61930',
                             confirmButtonText: 'Eliminar',
                             cancelButtonText: 'Cancelar'
                         });
@@ -232,7 +230,7 @@ async function inicializarModuloPlantillas() {
                                         title: 'Error',
                                         text: 'Hubo un error al eliminar la platilla.',
                                         icon: 'error',
-                                        confirmButtonColor: '#1F4281',
+                                        confirmButtonColor: '#a61930',
                                     });
                                 }
                             } catch (error) {
@@ -241,7 +239,7 @@ async function inicializarModuloPlantillas() {
                                     title: 'Error',
                                     text: 'Hubo un error al eliminar la platilla.',
                                     icon: 'error',
-                                    confirmButtonColor: '#1F4281',
+                                    confirmButtonColor: '#a61930',
                                 });
                             }
                         }
@@ -260,7 +258,7 @@ async function inicializarModuloPlantillas() {
             title: 'Error',
             text: 'Hubo un error de conexión.',
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
     }
 }

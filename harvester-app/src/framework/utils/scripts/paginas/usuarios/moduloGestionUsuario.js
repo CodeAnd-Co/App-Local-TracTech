@@ -9,6 +9,7 @@ const { crearUsuario: crearUsuarioCU } = require(`${rutaBase}src/backend/casosUs
 const { obtenerUsuarios } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarUsuarios.js`);
 const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/eliminarUsuario`);
 const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarRoles.js`);
+const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dispositivos/deshabilitarDispositivo.js`);
 const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
 
@@ -198,7 +199,7 @@ async function eliminarUsuario(id) {
                 title: 'Error',
                 text: 'Error al eliminar el usuario.',
                 icon: 'error',
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#a61930',
             });
         }
         
@@ -206,7 +207,7 @@ async function eliminarUsuario(id) {
             title: 'Eliminación exitosa',
             text: 'El usuario ha sido eliminado.',
             icon: 'success',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#a61930',
         });
     } catch (error) {
         console.error('Error al eliminar el usuario:', error);
@@ -214,7 +215,7 @@ async function eliminarUsuario(id) {
                 title: 'Error de conexión',
                 text: 'Verifica tu conexión e inténtalo de nuevo.',
                 icon: 'error',
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#a61930',
             });
     }
 }
@@ -331,6 +332,12 @@ function mostrarUsuarios(usuarios) {
     for (const { id, nombre } of usuarios) {
         const div = document.createElement('div');
         div.className = 'frame-usuario';
+        
+        const botonDeshabilitar =  `
+                <button class='boton-deshabilitar' data-id='${id}'>
+                  <img src='${rutaBase}src/framework/utils/iconos/Deshabilitar.svg' alt='Deshabilitar Dispositivo'/>
+                </button>` ;
+        
         div.innerHTML = `
             <div class='nombre-usuario'>
                 <div class='texto-usuario'>${nombre}</div>
@@ -338,6 +345,7 @@ function mostrarUsuarios(usuarios) {
                 <button class='boton-editar' data-id='${id}'>
                   <img src='${rutaBase}src/framework/utils/iconos/Editar2.svg' alt='Editar'/>
                 </button>
+                ${botonDeshabilitar}
                 <button class='boton-eliminar' data-id='${id}'>
                   <img src='${rutaBase}src/framework/utils/iconos/BasuraBlanca.svg' alt='Eliminar'/>
                 </button>
@@ -360,8 +368,7 @@ function mostrarUsuarios(usuarios) {
                 text: 'Esta acción no se puede deshacer.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#a61930',
                 confirmButtonText: 'Confirmar',
                 cancelButtonText: 'Cancelar'
               }).then(async (resultado) => { // Cambiar el callback a async
@@ -370,6 +377,29 @@ function mostrarUsuarios(usuarios) {
                     setTimeout(() => {
                         inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
                     }, 500);
+                }
+            });
+        });
+    });
+
+    // Añadir eventos a los botones de deshabilitar dispositivo
+    const botonesDeshabilitarDispositivo = listaUsuariosElemento.querySelectorAll('.boton-deshabilitar');
+    botonesDeshabilitarDispositivo.forEach(boton => {
+        boton.addEventListener('click', async evento => {
+            evento.preventDefault();
+            const idUsuario = boton.getAttribute('data-id');
+
+            Swal.fire({
+                title: '¿Deshabilitar dispositivo?',
+                html: `La aplicación Harvester en el dispositivo vinculado al usuario será inaccesible.<br><br><strong>SOLO DESHABILITAR EN CASO DE ROBO O PÉRDIDA DEL DISPOSITIVO.</strong>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#a61930',
+                confirmButtonText: 'Deshabilitar',
+                cancelButtonText: 'Cancelar'
+            }).then(async (resultado) => {
+                if (resultado.isConfirmed) {
+                    await deshabilitarDispositivoUsuario(idUsuario);
                 }
             });
         });
@@ -454,7 +484,7 @@ async function editarUsuario() {
             title: 'Formulario con errores',
             text: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
             icon: 'warning',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#a61930',
         });
     }
 
@@ -471,7 +501,7 @@ async function editarUsuario() {
                 title: 'Contraseñas no coinciden',
                 text: 'La contraseña y su confirmación deben ser iguales.',
                 icon: 'warning',
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#a61930',
             });
         }
     }
@@ -489,7 +519,7 @@ async function editarUsuario() {
             title: 'Error',
             text: error,
             icon: 'warning',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#a61930',
         });
     }
 
@@ -502,7 +532,7 @@ async function editarUsuario() {
                 title: 'Usuario modificado',
                 text: resultado.mensaje || 'El usuario fue modificado correctamente.',
                 icon: 'success',
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#a61930',
             });
 
             // Limpiar los campos del formulario
@@ -524,7 +554,7 @@ async function editarUsuario() {
                 title: 'Error al modificar usuario',
                 text: resultado.mensaje || 'No se pudo modificar el usuario.',
                 icon: 'error',
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#a61930',
             });
         }
     } catch (error) {
@@ -532,7 +562,7 @@ async function editarUsuario() {
             title: 'Error de red',
             text: error.message || 'Hubo un problema al conectar con el servidor.',
             icon: 'error',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#a61930',
         });
     }
 }
@@ -775,7 +805,7 @@ async function crearUsuario() {
             title: 'Formulario con errores',
             text: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
             icon: 'warning',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#a61930',
         });
     }
 
@@ -785,7 +815,7 @@ async function crearUsuario() {
             title: 'Contraseñas no coinciden',
             text: 'La contraseña y su confirmación deben ser iguales.',
             icon: 'warning',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#a61930',
         });
     }
 
@@ -795,7 +825,7 @@ async function crearUsuario() {
             title: 'Datos incompletos',
             text: 'Por favor, completa todos los campos.',
             icon: 'warning',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#a61930',
         });
     }
 
@@ -855,7 +885,7 @@ async function crearUsuario() {
                 title: 'Usuario creado',
                 text: resultado.mensaje || 'El usuario fue registrado correctamente.',
                 icon: 'success',
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#a61930',
             });
 
             // Limpiar los campos del formulario
@@ -876,7 +906,7 @@ async function crearUsuario() {
                 title: 'Error al crear usuario',
                 text: resultado.mensaje || 'No se pudo registrar el usuario.',
                 icon: 'error',
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#a61930',
             });
         }
     } catch (error) {
@@ -885,7 +915,7 @@ async function crearUsuario() {
             title: 'Error de red',
             text: 'Hubo un problema al conectar con el servidor.',
             icon: 'error',
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#a61930',
         });
     }
 }
@@ -967,6 +997,44 @@ function cargarRoles() {
         console.error('No se encontró el elemento <select> con id="rol".');
     }
     return
+}
+
+/**
+ * Deshabilita el dispositivo de un usuario específico.
+ * Llama al backend para deshabilitar el dispositivo del usuario y muestra retroalimentación.
+ * @async
+ * @function deshabilitarDispositivoUsuario
+ * @param {string} idUsuario - ID del usuario cuyo dispositivo se va a deshabilitar
+ * @returns {Promise<void>}
+ */
+async function deshabilitarDispositivoUsuario(idUsuario) {
+    try {
+        const respuesta = await deshabilitarDispositivo(idUsuario);
+
+        if (respuesta.ok) {
+            Swal.fire({
+                title: 'Dispositivo deshabilitado',
+                text: respuesta.mensaje || 'El dispositivo del usuario ha sido deshabilitado exitosamente.',
+                icon: 'success',
+                confirmButtonColor: '#a61930',
+            });
+        } else {
+            Swal.fire({
+                title: 'Error al deshabilitar dispositivo',
+                text: respuesta.mensaje || 'No se pudo deshabilitar el dispositivo del usuario.',
+                icon: 'error',
+                confirmButtonColor: '#a61930',
+            });
+        }
+    } catch (error) {
+        console.error('Error al deshabilitar el dispositivo:', error);
+        Swal.fire({
+            title: 'Error de conexión',
+            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#a61930',
+        });
+    }
 }
 
 
