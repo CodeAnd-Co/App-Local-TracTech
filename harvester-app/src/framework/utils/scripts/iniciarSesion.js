@@ -38,8 +38,7 @@ async function manejarInicioSesion() {
       const usuario = resultado.usuario;
       localStorage.setItem('nombreUsuario', usuario);
       const rutaInicio = `${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`;
-      try {
-          const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio,{Seccion: 'Inicio', Icono: 'Casa'});
+      try {          const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio,{Seccion: 'Inicio', Icono: 'Casa', permisos});
           window.location.href = vista;
       } catch (err) {
           console.error('Error al cargar vista:', err);
