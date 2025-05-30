@@ -1,17 +1,16 @@
 /* === Layout de dos columnas === */
 .container {
   display: flex;         /* activa Flexbox */
-  gap: 130px;             /* espacio entre columnas */
+  gap: 65px;            /* espacio entre columnas */
 }
 
 /* Ajuste de anchos: puedes cambiar 2/1 por la proporción que necesites */
 .columna-busqueda-usuario {
   gap: 30px;
-  display: flex;       /* necesario para que gap funcione */
-  flex-direction: column; /* para que los elementos se apilen verticalmente */
+  display: flex;         /* necesario para que gap funcione */
+  flex-direction: column;/* para que los elementos se apilen verticalmente */
   flex: 2;
 }
-
 
 .columna-crear-modificar-usuario {
   flex: 1;
@@ -41,18 +40,15 @@
 #buscar-usuario {
   flex: 1;
   background: transparent; /* Fondo transparente para mostrar el fondo del contenedor */
-  border: none; /* Eliminar borde */
-  outline: none; /* Eliminar contorno al foco */
+  border: none;            /* Eliminar borde */
+  outline: none;           /* Eliminar contorno al foco */
   font-size: 1.125rem;
-  color: rgba(0,0,0,.8); /* Color de texto al escribir */
+  color: rgba(0,0,0,.8);
 }
-
 #buscar-usuario::placeholder {
   color: rgba(0,0,0,.33); /* Color del placeholder */
   font-size: 1.125rem;
 }
-
-/* Elimina la clase placeholder del input y actualiza el selector existente */
 .secundario .placeholder {
   flex: 1;
   color: rgba(0,0,0,.33);
@@ -73,6 +69,7 @@
 }
 .primario .mas { width: 3rem; height: 3rem; }
 
+
 /* === Lista de usuarios === */
 .lista-usuarios {
   display: flex;
@@ -82,20 +79,17 @@
 
 .frame-usuario {
   display: flex;
-  align-items: center;
-  flex-direction: row;
+  align-items: stretch;
   gap: .75rem;
 }
 
 .nombre-usuario {
-  height: 100%;
   flex: 1;
   padding: 1rem;
   background: #fff;
   border: 1.5px solid #000;
   border-radius: .4rem;
   font-size: 1.125rem;
-  flex-direction: row;
 }
 
 .boton-editar,
@@ -123,16 +117,16 @@
   height: 3rem;
 }
 
+
 /* === Paginación === */
 .paginacion {
   display: flex;
   gap: .5rem;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 1.75rem;
 }
 .paginacion button,
 .paginacion span {
-  text-decoration: none;
   color: #000;
   padding: .25rem .5rem;
 }
@@ -140,29 +134,26 @@
   font-size: 1.5rem;
   color: #a61930;
 }
-
-/* Botones de paginación */
 .boton-pagina-previa,
 .boton-pagina,
 .boton-pagina-siguiente {
   background: transparent !important;
   border: none !important;
-  padding: 4px 8px; /* para mantener el «click‐area» */
-  color: inherit;    /* hereda el color del texto */
+  padding: 4px 8px;
+  font-size: 1.125rem;
+  color: inherit;
   cursor: pointer;
 }
-
-/* El botón de la página actual puede llevar subrayado o color distinto */
 .boton-pagina.pagina-actual {
   text-decoration: underline;
+  font-size: 1.75rem;
   font-weight: bold;
 }
-
-/* Los «…» también pueden ir sin fondo */
 .puntos-paginacion {
   background: transparent;
   padding: 0 4px;
 }
+
 
 /* === Pop-out (columna crear usuario) === */
 .pop-out {
@@ -173,9 +164,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.125rem;
-  width: 600px; /* Ancho fijo */
-  height: 100%; /* Alto fijo */
-  margin: 0 auto; /* Centra el contenedor horizontalmente */
+  width: 600px;
+  height: 100%;
+  margin: 0 auto;
 }
 
 .pop-out .crear-modificar-usuario {
@@ -208,23 +199,23 @@
   font-size: 1rem;
 }
 
-.pop-out .verContrasenia{
+.pop-out .verContraseniaEntrada {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
+  gap: .5rem;
+  margin-top: .25rem;
   font-size: 1rem;
   color: rgba(0,0,0,.8);
   cursor: pointer;
 }
 
-.pop-out .verContrasenia input[type="checkbox"] {
+.pop-out .verContraseniaEntrada input[type="checkbox"] {
   width: 1rem;
   height: 1rem;
   cursor: pointer;
 }
 
-.pop-out .verContrasenia label {
+.pop-out .verContraseniaEntrada label {
   font-size: 1rem;
   cursor: pointer;
 }
@@ -261,21 +252,51 @@
   cursor: pointer;
 }
 
-/* Mensajes de error bajo los campos */
+
+/* === Mensajes de error bajo los campos === */
 .mensajeError {
-  display: none;          /* oculto por defecto */
-  color: #e63946;         /* letra roja */
-  font-size: 0.875rem;    /* un poco más pequeña que el texto normal */
-  min-height: 1em;        /* reserva espacio aunque esté vacío */
-  margin-top: 0.25rem;    /* separación con el input */
+  visibility: hidden;
+  display: block;        /* sigue estando en el flujo */
+  color: #e63946;
+  font-size: 0.875rem;
+  min-height: 1em;
+  margin: 0;
 }
 
-/* Input en estado de error: borde en rojo */
-.inputError {
-  border-color: #e63946 !important;
+/* Cuando el input tiene .inputError, sólo cambiamos visibility */
+.inputError + .info-error-contador .mensajeError {
+  visibility: visible;
 }
 
-/* Cuando el input tenga clase .input-error, muestra el mensaje bajo él */
-.inputError + .mensajeError {
-  display: block;
+
+/* === Contador de caracteres === */
+.contador-caracteres {
+  font-size: 12px;
+  text-align: right;
+  color: #7f8c8d;
+  margin: 4px 0;
+  padding-right: 4px;
+  white-space: nowrap;
+}
+
+/* === Contenedor para mensaje de error + contador === */
+.info-error-contador {
+  display: flex;
+  justify-content: space-between; /* error izq, contador der */
+  align-items: center;            /* alineación vertical centrada */
+  margin-top: 4px;                /* espacio bajo el input */
+  flex-wrap: nowrap;              /* que no bajen */
+}
+
+/* Permitir que el mensaje de error crezca y se trunque si es muy largo */
+.info-error-contador .mensajeError {
+  flex: 1;
+  margin-right: 8px;
+  min-width: 0;        /* permite truncar dentro de flex */
+}
+
+/* Evitar que el contador se encoja o haga wrap */
+.info-error-contador .contador-caracteres {
+  flex-shrink: 0;
+  white-space: nowrap;
 }

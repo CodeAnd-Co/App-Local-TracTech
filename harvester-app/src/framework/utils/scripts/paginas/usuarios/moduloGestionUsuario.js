@@ -63,7 +63,8 @@ async function inicializarModuloGestionUsuarios() {
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
 
-        configurarValidacionesCampos()
+        configurarValidacionesCampos();
+        configurarContadoresCampos();
         
     } catch {
         Swal.fire({
@@ -73,7 +74,7 @@ async function inicializarModuloGestionUsuarios() {
             confirmButtonColor: '#a61930',
         });
         document.getElementById('lista-usuarios').innerHTML
-        = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
+            = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
 
     const botonAgregar = document.querySelector('.primario');
@@ -98,6 +99,9 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('passwordConfirmar').value = '';
         document.getElementById('rol').value = '';
 
+        actualizarTodosContadores();
+        limpiarMensajesError();
+
         columnaCrear.style.display = 'block';
         cargarRoles(); // Cargar roles al abrir el formulario
         listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
@@ -109,6 +113,8 @@ async function inicializarModuloGestionUsuarios() {
     botonCancelar.parentNode.replaceChild(nuevoBotonCancelar, botonCancelar);
     nuevoBotonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
+        actualizarTodosContadores();
+        limpiarMensajesError();
         columnaCrear.style.display = 'none';
     });
 
@@ -118,6 +124,8 @@ async function inicializarModuloGestionUsuarios() {
     botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
+        actualizarTodosContadores();
+        limpiarMensajesError();
         if (modoActual === modoFormulario.CREAR) {
             // Deshabilitar el botón para evitar múltiples envíos
             nuevoBotonGuardar.disabled = true;
@@ -150,6 +158,26 @@ async function inicializarModuloGestionUsuarios() {
     validarCoincidenciaContrasenas();
 }
 
+/**
+ * Actualiza los contadores de caracteres que ya existen en el HTML.
+ * No inserta nada, solo los inicializa y los mantiene al día.
+ */
+function configurarContadoresCampos() {
+document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
+    const maximoCaracteres = input.getAttribute('maxlength');
+    const contador = input.parentNode.querySelector('.contador-caracteres');
+    if (!contador) return;
+
+    // Inicializa una sola llamada a la función extraída
+    actualizarContador(input, contador, maximoCaracteres);
+
+    // Y vuelve a usar la misma función como callback
+    input.addEventListener('input', () => {
+    actualizarContador(input, contador, maximoCaracteres);
+    });
+});
+} 
+
 function verContrasenia() {
     const botonVerContrasenia = document.querySelector('#verContrasenia');
     const inputContrasenia = document.querySelector('#password');
@@ -179,8 +207,8 @@ function filtrarUsuarios() {
     if (terminoBusqueda === '') {
         usuariosFiltrados = [...listaUsuarios];
     } else {
-        usuariosFiltrados = listaUsuarios.filter(usuario => 
-            usuario.nombre.toLowerCase().includes(terminoBusqueda) 
+        usuariosFiltrados = listaUsuarios.filter(usuario =>
+            usuario.nombre.toLowerCase().includes(terminoBusqueda)
             || (usuario.correo && usuario.correo.toLowerCase().includes(terminoBusqueda)));
     }
     paginaActual = 1; // Reiniciar la página actual al filtrar
@@ -207,7 +235,7 @@ async function eliminarUsuario(id) {
                 confirmButtonColor: '#a61930',
             });
         }
-        
+
         return Swal.fire({
             title: 'Eliminación exitosa',
             text: 'El usuario ha sido eliminado.',
@@ -374,7 +402,7 @@ function mostrarUsuarios(usuarios) {
                 confirmButtonColor: '#a61930',
                 confirmButtonText: 'Confirmar',
                 cancelButtonText: 'Cancelar'
-              }).then(async (resultado) => { // Cambiar el callback a async
+            }).then(async (resultado) => { // Cambiar el callback a async
                 if (resultado.isConfirmed) {
                     await eliminarUsuario(id); // Ahora puedes usar await aquí
                     setTimeout(() => {
@@ -410,6 +438,20 @@ function mostrarUsuarios(usuarios) {
 }
 
 /**
+ * Limpia todos los mensajes de error y quita la clase de error de los inputs.
+ */
+function limpiarMensajesError() {
+    // Borra el texto de todos los <small class="mensajeError">…
+    document.querySelectorAll('.mensajeError').forEach(el => {
+      el.textContent = '';
+    });
+    // Quita la clase .inputError de cualquier input que la tuviera
+    document.querySelectorAll('.inputError').forEach(input => {
+      input.classList.remove('inputError');
+    });
+  } 
+
+/**
  * Esta función busca todos los elementos con la clase `.boton-editar` en la lista
  * de usuarios actualmente renderizados (paginados). Al hacer clic en uno de estos
  * botones, se obtiene el `idUsuario` correspondiente desde `usuariosFiltrados`,
@@ -424,6 +466,8 @@ function escucharEventoBotonesEditar(listaDeUsuarios) {
             evento.preventDefault();
             modoEditar(boton.dataset.id);
             cargarRoles();
+            actualizarTodosContadores();
+            limpiarMensajesError();
         });
     });
 }
@@ -452,13 +496,13 @@ function modoEditar(idUsuario) {
     document.querySelector('.btn-guardar').textContent = 'Modificar';
     document.getElementById('columna-crear-modificar-usuario').style.display = 'block';
 
-    
+
     document.getElementById('username').value = usuario.nombre;
     document.getElementById('email').value = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
     document.getElementById('passwordConfirmar').value = '';
     document.getElementById('rol').value = usuario.rol;
-    
+
 }
 
 /**
@@ -474,13 +518,13 @@ async function editarUsuario() {
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
     let hayErroresVisibles = false;
-    
+
     mensajesError.forEach(mensaje => {
         if (mensaje.textContent.trim() !== '') {
             hayErroresVisibles = true;
         }
     });
-    
+
     if (hayErroresVisibles) {
         return Swal.fire({
             title: 'Formulario con errores',
@@ -548,7 +592,7 @@ async function editarUsuario() {
             setTimeout(() => {
                 inicializarModuloGestionUsuarios();
             }, 500);
-            
+
             // Ocultar el formulario tras una modificación exitosa
             document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
         } else {
@@ -581,7 +625,7 @@ async function editarUsuario() {
  * @returns {{ error: string|null, datos: Object|null }}
  */
 function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
-    
+
     const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
     // TODO: Utilizar estructuras de control en lugar de operadores ternarios
@@ -605,6 +649,8 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error, datos: null };
         }
         datos.nombre = validator.escape(nombre.trim());
+    } else {
+        datos.nombre = usuarioAEditar.nombre;
     }
 
     // Validar correo
@@ -620,6 +666,8 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
         }
         datos.correo = correoNormalizado;
+    } else {
+        datos.correo = usuarioAEditar.correo;
     }
 
     // Validar contraseña
@@ -629,6 +677,8 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error, datos: null };
         }
         datos.contrasenia = contrasenia.trim();
+    } else {
+        datos.contrasenia = contrasenia;
     }
 
     // Validar rol
@@ -638,6 +688,8 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error, datos: null };
         }
         datos.idRol = idRol;
+    } else {
+        datos.idRol = idRolUsuarioAEditar;
     }
 
     return { error: null, datos };
@@ -671,7 +723,7 @@ function configurarValidacionesCampos() {
 
     campos.forEach(({ idInput, idError, validador, evento = 'input' }) => {
         const campoEntrada = document.getElementById(idInput);
-        
+
         // Verificar si el campo existe
         if (!campoEntrada) {
             return;
@@ -691,11 +743,10 @@ function configurarValidacionesCampos() {
         // Configurar el evento para validación en tiempo real
         campoEntrada.addEventListener(evento, () => {
             const valor = campoEntrada.value;
-            
-            // Si el campo está vacío, quitar indicador de error
-            if(valor.trim() === '') {
-                campoEntrada.classList.remove('inputError');
-                mensajeError.textContent = '';
+
+            if (valor.trim() === '') {
+                campoEntrada.classList.add('inputError');
+                mensajeError.textContent = 'El campo no puede estar vacío';
                 return;
             }
 
@@ -722,7 +773,7 @@ function configurarValidacionesCampos() {
 function validarCoincidenciaContrasenas() {
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('passwordConfirmar');
-    
+
     // Verificar si ambos campos existen
     if (!passwordInput || !confirmPasswordInput) {
         return;
@@ -742,14 +793,14 @@ function validarCoincidenciaContrasenas() {
     const validarCoincidencia = () => {
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
-        
+
         // Si el campo de confirmación está vacío, no mostrar error
         if (confirmPassword.trim() === '') {
-            confirmPasswordInput.classList.remove('inputError');
-            mensajeError.textContent = '';
+            confirmPasswordInput.classList.add('inputError');
+            mensajeError.textContent = 'El campo no puede estar vacío';
             return;
         }
-        
+
         // Validar coincidencia
         if (password !== confirmPassword) {
             confirmPasswordInput.classList.add('inputError');
@@ -762,7 +813,7 @@ function validarCoincidenciaContrasenas() {
 
     // Configurar eventos para validación en tiempo real
     confirmPasswordInput.addEventListener('input', validarCoincidencia);
-    
+
     // También validar cuando cambie la contraseña principal
     passwordInput.addEventListener('input', () => {
         if (confirmPasswordInput.value.trim() !== '') {
@@ -795,13 +846,13 @@ async function crearUsuario() {
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
     let hayErroresVisibles = false;
-    
+
     mensajesError.forEach(mensaje => {
         if (mensaje.textContent.trim() !== '') {
             hayErroresVisibles = true;
         }
     });
-    
+
     if (hayErroresVisibles) {
         return Swal.fire({
             title: 'Formulario con errores',
@@ -841,7 +892,7 @@ async function crearUsuario() {
         return;
     }
 
-    if (nombre.length > 55) {
+    if (nombre.length > 45) {
         await Swal.fire({
             title: 'Nombre demasiado largo',
             text: 'El nombre no puede tener más de 55 caracteres.',
@@ -850,7 +901,7 @@ async function crearUsuario() {
         return;
     }
 
-    if (correo.length > 55) {
+    if (correo.length > 50) {
         await Swal.fire({ 
             title: 'Correo demasiado largo',
             text: 'El correo no puede tener más de 55 caracteres.',
@@ -861,7 +912,7 @@ async function crearUsuario() {
     }
 
 
-    if (contrasenia.length < 5) {
+    if (contrasenia.length < 8) {
         await Swal.fire({
             title: 'Contraseña demasiado corta',
             text: 'La contraseña debe de tener más de 5 caracteres.',
@@ -870,7 +921,7 @@ async function crearUsuario() {
         return
     }
 
-    if (contrasenia.length > 55) {
+    if (contrasenia.length > 512) {
         await Swal.fire({
             title: 'Contraseña demasiado larga',
             text: 'La contraseña no puede tener más de 55 caracteres.',
@@ -878,7 +929,7 @@ async function crearUsuario() {
         });
         return
     }
-    
+
 
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
@@ -898,7 +949,7 @@ async function crearUsuario() {
             rolInput.value = '';
 
             document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
-            
+
             // Actualizar la vista para mostrar el nuevo usuario en la lista
             setTimeout(() => {
                 inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
@@ -933,10 +984,10 @@ let rolesCache = [];
  * @returns {Promise<void>}
  */
 async function guardarRoles() {
-    
+
     try {
         const roles = await consultarRolesCU(); // Llama a la función de consultarRoles.js
-        
+
 
         if (!roles || roles.length === 0) {
             rolesCache = []; // Vacía la caché si no hay roles
@@ -958,7 +1009,7 @@ async function guardarRoles() {
 function llenarSelectConRoles(selectRol) {
 
     const rolPorDefecto = usuarioAEditar ? usuarioAEditar.rol : null;
-    
+
     if (!rolesCache || rolesCache.length === 0) {
         selectRol.innerHTML = '<option value="">No hay roles disponibles</option>';
         return;
@@ -966,7 +1017,7 @@ function llenarSelectConRoles(selectRol) {
 
     // Limpiar el contenido previo del <select>
     selectRol.innerHTML = `
-        <option value="" disabled ${rolPorDefecto===null ? 'selected' : ''}>
+        <option value="" disabled ${rolPorDefecto === null ? 'selected' : ''}>
         Selecciona rol
         </option>
     `;
@@ -977,7 +1028,7 @@ function llenarSelectConRoles(selectRol) {
         option.value = rol.idRol;
         option.textContent = rol.Nombre;
         if (rol.Nombre === rolPorDefecto) {
-          option.selected = true;
+            option.selected = true;
         }
         selectRol.appendChild(option);
     });
@@ -994,6 +1045,28 @@ function cargarRoles() {
         });
     }
     return
+}
+
+/**
+ * Actualiza el texto de un contador dado el input, su contenedor de contador y el maxlength.
+ * @param {HTMLInputElement} input
+ * @param {HTMLElement} contador
+ * @param {number|string} maximoCaracteres
+ */
+function actualizarContador(input, contador, maximoCaracteres) {
+    contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
+}
+
+/**
+ * Recalcula TODOS los contadores a partir del valor actual de cada input.
+ */
+function actualizarTodosContadores() {
+    document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
+      const maximoCaracteres = input.getAttribute('maxlength');
+      const contador = input.parentNode.querySelector('.contador-caracteres');
+      if (!contador) return;
+      actualizarContador(input, contador, maximoCaracteres);
+    });
 }
 
 /**

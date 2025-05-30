@@ -1,5 +1,7 @@
 const { renderizarFormulas } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/consultarFormulas.js`);
 const { Swal } = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.js`);
+const { filtrarFormulas } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/buscadorFormulas.js`);
+
 /**
  * Inicializa el módulo de fórmulas.
  * @async
@@ -7,6 +9,9 @@ const { Swal } = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.
  * @returns {Promise<void>}
  */
 async function inicializarModuloFormulas(){
+  const barraBusqueda = document.getElementById('busqueda-formulas');
+
+  
 
     localStorage.setItem('seccion-activa', 'formulas');
     const ventanaPrincipal = document.getElementById('ventana-principal');
@@ -25,6 +30,12 @@ async function inicializarModuloFormulas(){
         });
       document.getElementById('frame-formulas').innerHTML  
       = `<div class='error-carga'>Error al cargar las fórmulas</div>`;
+    }
+
+    if (barraBusqueda){
+      barraBusqueda.addEventListener('input', function(){
+        filtrarFormulas(this.value.toLowerCase());
+      })
     }
 
 }

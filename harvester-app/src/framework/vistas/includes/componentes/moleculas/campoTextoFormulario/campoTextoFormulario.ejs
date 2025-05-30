@@ -1,6 +1,7 @@
 <!-- Molécula: Campo Texto Formulario -->
 <!-- Carga de estilos del componente -->
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/campoTextoFormulario/campoTextoFormulario.css' rel='stylesheet' />
+<link rel="stylesheet" href="<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/campoTexto/campoTexto.css">
 
 <div class='campo-formulario'>
   
@@ -10,17 +11,19 @@
     textoInterior: label,
     tamanio: 'texto-md',
     color: 'texto-negro',
-    fuente: 'fuente-regular'
+    fuente: 'fuente-regular',
+    alinear: 'izquierda',
   }) %>
-  
+
   <!-- Átomo: Campo de texto -->
   <%- include('../../atomos/campoTexto/campoTexto.ejs', { 
-    type: type || 'text',
+    tipo: 'campoTexto',
     id: id,
-    name: name,
-    placeholder: placeholder,
-    maxlength: maxlength,
-    required: required
+    class: 'campo-texto',
+    nombre: name,
+    textoAyuda: placeholder,
+    longitudMaxima: maxlength,
+    requerido: required
   }) %>
   
   <!-- Átomo: Cuadro de texto para errores (si se proporciona errorId) -->

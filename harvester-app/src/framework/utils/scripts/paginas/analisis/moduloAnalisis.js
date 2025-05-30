@@ -20,33 +20,33 @@ const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framewor
 */
 /* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
-  
+
   const idContenedor = 'contenedorElementos';
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
-  
+
   const contenedor = document.getElementById(idContenedor);
-  
+
   if (!contenedor) return;
-  
+
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
   botonPDF.addEventListener('click', async () => {
-    
+
     const anterior = botonPDF.textContent;
     botonPDF.disabled = true;
     const contenedorTexto = botonPDF.children[1]
     contenedorTexto.textContent = 'Descargando...';
     pantallaBloqueo.classList.remove('oculto');
-    
+
     descargarPDF()
-    
+
     ipcRenderer.once('pdf-guardado', (event, exito) => {
       botonPDF.disabled = false;
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
     });
   });
-  
+
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
     configurarGrafica(idContenedor, idContenedorPrevisualizacion);
@@ -65,10 +65,10 @@ function cargarDatosExcel() {
     if (datosDisponibles !== 'true' || !datosExcelJSON) {
       throw new Error('No hay datos de Excel disponibles');
     }
-    
+
     const datosExcel = JSON.parse(datosExcelJSON);
     return datosExcel;
-    
+
   } catch (error) {
     Swal.fire({
       title: 'Error',
@@ -94,7 +94,7 @@ async function descargarPDF() {
     });
     throw new Error('[PDF] jsPDF no cargado');
   }
-  
+
   // Configuración básica del documento
   /* eslint-disable-next-line new-cap */
   const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
@@ -115,11 +115,11 @@ async function descargarPDF() {
 
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
-      let tamanoFuente = 12;
+      let tamanoFuente = 11.5;
       let estiloFuente = 'normal';
-      let espaciado = 11;
-      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 14; }
-      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 16; }
+      let espaciado = 50;
+      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 75; }
+      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 55; }
 
       documentoPDF.setFontSize(tamanoFuente);
       documentoPDF.setFont(undefined, estiloFuente);
@@ -137,7 +137,7 @@ async function descargarPDF() {
 
         documentoPDF.text(lineas, margen, posicionY);
 
-        posicionY += lineas.length * tamanoFuente + espaciado + 12;
+        posicionY += lineas.length * tamanoFuente + espaciado;
       })
 
     } else if (elemento.classList.contains('previsualizacion-grafica')) {
@@ -166,9 +166,9 @@ async function descargarPDF() {
       }
 
       documentoPDF.setFillColor(224, 224, 224);
-      documentoPDF.roundedRect(margen - 2, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
+      documentoPDF.roundedRect(margen, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
       documentoPDF.addImage(imagen, 'PNG', margen + desplazamiento, posicionY + espaciado, anchoImagen, altoImagen);
-      posicionY += altoFondo + 35;
+      posicionY += altoFondo + espaciado;
     }
   });
 

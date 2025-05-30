@@ -1,7 +1,17 @@
+<%
+  var paddingInferior = typeof paddingInferior !== 'undefined' ? paddingInferior : '';
+  var paddingSuperior = typeof paddingSuperior !== 'undefined' ? paddingSuperior : '';
+  var tamanio = typeof tamanio !== 'undefined' ? tamanio : '';
+  var color = typeof color !== 'undefined' ? color : '';
+  var fuente = typeof fuente !== 'undefined' ? fuente : '';
+  var alinear = typeof alinear !== 'undefined' ? alinear : '';
+%>
+
 <link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/cuadroTexto/cuadroTexto.css' rel='stylesheet' />
 <div 
     id='<%= id %>' 
-    class='cuadro-texto<%= tamanio || "" %> <%= color || "" %> <%= fuente || "" %>'><%= textoInterior %>
+    class='cuadro-texto <%= tamanio %> <%= color %> <%= fuente %> texto-<%= alinear %> mb-<%= paddingInferior %> mt-<%= paddingSuperior %>'>
+    <%= textoInterior %>
 </div>
 
 <% /*
@@ -11,4 +21,6 @@
     - tamanio: 'texto-md'
     - color: 'texto-negro'
     - fuente: 'fuente-bold'
+    - alinear: 'izquierda'
+    - paddingInferior: '16'
 */ %>

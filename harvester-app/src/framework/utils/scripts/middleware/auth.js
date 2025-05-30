@@ -29,4 +29,4 @@ const PERMISOS = {
     SUPERADMIN: 'SUPERADMIN',
 }
 
-module.exports = { verificarPermisos, PERMISOS };
+module.exports = { verificarPermisos, PERMISOS, obtenerPermisos };

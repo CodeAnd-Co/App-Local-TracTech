@@ -13,7 +13,7 @@ const informacionModulos = {
 
 async function cargarModulo(modulo){
   try {
-        const vista = await ipcRenderer.invoke('precargar-ejs', informacionModulos[modulo][0], { Seccion: informacionModulos[modulo][1], Icono : informacionModulos[modulo][2]});
+        const vista = await ipcRenderer.invoke('precargar-ejs', informacionModulos[modulo][0], { Seccion: informacionModulos[modulo][1], Icono : informacionModulos[modulo][2], permisos});
         window.location.href = vista;
         localStorage.setItem('seccion-activa', modulo);
     } catch (err) {
