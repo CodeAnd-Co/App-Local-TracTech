@@ -1,5 +1,7 @@
 // RF14: Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
+const { mostrarAlerta } = require("../../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal");
+
 /**
  * Filtra los datos del excel por hojas(tractores) y columnas seleccionadas
  * @function seleccionaDatosAComparar
@@ -37,8 +39,8 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
 
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
-    } catch (error) {
-        throw new Error('Error al comparar datos');
+    } catch {
+        mostrarAlerta('Error al procesar los datos', 'Ocurrió un error al filtrar los datos del Excel.', 'error');
     }
 }
 

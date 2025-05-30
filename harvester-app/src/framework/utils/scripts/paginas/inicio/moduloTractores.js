@@ -357,7 +357,7 @@ async function botonReporte(datosExcel) {
             var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
             window.location.href = vista;
             localStorage.setItem('seccion-activa', 'analisis');
-        } catch (error) {
+        } catch {
             mostrarAlerta('Ocurrió un problema', 'No se pudo cargar el módulo de análisis.', 'error');
         }
     })

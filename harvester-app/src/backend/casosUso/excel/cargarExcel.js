@@ -54,7 +54,7 @@ async function verificarArchivoSeguro(archivo) {
         // Si pasó todas las verificaciones
         return { esSeguro: true, mensaje: 'Archivo verificado correctamente' };
         
-    } catch (error) {
+    } catch {
         return { 
             esSeguro: false, 
             mensaje: 'Error al verificar el archivo. Es posible que esté dañado o no sea un Excel válido.' 
