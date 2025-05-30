@@ -115,11 +115,11 @@ async function descargarPDF() {
 
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
-      let tamanoFuente = 12;
+      let tamanoFuente = 11.5;
       let estiloFuente = 'normal';
-      let espaciado = 11;
-      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 14; }
-      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 16; }
+      let espaciado = 50;
+      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 75; }
+      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 55; }
 
       documentoPDF.setFontSize(tamanoFuente);
       documentoPDF.setFont(undefined, estiloFuente);
@@ -137,7 +137,7 @@ async function descargarPDF() {
 
         documentoPDF.text(lineas, margen, posicionY);
 
-        posicionY += lineas.length * tamanoFuente + espaciado + 12;
+        posicionY += lineas.length * tamanoFuente + espaciado;
       })
 
     } else if (elemento.classList.contains('previsualizacion-grafica')) {
@@ -166,9 +166,9 @@ async function descargarPDF() {
       }
 
       documentoPDF.setFillColor(224, 224, 224);
-      documentoPDF.roundedRect(margen - 2, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
+      documentoPDF.roundedRect(margen, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
       documentoPDF.addImage(imagen, 'PNG', margen + desplazamiento, posicionY + espaciado, anchoImagen, altoImagen);
-      posicionY += altoFondo + 35;
+      posicionY += altoFondo + espaciado;
     }
   });
 
