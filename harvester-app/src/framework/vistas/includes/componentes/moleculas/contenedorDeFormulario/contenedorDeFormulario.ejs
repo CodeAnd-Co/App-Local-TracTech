@@ -1,0 +1,65 @@
+<link rel="stylesheet" href="<%= rutaBase %>src/framework/utils/css/contenedorDeFormulario.css">
+
+<div class="contenedor-formulario-molecula">
+    <%- include('../../atomos/tarjeta/tarjeta.ejs', {
+        id: 'tarjeta',
+        color: 'blanco',
+        alinear: 'centro',
+        orientacion: 'columna',
+        claseExtra: 'tarjeta-gap-28' + (paddingTarjeta ? ' ' + paddingTarjeta : ''),
+        elementos: [
+            {
+                ruta: '../../atomos/cuadroTexto/cuadroTexto.ejs',
+                parametros: {
+                    id: 'cuadroTextoSuperior',
+                    textoInterior: textoSuperior || 'Bienvenido a la pantalla de carga',
+                    tamanio: 'texto-lg',
+                    color: 'texto-negro',
+                    fuente: 'fuente-regular',
+                    alinear: 'centro',
+                    paddingInferior: '14',
+                    paddingSuperior: '14'
+                }
+            },
+            // Campos dinámicos
+            ...((camposFormulario || []).map(function(campo) {
+                return {
+                    ruta: '../../moleculas/campoTextoFormulario/campoTextoFormulario.ejs',
+                    parametros: campo
+                }
+            })),
+            // Menús desplegables dinámicos (mover aquí)
+            ...((menusDesplegables || []).map(function(menu) {
+                return {
+                    ruta: '../../moleculas/menuDesplegableFormulario/menuDesplegableFormulario.ejs',
+                    parametros: menu
+                }
+            })),
+            // Línea divisora después de los campos
+            {
+                ruta: '../../atomos/lineaDivisora/lineaDivisora.ejs'
+            },
+            {
+                ruta: '../../moleculas/grupoBotones/grupoBotones.ejs',
+                parametros: {
+                    orientacion: 'horizontal',
+                    espaciado: espaciadoBotones, 
+                    botones: (botones || [
+                        { id: 'botonCancelar', etiqueta: 'Cancelar' },
+                        { id: 'botonContinuar', etiqueta: 'Continuar' }
+                    ]).map(function(btn, idx) {
+                        // Fija los demás atributos
+                        return {
+                            id: btn.id,
+                            etiqueta: btn.etiqueta,
+                            tipo: idx === 0 ? 'secundario' : 'primario',
+                            tamanio: 'grande',
+                            colorTexto: idx === 0 ? 'rojo' : undefined
+                        }
+                    })
+                }
+            }
+        ]
+    }) %>
+</div>
+

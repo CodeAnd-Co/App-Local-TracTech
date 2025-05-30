@@ -13,7 +13,7 @@ const informacionModulos = {
 
 async function cargarModulo(modulo){
   try {
-        const vista = await ipcRenderer.invoke('precargar-ejs', informacionModulos[modulo][0], { Seccion: informacionModulos[modulo][1], Icono : informacionModulos[modulo][2]});
+        const vista = await ipcRenderer.invoke('precargar-ejs', informacionModulos[modulo][0], { Seccion: informacionModulos[modulo][1], Icono : informacionModulos[modulo][2], permisos});
         window.location.href = vista;
         localStorage.setItem('seccion-activa', modulo);
     } catch (err) {
@@ -28,7 +28,6 @@ function configurarBotonesLaterales(){
     localStorage.setItem('estado-barra-lateral', 'expandida');
   } else {
     if(estadoBarraLateral == 'contraida'){
-      console.log("contraida2")
       const barraLateralExpandida = document.getElementById('barraLateralExpandida');
       const barraLateralColapsada = document.getElementById('barraLateralColapsada');
       barraLateralExpandida.style.display = 'none';

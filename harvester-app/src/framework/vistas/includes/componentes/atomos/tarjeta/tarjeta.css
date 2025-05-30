@@ -1,7 +1,18 @@
 .tarjeta{
     padding: 15px;
     display: flex;
-    gap: 12px;
+    border: 1px solid #000;      
+    border-radius: 10px;       
+}
+
+.tarjeta-gap-0 { gap: 0px; }
+.tarjeta-gap-28 { gap: 28px; }
+
+.tarjeta-padding-24 {
+    padding: 24px;
+}
+.tarjeta-padding-0 {
+    padding: 0;
 }
 
 .tarjeta-blanco { background-color: #fafafa; }
@@ -12,10 +23,7 @@
 .centro{ justify-content: center; }
 .izquierda{ justify-content: flex-start; }
 
-.tarjeta.direccion-horizontal {
-    flex-direction: row;
-  }
+.fila { flex-direction: row; }
 
-.tarjeta.direccion-vertical {
-    flex-direction: column;
-  }
+.columna { flex-direction: column; }
+

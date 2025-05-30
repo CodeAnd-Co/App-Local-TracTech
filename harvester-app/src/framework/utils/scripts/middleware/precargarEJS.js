@@ -19,7 +19,7 @@ function precargarEJS(ruta, parametros = {}){
 
       const datos = {
         rutaBase,
-        ...parametros
+        ...parametros,
       };
 
       ejs.renderFile(ruta, datos, (error, archivo) => {

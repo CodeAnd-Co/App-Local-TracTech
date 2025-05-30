@@ -36,7 +36,7 @@ jest.mock('../../backend/domain/usuariosAPI/usuariosAPI', () => ({
 }));
 
 /*  3. ───── Tests ──────────────────────────────────────────────────────── */
-describe('obtenerUsuarios (use-case)', () => {
+describe('obtenerUsuarios (caso de uso)', () => {
   let monitorDeError;
 
   // Suprime errores en consola durante las pruebas que los provocan

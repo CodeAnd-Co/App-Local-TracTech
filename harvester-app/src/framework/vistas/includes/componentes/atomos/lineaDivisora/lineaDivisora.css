@@ -1,0 +1,11 @@
+.line-1 {
+  margin-top: -1px;
+  border-style: solid;
+  border-color: rgba(109, 108, 108, 0.3);
+  border-width: 1px 0 0 0;
+  flex-shrink: 0;
+  height: 5px;
+  position: relative;
+  transform-origin: 0 0;
+  transform: rotate(0deg) scale(1, 1);
+}
