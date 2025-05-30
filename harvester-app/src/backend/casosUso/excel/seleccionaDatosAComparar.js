@@ -59,7 +59,6 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
         console.log('Nuevo JSON guardado en localStorage:', nuevoJSON);
-        conssole.log('Datos filtrados guardados en localStorage');
         return nuevoJSON;
     } catch (error) {
         console.error('Error verificando archivo:', error);

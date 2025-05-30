@@ -87,7 +87,7 @@ function crearElementoDistribuidor(nombreDistribuidor) {
 
     // Añadir elementos
     distribuidorDiv.appendChild(nombreDistribuidorDiv);
-    distribuidorDiv.appendChild(caja);
+    distribuidorDiv.appendChild(casillaVerificacion);
     return distribuidorDiv;
 }
 
@@ -159,14 +159,21 @@ function crearElementoTractor(nombreTractor, datosExcel) {
  * @returns {void}
  */
 function cambiarSeleccionTractor(nombreTractor, casillaVerificacion) {
-    const estadoActual = tractoresSeleccionados[nombreTractor]?.seleccionado ?? false;
-    const columnas = tractoresSeleccionados[nombreTractor]?.columnas ?? [];
-    tractoresSeleccionados[nombreTractor] = {
-        seleccionado: !estadoActual,
-        columnas
-    };
-    cambiarIconoMarcadoADesmarcado(casillaVerificacion);
-    console.log(tractoresSeleccionados);
+    // Verificar si el tractor ya existe en tractoresSeleccionados
+    if (!tractoresSeleccionados[nombreTractor]) {
+        tractoresSeleccionados[nombreTractor] = {
+            seleccionado: false,
+            columnas: []
+        };
+    }
+
+    // Alternar estado de la seleccion
+    const estadoActual = tractoresSeleccionados[nombreTractor].seleccionado;
+    tractoresSeleccionados[nombreTractor].seleccionado = !estadoActual;
+
+    // Actualizar el icono en el DOM
+    cambiarIconoMarcadoADesmarcado(casillaVerificacion)
+    console.log('Estado actualizado de tractoresSeleccionados:', tractoresSeleccionados);
 }
 
 /**
@@ -199,7 +206,9 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
 
     // Asegurarse de que el objeto para este tractor exista en tractoresSeleccionados
     if (!tractoresSeleccionados[nombreTractor]) {
-        tractoresSeleccionados[nombreTractor] = { eleccionado: false, columnas: [] };
+        tractoresSeleccionados[nombreTractor] = { 
+            seleccionado: false, columnas: [] 
+        };
     }
     console.log(tractoresSeleccionados);
     columnas.forEach(nombreColumna => {
@@ -266,10 +275,10 @@ function crearElementoColumna(nombreTractor, nombreColumna) {
  * @function seleccionarColumna
  * @param {string} nombreTractor - El nombre del tractor cuya columna se va a seleccionar o deseleccionar.
  * @param {string} nombreColumna - El nombre de la columna que se desea seleccionar o deseleccionar.
- * @param {HTMLElement} caja - El elemento de imagen (checkbox) que refleja el estado de selección de la columna.
+ * @param {HTMLElement} casillaVerificacion - El elemento de imagen (checkbox) que refleja el estado de selección de la columna.
  * @returns {void}
  */
-function seleccionarColumna(nombreTractor, nombreColumna, caja) {
+function seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion) {
     // Verificamos si el tractor está seleccionado
     if (!tractoresSeleccionados[nombreTractor]) {
         tractoresSeleccionados[nombreTractor] = {
@@ -288,10 +297,12 @@ function seleccionarColumna(nombreTractor, nombreColumna, caja) {
         // Si la columna ya está seleccionada, la deseleccionamos
         seleccion.columnas.splice(indice, 1);
     }
+    seleccion.columnas.sort();
+
     // Si hay al menos una columna seleccionada, marcar el tractor como seleccionado
     seleccion.seleccionado = seleccion.columnas.length > 0;
 
-    cambiarIconoMarcadoADesmarcado(caja)
+    cambiarIconoMarcadoADesmarcado(casillaVerificacion)
     console.log(tractoresSeleccionados);
 }
 
