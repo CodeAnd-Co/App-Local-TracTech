@@ -13,8 +13,8 @@ async function eliminarFormula(id) {
     try {
         const respuesta = await eliminarFormulaAPI(id, localStorage.getItem('token'));
         return respuesta;
-    } catch {
-        throw new Error('No se pudo eliminar la fórmula');
+    } catch (error) {
+        throw new Error(`No se pudo eliminar la fórmula: ${error.mensaje}`);
     }
 }
 

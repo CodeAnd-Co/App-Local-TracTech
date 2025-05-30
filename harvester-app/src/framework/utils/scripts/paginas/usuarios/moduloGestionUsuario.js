@@ -1104,8 +1104,7 @@ async function deshabilitarDispositivoUsuario(idUsuario) {
             confirmButtonColor: '#a61930',
         });
     }
-}
-
+} 
 
 // Expone la función de inicialización al objeto window
 inicializarModuloGestionUsuarios()

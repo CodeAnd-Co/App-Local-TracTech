@@ -6,6 +6,7 @@ const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/
 const { ipcRenderer } = require('electron');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
+
  
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
