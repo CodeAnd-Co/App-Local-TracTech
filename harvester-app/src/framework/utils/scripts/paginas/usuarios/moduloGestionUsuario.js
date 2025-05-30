@@ -66,6 +66,12 @@ async function inicializarModuloGestionUsuarios() {
         configurarValidacionesCampos()
         
     } catch {
+        Swal.fire({
+            title: 'Error al cargar usuarios',
+            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#a61930',
+        });
         document.getElementById('lista-usuarios').innerHTML
         = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }

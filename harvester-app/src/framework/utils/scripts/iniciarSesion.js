@@ -78,6 +78,7 @@ botonAcceder.addEventListener('click', manejarInicioSesion);
 [entradaCorreo, entradaContrasenia].forEach(entrada => {
   entrada.addEventListener('keydown', (evento) => {
     if (evento.key === 'Enter') {
+      evento.preventDefault();
       manejarInicioSesion();
     }
   });

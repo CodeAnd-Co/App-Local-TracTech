@@ -37,14 +37,16 @@ async function eliminarFormula(id) {
             Swal.fire({
                 title: 'Error de conexión',
                 text: respuesta.mensaje,
-                icon: 'error'
+                icon: 'error',
+                confirmButtonColor: '#a61930',
             });
         }
     } catch {
         Swal.fire({
             title: 'Error de conexión',
             text: 'Verifica tu conexión e inténtalo de nuevo.',
-            icon: 'error'
+            icon: 'error',
+            confirmButtonColor: '#a61930',
         });
     }
 }
@@ -152,13 +154,20 @@ async function renderizarFormulas() {
                     Swal.fire({
                         title: 'Error de conexión',
                         text: 'Verifica tu conexión e inténtalo de nuevo.',
-                        icon: 'error'
+                        icon: 'error',
+                        confirmButtonColor: '#a61930',
                     });
                 }
             });
         });
 
     } catch {
+        Swal.fire({
+            title: 'Error de conexión',
+            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#a61930',
+        });
         document.getElementById('frame-formulas').innerHTML = `<div class='error-carga'>Error al cargar las fórmulas</div>`;
     }
 }
