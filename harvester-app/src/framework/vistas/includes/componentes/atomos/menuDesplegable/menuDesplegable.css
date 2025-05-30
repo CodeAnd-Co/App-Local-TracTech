@@ -27,8 +27,48 @@
   box-sizing: border-box;
 }
 
+.menu-desplegable-formulario {
+  box-sizing: border-box;
+  background: #e8e8e8;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(0, 3, 16, 0.1);
+  border-width: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  color: var(--negro, #000000);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  text-align: left;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.33);
+}
+
+
+.texto-negro {
+  color: #000000;
+}
+
+
+.menu-desplegable::placeholder{
+    color: rgba(0, 0, 0, 0.33);
+}
+
 /* Estilos adicionales para el select */
-.opcion-texto:focus {
+.menu-desplegable:focus {
   box-shadow: 0 0 0 2px rgba(166,25,48,0.5);
 }
 

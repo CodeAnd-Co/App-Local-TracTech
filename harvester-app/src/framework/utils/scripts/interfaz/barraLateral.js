@@ -28,7 +28,6 @@ function configurarBotonesLaterales(){
     localStorage.setItem('estado-barra-lateral', 'expandida');
   } else {
     if(estadoBarraLateral == 'contraida'){
-      console.log("contraida2")
       const barraLateralExpandida = document.getElementById('barraLateralExpandida');
       const barraLateralColapsada = document.getElementById('barraLateralColapsada');
       barraLateralExpandida.style.display = 'none';
