@@ -11,33 +11,51 @@
 function seleccionaDatosAComparar(datosExcel, seleccion) {
     try {
         const nuevoJSON = { hojas: {} };
+        console.log('Datos Excel:', datosExcel);
+        console.log('Selección:', seleccion);
     
         Object.entries(seleccion).forEach(([nombreTractor, datosSeleccion]) => {
+            console.log(`Procesando tractor: ${nombreTractor}`, datosSeleccion);
             if (!datosSeleccion.seleccionado) {
                 return;
             }
             // Obtener los datos completos del tractor desde el JSON original
-            const indicesColumnas = datosSeleccion.columnas;
+            const columnasSeleccionadas = datosSeleccion.columnas;
             const datosTractor = datosExcel.hojas[nombreTractor];
-    
-            if (!datosTractor || !Array.isArray(indicesColumnas) || indicesColumnas.length === 0) { 
-                console.warn(`No se encontró la hoja para el tractor: ${nombreTractor}`);
-                return;
-            }       
-    
-            const filasFiltradas = datosTractor.map(fila => {
-                indicesColumnas.map(iterador => { fila[iterador] ?? null })
-            });
 
-            // Guardar encabezados y filas
+            if (!Array.isArray(datosTractor) || columnasSeleccionadas.length === 0) {
+                console.warn(`No se encontró la hoja o columnas vacías para el tractor: ${nombreTractor}`);
+                return;
+            }
+    
+            const encabezadosOriginales = datosTractor[0];
+            const indicesSeleccionados = columnasSeleccionadas.map(nombreColumna => {
+                const index = encabezadosOriginales.indexOf(nombreColumna);
+                if (index === -1) {
+                    console.warn(`Columna "${nombreColumna}" no encontrada en ${nombreTractor}`);
+                }
+                return index;
+            }).filter(i => i !== -1);
+
+            const nuevasFilas = Object.keys(datosTractor)
+                .filter(key => key !== "0") // Ignorar encabezados
+                .map(key => {
+                    const fila = datosTractor[key];
+                    return indicesSeleccionados.map(i => fila[i] ?? null);
+                });
+
             nuevoJSON.hojas[nombreTractor] = {
-                columnas: indicesColumnas,
-                filas: filasFiltradas
+                columnas: columnasSeleccionadas,
+                filas: nuevasFilas
             };
+
+            console.log(`Filtrado de ${nombreTractor}:`, nuevoJSON.hojas[nombreTractor]);
         });
     
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
+        console.log('Nuevo JSON guardado en localStorage:', nuevoJSON);
+        conssole.log('Hola');
         return nuevoJSON;
     } catch (error) {
         console.error('Error verificando archivo:', error);
