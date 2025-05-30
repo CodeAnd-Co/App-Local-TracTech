@@ -2,6 +2,9 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('node:path');
 const fs = require('fs');
 const {precargarEJS} = require('./framework/utils/scripts/middleware/precargarEJS')
+const { verificarEstado } = require('./backend/servicios/verificarEstado');
+const { obtenerID } = require('./backend/servicios/generadorID');
+const { PERMISOS } = require('./framework/utils/scripts/middleware/auth');
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -9,9 +12,11 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+let mainWindow;
+
 const createWindow = async () => {
   // Crear la ventana del navegador.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
     webPreferences: {
@@ -38,6 +43,7 @@ const createWindow = async () => {
   // Poner la ventana en modo de pantalla completa.
   mainWindow.maximize();
 
+  iniciarVerificacionPeriodica();
   // Abrir las herramientas de desarrollo.
   // mainWindow.webContents.openDevTools();
 };
@@ -45,46 +51,190 @@ const createWindow = async () => {
 // Este método se llamará cuando Electron haya terminado de inicializar
 // y esté listo para crear ventanas del navegador.
 
+function iniciarVerificacionPeriodica() {
+    // Verificar cada 5 minutos
+    const verificacionIntervalo = setInterval(async () => {
+        await verificarYManejarEstado();
+    }, 0.5 * 60 * 1000);
+
+    // Verificación inicial
+    setTimeout(verificarYManejarEstado, 15000); // 2 segundos después del inicio
+    
+    // Guardar el intervalo para poder limpiarlo si es necesario
+    app.verificacionIntervalo = verificacionIntervalo;
+}
+
+/**
+ * Verifica el estado y maneja la deshabilitación si es necesario
+ */
+async function verificarYManejarEstado() {
+    const token = await obtenerTokenAlmacenado();
+    const dispositivoId = obtenerID();
+    
+    if (!token) {
+        console.log('No hay token disponible para verificación');
+        return;
+    }
+    
+    // Verificar si el usuario es superadministrador
+    const permisos = await obtenerPermisosAlmacenados();
+    const esSuperAdmin = permisos.includes(PERMISOS.SUPERADMIN);
+    
+    if (esSuperAdmin) {
+        console.log('Usuario superadministrador detectado - omitiendo verificación periódica de dispositivo');
+        return;
+    }
+    
+    try {
+        console.log('Verificando estado del dispositivo:', dispositivoId);
+        const verificacion = await verificarEstado(token, dispositivoId);
+        console.log('Estado recibido:', verificacion);
+        if (!verificacion.estado) {
+            console.log('Aplicación deshabilitada');
+            deshabilitarAplicacion('Aplicación deshabilitada por seguridad');
+        } else {
+            console.log('Aplicación activa');
+        }
+    } catch (error) {
+        console.error('Error en verificación de estado:', error);
+        // No deshabilitar por errores de red, solo registrar
+    }
+}
+
+/**
+ * Deshabilita la aplicación mostrando una pantalla de bloqueo
+ */
+async function deshabilitarAplicacion(mensaje) {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        try {
+            // Limpiar el intervalo de verificación
+            if (app.verificacionIntervalo) {
+                clearInterval(app.verificacionIntervalo);
+            }
+            
+            // Cargar pantalla de bloqueo
+            const pantallaBloqueoPath = path.join(__dirname, './framework/vistas/paginas/inicio/pantallaBloqueo.ejs');
+            
+            const vista = await precargarEJS(pantallaBloqueoPath, { mensaje });
+            await mainWindow.loadFile(vista);
+            
+            // Deshabilitar navegación
+            mainWindow.webContents.removeAllListeners('will-navigate');
+            mainWindow.webContents.on('will-navigate', (event) => {
+                event.preventDefault();
+            });
+            
+            // Deshabilitar nuevas ventanas
+            mainWindow.webContents.setWindowOpenHandler(() => {
+                return { action: 'deny' };
+            });
+            
+            // Limpiar datos sensibles
+            await limpiarDatosSensibles();
+            
+        } catch (err) {
+            console.error("Error al cargar pantalla de bloqueo:", err);
+            // Como último recurso, cerrar la aplicación
+            app.quit();
+        }
+    }
+}
+
+/**
+ * Limpia datos sensibles del localStorage y archivos temporales
+ */
+async function limpiarDatosSensibles() {
+    if (mainWindow && mainWindow.webContents && !mainWindow.isDestroyed()) {
+        try {
+            await mainWindow.webContents.executeJavaScript(`
+                localStorage.clear();
+            `);
+        } catch (error) {
+            console.error('Error al limpiar datos sensibles:', error);
+        }
+    }
+}
+
+/**
+ * Obtiene el token almacenado
+ */
+async function obtenerTokenAlmacenado() {
+    if (mainWindow && mainWindow.webContents && !mainWindow.isDestroyed()) {
+        try {
+            return await mainWindow.webContents.executeJavaScript('localStorage.getItem("token")');
+        } catch (error) {
+            console.error('Error al obtener token:', error);
+            return null;
+        }
+    }
+    return null;
+}
+
+/**
+ * Obtiene los permisos del usuario almacenados en localStorage
+ */
+async function obtenerPermisosAlmacenados() {
+    if (mainWindow && mainWindow.webContents && !mainWindow.isDestroyed()) {
+        try {
+            const permisos = await mainWindow.webContents.executeJavaScript('localStorage.getItem("permisos")');
+            return permisos ? JSON.parse(permisos) : [];
+        } catch (error) {
+            console.error('Error al obtener permisos:', error);
+            return [];
+        }
+    }
+    return [];
+}
+
 app.whenReady().then(() => {
   createWindow();
 
-  // Cerrar la ventana principal cuando se cierra la última ventana.
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
 // Cerrar la aplicación cuando todas las ventanas estén cerradas
 // Esto es necesario para evitar que la aplicación se cierre en macOS
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  if (process.platform !== 'darwin') app.quit();
 });
 
 // Manejar la apertura del diálogo de selección de archivos cuando se descarga un pdf
 ipcMain.on('guardar-pdf', async (evento, bufer) => {
-  const { canceled: cancelado, filePath: ubicacion } = await dialog.showSaveDialog({
+  const resultado = await dialog.showSaveDialog(mainWindow, {
     title: 'Guardar PDF',
     defaultPath: 'reporte.pdf',
-    filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+    filters: [
+      { name: 'PDF', extensions: ['pdf'] }
+    ]
   });
 
-  if (!cancelado && ubicacion) {
-    fs.writeFile(ubicacion, bufer, (error) => {
-      if (error) {
-        console.error('Error al guardar PDF:', error);
-      } 
-    });
+  if (!resultado.canceled) {
+    fs.writeFileSync(resultado.filePath, bufer);
   }
-
-  evento.sender.send('pdf-guardado', !cancelado);
 });
 
-
 ipcMain.handle('precargar-ejs', async (event, rutaEJS, parametros) => {
-  const { precargarEJS } = require('./framework/utils/scripts/middleware/precargarEJS');
   return await precargarEJS(rutaEJS, parametros);
+});
+
+// IPC para verificación manual de estado
+ipcMain.handle('verificar-estado-aplicacion', async () => {
+    const token = await obtenerTokenAlmacenado();
+    const dispositivoId = obtenerID();
+    
+    if (!token) return { estado: false, mensaje: 'No hay token válido' };
+    
+    try {
+        return await verificarEstado(token, dispositivoId);
+    } catch (error) {
+        console.error('Error en verificación manual:', error);
+        return { estado: false, mensaje: 'Error de conexión' };
+    }
+});
+
+// IPC para obtener el ID del dispositivo
+ipcMain.handle('obtener-dispositivo-id', () => {
+    return obtenerID();
 });

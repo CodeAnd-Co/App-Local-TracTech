@@ -27,6 +27,7 @@ function verificarPermisos(permiso) {
  */
 const PERMISOS = {
     ADMIN: 'ADMIN',
+    SUPERADMIN: 'SUPERADMIN',
 }
 
 module.exports = { verificarPermisos, PERMISOS };
