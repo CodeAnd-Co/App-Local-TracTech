@@ -2,6 +2,8 @@
 
 const { modificarFormulaCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/modificarFormula.js`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
+    LONGITUD_MAXIMA_FORMULA} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 
 /**
  * @function inicializarModificarFormula
@@ -32,8 +34,22 @@ async function inicializarModificarFormula(id, nombre, formula) {
         const botonGuardar = document.getElementById('btnGuardar');
         const nombreInput = document.getElementById('nombreFormula');
         const formulaInput = document.getElementById('resultado');
+
+
         nombreInput.value = nombre;
         formulaInput.value = formula;
+
+        nombreInput.setAttribute('maxlength', LONGITUD_MAXIMA_NOMBRE_FORMULA)
+        nombreInput.addEventListener('input', () => {
+            actualizarCaracteres(nombreInput);
+        });
+
+        formulaInput.setAttribute('maxlength', LONGITUD_MAXIMA_FORMULA)
+        formulaInput.addEventListener('input', () => {
+            actualizarCaracteres(formulaInput);
+        });
+
+
         document.getElementById('btnCancelar').addEventListener('click', () => {
             window.cargarModulo('formulas');
         });
@@ -57,3 +73,44 @@ async function inicializarModificarFormula(id, nombre, formula) {
 module.exports = {
     inicializarModificarFormula
 };
+
+/**
+ * Actualiza el contador de caracteres restantes en la tarjeta del {@link areaEscritura}.
+ *
+ * @param {HTMLTextAreaElement} areaEscritura - Área de texto con el contenido a mostrar.
+ * @returns {void}
+ */
+function actualizarCaracteres(areaEscritura) {
+  const caracteresUsados = areaEscritura.value.length;
+  const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
+
+  const selector = `[maxlength_placeholder='${areaEscritura.getAttribute('maxlength')}']`;
+  const elementosContador = document.querySelectorAll(selector);
+
+  if (elementosContador.length === 0) {
+    const nuevoContador = document.createElement('div');
+    nuevoContador.className = 'contador-caracteres';
+    nuevoContador.setAttribute('maxlength_placeholder', areaEscritura.getAttribute('maxlength'));
+    actualizarContador(nuevoContador, caracteresUsados, limite);
+    areaEscritura.after(nuevoContador);
+    return;
+  }
+
+  elementosContador.forEach((elemento) => {
+    actualizarContador(elemento, caracteresUsados, limite);
+  });
+}
+
+/**
+ * Actualiza el contenido y color del contador de caracteres.
+ *
+ * @param {HTMLElement} elemento - Elemento del DOM que muestra el contador.
+ * @param {number} caracteresUsados - Cantidad de caracteres utilizados.
+ * @param {number} limite - Límite total de caracteres permitido.
+ * @returns {void}
+ */
+function actualizarContador(elemento, caracteresUsados, limite) {
+  const caracteresRestantes = limite - caracteresUsados;
+  elemento.textContent = `${caracteresUsados}/${limite} caracteres`;
+  elemento.style.color = caracteresRestantes < 5 ? '#e74c3c' : '#7f8c8d';
+}
