@@ -176,7 +176,7 @@ function botonTractores() {
     botonTractores.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/seleccionarTractor.ejs`;
         try {
-            var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Tractores', Icono : 'Casa'});
+            var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Tractores', Icono : 'Casa', permisos});
             window.location.href = vista;
             localStorage.setItem('seccion-activa', 'inicio');
         } catch (err) {
