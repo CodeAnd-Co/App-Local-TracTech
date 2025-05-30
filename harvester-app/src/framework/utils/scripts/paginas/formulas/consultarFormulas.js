@@ -69,6 +69,7 @@ async function renderizarFormulas() {
         const nombresFormulas = formulas.map((formula) => formula.Nombre);
         localStorage.setItem('nombresFormulas', JSON.stringify(nombresFormulas));
 
+
         // Renderizar las fórmulas en el contenedor correspondiente
         const contenedor = document.getElementById('frame-formulas');
 
@@ -114,7 +115,7 @@ async function renderizarFormulas() {
                         localStorage.setItem('modificarFormulaDatos', Datos);
                         try {
                             const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
-                            const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion'});
+                            const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion', permisos});
                             window.location.href = vista;
                             localStorage.setItem('seccion-activa', 'formulas');
                         } catch (err) {
@@ -178,7 +179,7 @@ async function renderizarFormulas() {
         btnCrearFormula.addEventListener('click', async () => {
             try {
                 const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono : 'Funcion'});
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono : 'Funcion', permisos});
                 window.location.href = vista;
                 localStorage.setItem('seccion-activa', 'formulas');
             } catch (err) {

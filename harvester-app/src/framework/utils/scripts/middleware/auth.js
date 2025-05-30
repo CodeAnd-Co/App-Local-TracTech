@@ -21,12 +21,4 @@ function verificarPermisos(permiso) {
     return permisos.includes(permiso);
 }
 
-/**
- * Objeto que contiene los tipos de permisos disponibles en el sistema
- * @constant {Object}
- */
-const PERMISOS = {
-    ADMIN: 'ADMIN',
-}
-
-module.exports = { verificarPermisos, PERMISOS };
+module.exports = { obtenerPermisos, verificarPermisos };

@@ -10,13 +10,15 @@
 </head>
 <script>
   const rutaBase = <%- JSON.stringify(rutaBase) %>;
+  const { obtenerPermisos } = require(`${rutaBase}src/framework/utils/scripts/middleware/auth`);
+  const permisos = obtenerPermisos();
 </script>
 <body>
   <div id='pantalla-bloqueo' class='pantalla-bloqueo oculto'>
   </div>
   <div class='formulas-brillante'>
     <div class='frame-10'>
-        <div id='contenedorBarraLateral'> <%- include('barraLateral.ejs') %> </div>
+        <div id='contenedorBarraLateral'> <%- include('barraLateral.ejs', permisos) %> </div>
 
       <div class='main-container'>
           <div id='contenedorBarraSuperior'> <%- include('barraSuperior.ejs') %> </div>

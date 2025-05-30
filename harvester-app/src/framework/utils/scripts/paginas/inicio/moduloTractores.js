@@ -356,7 +356,7 @@ async function botonReporte(datosExcel) {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
         try {
-            var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras'});
+            var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
             window.location.href = vista;
             localStorage.setItem('seccion-activa', 'analisis');
         } catch (error) {
