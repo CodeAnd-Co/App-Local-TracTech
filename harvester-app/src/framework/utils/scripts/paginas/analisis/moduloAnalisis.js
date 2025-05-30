@@ -168,7 +168,7 @@ async function descargarPDF() {
       documentoPDF.setFillColor(224, 224, 224);
       documentoPDF.roundedRect(margen, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
       documentoPDF.addImage(imagen, 'PNG', margen + desplazamiento, posicionY + espaciado, anchoImagen, altoImagen);
-      posicionY += altoFondo + espaciado;
+      posicionY += altoFondo + espaciado * 2;
     }
   });
 
