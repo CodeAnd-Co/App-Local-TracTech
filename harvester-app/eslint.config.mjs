@@ -16,6 +16,7 @@ export default [
       
       globals: {
         rutaBase: 'readonly',
+        permisos: 'readonly',
       },
     },
     rules: {
