@@ -167,12 +167,13 @@ function cambiarSeleccionTractor(nombreTractor, casillaVerificacion) {
         };
     }
 
-    // Alternar estado de la seleccion
+    // Alternar estado de la selección
     const estadoActual = tractoresSeleccionados[nombreTractor].seleccionado;
     tractoresSeleccionados[nombreTractor].seleccionado = !estadoActual;
 
-    // Actualizar el icono en el DOM
-    cambiarIconoMarcadoADesmarcado(casillaVerificacion)
+    // Actualizar el ícono en el DOM
+    cambiarIconoMarcadoADesmarcado(casillaVerificacion);
+
     console.log('Estado actualizado de tractoresSeleccionados:', tractoresSeleccionados);
 }
 
@@ -236,7 +237,7 @@ function obtenerColumnas(hoja) {
 
 /**
  * Crea un elemento que contiene el nombre de la columna dentro de una hoja
- * Permite la seleccion de una columna y agregarla al arreglo global
+ * Permite la selección de una columna y agregarla al arreglo global
  * 
  * @function crearElementoColumna
  * @param {string} nombreTractor
@@ -253,15 +254,26 @@ function crearElementoColumna(nombreTractor, nombreColumna) {
 
     const casillaVerificacion = document.createElement('img');
     casillaVerificacion.className = 'check-box';
-    casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
 
-    // Verificar si la columna ya está seleccionada
-    if (tractoresSeleccionados[nombreTractor].columnas.includes(nombreColumna)) {
-        casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
+    // Verificar si la columna ya está seleccionada en tractoresSeleccionados
+    if (tractoresSeleccionados[nombreTractor]?.columnas.includes(nombreColumna)) {
+        casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box.svg`; // Marcado
+    } else {
+        casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Desmarcado
     }
+
+    // Agregar evento para alternar la selección de la columna
     columnaDiv.addEventListener('click', () => {
         seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion);
+
+        // Actualizar visualmente el estado del checkbox
+        if (tractoresSeleccionados[nombreTractor]?.columnas.includes(nombreColumna)) {
+            casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box.svg`; // Marcado
+        } else {
+            casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Desmarcado
+        }
     });
+
     columnaDiv.appendChild(nombreColumnaDiv);
     columnaDiv.appendChild(casillaVerificacion);
     return columnaDiv;
