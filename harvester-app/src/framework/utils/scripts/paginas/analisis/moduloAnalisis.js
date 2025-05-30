@@ -20,33 +20,33 @@ const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framewor
 */
 /* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
-  
+
   const idContenedor = 'contenedorElementos';
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
-  
+
   const contenedor = document.getElementById(idContenedor);
-  
+
   if (!contenedor) return;
-  
+
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
   botonPDF.addEventListener('click', async () => {
-    
+
     const anterior = botonPDF.textContent;
     botonPDF.disabled = true;
     const contenedorTexto = botonPDF.children[1]
     contenedorTexto.textContent = 'Descargando...';
     pantallaBloqueo.classList.remove('oculto');
-    
+
     descargarPDF()
-    
+
     ipcRenderer.once('pdf-guardado', (event, exito) => {
       botonPDF.disabled = false;
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
     });
   });
-  
+
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
     configurarGrafica(idContenedor, idContenedorPrevisualizacion);
@@ -65,10 +65,10 @@ function cargarDatosExcel() {
     if (datosDisponibles !== 'true' || !datosExcelJSON) {
       throw new Error('No hay datos de Excel disponibles');
     }
-    
+
     const datosExcel = JSON.parse(datosExcelJSON);
     return datosExcel;
-    
+
   } catch (error) {
     Swal.fire({
       title: 'Error',
@@ -94,7 +94,7 @@ async function descargarPDF() {
     });
     throw new Error('[PDF] jsPDF no cargado');
   }
-  
+
   // Configuración básica del documento
   /* eslint-disable-next-line new-cap */
   const documentoPDF = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
