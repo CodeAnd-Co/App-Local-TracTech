@@ -78,7 +78,7 @@ function agregarTexto(
       title: 'Error',
       text: 'Ocurrió un error al agregar cuadro de texto.',
       icon: 'error',
-      confirmButtonColor: '#1F4281',
+      confirmButtonColor: '#a61930',
     });
     return;
   }

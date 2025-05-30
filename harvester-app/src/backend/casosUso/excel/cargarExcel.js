@@ -54,8 +54,7 @@ async function verificarArchivoSeguro(archivo) {
         // Si pasó todas las verificaciones
         return { esSeguro: true, mensaje: 'Archivo verificado correctamente' };
         
-    } catch (error) {
-        console.error('Error verificando archivo:', error);
+    } catch {
         return { 
             esSeguro: false, 
             mensaje: 'Error al verificar el archivo. Es posible que esté dañado o no sea un Excel válido.' 
@@ -120,8 +119,7 @@ async function leerExcel(archivo) {
                         mensaje: 'Archivo procesado correctamente'
                     });
                     
-                } catch (error) {
-                    console.error('Error al leer el archivo Excel:', error);
+                } catch {
                     reject({
                         exito: false,
                         mensaje: 'Error al procesar el archivo Excel. Verifica que sea un archivo válido.'
@@ -129,8 +127,7 @@ async function leerExcel(archivo) {
                 }
             };
             
-            lector.onerror = function(error) {
-                console.error('Error al leer el archivo:', error);
+            lector.onerror = function() {
                 reject({
                     exito: false,
                     mensaje: 'Error al leer el archivo. Inténtalo de nuevo.'
@@ -141,8 +138,7 @@ async function leerExcel(archivo) {
             lector.readAsArrayBuffer(archivo);
         });
         
-    } catch (error) {
-        console.error('Error en la verificación del archivo:', error);
+    } catch {
         return { 
             exito: false, 
             mensaje: 'Error al verificar el archivo. Es posible que esté dañado.'

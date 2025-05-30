@@ -26,8 +26,7 @@ async function verificarPermisos(token) {
 
     // Retornar true si la respuesta fue exitosa y el servidor confirmó la validez
     return respuesta.ok && datos;
-  } catch (error) {
-    console.error('Error al verificar el token:', error);
+  } catch {
 
     // En caso de error en la solicitud, se considera que el token no es válido
     return false;

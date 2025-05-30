@@ -705,7 +705,7 @@ button:hover{
   position: relative;
 }
 .btn-usar {
-  background: var(--secundario, #1f4281);
+  background: var(--secundario, #a61930);
   border-radius: 8px;
   border-style: solid;
   border-color: rgba(255, 255, 255, 0.2);

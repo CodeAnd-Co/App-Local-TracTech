@@ -5,8 +5,7 @@
 function obtenerPermisos() {
     try {
         return JSON.parse(localStorage.getItem('permisos')) || [];
-    } catch (error) {
-        console.error('Error al obtener permisos del localStorage:', error);
+    } catch {
         return [];
     }
 }
@@ -21,4 +20,13 @@ function verificarPermisos(permiso) {
     return permisos.includes(permiso);
 }
 
-module.exports = { obtenerPermisos, verificarPermisos };
+/**
+ * Objeto que contiene los tipos de permisos disponibles en el sistema
+ * @constant {Object}
+ */
+const PERMISOS = {
+    ADMIN: 'ADMIN',
+    SUPERADMIN: 'SUPERADMIN',
+}
+
+module.exports = { verificarPermisos, PERMISOS, obtenerPermisos };

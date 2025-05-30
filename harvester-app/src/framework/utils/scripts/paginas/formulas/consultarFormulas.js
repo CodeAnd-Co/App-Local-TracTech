@@ -6,6 +6,7 @@ const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/
 const { ipcRenderer } = require('electron');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
+
  
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
@@ -38,18 +39,16 @@ async function eliminarFormula(id) {
             Swal.fire({
                 title: 'Error de conexión',
                 text: respuesta.mensaje,
-                icon: 'error'
+                icon: 'error',
+                confirmButtonColor: '#a61930',
             });
         }
-    } catch (error) {
-        let errorMensaje = error.message || 'Error al consultar las fórmulas';
-        if (error == undefined || error == null) {
-            errorMensaje = 'Error desconocido.';
-        }
+    } catch {
         Swal.fire({
             title: 'Error de conexión',
-            text: `Verifica tu conexión e inténtalo de nuevo. ${errorMensaje}`,
-            icon: 'error'
+            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#a61930',
         });
     }
 }
@@ -101,10 +100,9 @@ async function renderizarFormulas() {
                 btn.addEventListener('click', async (evento) => {
                     const formulaId = evento.currentTarget.getAttribute('data-id');
 
-                    if (!formulaId) {
-                        console.warn('No se encontró data-id en el botón.');
-                        return;
-                    }
+                if (!formulaId) {
+                    return;
+                }
 
                     const formulaSeleccionada = formulas.find(formula => formula.idFormula == formulaId);
 
