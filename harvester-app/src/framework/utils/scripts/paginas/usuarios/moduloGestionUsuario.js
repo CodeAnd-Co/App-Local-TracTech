@@ -64,8 +64,7 @@ async function inicializarModuloGestionUsuarios() {
 
         configurarValidacionesCampos()
 
-    } catch (error) {
-        console.error('Error al obtener usuarios:', error);
+    } catch {
         document.getElementById('lista-usuarios').innerHTML
             = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
@@ -208,8 +207,7 @@ async function eliminarUsuario(id) {
             icon: 'success',
             confirmButtonColor: '#3085d6',
         });
-    } catch (error) {
-        console.error('Error al eliminar el usuario:', error);
+    } catch {
         return Swal.fire({
             title: 'Error de conexión',
             text: 'Verifica tu conexión e inténtalo de nuevo.',
@@ -494,7 +492,6 @@ async function editarUsuario() {
     }
 
     const { idUsuario, nombre, correo, contrasenia, idRol } = datos;
-    console.log('Datos a enviar para modificar usuario:', datos);
 
     try {
         const resultado = await modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol);
@@ -616,7 +613,6 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
     } else {
         datos.idRol = idRolUsuarioAEditar;
     }
-    console.log("Datos:", datos)
 
     return { error: null, datos };
 }
@@ -889,8 +885,7 @@ async function crearUsuario() {
                 confirmButtonColor: '#3085d6',
             });
         }
-    } catch (error) {
-        console.error('Error al crear usuario:', error);
+    } catch {
         Swal.fire({
             title: 'Error de red',
             text: 'Hubo un problema al conectar con el servidor.',
@@ -918,14 +913,12 @@ async function guardarRoles() {
 
 
         if (!roles || roles.length === 0) {
-            console.warn('No hay roles disponibles para guardar.');
             rolesCache = []; // Vacía la caché si no hay roles
             return;
         }
 
         rolesCache = roles; // Guarda los roles en la variable global
-    } catch (error) {
-        console.error('Error al cargar y guardar los roles:', error);
+    } catch {
         rolesCache = []; // Vacía la caché en caso de error
     }
 }
