@@ -17,7 +17,7 @@ function cargarDatosExcel() {
         console.log('Datos de Excel cargados:', datosExcel);
         return datosExcel;
         
-    } catch (error) {
+    } catch {
         Swal.fire({
         title: 'Error',
         text: 'Ocurrió un error al cargar los datos de Excel.',
