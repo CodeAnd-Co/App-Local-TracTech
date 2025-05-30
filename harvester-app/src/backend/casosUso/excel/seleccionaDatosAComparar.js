@@ -77,8 +77,7 @@ function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
  */
 function obtenerFilasFiltradas(hoja, indices) {
     return hoja.slice(1).map(fila =>
-        indices.map(indice => fila?.[indice] ?? null)
-    );
+        indices.map(indice => fila?.[indice] ?? null));
 }
 
 module.exports = {
