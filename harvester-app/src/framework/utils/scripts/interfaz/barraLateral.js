@@ -17,7 +17,7 @@ async function cargarModulo(modulo){
         window.location.href = vista;
         localStorage.setItem('seccion-activa', modulo);
     } catch (err) {
-        console.error('Error al cargar vista:', err);
+        return ('Error al cargar vista:', err);
     }
 }
 
