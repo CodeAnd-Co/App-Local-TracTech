@@ -179,8 +179,8 @@ function crearCuadroFormulas(columnas) {
   crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
   // Fórmulas en contenedoesSeleccion[1]
 
-  const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
-  botonRegresar.addEventListener('click', () => {
+  const botonCerrarCuadroFormulas = cuadroFormulas.querySelector('.titulo-formulas');
+  botonCerrarCuadroFormulas.addEventListener('click', () => {
     cuadroFormulas.remove();
   });
 
