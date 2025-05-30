@@ -1,6 +1,6 @@
 // RF76 usuario consulta formulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 
-const { consultarFormulas } = require('../../domain/formulasAPI/formulaApi');
+const { consultarFormulas } = require('../../domain/formulasAPI/formulaAPI');
 
 /**
  * @async
