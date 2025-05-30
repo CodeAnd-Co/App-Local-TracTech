@@ -9,7 +9,7 @@
 /* eslint-disable no-unused-vars */
 const { jsPDF } = require(`${rutaBase}/node_modules/jspdf/dist/jspdf.umd.min.js`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 if (typeof ipcRenderer === 'undefined') {
   const { ipcRenderer } = require('electron');
 }
@@ -52,19 +52,9 @@ function inicializarModuloAnalisis() {
       pantallaBloqueo.classList.add('oculto');
       
       if (exito) {
-        Swal.fire({
-          title: 'Éxito',
-          text: 'El reporte PDF se ha guardado correctamente.',
-          icon: 'success',
-          confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta('Éxito', 'El archivo PDF se ha guardado correctamente.', 'success');
       } else {
-        Swal.fire({
-          title: 'Error',
-          text: 'Hubo un problema al guardar el archivo PDF.',
-          icon: 'error',
-          confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta('Error', 'No se descargó el pdf.', 'error');
       }
     });
 
