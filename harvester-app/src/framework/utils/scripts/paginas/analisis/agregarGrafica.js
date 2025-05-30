@@ -5,11 +5,9 @@ const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-if (typeof Swal === 'undefined') {
-  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-}
 
 /**
  * Agrega una nueva tarjeta de gráfica y su previsualización.
@@ -26,12 +24,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const contenedores = new Contenedores(contenedor, previsualizacion);
 
   if (!contenedor || !previsualizacion) {
-    Swal.fire({
-      title: 'Error',
-      text: 'Ocurrió un error al agregar cuadro de texto.',
-      icon: 'error',
-      confirmButtonColor: '#1F4281',
-    });
+    mostrarAlerta('Error', 'Ocurrió un error al agregar la gráfica.', 'error');
     return
   }
 
