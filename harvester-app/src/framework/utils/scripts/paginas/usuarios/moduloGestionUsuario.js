@@ -571,7 +571,7 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
             return { error, datos: null };
         }
         datos.nombre = validator.escape(nombre.trim());
-    } else { 
+    } else {
         datos.nombre = usuarioAEditar.nombre;
     }
 
@@ -666,10 +666,9 @@ function configurarValidacionesCampos() {
         campoEntrada.addEventListener(evento, () => {
             const valor = campoEntrada.value;
 
-            // Si el campo está vacío, quitar indicador de error
             if (valor.trim() === '') {
-                campoEntrada.classList.remove('inputError');
-                mensajeError.textContent = '';
+                campoEntrada.classList.add('inputError');
+                mensajeError.textContent = 'El campo no puede estar vacío';
                 return;
             }
 
@@ -719,8 +718,8 @@ function validarCoincidenciaContrasenas() {
 
         // Si el campo de confirmación está vacío, no mostrar error
         if (confirmPassword.trim() === '') {
-            confirmPasswordInput.classList.remove('inputError');
-            mensajeError.textContent = '';
+            confirmPasswordInput.classList.add('inputError');
+            mensajeError.textContent = 'El campo no puede estar vacío';
             return;
         }
 
