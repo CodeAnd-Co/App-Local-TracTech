@@ -1,3 +1,5 @@
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+
 /**
  * Carga los datos de Excel almacenados en localStorage.
  * 
