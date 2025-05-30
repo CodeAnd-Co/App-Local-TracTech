@@ -31,11 +31,11 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
 
             const encabezadosOriginales = datosTractor[0];
             const indicesSeleccionados = columnasSeleccionadas.map(nombreColumna => {
-                const index = encabezadosOriginales.indexOf(nombreColumna);
-                if (index === -1) {
+                const indiceColumna = encabezadosOriginales.indexOf(nombreColumna);
+                if (indiceColumna === -1) {
                     console.warn(`Columna "${nombreColumna}" no encontrada en ${nombreTractor}`);
                 }
-                return index;
+                return indiceColumna;
             }).filter(i => i !== -1);
 
             // Procesar las filas y agregar solo las columnas seleccionadas
