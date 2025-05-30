@@ -22,8 +22,9 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
         let datosExcel;
         try {
             datosExcel = JSON.parse(datosExcelCadena);
-        } catch (error) {
-            throw new Error(`Los datos en localStorage no son un JSON válido: ${error.mensaje}`);
+        } catch {
+
+            throw new Error('Los datos en localStorage no son un JSON válido');
         }
         
    
