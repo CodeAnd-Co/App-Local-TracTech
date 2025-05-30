@@ -23,9 +23,7 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
         try {
             datosExcel = JSON.parse(datosExcelCadena);
         } catch (error) {
-            console.error('Error al parsear JSON:', error);
-
-            throw new Error('Los datos en localStorage no son un JSON válido');
+            throw new Error(`Los datos en localStorage no son un JSON válido: ${error.mensaje}`);
         }
         
    
@@ -49,7 +47,6 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
         
         // Verificar que datos sea un array
         if (!Array.isArray(datos)) {
-            console.error('Datos no es un array:', datos);
             throw new Error('Formato de datos inválido: se esperaba un array');
         }
         
@@ -97,7 +94,6 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
             datosActualizados
         };
     } catch (error) {
-        console.error('Error en aplicarFormula:', error);
         return {
             error: error.message,
             nombreHoja: nombreHoja || 'desconocida'
@@ -114,7 +110,6 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
  */
 function encontrarColumnaVacia(datos) {
     if (!Array.isArray(datos)) {
-        console.error('encontrarColumnaVacia: datos no es un array', datos);
         return 0;
     }
     

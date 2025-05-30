@@ -6,7 +6,21 @@
 <%- include ('../../includes/encabezado.ejs')%>
     <div class='formula-container'>
         <div class='formula-encabezado'>
-            <h2>Crear Fórmula</h2>
+            <div class='tituloYBoton'>
+                <h2>Crear Fórmula</h2>
+            <%- include('../../includes/componentes/moleculas/botonConIcono/botonConIcono.ejs', {
+                id:'btnAyuda', 
+                tipo:'terciario', 
+                tamanio:'btn-sm', 
+                icono:{
+                    nombre: 'info',
+                    tamano: 'icono-l',
+                    color: 'icono-negro'
+                    }
+                }
+            )
+            %>
+            </div>
             <div class='formula-entrada-nombre'>
                 <label for='nombreFormula'>Nombre de la fórmula</label>
                 <input type='text' id='nombreFormula' placeholder='Ingrese un nombre descriptivo' />

@@ -20,9 +20,13 @@ async function mostrarAlertaConfirmacion(titulo, texto, icono) {
     showCancelButton: true,
     confirmButtonText: 'Confirmar',
     cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#a61930',
+    confirmButtonColor: '#a61930'
   });
-  return resultado.isConfirmed;
+  if (resultado.isConfirmed){
+    return true;
+  } else {
+    return false;
+  }
 }
 
 async function mostrarAlertaBorrado(){
@@ -35,7 +39,11 @@ async function mostrarAlertaBorrado(){
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#a61930',
     });
-    return resultado.isConfirmed;
+    if (resultado.isConfirmed){
+      return true;
+    } else {
+      return false;
+    }
 }
 
 
