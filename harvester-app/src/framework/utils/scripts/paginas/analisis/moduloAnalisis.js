@@ -25,7 +25,6 @@ function inicializarModuloAnalisis() {
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
   const contenedor = document.getElementById(idContenedor);
-  console.log('Datos de excel filtrados:', JSON.parse(localStorage.getItem('datosFiltradosExcel')));
   if (!contenedor) return;
 
   const botonPDF = document.getElementById('descargarPDF')

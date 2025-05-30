@@ -10,9 +10,6 @@
 function seleccionaDatosAComparar(datosExcel, seleccion) {
     try {
         const nuevoJSON = { hojas: {} };
-        console.log('Datos Excel:', datosExcel);
-        console.log('Selección:', seleccion);
-
         for (const [nombreHoja, configuracionSeleccion] of Object.entries(seleccion)) {
             if (!configuracionSeleccion.seleccionado) continue;
 
@@ -44,9 +41,7 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
 
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
-        console.log('Nuevo JSON guardado en localStorage:', nuevoJSON);
     } catch (error) {
-        console.error('Error verificando archivo:', error);
         throw new Error('Error al comparar datos');
     }
 }

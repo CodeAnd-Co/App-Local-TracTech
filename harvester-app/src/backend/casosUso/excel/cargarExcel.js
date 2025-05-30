@@ -55,7 +55,6 @@ async function verificarArchivoSeguro(archivo) {
         return { esSeguro: true, mensaje: 'Archivo verificado correctamente' };
         
     } catch (error) {
-        console.error('Error verificando archivo:', error);
         return { 
             esSeguro: false, 
             mensaje: 'Error al verificar el archivo. Es posible que esté dañado o no sea un Excel válido.' 
