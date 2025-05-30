@@ -13,12 +13,13 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
         const nuevoJSON = { hojas: {} };
         console.log('Datos Excel:', datosExcel);
         console.log('Selección:', seleccion);
-    
+
         Object.entries(seleccion).forEach(([nombreTractor, datosSeleccion]) => {
             console.log(`Procesando tractor: ${nombreTractor}`, datosSeleccion);
             if (!datosSeleccion.seleccionado) {
                 return;
             }
+
             // Obtener los datos completos del tractor desde el JSON original
             const columnasSeleccionadas = datosSeleccion.columnas;
             const datosTractor = datosExcel.hojas[nombreTractor];
@@ -27,7 +28,7 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 console.warn(`No se encontró la hoja o columnas vacías para el tractor: ${nombreTractor}`);
                 return;
             }
-    
+
             const encabezadosOriginales = datosTractor[0];
             const indicesSeleccionados = columnasSeleccionadas.map(nombreColumna => {
                 const index = encabezadosOriginales.indexOf(nombreColumna);
@@ -37,25 +38,28 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 return index;
             }).filter(i => i !== -1);
 
+            // Procesar las filas y agregar solo las columnas seleccionadas
             const nuevasFilas = Object.keys(datosTractor)
                 .filter(key => key !== "0") // Ignorar encabezados
                 .map(key => {
                     const fila = datosTractor[key];
-                    return indicesSeleccionados.map(i => fila[i] ?? null);
+                    return indicesSeleccionados.map(i => fila[i] ?? null); // Solo datos seleccionados
                 });
 
-            nuevoJSON.hojas[nombreTractor] = {
-                columnas: columnasSeleccionadas,
-                filas: nuevasFilas
-            };
+            // Agregar encabezados seleccionados como la primera fila
+            const encabezadosSeleccionados = indicesSeleccionados.map(i => encabezadosOriginales[i]);
+            nuevoJSON.hojas[nombreTractor] = [
+                encabezadosSeleccionados, // Solo los encabezados seleccionados
+                ...nuevasFilas // Filas procesadas sin el nombre del tractor
+            ];
 
             console.log(`Filtrado de ${nombreTractor}:`, nuevoJSON.hojas[nombreTractor]);
         });
-    
+
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
         console.log('Nuevo JSON guardado en localStorage:', nuevoJSON);
-        conssole.log('Hola');
+        conssole.log('Datos filtrados guardados en localStorage');
         return nuevoJSON;
     } catch (error) {
         console.error('Error verificando archivo:', error);
