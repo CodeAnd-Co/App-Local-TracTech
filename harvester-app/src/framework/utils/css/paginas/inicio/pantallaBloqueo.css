@@ -1,0 +1,53 @@
+.pantalla-bloqueo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: Arial, sans-serif;
+}
+
+.contenido-bloqueo {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+}
+
+.icono-bloqueo {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.mensaje-bloqueo {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+.instrucciones {
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.contacto-info {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.contacto-info p {
+    margin: 0.5rem 0;
+    color: #333;
+}
