@@ -410,7 +410,6 @@ function modificarTitulo(grafica, entradaTexto, tarjetaGrafica) {
  * @param {string} tituloGrafica - Título de la gráfica.
  */
 function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
-  console.log('Modificando tipo de gráfica a:', tituloGrafica);
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');
     const graficaOriginal = Chart.getChart(contexto);
