@@ -112,10 +112,11 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     modificarTitulo(graficaDiv, entradaTexto, tarjetaGrafica));
 
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
-  const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
   selectorTipo.value = grafico.config.type;
-  selectorTipo.addEventListener('change', () =>
-    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica));
+  selectorTipo.addEventListener('change', () => {
+    const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
+    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica)
+  })
 
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () =>
     eliminarGrafica(tarjetaGrafica, graficaDiv));
@@ -402,6 +403,7 @@ function modificarTitulo(grafica, entradaTexto, tarjetaGrafica) {
  * @param {string} tituloGrafica - Título de la gráfica.
  */
 function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
+  console.log('Modificando tipo de gráfica a:', tituloGrafica);
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');
     const graficaOriginal = Chart.getChart(contexto);
