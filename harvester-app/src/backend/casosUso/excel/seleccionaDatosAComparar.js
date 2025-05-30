@@ -1,7 +1,7 @@
 // RF14: Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
 /**
- * Filtra los datos del excel por tractores y columnas seleccionadas
+ * Filtra los datos del excel por hojas(tractores) y columnas seleccionadas
  * @function seleccionaDatosAComparar
  * @param {Object} datosExcel - JSON original del excel
  * @param {Object.<string, {seleccionado: boolean, columnas: Array<number>}>} seleccion - Objeto donde las claves son los nombres de los tractores (hojas)
@@ -37,6 +37,7 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
             // Guardar la hoja filtrada en el nuevo JSON
             nuevoJSON.hojas[nombreHoja] = [
                 encabezadosFiltrados,
+                // Usamos el operador de propagación para insertar cada fila como un elemento individual
                 ...filasFiltradas
             ];
         }
