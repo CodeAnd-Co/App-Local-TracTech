@@ -1,7 +1,5 @@
 const { mostrarAlerta } = require("../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal");
 
-const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-
 /**
  * Carga los datos de Excel almacenados en localStorage.
  * 
@@ -12,7 +10,7 @@ function cargarDatosExcel() {
         const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
         const datosExcelJSON = localStorage.getItem('datosExcel');
         if (datosDisponibles !== 'true' || !datosExcelJSON) {
-            throw new Error('No hay datos de Excel disponibles');
+            mostrarAlerta('Error al cargar datos', 'No hay datos de Excel disponibles.', 'error');
         }
         
         const datosExcel = JSON.parse(datosExcelJSON);
