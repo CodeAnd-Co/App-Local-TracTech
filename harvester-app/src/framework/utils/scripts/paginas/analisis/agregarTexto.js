@@ -1,7 +1,6 @@
-/**
- * @fileoverview Funcionalidades para agregar, modificar y eliminar cuadros de texto en reportes.
- * Implementa los requisitos funcionales RF17, RF18 y RF19.
- */
+// RF17 - Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf17/
+// RF18 - Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf18/
+// RF19 - Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf19/
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
