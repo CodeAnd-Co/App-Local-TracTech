@@ -1,6 +1,6 @@
 // RF71 - Eliminar una fórmula - http...
 
-const { eliminarFormula: eliminarFormulaAPI } = require('../../domain/formulasAPI/formulaApi');
+const { eliminarFormula: eliminarFormulaAPI } = require('../../domain/formulasAPI/formulaAPI');
 
 /**
  * @async

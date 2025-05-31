@@ -31,8 +31,7 @@ async function manejarEliminarFormula(id) {
                 icon: 'error'
             });
         }
-    } catch (error) {
-        console.error('Error al conectar con el backend:', error);
+    } catch {
         Swal.fire({
             title: 'Error de conexión',
             text: 'Verifica tu conexión e inténtalo de nuevo.',

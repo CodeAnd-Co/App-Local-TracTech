@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/reseteoEstilos.css'>
+<link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/paginas/inicio/pantallaBloqueo.css'>
+
+<body>
+  <div class='pantalla-bloqueo'>
+    <div class='contenido-bloqueo'>
+      <div class='icono-bloqueo'>🔒</div>
+      <h1>Aplicación Deshabilitada</h1>
+      <p class='mensaje-bloqueo'><%= mensaje || 'Esta aplicación ha sido deshabilitada por motivos de seguridad.' %></p>
+      <p class='instrucciones'>
+        Para más información, contacte al administrador del sistema o al call center.
+      </p>
+      <div class='contacto-info'>
+        <p><strong>Call Center:</strong> 0800 266 1374</p>
+        <p><strong>WhatsApp:</strong> 54 9 11 2034-1408</p>
+      </div>
+      
+      <!-- Información del dispositivo para soporte -->
+      <div class='info-dispositivo' style='margin-top: 20px; font-size: 12px; color: #666;'>
+        <p><strong>ID del Dispositivo:</strong> <span id='dispositivo-id'>Cargando...</span></p>
+        <p><strong>Fecha:</strong> <%= new Date().toLocaleString('es-ES') %></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Obtener y mostrar el ID del dispositivo para soporte
+    const { ipcRenderer } = require('electron');
+    
+    ipcRenderer.invoke('obtener-dispositivo-id').then(dispositivoId => {
+      document.getElementById('dispositivo-id').textContent = dispositivoId;
+    }).catch(error => {
+      document.getElementById('dispositivo-id').textContent = 'No disponible';
+    });
+  </script>
+</body>
