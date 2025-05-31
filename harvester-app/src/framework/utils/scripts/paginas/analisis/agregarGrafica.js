@@ -7,10 +7,40 @@ const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
+
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 if (typeof Swal === 'undefined') {
   const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+}
+
+// Variable global para almacenar las fórmulas consultadas
+let formulasDisponibles = [];
+
+/**
+ * Consulta las fórmulas una sola vez y las almacena globalmente.
+ * @returns {Promise<void>}
+ */
+async function cargarFormulasIniciales() {
+  try {
+    if (formulasDisponibles.length > 0) {
+      return; 
+    }
+
+    const respuesta = await consultaFormulasCasoUso();
+    
+    
+    if (!respuesta.ok || !respuesta.datos) {
+      throw new Error('Error al consultar fórmulas');
+    }
+
+    formulasDisponibles = respuesta.datos;
+  } catch (error) {
+    
+    formulasDisponibles = [];    
+    mostrarAlerta('Error', 'No se pudieron cargar las fórmulas disponibles. Revisa que sí haya fórmulas guardadas y estes conectado a internet', 'error');
+  }
 }
 
 /**
@@ -134,12 +164,117 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
 
 /**
+ * Filtra y renderiza las fórmulas según el término de búsqueda.
+ * @param {HTMLDivElement} contenedor - Contenedor donde se mostrarán las fórmulas.
+ * @param {string} terminoBusqueda - Término de búsqueda para filtrar fórmulas.
+ * @returns {void}
+ */
+function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '') {
+  // Limpiar contenedor
+  contenedor.innerHTML = '';
+
+  // Si no hay término de búsqueda, mostrar mensaje inicial
+  if (!terminoBusqueda || terminoBusqueda.trim() === '') {
+    return;
+  }
+
+  // Si no hay fórmulas cargadas, mostrar mensaje específico
+  if (formulasDisponibles.length === 0) {
+    contenedor.innerHTML = '<div class="mensaje-sin-formulas">No hay fórmulas creadas. <br>Ve al módulo de fórmulas para crear una.</div>';
+    return;
+  }
+
+  // Filtrar fórmulas por término de búsqueda SOLO en el nombre
+  const terminoLowerCase = terminoBusqueda.toLowerCase();
+  const formulasFiltradas = formulasDisponibles.filter(formula => {
+    return formula.Nombre.toLowerCase().includes(terminoLowerCase);
+  });
+
+  // Renderizar fórmulas filtradas
+  if (formulasFiltradas.length === 0) {
+    contenedor.innerHTML = '<div class="mensaje-sin-resultados">No hay fórmulas con ese nombre</div>';
+    return;
+  }
+
+  formulasFiltradas.forEach((formula, indice) => {
+    const elementoFormula = document.createElement('div');
+    elementoFormula.className = 'formula-objeto';
+    
+    const radioId = `formula-${formula.idFormula}`;
+    
+    elementoFormula.innerHTML = `
+      <input type="radio" 
+             id="${radioId}" 
+             name="formula-seleccionada" 
+             value="${formula.idFormula}"
+             data-formula-nombre="${formula.Nombre}"
+             data-formula-datos="${formula.Datos}"
+             style="display: none;">
+      <div class="formula" data-radio-id="${radioId}">
+        <label for="${radioId}" class="formula-label">${formula.Nombre}</label>
+      </div>
+    `;
+    
+    // Agregar evento de clic al div .formula
+    const divFormula = elementoFormula.querySelector('.formula');
+    const radioButton = elementoFormula.querySelector('input[type="radio"]');
+    
+    divFormula.addEventListener('click', () => {
+      // Deseleccionar todas las fórmulas anteriores
+      contenedor.querySelectorAll('.formula').forEach(div => {
+        div.classList.remove('formula-seleccionada');
+      });
+      
+      // Deseleccionar todos los radio buttons
+      contenedor.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.checked = false;
+      });
+      
+      // Seleccionar la fórmula actual
+      radioButton.checked = true;
+      divFormula.classList.add('formula-seleccionada');
+      
+      // Llamar a la función de selección
+      seleccionarFormula(radioButton, contenedor);
+    });
+    
+    contenedor.appendChild(elementoFormula);
+  });
+}
+
+/**
+ * Maneja la selección de una fórmula.
+ * @param {HTMLInputElement} radioButton - Radio button de fórmula seleccionado.
+ * @param {HTMLDivElement} contenedor - Contenedor de fórmulas.
+ * @returns {void}
+ */
+function seleccionarFormula(radioButton, contenedor) {
+  // Guardar la fórmula seleccionada para uso posterior
+  const formulaSeleccionada = {
+    id: radioButton.value,
+    nombre: radioButton.dataset.formulaNombre,
+    datos: radioButton.dataset.formulaDatos
+  };
+  
+  // Almacenar en el elemento padre para acceso posterior
+  const cuadroFormulas = contenedor.closest('.contenedor-formulas');
+  if (cuadroFormulas) {
+    cuadroFormulas.dataset.formulaSeleccionada = JSON.stringify(formulaSeleccionada);
+  }
+  
+  console.log('Fórmula seleccionada:', formulaSeleccionada);
+}
+
+/**
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
  * @returns {void}
  */
 async function crearCuadroFormulas(columnas) {
-  eliminarCuadroFormulas()
+  eliminarCuadroFormulas();
+
+  // Cargar fórmulas una sola vez al inicio
+  await cargarFormulasIniciales();
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
@@ -161,7 +296,7 @@ async function crearCuadroFormulas(columnas) {
                   <div class='opciones-carta'>
                       <input class='search-section' placeholder='Encuentra una fórmula' />
                       <div class='contenedor-busqueda'>
-                          <!-- Las fórmulas se renderizarán aquí dinámicamente -->
+                          <div class="mensaje-inicial">Escribe para buscar fórmulas...</div>
                       </div>
                       <div class='boton-agregar'>
                           <div>Aplicar Fórmula</div>
@@ -179,13 +314,10 @@ async function crearCuadroFormulas(columnas) {
   const campoBusqueda = cuadroFormulas.querySelector('.search-section');
   const contenedorBusqueda = cuadroFormulas.querySelector('.contenedor-busqueda');
   
-  // Cargar y renderizar fórmulas inicialmente
-  await cargarYRenderizarFormulas(contenedorBusqueda, '');
-  
-  // Configurar evento de búsqueda
-  campoBusqueda.addEventListener('input', async (evento) => {
-    const terminoBusqueda = evento.target.value.toLowerCase();
-    await cargarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda);
+  // Configurar evento de búsqueda (filtrado local)
+  campoBusqueda.addEventListener('input', (evento) => {
+    const terminoBusqueda = evento.target.value.trim();
+    filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda);
   });
 
   const botonCerrarCuadroFormulas = cuadroFormulas.querySelector('.titulo-formulas');
@@ -198,100 +330,6 @@ async function crearCuadroFormulas(columnas) {
     seccionReporte.insertAdjacentElement('afterend', cuadroFormulas);
   } else {
     document.querySelector('.frame-analisis').appendChild(cuadroFormulas);
-  }
-}
-
-/**
- * Carga las fórmulas desde la base de datos y las renderiza filtradas por término de búsqueda.
- * @param {HTMLDivElement} contenedor - Contenedor donde se mostrarán las fórmulas.
- * @param {string} terminoBusqueda - Término de búsqueda para filtrar fórmulas.
- * @returns {Promise<void>}
- */
-async function cargarYRenderizarFormulas(contenedor, terminoBusqueda = '') {
-  try {
-    // Reutilizar la función de consulta de fórmulas
-    const respuesta = await consultaFormulasCasoUso();
-    
-    if (!respuesta.ok || !respuesta.datos) {
-      throw new Error('Error al consultar fórmulas');
-    }
-
-    const formulas = respuesta.datos;
-    
-    // Filtrar fórmulas por término de búsqueda
-    const formulasFiltradas = formulas.filter(formula => {
-      if (!terminoBusqueda) return true;
-      return formula.Nombre.toLowerCase().includes(terminoBusqueda) ||
-             formula.Datos.toLowerCase().includes(terminoBusqueda);
-    });
-
-    // Limpiar contenedor
-    contenedor.innerHTML = '';
-
-    // Renderizar fórmulas filtradas
-    if (formulasFiltradas.length === 0) {
-      contenedor.innerHTML = '<div class="mensaje-sin-resultados">No se encontraron fórmulas</div>';
-      return;
-    }
-
-    formulasFiltradas.forEach(formula => {
-      const elementoFormula = document.createElement('div');
-      elementoFormula.className = 'formula';
-      elementoFormula.textContent = `${formula.Nombre}: ${formula.Datos}`;
-      elementoFormula.dataset.formulaId = formula.idFormula;
-      elementoFormula.dataset.formulaNombre = formula.Nombre;
-      elementoFormula.dataset.formulaDatos = formula.Datos;
-      
-      // Agregar evento de clic para seleccionar fórmula
-      elementoFormula.addEventListener('click', () => {
-        seleccionarFormula(elementoFormula, contenedor);
-      });
-      
-      contenedor.appendChild(elementoFormula);
-    });
-
-  } catch (error) {
-    console.error('Error al cargar fórmulas:', error);
-    contenedor.innerHTML = '<div class="error-carga-formulas">Error al cargar fórmulas</div>';
-    
-    // Mostrar mensaje de error con SweetAlert
-    if (typeof Swal !== 'undefined') {
-      Swal.fire({
-        title: 'Error',
-        text: 'No se pudieron cargar las fórmulas disponibles.',
-        icon: 'warning',
-        confirmButtonColor: '#a61930',
-      });
-    }
-  }
-}
-
-/**
- * Maneja la selección de una fórmula.
- * @param {HTMLDivElement} elementoFormula - Elemento de fórmula seleccionado.
- * @param {HTMLDivElement} contenedor - Contenedor de fórmulas.
- * @returns {void}
- */
-function seleccionarFormula(elementoFormula, contenedor) {
-  // Remover selección previa
-  contenedor.querySelectorAll('.formula').forEach(formula => {
-    formula.classList.remove('formula-seleccionada');
-  });
-  
-  // Agregar selección actual
-  elementoFormula.classList.add('formula-seleccionada');
-  
-  // Guardar la fórmula seleccionada para uso posterior
-  const formulaSeleccionada = {
-    id: elementoFormula.dataset.formulaId,
-    nombre: elementoFormula.dataset.formulaNombre,
-    datos: elementoFormula.dataset.formulaDatos
-  };
-  
-  // Almacenar en el elemento padre para acceso posterior
-  const cuadroFormulas = elementoFormula.closest('.contenedor-formulas');
-  if (cuadroFormulas) {
-    cuadroFormulas.dataset.formulaSeleccionada = JSON.stringify(formulaSeleccionada);
   }
 }
 
@@ -576,4 +614,7 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
   }
 }
 
-module.exports = { agregarGrafica };
+module.exports = { 
+  agregarGrafica,
+  cargarFormulasIniciales,
+ };

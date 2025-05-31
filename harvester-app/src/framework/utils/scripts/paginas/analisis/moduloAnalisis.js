@@ -8,6 +8,7 @@ if (typeof ipcRenderer === 'undefined') {
   const { ipcRenderer } = require('electron');
 }
 const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
+const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
 
 /**
  * Inicializa la interfaz de análisis:
@@ -15,18 +16,21 @@ const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framewor
  * - Configura el listener de descarga de PDF.
  * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío.
  * - Configura delegación de eventos para mostrar/ocultar botones flotantes en tarjetas.
+ * - Carga las fórmulas disponibles.
 *
 * @returns {void}
 */
 /* eslint-disable no-undef */
-function inicializarModuloAnalisis() {
-
+async function inicializarModuloAnalisis() {
   const idContenedor = 'contenedorElementos';
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
   const contenedor = document.getElementById(idContenedor);
 
   if (!contenedor) return;
+
+  // Cargar fórmulas al inicializar el módulo
+  await cargarFormulasIniciales();
 
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
