@@ -1,3 +1,5 @@
+const { mostrarAlerta } = require("../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal");
+
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 /**
@@ -17,13 +19,7 @@ function cargarDatosExcel() {
         return datosExcel;
         
     } catch {
-        Swal.fire({
-        title: 'Error',
-        text: 'Ocurrió un error al cargar los datos de Excel.',
-        icon: 'error',
-        confirmButtonColor: '#1F4281',
-        });
-        return null;
+        mostrarAlerta('Error al cargar datos', 'No se pudieron cargar los datos de Excel. Asegúrate de que el archivo esté cargado correctamente.', 'error');
     }
 }
 
