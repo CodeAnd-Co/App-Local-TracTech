@@ -37,12 +37,12 @@ function inicializarModuloUsuario() {
       const contenidoOriginal = botonCerrarSesion.innerHTML;
       botonCerrarSesion.innerHTML = '<div class="cerrar-sesi-n">Cerrando sesión...</div>';
 
-      const timeoutPromise = new Promise((reject) => {
+      const tiempoPromesa = new Promise((reject) => {
         setTimeout(() => reject(new Error('Tiempo de espera agotado')), 5000);
       });
 
       try {
-        const respuesta = await Promise.race([cerrarSesion(), timeoutPromise]);
+        const respuesta = await Promise.race([cerrarSesion(), tiempoPromesa]);
         const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
         if (respuesta.ok) {
           localStorage.removeItem('token');

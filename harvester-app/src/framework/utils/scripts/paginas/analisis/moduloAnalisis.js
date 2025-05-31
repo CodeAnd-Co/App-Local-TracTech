@@ -1,23 +1,28 @@
 // RF25 - Usuario descarga reporte en PDF - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf25/
+// RF17 - Usuario añade cuadro de texto al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf17/
+// RF18 - Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf18/
+// RF19 - Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf19/
+// RF36 - Usuario añade gráfica al reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf36/
+// RF37 - Usuario modifica gráfica del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf37/
+// RF38 - Usuario elimina gráfica del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf38/
 
 /* eslint-disable no-unused-vars */
 const { jsPDF } = require(`${rutaBase}/node_modules/jspdf/dist/jspdf.umd.min.js`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 if (typeof ipcRenderer === 'undefined') {
   const { ipcRenderer } = require('electron');
 }
 const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
 
 /**
- * Inicializa la interfaz de análisis:
- * - Oculta los botones globales.
- * - Configura el listener de descarga de PDF.
- * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío.
- * - Configura delegación de eventos para mostrar/ocultar botones flotantes en tarjetas.
-*
-* @returns {void}
-*/
+ * Inicializa la interfaz del módulo de análisis:
+ * - Configura el listener de descarga de PDF con manejo de estados de carga
+ * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío
+ * - Gestiona la pantalla de bloqueo durante la descarga
+ * 
+ * @returns {void}
+ */
 /* eslint-disable no-undef */
 function inicializarModuloAnalisis() {
 
@@ -28,24 +33,32 @@ function inicializarModuloAnalisis() {
 
   if (!contenedor) return;
 
-  const botonPDF = document.getElementById('descargarPDF')
+  const botonPDF = document.getElementById('descargarPDF');
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
+  
   botonPDF.addEventListener('click', async () => {
 
     const anterior = botonPDF.textContent;
     botonPDF.disabled = true;
-    const contenedorTexto = botonPDF.children[1]
+    const contenedorTexto = botonPDF.children[1];
     contenedorTexto.textContent = 'Descargando...';
     pantallaBloqueo.classList.remove('oculto');
 
-    descargarPDF()
+    descargarPDF();
 
     ipcRenderer.once('pdf-guardado', (event, exito) => {
       botonPDF.disabled = false;
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
+      
+      if (exito) {
+        mostrarAlerta('Éxito', 'El archivo PDF se ha guardado correctamente.', 'success');
+      } else {
+        mostrarAlerta('Error', 'No se descargó el pdf.', 'error');
+      }
     });
-  });
+
+  }); // Cierre del addEventListener
 
   if (contenedor.children.length === 0) {
     configurarTexto(idContenedor, idContenedorPrevisualizacion);
@@ -54,10 +67,11 @@ function inicializarModuloAnalisis() {
 }
 
 /**
- * Carga los datos de Excel almacenados en localStorage.
+ * Carga los datos de Excel almacenados en localStorage y los valida.
+ * Muestra un mensaje de error si los datos no están disponibles o son inválidos.
  * 
- * @returns {Object|null} Datos parseados o null si falla.
-*/
+ * @returns {Object|null} Datos de Excel parseados desde JSON, o null si hay error
+ */
 function cargarDatosExcel() {
   try {
     const datosDisponibles = localStorage.getItem('datosExcelDisponibles');
@@ -82,9 +96,12 @@ function cargarDatosExcel() {
 
 /**
  * Genera y descarga el reporte en PDF usando jsPDF.
-*
-* @throws {Error} Si jsPDF no está cargado o falla la extracción de previsualización.
-*/
+ * Procesa elementos de texto y gráficas del contenedor de previsualización,
+ * aplicando estilos y paginación automática según el contenido.
+ * 
+ * @returns {Promise<void>} Promesa que se resuelve cuando el PDF es enviado para guardar
+ * @throws {Error} Si jsPDF no está cargado o no se encuentra el contenedor de previsualización
+ */
 async function descargarPDF() {
   if (!jsPDF) {
     Swal.fire({

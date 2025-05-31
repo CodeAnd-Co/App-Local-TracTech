@@ -258,7 +258,7 @@ function crearGrafica(contexto, tipo, color) {
   const grafico = new Chart(contexto, {
     type: tipo,
     data: {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
       datasets: [{
         label: 'Datos',
         backgroundColor: fondo => {

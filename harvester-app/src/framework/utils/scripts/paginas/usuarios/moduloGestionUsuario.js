@@ -1003,21 +1003,21 @@ async function guardarRoles() {
 /**
  * Llena el elemento <select> con los roles almacenados en `rolesCache`.
  * @function llenarSelectConRoles
- * @param {HTMLElement} selectRol - El elemento <select> a llenar
+ * @param {HTMLElement} seleccionarRol - El elemento <select> a llenar
  * @returns {void}
  */
-function llenarSelectConRoles(selectRol) {
+function llenarSelectConRoles(seleccionarRol) {
 
     const rolPorDefecto = usuarioAEditar ? usuarioAEditar.rol : null;
 
     if (!rolesCache || rolesCache.length === 0) {
-        selectRol.innerHTML = '<option value="">No hay roles disponibles</option>';
+        seleccionarRol.innerHTML = '<option value="">No hay roles disponibles</option>';
         return;
     }
 
     // Limpiar el contenido previo del <select>
-    selectRol.innerHTML = `
-        <option value="" disabled ${rolPorDefecto === null ? 'selected' : ''}>
+    seleccionarRol.innerHTML = `
+        <option value="" disabled ${rolPorDefecto===null ? 'selected' : ''}>
         Selecciona rol
         </option>
     `;
@@ -1030,18 +1030,18 @@ function llenarSelectConRoles(selectRol) {
         if (rol.Nombre === rolPorDefecto) {
             option.selected = true;
         }
-        selectRol.appendChild(option);
+        seleccionarRol.appendChild(option);
     });
 }
 
 
 function cargarRoles() {
-    const selectRol = document.querySelector('#rol'); // Busca el <select> con id="rol"
-    if (selectRol) {
+    const seleccionarRol = document.querySelector('#rol'); // Busca el <select> con id="rol"
+    if (seleccionarRol) {
         // Cargar y guardar los roles al iniciar
         guardarRoles().then(() => {
             // Llenar el <select> con los roles guardados
-            llenarSelectConRoles(selectRol);
+            llenarSelectConRoles(seleccionarRol);
         });
     }
     return
