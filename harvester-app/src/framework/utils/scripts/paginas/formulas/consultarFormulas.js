@@ -121,8 +121,10 @@ async function renderizarFormulas() {
                     try {
                         const resultadoConfirmado = await mostrarAlertaConfirmacion('¿Estás seguro?', 'Esta acción no se puede deshacer.', 'warning');
                         if(resultadoConfirmado) {
-                            eliminarFormula(formulaId);
-                            window.cargarModulo('formulas');
+                            const eliminacionExitosa = await eliminarFormula(formulaId);
+                            if(eliminacionExitosa) {
+                                window.cargarModulo('formulas');
+                            }
                         }
                         // eslint-disable-next-line no-unused-vars
                     } catch (error) {
