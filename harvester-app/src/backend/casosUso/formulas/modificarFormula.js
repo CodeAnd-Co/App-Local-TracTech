@@ -25,7 +25,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         });
         return;
     }
-    if (nombre === '' || nombre.length >= LONGITUD_MAXIMA_NOMBRE_FORMULA) {
+    if (nombre === '' || nombre.length > LONGITUD_MAXIMA_NOMBRE_FORMULA) {
         Swal.fire({
             title: 'Error',
             text: `Verifica que la formula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
@@ -34,7 +34,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         });
         return;
     }
-    if (formula.length >= LONGITUD_MAXIMA_FORMULA) {
+    if (formula.length > LONGITUD_MAXIMA_FORMULA) {
         Swal.fire({
             title: 'Error',
             text: `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`,

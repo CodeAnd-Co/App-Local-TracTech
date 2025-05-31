@@ -1,13 +1,13 @@
 // RF 76 - Consultar fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 
-const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`); 
+const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`);
 const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/eliminarFormula.js`);
 const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/modificarFormula.js`);
 const { ipcRenderer } = require('electron');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 
- 
+
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 async function consultarFormulas() {
@@ -100,9 +100,9 @@ async function renderizarFormulas() {
                 btn.addEventListener('click', async (evento) => {
                     const formulaId = evento.currentTarget.getAttribute('data-id');
 
-                if (!formulaId) {
-                    return;
-                }
+                    if (!formulaId) {
+                        return;
+                    }
 
                     const formulaSeleccionada = formulas.find(formula => formula.idFormula == formulaId);
 
@@ -113,7 +113,7 @@ async function renderizarFormulas() {
                         localStorage.setItem('modificarFormulaDatos', Datos);
                         try {
                             const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
-                            const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion', permisos});
+                            const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono: 'Funcion', permisos });
                             window.location.href = vista;
                             localStorage.setItem('seccion-activa', 'formulas');
                         } catch (err) {
@@ -129,7 +129,7 @@ async function renderizarFormulas() {
             // Registrar event listeners para eliminar solo si hay fórmulas
             document.querySelectorAll('.eliminar').forEach(btn => {
                 btn.addEventListener('click', (evento) => {
-                     
+
                     const formulaId = evento.currentTarget.getAttribute('data-id');
                     try {
                         Swal.fire({
@@ -141,7 +141,7 @@ async function renderizarFormulas() {
                             cancelButtonText: 'Cancelar',
                             confirmButtonColor: '#1F4281',
                             cancelButtonColor: '#A61930'
-                            
+
                         }).then((resultado) => {
                             if (resultado.isConfirmed) {
                                 eliminarFormula(formulaId);
@@ -177,7 +177,7 @@ async function renderizarFormulas() {
         btnCrearFormula.addEventListener('click', async () => {
             try {
                 const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono : 'Funcion', permisos});
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono: 'Funcion', permisos });
                 window.location.href = vista;
                 localStorage.setItem('seccion-activa', 'formulas');
             } catch (err) {
