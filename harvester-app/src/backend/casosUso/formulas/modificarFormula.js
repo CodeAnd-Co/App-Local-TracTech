@@ -21,7 +21,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
             title: 'Error',
             text: 'Por favor, completa todos los campos.',
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         return;
     }
@@ -30,7 +30,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
             title: 'Error',
             text: `Verifica que la formula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         return;
     }
@@ -39,7 +39,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
             title: 'Error',
             text: `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`,
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         return;
     }
@@ -52,7 +52,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
             title: 'Error',
             text: 'Ya existe una fórmula con ese nombre.',
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         return
         
@@ -66,7 +66,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
                 title: 'Fórmula modificada',
                 text: 'La fórmula ha sido modificada exitosamente.',
                 icon: 'success',
-                confirmButtonColor: '#1F4281',
+                confirmButtonColor: '#a61930',
             });
             window.cargarModulo('formulas');
         } else {
@@ -74,7 +74,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
                 title: 'Error de conexión',
                 text: respuesta.mensaje,
                 icon: 'error',
-                confirmButtonColor: '#1F4281',
+                confirmButtonColor: '#a61930',
             });
             return;
         }
@@ -83,7 +83,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
             title: 'Error',
             text: `No se pudo modificar la fórmula. Inténtalo de nuevo más tarde: ${error}`,
             icon: 'error',
-            confirmButtonColor: '#1F4281',
+            confirmButtonColor: '#a61930',
         });
         return;
     }

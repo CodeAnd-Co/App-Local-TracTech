@@ -72,7 +72,7 @@ async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
         contrasenia: contraseniaSanitizada,
         idRolFK: idRolFKSanitizada,
     };
-    
+
     try {
         const respuesta = await crearUsuarioAPI(datosApi);
         if (!respuesta.ok) {

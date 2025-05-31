@@ -73,7 +73,7 @@ function cargarDatosExcel() {
       title: 'Error',
       text: 'Ocurrió un error al cargar los datos de Excel.',
       icon: 'error',
-      confirmButtonColor: '#1F4281',
+      confirmButtonColor: '#a61930',
     });
     return null;
   }
