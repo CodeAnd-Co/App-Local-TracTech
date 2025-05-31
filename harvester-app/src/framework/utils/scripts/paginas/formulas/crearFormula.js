@@ -1,10 +1,10 @@
 // RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
 // RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
 const { LONGITUD_MAXIMA_FORMULA,
-    LONGITUD_MAXIMA_NOMBRE_FORMULA,} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
+    LONGITUD_MAXIMA_NOMBRE_FORMULA } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 
 const { abrirAyudaExterna } = require(`${rutaBase}src/framework/utils/scripts/middleware/ayudaExterna.js`);
-const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 const { guardarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/crearFormula.js`);
 
@@ -13,14 +13,14 @@ inicializarCrearFormula();
 /**
  * @function eliminarElemento
  * @description Elimina un elemento del DOM.
- * @param {HTMLElement} boton - El botón que se ha pulsado para eliminar el elemento.
+* @param {HTMLElement} boton - El botón que se ha pulsado para eliminar el elemento.
  * @returns {void}
  * @throws {Error} Si el elemento no se puede eliminar.
  */
 // eslint-disable-next-line no-unused-vars
 function eliminarElemento(boton) {
-            const elementoABorrar = boton.parentNode.parentNode;
-            elementoABorrar.remove();
+    const elementoABorrar = boton.parentNode.parentNode;
+    elementoABorrar.remove();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -35,48 +35,38 @@ function cancelarVista(){
  * @throws {Error} Si el botón de creación de fórmulas no se encuentra en el DOM.
  */
 async function inicializarCrearFormula() {
-        const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
-                document.getElementById('btnCancelar').addEventListener('click', () => {
-                    window.cargarModulo('formulas');
-                });
+    const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
+    document.getElementById('btnCancelar').addEventListener('click', () => {
+        window.cargarModulo('formulas');
+    });
 
-                document.getElementById('btnGuardar').addEventListener('click', async () => {
-                    procesarFormula();
-                });
+    document.getElementById('btnGuardar').addEventListener('click', async () => {
+        procesarFormula();
+    });
 
-                document.getElementById('btnAyuda').addEventListener('click', async () => {
-                    await abrirAyudaExterna('https://docs.google.com/document/d/14tKDIFsQO1i_32oEwaGaE7u8hHv3pcdb3frWU7vJ9M8/edit?tab=t.0#heading=h.ldire7zbv2f')
-                });
+    document.getElementById('btnAyuda').addEventListener('click', async () => {
+        await abrirAyudaExterna('https://docs.google.com/document/d/14tKDIFsQO1i_32oEwaGaE7u8hHv3pcdb3frWU7vJ9M8/edit?tab=t.0#heading=h.ldire7zbv2f');
+    });
 
-                document.getElementById('btnGenerar').addEventListener('click', () => {
-                    const contenedor = document.getElementById('function-arguments');
-                    if (contenedor) {
-                        generarFormulaCompleja();
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'No se ha podido generar la fórmula.',
-                            icon: 'error',
-                            confirmButtonColor: '#1F4281',
-                        });
-                    }
-                });
+    document.getElementById('btnGenerar').addEventListener('click', () => {
+        const contenedor = document.getElementById('function-arguments');
+        if (contenedor) {
+            generarFormulaCompleja();
+        } else {
+            mostrarAlerta('Error', 'No se ha podido generar la fórmula.', 'error');
+        }
+    });
 
-                if (nombreArchivo === null || nombreArchivo === undefined) {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'No hay un archivo cargado.',
-                        icon: 'error',
-                        confirmButtonColor: '#1F4281',
-                    });
-                    document.getElementById('btnGuardar').disabled = true;
-                    document.getElementById('btnGenerar').disabled = true;
+    if (nombreArchivo === null || nombreArchivo === undefined) {
+        mostrarAlerta('Error', 'No hay un archivo cargado.', 'error');
+        document.getElementById('btnGuardar').disabled = true;
+        document.getElementById('btnGenerar').disabled = true;
 
-                    return;
-                }
-    } 
-        
-    
+        return;
+    }
+}
+
+
 
 /**
  * @function procesarFormula
@@ -95,110 +85,68 @@ async function procesarFormula() {
     const nombreFormula = nombreFormulaSinProcesar.trim();
     const formulasGuardadas = localStorage.getItem('nombresFormulas'); 
     if (nombreFormula === '' || nombreFormula.length >= LONGITUD_MAXIMA_NOMBRE_FORMULA) {
-        Swal.fire({
-            title: 'Error',
-            text: `Verifica que la formula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta(
+            'Error',
+            `Verifica que la fórmula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
+            'error'
+        );
         return;
     }
     if (formulasGuardadas) {
         const nombresFormulas = JSON.parse(formulasGuardadas);
         if (nombresFormulas.includes(nombreFormula)) {
-            Swal.fire({
-                title: 'Error',
-                text: 'Ya existe una fórmula con ese nombre.',
-                icon: 'error',
-                confirmButtonColor: '#1F4281',
-            });
+            mostrarAlerta('Error', 'Ya existe una fórmula con ese nombre.', 'error');
             return;
         }
     }
-    // Obtener referencia al botón de guardar
+// Obtener referencia al botón de guardar
     const btnGuardar = document.getElementById('btnGuardar');    
-    // Deshabilitar el botón para evitar múltiples clics
+// Deshabilitar el botón para evitar múltiples clics
     btnGuardar.disabled = true;
-    
+
     // Almacenar el contenido original del botón
     const contenidoOriginal = btnGuardar.innerHTML;
-    
+
     // Cambiar el texto del botón para indicar que está procesando
     btnGuardar.innerHTML = '<div>Guardando fórmula...</div>';
-    
+
     const cuadroTextoGenerado = document.getElementById('resultado').innerText;
     // Mucho ojo aquí, si vamos a utilizar rangos de celdas, tenemos que separarlo de otra forma
     if (cuadroTextoGenerado === '') {
-        Swal.fire({
-            title: 'Error',
-            text: 'Verifica que la fórmula ha sido generada.',
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
-        // Restaurar el botón en caso de error
+        mostrarAlerta('Error', 'Verifica que la fórmula ha sido generada.', 'error');
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
         return;
     } else if (cuadroTextoGenerado === 'Por favor, selecciona una función principal.') {
-        Swal.fire({
-            title: 'Error',
-            text: 'Verifica que la fórmula esté completa.',
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
-        // Restaurar el botón en caso de error
+        mostrarAlerta('Error', 'Verifica que la fórmula esté completa.', 'error');
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
         return;
-        
+
     }
     if (cuadroTextoGenerado.length >= LONGITUD_MAXIMA_FORMULA) {
-        Swal.fire({
-            title: 'Error',
-            text: `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`,
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta('Error', `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`, 'error');
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
         return;
     }
     const formula = cuadroTextoGenerado.split(':')[1].trim();
-    
-    try{
+
+    try {
         const respuesta = await guardarFormula(nombreFormula, formula);
         if (respuesta.ok) {
             window.cargarModulo('formulas');
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un error al guardar la fórmula.',
-                icon: 'error',
-                confirmButtonColor: '#1F4281',
-            });
-            
-            // Restaurar el botón en caso de error
+            mostrarAlerta('Error', 'Hubo un error al guardar la fórmula.', 'error');
             btnGuardar.innerHTML = contenidoOriginal;
             btnGuardar.disabled = false;
         }
     } catch (error) {
-        Swal.fire({
-            title: 'Error',
-            text: `Hubo un error en la conexión: ${error}`,
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
-        
-        // Restaurar el botón en caso de error
+        mostrarAlerta('Error', `Hubo un error en la conexión: ${error}`, 'error');
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
     }
-    Swal.fire({
-        title: 'Fórmula guardada',
-        text: 'La fórmula ha sido guardada exitosamente.',
-        icon: 'success',
-        confirmButtonColor: '#1F4281',
-    });
+    mostrarAlerta('Fórmula guardada', 'La fórmula ha sido guardada exitosamente.', 'success');
 }
 
 /**
@@ -500,14 +448,9 @@ function validarCamposFormula(contenedor) {
     });
     
     if (!camposValidos) {
-        Swal.fire({
-            title: 'Error',
-            text: mensajeError,
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta('Error', mensajeError, 'error');
     }
-    
+
     return camposValidos;
 }
 
@@ -523,15 +466,10 @@ function generarFormulaCompleja() {
     previsualizador[0].style.display = 'block';
     const seleccionFuncionPrincipal = document.getElementById('main-function');
     if (!seleccionFuncionPrincipal.value) {
-        Swal.fire({
-            title: 'Error',
-            text: 'Por favor, selecciona una función principal.',
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta('Error', 'Por favor, selecciona una función principal.', 'error');
         return;
     }
-    
+
     const contenedor = document.getElementById('function-arguments');
     if (!validarCamposFormula(contenedor)) {
         return;
@@ -699,12 +637,7 @@ function popularDropdown(elementoSeleccionado) {
         return;
     }
     if (!Array.isArray(columnas)) {
-        Swal.fire({
-            title: 'Error',
-            text: 'El archivo seleccionado no tiene parámetros.',
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta('Error', 'El archivo seleccionado no tiene parámetros.', 'error');
         return;
     }
     elementoSeleccionado.innerHTML = '<option value="">Seleccionar</option>';
