@@ -55,9 +55,7 @@ async function inicializarModificarFormula(id, nombre, formula) {
 
   formulaInput.setAttribute('maxlength', LONGITUD_MAXIMA_FORMULA);
   actualizarCaracteres(formulaInput);
-  formulaInput.addEventListener('input', () =>
-    actualizarCaracteres(formulaInput)
-  );
+  formulaInput.addEventListener('input', () => actualizarCaracteres(formulaInput));
 
   // Botón cancelar
   document.getElementById('btnCancelar').addEventListener('click', () => {
