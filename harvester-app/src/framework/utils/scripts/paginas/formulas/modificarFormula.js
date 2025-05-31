@@ -117,10 +117,10 @@ function validador(areaEscritura) {
   const mensaje = validarContenido(valor);
 
   if (mensaje) {
-    areaEscritura.classList.add('inputError');
+      mensajeError.style.color = '#e74c3c';
     mensajeError.textContent = mensaje;
   } else {
-    areaEscritura.classList.remove('inputError');
+    mensajeError.style.color = '#7f8c8d';
     mensajeError.textContent = '';
   }
 }
