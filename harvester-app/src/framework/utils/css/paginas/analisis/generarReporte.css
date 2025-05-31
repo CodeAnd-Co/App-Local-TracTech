@@ -927,3 +927,11 @@ body,
 .swal2-popup-inline .swal2-deny {
   margin-left: 0 !important;
 }
+
+.contador-caracteres {
+  font-size: 12px;
+  text-align: right;
+  color: #7f8c8d;
+  margin: 4px 0;
+  padding-right: 4px;
+}
