@@ -79,13 +79,10 @@ async function renderizarFormulas() {
             document.getElementById('frame-formulas').innerHTML = `<div class='mensaje-sin-formulas'>No hay fórmulas creadas</div>`;
             mostrarAlerta('No hay fórmulas', 'No se encontraron fórmulas en la base de datos.', 'info');
             // NO hacer return aquí, continuar para configurar el botón
-        }
-        // Verificar que la base de datos contenga fórmulas
-        else if (respuesta.datos.length === 0) {
+        } else if (respuesta.datos.length === 0) {
             document.getElementById('frame-formulas').innerHTML = `<div class='mensaje-sin-formulas'>No hay fórmulas creadas</div>`;
             mostrarAlerta('No hay fórmulas', 'No se encontraron fórmulas en la base de datos.', 'info');
-        }
-        else {
+        } else {
             // Obtener el arreglo de fórmulas de la respuesta
             const formulas = respuesta.datos;
             // Conseguir el nombre de todas las fórmulas
