@@ -7,9 +7,7 @@
 
 const { cerrarSesion } = require(`${rutaBase}src/backend/casosUso/sesion/cerrarSesion.js`);
 const { verificarPermisos, PERMISOS } = require(`${rutaBase}src/framework/utils/scripts/middleware/auth.js`);
-if (typeof Swal === 'undefined'){
-  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-}
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 
 inicializarModuloUsuario();
@@ -55,12 +53,7 @@ function inicializarModuloUsuario() {
       } catch (error) {
         console.error('Error al cerrar sesión:', error);
 
-        Swal.fire({
-          title: 'Error',
-          text: 'Hubo un error al cerrar sesión.',
-          icon: 'error',
-          confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta('Error', 'Hubo un error al cerrar sesión:', 'error');
 
         botonCerrarSesion.innerHTML = contenidoOriginal;
         botonCerrarSesion.disabled = false;

@@ -2,7 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 const { jsPDF } = require(`${rutaBase}/node_modules/jspdf/dist/jspdf.umd.min.js`);
-const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 if (typeof ipcRenderer === 'undefined') {
   const { ipcRenderer } = require('electron');
@@ -70,12 +70,7 @@ function cargarDatosExcel() {
     return datosExcel;
 
   } catch (error) {
-    Swal.fire({
-      title: 'Error',
-      text: 'Ocurrió un error al cargar los datos de Excel.',
-      icon: 'error',
-      confirmButtonColor: '#1F4281',
-    });
+    mostrarAlerta('Error', 'Ocurrió un error al cargar los datos de Excel.', 'error'); 
     return null;
   }
 }
@@ -87,11 +82,7 @@ function cargarDatosExcel() {
 */
 async function descargarPDF() {
   if (!jsPDF) {
-    Swal.fire({
-      title: 'Error al descargar reporte',
-      text: 'Ha courrido un error, contacta a soporte',
-      icon: 'error'
-    });
+    mostrarAlerta('Error al descargar reporte', 'Ha ocurrido un error, contacta a soporte', 'error');
     throw new Error('[PDF] jsPDF no cargado');
   }
 
@@ -105,11 +96,7 @@ async function descargarPDF() {
 
   const contenedorPrevisualizacion = document.getElementById('contenedor-elementos-previsualizacion');
   if (!contenedorPrevisualizacion) {
-    Swal.fire({
-      title: 'Error al descargar reporte',
-      text: 'No se encontró el contenedor de previsualización',
-      icon: 'warning'
-    });
+    mostrarAlerta('Error al descargar reporte', 'No se encontró el contenedor de previsualización', 'warning');
     throw new Error('[PDF] Contenedor de previsualización no encontrado');
   }
 
