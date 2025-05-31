@@ -25,7 +25,6 @@ function inicializarModuloAnalisis() {
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
   const contenedor = document.getElementById(idContenedor);
-
   if (!contenedor) return;
 
   const botonPDF = document.getElementById('descargarPDF')
