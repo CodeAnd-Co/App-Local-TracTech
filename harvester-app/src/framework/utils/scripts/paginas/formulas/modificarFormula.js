@@ -2,11 +2,8 @@
 
 const { modificarFormulaCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/modificarFormula.js`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-
-const { mostrarAlerta} = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-
 const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
-    LONGITUD_MAXIMA_FORMULA} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
+  LONGITUD_MAXIMA_FORMULA } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 
 /**
  * @function inicializarModificarFormula
@@ -16,81 +13,84 @@ const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    const id = localStorage.getItem('modificarFormulaId');
-    const nombre = localStorage.getItem('modificarFormulaNombre');
-    const formula = localStorage.getItem('modificarFormulaDatos');
+  const id = localStorage.getItem('modificarFormulaId');
+  const nombre = localStorage.getItem('modificarFormulaNombre');
+  const formula = localStorage.getItem('modificarFormulaDatos');
 
-    // Eliminar inmediatamente
-    localStorage.removeItem('modificarFormulaId');
-    localStorage.removeItem('modificarFormulaNombre');
-    localStorage.removeItem('modificarFormulaDatos');
+  // Eliminar inmediatamente
+  localStorage.removeItem('modificarFormulaId');
+  localStorage.removeItem('modificarFormulaNombre');
+  localStorage.removeItem('modificarFormulaDatos');
 
-    if (id && nombre && formula) {
-        inicializarModificarFormula(id, nombre, formula);
-    } else {
-        return ('Datos incompletos para modificar la fórmula');
-    }
+  if (id && nombre && formula) {
+    inicializarModificarFormula(id, nombre, formula);
+  } else {
+    return ('Datos incompletos para modificar la fórmula');
+  }
 });
 
+/**
+ * Inicializa el formulario para modificar una fórmula.
+ *
+ * @param {string} id - ID de la fórmula.
+ * @param {string} nombre - Nombre actual de la fórmula.
+ * @param {string} formula - Contenido actual de la fórmula.
+ * @returns {Promise<void>}
+ */
 async function inicializarModificarFormula(id, nombre, formula) {
-    localStorage.setItem('secccion-activa', 'modificarFormula');
-        const botonGuardar = document.getElementById('btnGuardar');
-        const nombreInput = document.getElementById('nombreFormula');
-        const formulaInput = document.getElementById('resultado');
+  localStorage.setItem('secccion-activa', 'modificarFormula');
 
+  const botonGuardar = document.getElementById('btnGuardar');
+  const nombreInput = document.getElementById('nombreFormula');
+  const formulaInput = document.getElementById('resultado');
 
-        nombreInput.value = nombre;
-        formulaInput.value = formula;
+  // Asigna valores iniciales
+  nombreInput.value = nombre;
+  formulaInput.value = formula;
 
-        nombreInput.setAttribute('maxlength', LONGITUD_MAXIMA_NOMBRE_FORMULA)
-        actualizarCaracteres(nombreInput)
-        nombreInput.addEventListener('input', () => {
-            actualizarCaracteres(nombreInput);
-        });
+  // Configura contadores y validadores
+  nombreInput.setAttribute('maxlength', LONGITUD_MAXIMA_NOMBRE_FORMULA);
+  actualizarCaracteres(nombreInput);
+  nombreInput.addEventListener('input', () => actualizarCaracteres(nombreInput));
 
-        formulaInput.setAttribute('maxlength', LONGITUD_MAXIMA_FORMULA)
-        actualizarCaracteres(formulaInput)
-        formulaInput.addEventListener('input', () => {
-            actualizarCaracteres(formulaInput);
-        });
+  formulaInput.setAttribute('maxlength', LONGITUD_MAXIMA_FORMULA);
+  actualizarCaracteres(formulaInput);
+  formulaInput.addEventListener('input', () =>
+    actualizarCaracteres(formulaInput)
+  );
 
+  // Botón cancelar
+  document.getElementById('btnCancelar').addEventListener('click', () => {
+    window.cargarModulo('formulas');
+  });
 
-        document.getElementById('btnCancelar').addEventListener('click', () => {
-            window.cargarModulo('formulas');
-        });
-        botonGuardar.addEventListener('click', () => {
-            const nombre =  document.getElementById('nombreFormula')
-            const nombreInput = nombre.value.trim();
+  // Botón guardar
+  botonGuardar.addEventListener('click', () => {
+    const nombreValor = document.getElementById('nombreFormula').value.trim();
+    const formulaValor = document.getElementById('resultado').value.trim();
 
-            const formula =  document.getElementById('resultado')
-            const formulaInput = formula.value.trim();
-            if (nombreInput === nombre && formulaInput === formula) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No se han realizado cambios en la fórmula.',
-                    icon: 'error',
-                    confirmButtonColor: '#a61930',
-                });
-                return;
-            }
-            
-            modificarFormulaCasoUso(id, nombreInput, formulaInput, nombre);
-        });
-    } 
+    if (nombreValor === nombre && formulaValor === formula) {
+      Swal.fire({
+        title: 'Error',
+        text: 'No se han realizado cambios en la fórmula.',
+        icon: 'error',
+        confirmButtonColor: '#a61930',
+      });
+      return;
+    }
 
-module.exports = {
-    inicializarModificarFormula
-};
+    modificarFormulaCasoUso(id, nombreValor, formulaValor, nombre);
+  });
+}
 
 /**
- * Actualiza el contador de caracteres restantes en la tarjeta del {@link areaEscritura}.
+ * Actualiza el contador de caracteres restantes.
  *
- * @param {HTMLTextAreaElement} areaEscritura - Área de texto con el contenido a mostrar.
+ * @param {HTMLTextAreaElement} areaEscritura - Área de texto a validar.
  * @returns {void}
  */
 function actualizarCaracteres(areaEscritura) {
-
-  const contador = areaEscritura.parentElement.querySelector('.contador-caracteres');
+  const contador = areaEscritura.parentElement?.querySelector('.contador-caracteres');
 
   if (!contador) {
     console.warn('No se encontró el elemento con clase .contador-caracteres');
@@ -100,36 +100,46 @@ function actualizarCaracteres(areaEscritura) {
   const caracteresUsados = areaEscritura.value.length;
   const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
 
-
   const caracteresRestantes = limite - caracteresUsados;
   contador.textContent = `${caracteresUsados}/${limite} caracteres`;
   contador.style.color = caracteresRestantes < 5 ? '#e74c3c' : '#7f8c8d';
-  validador(areaEscritura);
+
+  validador(areaEscritura)
 }
 
-
+/**
+ * Valida el contenido del área de texto.
+ *
+ * @param {HTMLTextAreaElement} areaEscritura - Área a validar.
+ * @returns {void}
+ */
 function validador(areaEscritura) {
-    const mensajeError = areaEscritura.parentElement?.querySelector('.mensajeError');
+  const mensajeError = areaEscritura.parentElement?.querySelector('.mensajeError');
+  const valor = areaEscritura.value;
+  const mensaje = validarContenido(valor);
 
-    const valor = areaEscritura.value;
-    const mensaje = validarContenido(valor);
-
-    if (mensaje) {
-        areaEscritura.classList.add('inputError');
-        mensajeError.textContent = mensaje;
-    } else {
-        areaEscritura.classList.remove('inputError');
-        mensajeError.textContent = '';
-    }
+  if (mensaje) {
+    areaEscritura.classList.add('inputError');
+    mensajeError.textContent = mensaje;
+  } else {
+    areaEscritura.classList.remove('inputError');
+    mensajeError.textContent = '';
+  }
 }
 
+/**
+ * Lógica personalizada de validación.
+ *
+ * @param {string} texto - Texto ingresado.
+ * @returns {string|null} - Mensaje de error o null si es válido.
+ */
 function validarContenido(texto) {
-    // Ejemplo adicional: mínimo 5 caracteres útiles
-    if (texto.trim().length == 0) {
-        return 'Debe contener al menos 1 caracteres válidos';
-    }
-
-    return null;
+  if (texto.trim().length === 0) {
+    return 'Debe contener al menos 1 carácter válido';
+  }
+  return null;
 }
 
-
+module.exports = {
+  inicializarModificarFormula,
+};
