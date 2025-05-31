@@ -204,6 +204,8 @@ ipcMain.on('guardar-pdf', async (evento, bufer) => {
   if (!resultado.canceled) {
     fs.writeFileSync(resultado.filePath, bufer);
   }
+    
+  evento.sender.send('pdf-guardado', !resultado.canceled);
 });
 
 ipcMain.handle('precargar-ejs', async (event, rutaEJS, parametros) => {
