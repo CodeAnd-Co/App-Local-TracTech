@@ -129,6 +129,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   return tarjetaGrafica;
 }
 
+
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
@@ -141,7 +142,7 @@ function crearCuadroFormulas(columnas) {
   cuadroFormulas.className = 'contenedor-formulas';
 
   cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
-              <img class='flecha-atras' src='../utils/iconos/FlechaAtras.svg' />
+              <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
               <p class='texto'>Fórmulas</p>
           </div>
           <div class='seccion-formulas'>
@@ -153,7 +154,6 @@ function crearCuadroFormulas(columnas) {
               <div class='opciones-seccion'>
                   <div class='titulo-aplicar-formulas'>
                       <p>Aplicar Fórmula</p>
-                      <img class='circulo-ayuda' src='../utils/iconos/circulo-ayuda.svg' />
                   </div>
                   <div class='opciones-carta'>
                       <input class='search-section' placeholder='Encuentra una fórmula'>
