@@ -282,6 +282,9 @@ function crearGrafica(contexto, tipo, color) {
       }]
     },
     options: {
+      responsive: true,
+      animation: false,
+      devicePixelRatio: 1.5,  // Aumenta la densidad de píxeles
       plugins: {
         title: { display: true },
         tooltip: {
