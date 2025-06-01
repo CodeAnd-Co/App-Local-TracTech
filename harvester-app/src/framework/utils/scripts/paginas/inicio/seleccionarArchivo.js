@@ -4,7 +4,7 @@
 
 /* eslint-disable no-undef */
 
-const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+const { mostrarAlerta, mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const { borrarExcel } = require(`${rutaBase}/src/backend/casosUso/excel/borrarExcel.js`);
 const { leerExcel } = require(`${rutaBase}/src/backend/casosUso/excel/cargarExcel.js`);
 
@@ -37,35 +37,20 @@ function botonBorrar() {
         const botonBorrar = document.getElementById('boton-borrar');
         const entradaArchivo = document.querySelector('.cargar-excel');
 
-        botonBorrar.addEventListener('click', () => {
+        botonBorrar.addEventListener('click', async () => {
             // Modal de confirmación para eliminar el archivo
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: 'No podrás recuperar el archivo eliminado.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#1F4281',
-                cancelButtonColor: '#A61930',
-                confirmButtonText: 'Eliminar',
-                cancelButtonText: 'Cancelar'
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  Swal.fire({
-                    title: 'Eliminado',
-                    text: 'El archivo ha sido eliminado.',
-                    icon: 'success',
-                    confirmButtonColor: '#1F4281',
-                  });
-                  borrarExcel();
-                  botonAnalisis.setAttribute('disabled', 'true');
-                  botonBorrar.style.display = 'none';
+            const resultado = await mostrarAlertaBorrado('No podrás recuperar el archivo eliminado.', 'Eliminar', 'Cancelar');
+            if (resultado) {
+                mostrarAlerta('Eliminado', 'El archivo ha sido eliminado.', 'success');
+                borrarExcel();
+                botonAnalisis.setAttribute('disabled', 'true');
+                botonBorrar.style.display = 'none';
 
                 // Reiniciar el valor del input de archivos para que se pueda volver a seleccionar el mismo archivo
                 if (entradaArchivo) {
-                    entradaArchivo.value = '';
-                    }
+                entradaArchivo.value = '';
                 }
-              });
+            }
         });
     }, 100);
 }
@@ -127,13 +112,7 @@ function botonCargar() {
                         localStorage.removeItem('datosExcel');
                         
                         // Mostrar modal con el error de validación
-                        Swal.fire({
-                            title: 'Archivo no válido',
-                            text: resultado.mensaje,
-                            icon: 'error',
-                            confirmButtonColor: '#1F4281',
-                            confirmButtonText: 'Entendido'
-                        });
+                        mostrarAlerta('Archivo no válido', resultado.mensaje, 'error', 'Entendido');
                         
                         // Resetear el input
                         entradaArchivo.value = '';
@@ -149,13 +128,7 @@ function botonCargar() {
                     localStorage.removeItem('datosExcel');
                     
                     // Mostrar modal con el error
-                    Swal.fire({
-                        title: 'Error al procesar archivo',
-                        text: error.mensaje || 'Ha ocurrido un error al procesar el archivo.',
-                        icon: 'error',
-                        confirmButtonColor: '#1F4281',
-                        confirmButtonText: 'Aceptar'
-                    });
+                    mostrarAlerta('Error al procesar archivo', error.mensaje || 'Ha ocurrido un error al procesar el archivo.', 'error');
                     
                     // Reiniciar el valor del input
                     entradaArchivo.value = '';

@@ -11,9 +11,8 @@
 const { plantillas } = require('../../backend/domain/plantillasAPI/plantillasAPI.js');
 const { eliminarPlantillas } = require('../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js');
 const { seleccionarPlantillas } = require('../../backend/domain/plantillasAPI/seleccionarPlantillaAPI.js');
-if (typeof Swal === 'undefined'){
-    const Swal = require('sweetalert2');
-}
+const { mostrarAlertaBorrado } = require('../../../../vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js');
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 /**
  * Inicializa el módulo de plantillas, encargándose de:
@@ -106,20 +105,8 @@ async function inicializarModuloPlantillas() {
                             botonEditarVisualizador.addEventListener('click', async () => {
                                 if (menuOpciones) {
                                     const idPlantilla = menuOpciones.getAttribute('dato-id');
-                                    
-                                    const result = await Swal.fire({
-                                        title: '¿Estás seguro?',
-                                        text: 'No podrás recuperar la plantilla eliminada.',
-                                        icon: 'warning',
-                                        showCancelButton: true,
-                                        confirmButtonColor: '#1F4281',
-                                        cancelButtonColor: '#A61930',
-                                        confirmButtonText: 'Eliminar',
-                                        cancelButtonText: 'Cancelar'
-                                    });
-                                    
-                                    // Si el usuario confirmó la eliminación
-                                    if (result.isConfirmed && idPlantilla) {
+                                    const resultado = await mostrarAlertaBorrado('Estás seguro?', 'No podrás recuperar la plantilla eliminada.');
+                                    if(resultado && idPlantilla) {
                                         try {
                                             const respuesta = await eliminarPlantillas(idPlantilla);
                                             
@@ -144,33 +131,18 @@ async function inicializarModuloPlantillas() {
                                                     contenedor?.appendChild(tarjetaTexto);
                                                 }
                                             } else {
-                                                Swal.fire({
-                                                    title: 'Error',
-                                                    text: 'Hubo un error al eliminar la platilla.',
-                                                    icon: 'error',
-                                                    confirmButtonColor: '#1F4281',
-                                                });
+                                                mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
                                             }
                                         } catch (error) {
                                             console.error('Error al eliminar la plantilla:', error);
-                                            Swal.fire({
-                                                title: 'Error',
-                                                text: 'Hubo un error al eliminar la platilla.',
-                                                icon: 'error',
-                                                confirmButtonColor: '#1F4281',
-                                            });
+                                            mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
                                         }
                                     }
                                 }
                             });
                         }
                     } catch (error) {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Hubo un error de conexión.',
-                            icon: 'error',
-                            confirmButtonColor: '#1F4281',
-                            });
+                        mostrarAlerta('Error', 'Hubo un error de conexión.', 'error');
                         console.error(`No se pudo conectar con el servidor, error: ${error}`);
                     }
                 });
@@ -194,20 +166,9 @@ async function inicializarModuloPlantillas() {
                     
                     if (menuOpciones) {
                         const idPlantilla = menuOpciones.getAttribute('dato-id');
-                        
-                        const result = await Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: 'No podrás recuperar la plantilla eliminada.',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#1F4281',
-                            cancelButtonColor: '#A61930',
-                            confirmButtonText: 'Eliminar',
-                            cancelButtonText: 'Cancelar'
-                        });
-                        
-                        // Si el usuario confirmó la eliminación
-                        if (result.isConfirmed && idPlantilla) {
+
+                        const resultado = await mostrarAlertaBorrado('¿Estás seguro?', 'No podrás recuperar la plantilla eliminada.');
+                        if( resultado && idPlantilla) {
                             try {
                                 const respuesta = await eliminarPlantillas(idPlantilla);
 
@@ -228,21 +189,11 @@ async function inicializarModuloPlantillas() {
                                         contenedor?.appendChild(tarjetaTexto);
                                     }
                                 } else {
-                                    Swal.fire({
-                                        title: 'Error',
-                                        text: 'Hubo un error al eliminar la platilla.',
-                                        icon: 'error',
-                                        confirmButtonColor: '#1F4281',
-                                    });
+                                    mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
                                 }
                             } catch (error) {
                                 console.error('Error al eliminar la plantilla:', error);
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Hubo un error al eliminar la platilla.',
-                                    icon: 'error',
-                                    confirmButtonColor: '#1F4281',
-                                });
+                                mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
                             }
                         }
                     }
@@ -256,12 +207,7 @@ async function inicializarModuloPlantillas() {
         }
     } catch (error) {
         console.error('Error al cargar las plantillas:', error);
-        Swal.fire({
-            title: 'Error',
-            text: 'Hubo un error de conexión.',
-            icon: 'error',
-            confirmButtonColor: '#1F4281',
-        });
+        mostrarAlerta('Error', 'Hubo un error de conexión.', 'error');
     }
 }
 

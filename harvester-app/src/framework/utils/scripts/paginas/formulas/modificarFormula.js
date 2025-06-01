@@ -1,7 +1,7 @@
 // RF68 Modificar fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF68 
 
 const { modificarFormulaCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/modificarFormula.js`);
-const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 /**
  * @function inicializarModificarFormula
@@ -41,12 +41,7 @@ async function inicializarModificarFormula(id, nombre, formula) {
             const nombreInput = document.getElementById('nombreFormula').value;
             const formulaInput = document.getElementById('resultado').value;
             if (nombreInput === nombre && formulaInput === formula) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'No se han realizado cambios en la fórmula.',
-                    icon: 'error',
-                    confirmButtonColor: '#1F4281',
-                });
+                mostrarAlerta('Error', 'No se han realizado cambios en la fórmula.', 'error');
                 return;
             }
             
