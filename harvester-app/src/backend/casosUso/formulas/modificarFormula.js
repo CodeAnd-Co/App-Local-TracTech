@@ -20,11 +20,11 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         mostrarAlerta('Error', 'Por favor, completa todos los campos.', 'error');
         return;
     }
-    if (nombre === '' || nombre.length >= LONGITUD_MAXIMA_NOMBRE_FORMULA) {
+    if (nombre === '' || nombre.length > LONGITUD_MAXIMA_NOMBRE_FORMULA) {
         mostrarAlerta('Error', `Verifica que la fórmula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`, 'error');
         return;
     }
-    if (formula.length >= LONGITUD_MAXIMA_FORMULA) {
+    if (formula.length > LONGITUD_MAXIMA_FORMULA) {
         mostrarAlerta('Error', `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`, 'error');
         return;
     }
@@ -34,7 +34,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     formulasGuardadas = JSON.parse(formulasGuardadas);
     if (formulasGuardadas && formulasGuardadas.includes(nombre) && nombre !== nombreOriginal) {
         mostrarAlerta('Error', 'Ya existe una fórmula con ese nombre.', 'error');
-        return
+        return;
         
     }
     

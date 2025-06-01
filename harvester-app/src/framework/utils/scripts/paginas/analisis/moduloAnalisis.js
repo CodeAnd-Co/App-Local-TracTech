@@ -25,7 +25,6 @@ function inicializarModuloAnalisis() {
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
   const contenedor = document.getElementById(idContenedor);
-
   if (!contenedor) return;
 
   const botonPDF = document.getElementById('descargarPDF')
@@ -69,7 +68,7 @@ function cargarDatosExcel() {
     const datosExcel = JSON.parse(datosExcelJSON);
     return datosExcel;
 
-  } catch (error) {
+  } catch {
     mostrarAlerta('Error', 'Ocurrió un error al cargar los datos de Excel.', 'error'); 
     return null;
   }
@@ -105,8 +104,8 @@ async function descargarPDF() {
       let tamanoFuente = 11.5;
       let estiloFuente = 'normal';
       let espaciado = 50;
-      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 75; }
-      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 55; }
+      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 50; }
+      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 45; }
 
       documentoPDF.setFontSize(tamanoFuente);
       documentoPDF.setFont(undefined, estiloFuente);
@@ -154,8 +153,8 @@ async function descargarPDF() {
 
       documentoPDF.setFillColor(224, 224, 224);
       documentoPDF.roundedRect(margen, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
-      documentoPDF.addImage(imagen, 'PNG', margen + desplazamiento, posicionY + espaciado, anchoImagen, altoImagen);
-      posicionY += altoFondo + espaciado;
+      documentoPDF.addImage(imagen, 'PNG', margen + desplazamiento, posicionY, anchoImagen, altoImagen);
+      posicionY += altoFondo + espaciado * 2;
     }
   });
 

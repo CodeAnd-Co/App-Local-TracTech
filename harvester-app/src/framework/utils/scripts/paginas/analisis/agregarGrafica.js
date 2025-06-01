@@ -25,7 +25,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   if (!contenedor || !previsualizacion) {
     mostrarAlerta('Error', 'Ocurrió un error al agregar la gráfica.', 'error');
-    return
+    return;
   }
 
   const tarjetaGrafica = document.createElement('div');
@@ -43,9 +43,11 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     nuevaId = 1;
   }
   
+  const limite = 30;
   tarjetaGrafica.id = nuevaId;
   tarjetaGrafica.innerHTML = `
-    <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='30'/>
+    <input class='titulo-grafica' placeholder='Nombre de la gráfica' maxlength='${limite}'/>
+    <div class='contador-caracteres'>0/${limite} caracteres</div>
     <div class='titulo-texto'>
       <select class='tipo-texto tipo-grafica'>
         <option value='line'>Línea</option>
@@ -62,7 +64,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     </div>
     <div class='botones-eliminar' style='display: flex; justify-content: flex-end;'>
       <div class='eliminar'>
-        <img class='eliminar-icono' src='${rutaBase}/src/framework/utils/iconos/Texto.svg' />
+        <img class='eliminar-icono' src='${rutaBase}/src/framework/utils/iconos/Basura.svg' />
         <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>
@@ -105,10 +107,11 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     modificarTitulo(graficaDiv, entradaTexto, tarjetaGrafica));
 
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
-  const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
   selectorTipo.value = grafico.config.type;
-  selectorTipo.addEventListener('change', () =>
-    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica));
+  selectorTipo.addEventListener('change', () => {
+    const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
+    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica)
+  })
 
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () =>
     eliminarGrafica(tarjetaGrafica, graficaDiv));
@@ -171,8 +174,8 @@ function crearCuadroFormulas(columnas) {
   crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
   // Fórmulas en contenedoesSeleccion[1]
 
-  const botonRegresar = cuadroFormulas.querySelector('.titulo-formulas');
-  botonRegresar.addEventListener('click', () => {
+  const botonCerrarCuadroFormulas = cuadroFormulas.querySelector('.titulo-formulas');
+  botonCerrarCuadroFormulas.addEventListener('click', () => {
     cuadroFormulas.remove();
   });
 
@@ -368,14 +371,19 @@ function generarDegradadoHaciaBlanco(rgb, pasos) {
  * @param {HTMLDivElement} tarjetaGrafica - Tarjeta de gráfica donde se encuentra el campo de texto.
  */
 function modificarTitulo(grafica, entradaTexto, tarjetaGrafica) {
-  let contador = tarjetaGrafica.querySelector('.contador-caracteres');
-  if (!contador) {
-    contador = document.createElement('div');
-    contador.className = 'contador-caracteres';
-    tarjetaGrafica.insertBefore(contador, tarjetaGrafica.querySelector('.titulo-texto'));
-  }
+  const caracteresUsados = entradaTexto.value.length;
+  const limite = parseInt(entradaTexto.getAttribute('maxlength'), 10);
+  const caracteresRestantes = limite - caracteresUsados;
+  
+  const contadorCaracteres = tarjetaGrafica.querySelector('.contador-caracteres');
 
-  contador.textContent = `${entradaTexto.value.length}/30 caracteres`;
+  contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
+  
+  if (caracteresRestantes < 10) {
+    contadorCaracteres.style.color = '#e74c3c';
+  } else {
+    contadorCaracteres.style.color = '#7f8c8d';
+  }
 
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');

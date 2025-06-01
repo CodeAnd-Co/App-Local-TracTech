@@ -131,19 +131,17 @@ async function inicializarModuloPlantillas() {
                                                     contenedor?.appendChild(tarjetaTexto);
                                                 }
                                             } else {
-                                                mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
+                                            mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
                                             }
                                         } catch (error) {
-                                            console.error('Error al eliminar la plantilla:', error);
                                             mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
                                         }
                                     }
                                 }
                             });
                         }
-                    } catch (error) {
+                    } catch {
                         mostrarAlerta('Error', 'Hubo un error de conexión.', 'error');
-                        console.error(`No se pudo conectar con el servidor, error: ${error}`);
                     }
                 });
             });
@@ -191,8 +189,7 @@ async function inicializarModuloPlantillas() {
                                 } else {
                                     mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
                                 }
-                            } catch (error) {
-                                console.error('Error al eliminar la plantilla:', error);
+                            } catch {
                                 mostrarAlerta('Error', 'Hubo un error al eliminar la platilla.', 'error');
                             }
                         }
@@ -205,8 +202,7 @@ async function inicializarModuloPlantillas() {
             tarjetaTexto.innerHTML = `<div class='error-sin-plantillas'>No se Encontraron Plantillas</div>`;
             contenedor?.appendChild(tarjetaTexto);
         }
-    } catch (error) {
-        console.error('Error al cargar las plantillas:', error);
+    } catch {
         mostrarAlerta('Error', 'Hubo un error de conexión.', 'error');
     }
 }

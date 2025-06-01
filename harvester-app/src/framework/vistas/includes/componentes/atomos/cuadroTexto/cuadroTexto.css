@@ -2,7 +2,7 @@
 .cuadro-texto {
   display: flex;
   box-sizing: border-box;
-  text-align: left;
+  justify-content: flex-start;
   position: relative;
   width: 100%;
 }
@@ -27,10 +27,10 @@
 .fuente-bold { font-family: "SegoeUi-Bold", sans-serif; font-weight: 700; }
 .fuente-light { font-family: "SegoeUi-Light", sans-serif; font-weight: 300; }
 
-.texto-izquierda { text-align: left; }
-.texto-centro { text-align:  center; }
-.texto-derecha { text-align: right; }
-.texto-justificado { text-align: justify; }
+.texto-izquierda { justify-content: flex-start; }
+.texto-centro { justify-content:  center; }
+.texto-derecha { justify-content: flex-end; }
+.texto-justificado { justify-content: space-between; }
 
 .mb-0   { margin-bottom: 0; }
 .mb-8   { margin-bottom: 8px; }

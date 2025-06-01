@@ -12,16 +12,14 @@ async function cerrarSesion() {
         // Si no hay token, no hay sesión activa
         const token = localStorage.getItem('token');
         if (!token) {
-            console.error('No hay sesión activa.');
             return;
         }
 
         // Llamar a la API para cerrar sesión enviando el token
         const respuesta = await cerrarSesionAPI(token);
         return respuesta;
-    } catch (error) {
+    } catch {
         // Capturar y mostrar errores en consola
-        console.error('Error al cerrar sesión:', error);
         throw new Error('No se pudo cerrar sesión');
     }
 }

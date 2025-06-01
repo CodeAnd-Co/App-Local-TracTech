@@ -50,18 +50,14 @@ function inicializarModuloUsuario() {
         } else {
           throw new Error('La respuesta del servidor no fue exitosa');
         }
-      } catch (error) {
-        console.error('Error al cerrar sesión:', error);
-
+      } catch {
         mostrarAlerta('Error', 'Hubo un error al cerrar sesión:', 'error');
 
         botonCerrarSesion.innerHTML = contenidoOriginal;
         botonCerrarSesion.disabled = false;
       }
     });
-  } else {
-    console.warn('No se encontró el botón .boton-cerrar-sesion en el DOM.');
-  }
+  } 
 }
 
 /**
@@ -77,11 +73,6 @@ function actualizarNombreUsuario() {
     const nombreUsuario = localStorage.getItem('nombreUsuario');
     if (nombreUsuario) {
       elementoTextoUsuario.textContent = nombreUsuario;
-    } else {
-      // Si no hay nombre de usuario, mantener el valor predeterminado o mostrar un mensaje alternativo
-      console.warn('No se encontró el nombre de usuario en localStorage');
     }
-  } else {
-    console.warn('No se encontró el elemento .texto-usuario en el DOM');
   }
 }

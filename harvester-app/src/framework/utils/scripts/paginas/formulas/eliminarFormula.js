@@ -20,8 +20,8 @@ async function manejarEliminarFormula(id) {
         } else {
             mostrarAlerta('Error', respuesta.mensaje, 'error');
         }
-    } catch (error) {
-        mostrarAlerta('Error de conexión', `Verifica tu conexión e inténtalo de nuevo. ${error.message}`, 'error');
+    } catch {
+        mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
     }
 }
 

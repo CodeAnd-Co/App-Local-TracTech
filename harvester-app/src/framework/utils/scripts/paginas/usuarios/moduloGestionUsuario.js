@@ -9,6 +9,7 @@ const { crearUsuario: crearUsuarioCU } = require(`${rutaBase}src/backend/casosUs
 const { obtenerUsuarios } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarUsuarios.js`);
 const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/eliminarUsuario`);
 const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarRoles.js`);
+const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dispositivos/deshabilitarDispositivo.js`);
 const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
 const { mostrarAlerta, mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
@@ -65,6 +66,12 @@ async function inicializarModuloGestionUsuarios() {
         configurarContadoresCampos();
         
     } catch {
+        Swal.fire({
+            title: 'Error al cargar usuarios',
+            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#a61930',
+        });
         document.getElementById('lista-usuarios').innerHTML
             = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
@@ -149,6 +156,26 @@ async function inicializarModuloGestionUsuarios() {
     verContrasenia();
     validarCoincidenciaContrasenas();
 }
+
+/**
+ * Actualiza los contadores de caracteres que ya existen en el HTML.
+ * No inserta nada, solo los inicializa y los mantiene al día.
+ */
+function configurarContadoresCampos() {
+document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
+    const maximoCaracteres = input.getAttribute('maxlength');
+    const contador = input.parentNode.querySelector('.contador-caracteres');
+    if (!contador) return;
+
+    // Inicializa una sola llamada a la función extraída
+    actualizarContador(input, contador, maximoCaracteres);
+
+    // Y vuelve a usar la misma función como callback
+    input.addEventListener('input', () => {
+    actualizarContador(input, contador, maximoCaracteres);
+    });
+});
+} 
 
 function verContrasenia() {
     const botonVerContrasenia = document.querySelector('#verContrasenia');
@@ -309,7 +336,6 @@ function cargarPagina(pagina) {
 function mostrarUsuarios(usuarios) {
     const listaUsuariosElemento = document.getElementById('lista-usuarios');
     if (!listaUsuariosElemento) {
-        console.error('No se encontró el elemento de la lista de usuarios en el DOM.');
         return;
     }
 
@@ -324,6 +350,12 @@ function mostrarUsuarios(usuarios) {
     for (const { id, nombre } of usuarios) {
         const div = document.createElement('div');
         div.className = 'frame-usuario';
+        
+        const botonDeshabilitar =  `
+                <button class='boton-deshabilitar' data-id='${id}'>
+                  <img src='${rutaBase}src/framework/utils/iconos/Deshabilitar.svg' alt='Deshabilitar Dispositivo'/>
+                </button>` ;
+        
         div.innerHTML = `
             <div class='nombre-usuario'>
                 <div class='texto-usuario'>${nombre}</div>
@@ -331,6 +363,7 @@ function mostrarUsuarios(usuarios) {
                 <button class='boton-editar' data-id='${id}'>
                   <img src='${rutaBase}src/framework/utils/iconos/Editar2.svg' alt='Editar'/>
                 </button>
+                ${botonDeshabilitar}
                 <button class='boton-eliminar' data-id='${id}'>
                   <img src='${rutaBase}src/framework/utils/iconos/BasuraBlanca.svg' alt='Eliminar'/>
                 </button>
@@ -357,7 +390,44 @@ function mostrarUsuarios(usuarios) {
             }
         });
     });
+
+    // Añadir eventos a los botones de deshabilitar dispositivo
+    const botonesDeshabilitarDispositivo = listaUsuariosElemento.querySelectorAll('.boton-deshabilitar');
+    botonesDeshabilitarDispositivo.forEach(boton => {
+        boton.addEventListener('click', async evento => {
+            evento.preventDefault();
+            const idUsuario = boton.getAttribute('data-id');
+
+            Swal.fire({
+                title: '¿Deshabilitar dispositivo?',
+                html: `La aplicación Harvester en el dispositivo vinculado al usuario será inaccesible.<br><br><strong>SOLO DESHABILITAR EN CASO DE ROBO O PÉRDIDA DEL DISPOSITIVO.</strong>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#a61930',
+                confirmButtonText: 'Deshabilitar',
+                cancelButtonText: 'Cancelar'
+            }).then(async (resultado) => {
+                if (resultado.isConfirmed) {
+                    await deshabilitarDispositivoUsuario(idUsuario);
+                }
+            });
+        });
+    });
 }
+
+/**
+ * Limpia todos los mensajes de error y quita la clase de error de los inputs.
+ */
+function limpiarMensajesError() {
+    // Borra el texto de todos los <small class="mensajeError">…
+    document.querySelectorAll('.mensajeError').forEach(el => {
+      el.textContent = '';
+    });
+    // Quita la clase .inputError de cualquier input que la tuviera
+    document.querySelectorAll('.inputError').forEach(input => {
+      input.classList.remove('inputError');
+    });
+  } 
 
 /**
  * Esta función busca todos los elementos con la clase `.boton-editar` en la lista
@@ -392,7 +462,6 @@ function modoEditar(idUsuario) {
     // Precargar los datos del usuario
     const usuario = listaUsuarios.find(usuario => usuario.id === Number(idUsuario));
     if (!usuario) {
-        console.error('Usuario no encontrado');
         return;
     }
 
@@ -448,7 +517,7 @@ async function editarUsuario() {
     if (contraseniaIngresada !== '') {
         if (contraseniaIngresada !== contraseniaConfirmada) {
             mostrarAlerta('Las contraseñas no coinciden', 'Por favor, asegúrate de que la contraseña y su confirmación sean iguales.', 'warning');
-            return
+            return;
         }
     }
 
@@ -875,8 +944,6 @@ function cargarRoles() {
             // Llenar el <select> con los roles guardados
             llenarSelectConRoles(selectRol);
         });
-    } else {
-        console.error('No se encontró el elemento <select> con id="rol".');
     }
     return
 }
@@ -890,26 +957,6 @@ function cargarRoles() {
 function actualizarContador(input, contador, maximoCaracteres) {
     contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
 }
-  
-/**
- * Actualiza los contadores de caracteres que ya existen en el HTML.
- * No inserta nada, solo los inicializa y los mantiene al día.
- */
-function configurarContadoresCampos() {
-document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
-    const maximoCaracteres = input.getAttribute('maxlength');
-    const contador = input.parentNode.querySelector('.contador-caracteres');
-    if (!contador) return;
-
-    // Inicializa una sola llamada a la función extraída
-    actualizarContador(input, contador, maximoCaracteres);
-
-    // Y vuelve a usar la misma función como callback
-    input.addEventListener('input', () => {
-    actualizarContador(input, contador, maximoCaracteres);
-    });
-});
-}  
 
 /**
  * Recalcula TODOS los contadores a partir del valor actual de cada input.
@@ -924,18 +971,41 @@ function actualizarTodosContadores() {
 }
 
 /**
- * Limpia todos los mensajes de error y quita la clase de error de los inputs.
+ * Deshabilita el dispositivo de un usuario específico.
+ * Llama al backend para deshabilitar el dispositivo del usuario y muestra retroalimentación.
+ * @async
+ * @function deshabilitarDispositivoUsuario
+ * @param {string} idUsuario - ID del usuario cuyo dispositivo se va a deshabilitar
+ * @returns {Promise<void>}
  */
-function limpiarMensajesError() {
-    // Borra el texto de todos los <small class="mensajeError">…
-    document.querySelectorAll('.mensajeError').forEach(el => {
-      el.textContent = '';
-    });
-    // Quita la clase .inputError de cualquier input que la tuviera
-    document.querySelectorAll('.inputError').forEach(input => {
-      input.classList.remove('inputError');
-    });
-  }  
+async function deshabilitarDispositivoUsuario(idUsuario) {
+    try {
+        const respuesta = await deshabilitarDispositivo(idUsuario);
+
+        if (respuesta.ok) {
+            Swal.fire({
+                title: 'Dispositivo deshabilitado',
+                text: respuesta.mensaje || 'El dispositivo del usuario ha sido deshabilitado exitosamente.',
+                icon: 'success',
+                confirmButtonColor: '#a61930',
+            });
+        } else {
+            Swal.fire({
+                title: 'Error al deshabilitar dispositivo',
+                text: respuesta.mensaje || 'No se pudo deshabilitar el dispositivo del usuario.',
+                icon: 'error',
+                confirmButtonColor: '#a61930',
+            });
+        }
+    } catch {
+        Swal.fire({
+            title: 'Error de conexión',
+            text: 'Verifica tu conexión e inténtalo de nuevo.',
+            icon: 'error',
+            confirmButtonColor: '#a61930',
+        });
+    }
+} 
 
 // Expone la función de inicialización al objeto window
 inicializarModuloGestionUsuarios()

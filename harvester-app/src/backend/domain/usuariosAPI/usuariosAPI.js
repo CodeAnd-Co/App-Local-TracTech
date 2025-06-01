@@ -140,10 +140,45 @@ async function consultarRoles() {
     return { ok: respuesta.ok, ...datos };
 }
 
+/**
+ * Deshabilita el dispositivo de un usuario específico mediante una solicitud HTTP POST a la API.
+ *
+ * Esta función realiza una petición al endpoint de deshabilitación de dispositivos del servidor
+ * y devuelve el resultado indicando si la operación fue exitosa o no.
+ *
+ * @async
+ * @function deshabilitarDispositivo
+ * @param {string} idUsuario - ID del usuario cuyo dispositivo se va a deshabilitar.
+ * @returns {Promise<{ok: boolean, mensaje?: string}>} Objeto con el estado de la operación y un posible mensaje del servidor.
+ */
+async function deshabilitarDispositivo(idUsuario) {
+    try {
+        const respuesta = await fetch(`${URL_BASE}/dispositivo/deshabilitar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ idUsuario }),
+        });
+        
+        const datos = await respuesta.json();
+
+        return { ok: respuesta.ok, ...datos };
+    } catch (error) {
+        if (error instanceof TypeError) {
+            return { ok: false, mensaje: 'Error de conexión con el servidor' };
+        } else {
+            return { ok: false, mensaje: error.message || 'Error desconocido' };
+        }
+    }
+}
+
 module.exports = {
     obtenerUsuarios,
     modificarUsuario,
     eliminarUsuario,
     crearUsuario,
-    consultarRoles
+    consultarRoles,
+    deshabilitarDispositivo
 };

@@ -48,24 +48,19 @@ async function inicializarCrearFormula() {
         await abrirAyudaExterna('https://docs.google.com/document/d/14tKDIFsQO1i_32oEwaGaE7u8hHv3pcdb3frWU7vJ9M8/edit?tab=t.0#heading=h.ldire7zbv2f');
     });
 
-    document.getElementById('btnGenerar').addEventListener('click', () => {
-        const contenedor = document.getElementById('function-arguments');
-        if (contenedor) {
-            generarFormulaCompleja();
-        } else {
-            mostrarAlerta('Error', 'No se ha podido generar la fórmula.', 'error');
-        }
-    });
+                document.getElementById('btnGenerar').addEventListener('click', () => {
+                    const contenedor = document.getElementById('function-arguments');
+                    if (contenedor) {
+                        generarFormulaCompleja();
+                    } else {
+                        mostrarAlerta('Error', 'No se ha podido generar la fórmula.', 'error');
+                    }
+                });
 
-    if (nombreArchivo === null || nombreArchivo === undefined) {
-        mostrarAlerta('Error', 'No hay un archivo cargado.', 'error');
-        document.getElementById('btnGuardar').disabled = true;
-        document.getElementById('btnGenerar').disabled = true;
-
-        return;
-    }
-}
-
+                if (nombreArchivo === null || nombreArchivo === undefined) {
+                    mostrarAlerta('Error', 'No hay un archivo cargado.', 'error');
+                    document.getElementById('btnGuardar').disabled = true;
+                    document.getElementById('btnGenerar').disabled = true;
 
 
 /**

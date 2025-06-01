@@ -1,4 +1,11 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
+// RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
+
+const tractoresSeleccionados = {};
+const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
+const { seleccionaDatosAComparar } = require(`${rutaBase}/src/backend/casosUso/excel/seleccionaDatosAComparar.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
+
 
 /* eslint-disable no-undef*/
 
@@ -10,27 +17,19 @@ inicializarModuloTractores();
  * 
  * @function inicializarModuloTractores
  * @returns {void}
- */
+*/
 function inicializarModuloTractores() {
     // Actualizar topbar directamente
     if (window.actualizarBarraSuperior) {
         window.actualizarBarraSuperior('tractores');
     }
-
-    // Cargar los datos del Excel desde localStorage
-    const datosExcel = cargarDatosDeExcel();
+    const datosExcel = cargarDatosExcel();
     
-    // Si hay datos, inicializar la visualización aquí
-    if (!datosExcel) {
-        console.warn('No hay datos disponibles para análisis');
-    }
-
     iniciarDistribuidores(datosExcel);
-    inicializarTractores(datosExcel);
-    
+    iniciarTractores(datosExcel);
     busquedaTractores();
     botonesFiltrosTractores()
-    botonReporte();
+    botonReporte(datosExcel);
 }
 
 /**
@@ -49,120 +48,142 @@ function iniciarDistribuidores(datosExcel) {
     distribuidoresContenedor.innerHTML = '';
 
     const hojaExcel = datosExcel.hojas.Distribuidor;
-    
-    if (!hojaExcel || !Array.isArray(hojaExcel) || hojaExcel.length === 0) {
-        console.warn('No se encontraron distribuidores');
-    } else {
-        distribuidorContenedor.style.visibility = 'visible';
-        hojaExcel.forEach(fila => {
-            const nombreDistribuidor = fila.Distribuidor || fila.Nombre || fila.NombreDistribuidor;
-            if (!nombreDistribuidor) return;
-    
-            // Crear div para distribuidor
-            const distribuidorDiv = document.createElement('div');
-            distribuidorDiv.className = 'rancho';
-    
-            // Crear nombre del distribuidor
-            const nombreDistribuidorDiv = document.createElement('div');
-            nombreDistribuidorDiv.className = 'rancho-texto';
-            nombreDistribuidorDiv.textContent = nombreDistribuidor;
-    
-            // Crear checkbox
-            const caja = document.createElement('img');
-            caja.className = 'check-box';
-            
-            caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
-    
-            // Añadir elementos
-            distribuidorDiv.appendChild(nombreDistribuidorDiv);
-            distribuidorDiv.appendChild(caja);
-            distribuidoresContenedor.appendChild(distribuidorDiv);
-        });
+
+    if (!Array.isArray(hojaExcel) || hojaExcel.length === 0) {
+        mostrarAlerta('Ocurrió un problema', 'No se encontraron distribuidores.', 'warning');
+        return;
     }
 
+    distribuidorContenedor.style.visibility = 'visible';
+
+    hojaExcel.forEach(fila => {
+        const nombreDistribuidor = fila.distribuidor || fila.nombre || fila.nombreDistribuidor;
+        if (!nombreDistribuidor) {
+            return;
+        }
+        const distribuidorDiv = crearElementoDistribuidor(nombreDistribuidor)
+        distribuidoresContenedor.appendChild(distribuidorDiv);
+    });
 }
 
 /**
- * Inicia la lista de tractores en el DOM
+ * Crea un elemento que contiene el nombre del distribuidor
+ * 
+ * @function crearElementoDistribuidor
+ * @param {String} nombreDistribuidor
+ * @returns {HTMLElement}
+ */
+function crearElementoDistribuidor(nombreDistribuidor) {
+    const distribuidorDiv = document.createElement('div');
+    distribuidorDiv.className = 'rancho';
+
+    // Crear nombre del distribuidor
+    const textoDistribuidor = document.createElement('div');
+    textoDistribuidor.className = 'rancho-texto';
+    textoDistribuidor.textContent = nombreDistribuidor;
+
+    const casillaVerificacion = document.createElement('img');
+    casillaVerificacion.className = 'check-box';
+    casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
+
+    // Añadir elementos
+    distribuidorDiv.appendChild(nombreDistribuidorDiv);
+    distribuidorDiv.appendChild(casillaVerificacion);
+    return distribuidorDiv;
+}
+
+/**
+ * Inicia la lista de tractores en el DOM y permite seleccion
  * 
  * @function inicializarTractores 
  * @param {object} datosExcel - Objeto que contiene las hojas del Excel cargado.
  * @returns {void}
  */
-function inicializarTractores(datosExcel) {
+function iniciarTractores(datosExcel) {
     const tractoresContenedor = document.querySelector('.tractores-contenido');
     tractoresContenedor.innerHTML = '';
-    const tractores = Object.keys(datosExcel.hojas);
-    if (tractores.length === 0) {
-        const mensaje = document.createElement('div');
-        mensaje.className = 'rancho';
-        mensaje.textContent = 'No se encontraron tractores';
-        tractoresContenedor.appendChild(mensaje);
-    } else {
-        // Iterar sobre los tractores asumiendo que cada hoja es un tractor
-        tractores.forEach(tractorNombre => {
-        // Crear un div para el tractor
-        const tractorDiv = document.createElement('div');
-        tractorDiv.className = 'rancho'; // Asignar clase para estilo
+    const nombresTractores = Object.keys(datosExcel.hojas);
 
-        // Crear contenedor para el texto
-        const tractorDivTexto = document.createElement('div');
-        tractorDivTexto.className = 'caja-rancho-texto';
+    if (nombresTractores.length === 0) {
+        mostrarMensaje(tractoresContenedor, 'No se encontraron tractores')
+        return;
+    } 
 
-        // Crear el nombre del tractor
-        const nombreTractorDiv = document.createElement('div');
-        nombreTractorDiv.className = 'rancho-texto';
-        nombreTractorDiv.textContent = tractorNombre; // Nombre del tractor
-
-        tractorDivTexto.appendChild(nombreTractorDiv);
-
-        // Crear el cuadro de selección (checkbox) para el tractor
-        const caja = document.createElement('img');
-        caja.className = 'check-box';
-        caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Imagen del checkbox vacío 
-
-        
-        // Añadir el nombre y el checkbox al div del tractor
-        tractorDiv.appendChild(tractorDivTexto);
-        tractorDiv.appendChild(caja);
-        
-        // Añadir el div del tractor al contenedor
+    // Iterar sobre los tractores asumiendo que cada hoja es un tractor
+    nombresTractores.forEach(tractorNombre => {
+        const tractorDiv = crearElementoTractor(tractorNombre, datosExcel);
         tractoresContenedor.appendChild(tractorDiv);
-        
-        // Agregar evento para mostrar columnas
-        tractorDivTexto.addEventListener('click', () => {
-            cambiarSeleccionVisualUnica(tractorDiv);
-            manejarClickTractor(tractorNombre, datosExcel);
-            });
-        })
-    }
+    })
 }
 
-/** 
- * Cargamos los datos de excel que se encuentran en localStorage
+/**
+ * Crea un elemento que contiene el nombre del tractor
  * 
- * @function cargarDatosDeExcel
- * @returns {object|null} - objeto con las hojas de excel parseadas
-*/
-function cargarDatosDeExcel() {
-    try {
-        // Recuperar los datos de Excel
-        const datosExcelJSON = localStorage.getItem('datosExcel');
-        if (!datosExcelJSON) {
-            alert('No hay datos de Excel disponibles');
-            return null;
-        }
-        // Parsear los datos JSON
-        const datosExcel = JSON.parse(datosExcelJSON);
-        return datosExcel;
-    } catch (error) {
-        console.error('Error al cargar datos de Excel:', error);
-        return null;
+ * @function crearElementoTractor 
+ * @param {String} nombreTractor
+ * @param {object} datosExcel - Objeto que contiene las hojas del Excel cargado.
+ * @returns {HTMLElement}
+ */
+function crearElementoTractor(nombreTractor, datosExcel) {
+    const tractorDiv = document.createElement('div');
+    tractorDiv.className = 'rancho';
+
+    const tractorTextoDiv = document.createElement('div');
+    tractorTextoDiv.className = 'caja-rancho-texto';
+
+    const textoNombreTractorDiv = document.createElement('div');
+    textoNombreTractorDiv.className = 'rancho-texto';
+    textoNombreTractorDiv.textContent = nombreTractor; 
+
+    tractorTextoDiv.appendChild(textoNombreTractorDiv);
+    tractorDiv.appendChild(tractorTextoDiv);
+
+    const casillaVerificacion = document.createElement('img');
+    casillaVerificacion.className = 'check-box';
+    casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
+    tractorDiv.appendChild(casillaVerificacion);
+    
+    // Solo la casilla de verificación cambia el estado de seleccionado
+    casillaVerificacion.addEventListener('click', () => cambiarSeleccionTractor(nombreTractor, casillaVerificacion));
+
+    // El texto del tractor solo muestra las columnas
+    tractorTextoDiv.addEventListener('click', () => {
+        cambiarSeleccionVisualUnica(tractorDiv);
+        manejarClickTractor(nombreTractor, datosExcel);
+    });
+
+    return tractorDiv;
+}
+
+/**
+ * Cambia la seleccion de un tractor dentro del arreglo global tractoresSeleccionados
+ * 
+ * @function cambiarSeleccionTractor 
+ * @param {string} nombreTractor
+ * @param {HTMLElement} casillaVerificacion
+ * @returns {void}
+ */
+function cambiarSeleccionTractor(nombreTractor, casillaVerificacion) {
+    // Verificar si el tractor ya existe en tractoresSeleccionados
+    if (!tractoresSeleccionados[nombreTractor]) {
+        tractoresSeleccionados[nombreTractor] = {
+            seleccionado: false,
+            columnas: []
+        };
     }
+
+    // Alternar estado de la selección
+    const estadoActual = tractoresSeleccionados[nombreTractor].seleccionado;
+    tractoresSeleccionados[nombreTractor].seleccionado = !estadoActual;
+
+    // Actualizar el ícono en el DOM
+    cambiarIconoMarcadoADesmarcado(casillaVerificacion);
+
 }
 
 /**
  * Muestra las colmunas de un tractor específico en el contenedor de columnas
+ * Permite la seleccion individual
  * 
  * @function mostrarColumnasTractor
  * @param {string} nombreTractor
@@ -170,51 +191,130 @@ function cargarDatosDeExcel() {
  * @returns {void}
  */
 function mostrarColumnasTractor(nombreTractor, datosExcel) {
-    const columnaContenedor = document.getElementById('contenedorColumnas');
     const columnasContenedor = document.querySelector('.columnas-contenido');
     columnasContenedor.innerHTML = '';
+    const columnaContenedor = document.getElementById('contenedorColumnas');
     columnaContenedor.style.display = 'block';
 
     const datosHoja = datosExcel.hojas[nombreTractor];
-
     if (!Array.isArray(datosHoja) || datosHoja.length === 0) {
-        const mensaje = document.createElement('div');
-        mensaje.className = 'columna-nombre';
-        mensaje.textContent = 'No hay datos en esta hoja';
-        columnasContenedor.appendChild(mensaje);
+        mostrarMensaje(columnasContenedor, 'No hay datos en esta hoja');
         return;
     }
 
     // Obtener las columnas del primer objeto
-    let columnas = [];
-
-    // Si el primer elemento es un objeto, usamos sus claves
-    if (typeof datosHoja[0] === 'object' && !Array.isArray(datosHoja[0])) {
-        columnas = Object.keys(datosHoja[0]);
-    } else if (Array.isArray(datosHoja[0])) {
-        // Si el primer elemento es un array, usamos sus valores como encabezados
-        columnas = datosHoja[0];
+    const columnas = obtenerColumnas(datosHoja);
+    if (!columnas.length) {
+        mostrarMensaje(columnasContenedor, 'Formato de datos no reconocido')
+        return;
     }
-    localStorage.setItem('columnas', JSON.stringify(columnas));
+
+    // Asegurarse de que el objeto para este tractor exista en tractoresSeleccionados
+    if (!tractoresSeleccionados[nombreTractor]) {
+        tractoresSeleccionados[nombreTractor] = { 
+            seleccionado: false, columnas: [] 
+        };
+    }
     columnas.forEach(nombreColumna => {
-        // Crear div para la columna
-        const columnaDiv = document.createElement('div');
-        columnaDiv.className = 'columna-nombre';
-
-        // Texto del nombre
-        const nombreColumnaDiv = document.createElement('div');
-        nombreColumnaDiv.className = 'rancho-texto';
-        nombreColumnaDiv.textContent = nombreColumna;
-
-        const caja = document.createElement('img');
-        caja.className = 'check-box';
-        caja.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`;
-
-        // Agregar al DOM
-        columnaDiv.appendChild(nombreColumnaDiv);
-        columnaDiv.appendChild(caja);
+        const columnaDiv = crearElementoColumna(nombreTractor, nombreColumna);
         columnasContenedor.appendChild(columnaDiv);
     });
+}
+
+/**
+ * Obtiene las columnas dentro de una hoja del excel parseado
+ * 
+ * @function obtenerColumnas
+ * @param {string} hoja
+ * @returns {Array}
+ */
+function obtenerColumnas(hoja) {
+    if (Array.isArray(hoja[0])) {
+        return hoja[0]; // Usar los valores como nombres de columna
+    } 
+    if (typeof hoja[0] === 'object') {
+        return Object.keys(hoja[0]); // Usar las claves
+    }
+    return [];
+}
+
+/**
+ * Crea un elemento que contiene el nombre de la columna dentro de una hoja
+ * Permite la selección de una columna y agregarla al arreglo global
+ * 
+ * @function crearElementoColumna
+ * @param {string} nombreTractor
+ * @param {string} nombreColumna
+ * @returns {HTMLElement}
+ */
+function crearElementoColumna(nombreTractor, nombreColumna) {
+    const columnaDiv = document.createElement('div');
+    columnaDiv.className = 'columna-nombre';
+
+    const nombreColumnaDiv = document.createElement('div');
+    nombreColumnaDiv.className = 'rancho-texto';
+    nombreColumnaDiv.textContent = nombreColumna;
+
+    const casillaVerificacion = document.createElement('img');
+    casillaVerificacion.className = 'check-box';
+
+    // Verificar si la columna ya está seleccionada en tractoresSeleccionados
+    if (tractoresSeleccionados[nombreTractor]?.columnas.includes(nombreColumna)) {
+        casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box.svg`; // Marcado
+    } else {
+        casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Desmarcado
+    }
+
+    // Agregar evento para alternar la selección de la columna
+    columnaDiv.addEventListener('click', () => {
+        seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion);
+
+        // Actualizar visualmente el estado del checkbox
+        if (tractoresSeleccionados[nombreTractor]?.columnas.includes(nombreColumna)) {
+            casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box.svg`; // Marcado
+        } else {
+            casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Desmarcado
+        }
+    });
+
+    columnaDiv.appendChild(nombreColumnaDiv);
+    columnaDiv.appendChild(casillaVerificacion);
+    return columnaDiv;
+}
+
+/**
+ * Selecciona o deselecciona una columna en el panel de columnas de un tractor.
+ * Esta función actualiza la lista de columnas seleccionadas para el tractor específico,
+ * y cambia el icono del checkbox de acuerdo con el estado de selección de la columna.
+ * 
+ * @function seleccionarColumna
+ * @param {string} nombreTractor - El nombre del tractor cuya columna se va a seleccionar o deseleccionar.
+ * @param {string} nombreColumna - El nombre de la columna que se desea seleccionar o deseleccionar.
+ * @param {HTMLElement} casillaVerificacion - El elemento de imagen (checkbox) que refleja el estado de selección de la columna.
+ * @returns {void}
+ */
+function seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion) {
+    // Verificamos si el tractor está seleccionado
+    if (!tractoresSeleccionados[nombreTractor]) {
+        tractoresSeleccionados[nombreTractor] = {
+            seleccionado: false, // El tractor no está seleccionado por defecto
+            columnas: [] // No tiene columnas seleccionadas inicialmente
+        };
+    }
+
+    // Verificamos si la columna ya está seleccionada
+    const seleccion = tractoresSeleccionados[nombreTractor];
+    const indice = seleccion.columnas.indexOf(nombreColumna);
+    if (indice === -1) {
+        // Si la columna no está seleccionada, la agregamos
+        seleccion.columnas.push(nombreColumna);
+    } else {
+        // Si la columna ya está seleccionada, la deseleccionamos
+        seleccion.columnas.splice(indice, 1);
+    }
+    seleccion.columnas.sort();
+
+    cambiarIconoMarcadoADesmarcado(casillaVerificacion)
 }
 
 /**
@@ -245,18 +345,20 @@ function manejarClickTractor(tractorNombre, datosExcel) {
  * Configura el evento click para navegar al módulo de análisis
  * 
  * @function botonReporte
+ * @param {Object} datosExcel - Los datos del excel
  * @returns {void}
  */
-async function botonReporte() {
+async function botonReporte(datosExcel) {
     const botonAnalisis = document.querySelector('.primario');
     botonAnalisis.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         try {
+            seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
             var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
             window.location.href = vista;
             localStorage.setItem('seccion-activa', 'analisis');
-        } catch (err) {
-            console.error('Error al cargar vista:', err);
+        } catch {
+            mostrarAlerta('Ocurrió un problema', 'No se pudo cargar el módulo de análisis.', 'error');
         }
     })
 }
@@ -321,7 +423,7 @@ function botonesFiltrosTractores() {
  * @returns {void} 
  */
 function aplicarFiltrosCombinados() {
-    const datosExcel = cargarDatosDeExcel();
+    const datosExcel = cargarDatosExcel();
     if (!datosExcel) return;
 
     const entradaBusqueda = document.getElementById('buscadorTractor');

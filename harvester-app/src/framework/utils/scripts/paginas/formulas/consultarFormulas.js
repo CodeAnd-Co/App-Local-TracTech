@@ -1,6 +1,6 @@
 // RF 76 - Consultar fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 
-const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`); 
+const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`);
 const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/eliminarFormula.js`);
 const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/modificarFormula.js`);
 const { ipcRenderer } = require('electron');
@@ -30,12 +30,8 @@ async function eliminarFormula(id) {
         } else {
             mostrarAlerta('Error de conexión', respuesta.mensaje, 'error');
         }
-    } catch (error) {
-        let errorMensaje = error.message || 'Error al consultar las fórmulas';
-        if (error == undefined || error == null) {
-            errorMensaje = 'Error desconocido.';
-        }
-        mostrarAlerta('Error de conexión', `Verifica tu conexión e inténtalo de nuevo. ${errorMensaje}`, 'error');
+    } catch {
+        mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
     }
 }
 
@@ -87,7 +83,6 @@ async function renderizarFormulas() {
                     const formulaId = evento.currentTarget.getAttribute('data-id');
 
                     if (!formulaId) {
-                        console.warn('No se encontró data-id en el botón.');
                         return;
                     }
 
@@ -100,7 +95,7 @@ async function renderizarFormulas() {
                         localStorage.setItem('modificarFormulaDatos', Datos);
                         try {
                             const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
-                            const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion', permisos});
+                            const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono: 'Funcion', permisos });
                             window.location.href = vista;
                             localStorage.setItem('seccion-activa', 'formulas');
                         } catch (err) {
@@ -151,7 +146,7 @@ async function renderizarFormulas() {
         btnCrearFormula.addEventListener('click', async () => {
             try {
                 const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono : 'Funcion', permisos});
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono: 'Funcion', permisos });
                 window.location.href = vista;
                 localStorage.setItem('seccion-activa', 'formulas');
             } catch (err) {
