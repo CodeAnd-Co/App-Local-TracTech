@@ -8,6 +8,7 @@ Chart.register(ChartDataLabels);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
+const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
@@ -119,12 +120,43 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   `;
 
   // Datos disponibles para fórmulas
+  const datos = localStorage.getItem('datosExcel');  
   let columnas = [];
-  if (window.datosExcelGlobal) {
-    window.datosGrafica = window.datosExcelGlobal.hojas[
-      Object.keys(window.datosExcelGlobal.hojas)[0]
-    ];
-    columnas = window.datosGrafica[0].slice(3);
+
+  // Cargar y parsear los datos del localStorage
+  if (datos) {
+    try {
+      const datosParseados = JSON.parse(datos);
+      
+      // Si es un objeto con hojas (estructura compleja)
+      if (datosParseados && typeof datosParseados === 'object' && datosParseados.hojas) {
+        window.datosExcelGlobal = datosParseados;
+        const nombrePrimeraHoja = Object.keys(datosParseados.hojas)[0];
+        window.datosGrafica = datosParseados.hojas[nombrePrimeraHoja];
+        
+        // La primera fila contiene las columnas
+        if (window.datosGrafica && window.datosGrafica.length > 0) {
+          columnas = window.datosGrafica[0].slice(3); // Omitir las primeras 3 columnas
+        }
+      }
+      // Si es un array directo (matriz simple)
+      else if (Array.isArray(datosParseados)) {
+        window.datosGrafica = datosParseados;
+        window.datosExcelGlobal = {
+          hojas: {
+            'Hoja1': datosParseados
+          }
+        };
+        
+        // La primera fila contiene las columnas
+        if (datosParseados.length > 0) {
+          columnas = datosParseados[0].slice(3); // Omitir las primeras 3 columnas
+        }
+      }
+    } catch (error) {
+      console.error('Error al parsear los datos del Excel:', error);
+      columnas = [];
+    }
   }
 
   // Actualizar la llamada en el event listener del botón de fórmulas
@@ -197,49 +229,60 @@ function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '') {
   }
 
   formulasFiltradas.forEach((formula, indice) => {
-    const elementoFormula = document.createElement('div');
-    elementoFormula.className = 'formula-objeto';
-    
-    const radioId = `formula-${formula.idFormula}`;
-    
-    elementoFormula.innerHTML = `
-      <input type="radio" 
-             id="${radioId}" 
-             name="formula-seleccionada" 
-             value="${formula.idFormula}"
-             data-formula-nombre="${formula.Nombre}"
-             data-formula-datos="${formula.Datos}"
-             style="display: none;">
-      <div class="formula" data-radio-id="${radioId}">
-        <label for="${radioId}" class="formula-label">${formula.Nombre}</label>
-      </div>
-    `;
-    
-    // Agregar evento de clic al div .formula
-    const divFormula = elementoFormula.querySelector('.formula');
-    const radioButton = elementoFormula.querySelector('input[type="radio"]');
-    
-    divFormula.addEventListener('click', () => {
-      // Deseleccionar todas las fórmulas anteriores
-      contenedor.querySelectorAll('.formula').forEach(div => {
-        div.classList.remove('formula-seleccionada');
-      });
-      
-      // Deseleccionar todos los radio buttons
-      contenedor.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.checked = false;
-      });
-      
-      // Seleccionar la fórmula actual
-      radioButton.checked = true;
-      divFormula.classList.add('formula-seleccionada');
-      
-      // Llamar a la función de selección
-      seleccionarFormula(radioButton, contenedor);
+  const elementoFormula = document.createElement('div');
+  elementoFormula.className = 'formula-objeto';
+  
+  const radioId = `formula-${formula.idFormula}`;
+  
+  // Crear el elemento sin usar innerHTML para evitar problemas de escape
+  const inputRadio = document.createElement('input');
+  inputRadio.type = 'radio';
+  inputRadio.id = radioId;
+  inputRadio.name = 'formula-seleccionada';
+  inputRadio.value = formula.idFormula;
+  inputRadio.style.display = 'none';
+  
+  // Almacenar los datos directamente en propiedades del elemento
+  inputRadio.formulaNombre = formula.Nombre;
+  inputRadio.formulaDatos = formula.Datos;
+  
+  const divFormula = document.createElement('div');
+  divFormula.className = 'formula';
+  divFormula.setAttribute('data-radio-id', radioId);
+  
+  const label = document.createElement('label');
+  label.setAttribute('for', radioId);
+  label.className = 'formula-label';
+  label.textContent = formula.Nombre;
+  
+  divFormula.appendChild(label);
+  elementoFormula.appendChild(inputRadio);
+  elementoFormula.appendChild(divFormula);
+  
+  // Agregar evento de clic al div .formula
+  const radioButton = inputRadio;
+  
+  divFormula.addEventListener('click', () => {
+    // Deseleccionar todas las fórmulas anteriores
+    contenedor.querySelectorAll('.formula').forEach(div => {
+      div.classList.remove('formula-seleccionada');
     });
     
-    contenedor.appendChild(elementoFormula);
+    // Deseleccionar todos los radio buttons
+    contenedor.querySelectorAll('input[type="radio"]').forEach(radio => {
+      radio.checked = false;
+    });
+    
+    // Seleccionar la fórmula actual
+    radioButton.checked = true;
+    divFormula.classList.add('formula-seleccionada');
+    
+    // Llamar a la función de selección
+    seleccionarFormula(radioButton, contenedor);
   });
+  
+  contenedor.appendChild(elementoFormula);
+});
 }
 
 /**
@@ -252,8 +295,8 @@ function seleccionarFormula(radioBotton, contenedor) {
   // Guardar la fórmula seleccionada para uso posterior
   const formulaSeleccionada = {
     id: radioBotton.value,
-    nombre: radioBotton.dataset.formulaNombre,
-    datos: radioBotton.dataset.formulaDatos
+    nombre: radioBotton.formulaNombre,
+    datos: radioBotton.formulaDatos
   };
   
   // Almacenar en el elemento padre para acceso posterior
@@ -262,7 +305,7 @@ function seleccionarFormula(radioBotton, contenedor) {
     cuadroFormulas.dataset.formulaSeleccionada = JSON.stringify(formulaSeleccionada);
   }
   
-  console.log('Fórmula seleccionada:', formulaSeleccionada);
+  console.log('Fórmula seleccionada completa:', formulaSeleccionada);
 }
 
 /**
@@ -327,6 +370,32 @@ botonAplicarFormula.addEventListener('click', () => {
     return;
   }
 
+  // Verificar que hay datos disponibles
+  const datosExcel = localStorage.getItem('datosExcel');
+  if (!datosExcel) {
+    mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
+    return;
+  }
+
+  // Asegurar que window.datosExcelGlobal existe
+  if (!window.datosExcelGlobal) {
+    try {
+      const datosParseados = JSON.parse(datosExcel);
+      if (Array.isArray(datosParseados)) {
+        window.datosExcelGlobal = {
+          hojas: {
+            'Hoja1': datosParseados
+          }
+        };
+      } else {
+        window.datosExcelGlobal = datosParseados;
+      }
+    } catch (error) {
+      mostrarAlerta('Error', 'Error al procesar los datos de Excel.', 'error');
+      return;
+    }
+  }
+
   // Buscar el input radio en el elemento padre (formula-objeto)
   const formulaObjeto = formulaSeleccionada.closest('.formula-objeto');
   const inputRadio = formulaObjeto.querySelector('input[type="radio"]');
@@ -336,19 +405,90 @@ botonAplicarFormula.addEventListener('click', () => {
     return;
   }
 
-  const idFormula = inputRadio.value;
-  const nombreFormula = formulaSeleccionada.querySelector('.formula-label').textContent;
+  // Obtener los datos directamente de las propiedades del elemento
+  const nombreFormula = inputRadio.formulaNombre;
+  const datosFormula = inputRadio.formulaDatos;
+
+  // Verificar que los datos están completos
+  if (!datosFormula || datosFormula.trim() === '') {
+    mostrarAlerta('Error', 'Los datos de la fórmula están vacíos o incompletos.', 'error');
+    return;
+  }
+
+  console.log('Fórmula completa:', datosFormula); // Para verificar que está completa
 
   // Obtener la gráfica asociada
   const graficaId = cuadroFormulas.dataset.graficaId;
   const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
   
-  if (graficaDiv) {
-    // Aquí puedes aplicar la fórmula a la gráfica
-    console.log(`Aplicando fórmula ${nombreFormula} (ID: ${idFormula}) a la gráfica ${graficaId}`);
-    // Lógica para aplicar la fórmula a la gráfica...
-  } else {
+  if (!graficaDiv) {
     mostrarAlerta('Error', 'No se encontró la gráfica asociada.', 'error');
+    return;
+  }
+
+  try {
+    // Aplicar la fórmula a los datos
+    console.log(`Aplicando fórmula ${nombreFormula} con datos: ${datosFormula}`);
+    const resultadoFormula = aplicarFormula(nombreFormula, datosFormula);
+    
+    if (resultadoFormula.error) {
+      mostrarAlerta('Error', `Error al aplicar la fórmula: ${resultadoFormula.error}`, 'error');
+      return;
+    }
+
+    // Actualizar los datos globales con los resultados solo si existen
+    if (resultadoFormula.datosActualizados && window.datosExcelGlobal && window.datosExcelGlobal.hojas) {
+      // Actualizar los datos en la estructura global
+      const nombreHoja = Object.keys(window.datosExcelGlobal.hojas)[0];
+      window.datosExcelGlobal.hojas[nombreHoja] = resultadoFormula.datosActualizados;
+      window.datosGrafica = resultadoFormula.datosActualizados;
+    }
+
+    // Obtener el canvas y la gráfica existente
+    const canvas = graficaDiv.querySelector('canvas');
+    if (!canvas) {
+      mostrarAlerta('Error', 'No se encontró el canvas de la gráfica.', 'error');
+      return;
+    }
+
+    const contexto = canvas.getContext('2d');
+    const graficaExistente = Chart.getChart(contexto);
+    
+    if (graficaExistente && resultadoFormula.resultados) {
+      // Obtener el título actual de la gráfica
+      const tarjeta = document.getElementById(graficaId);
+      const tituloGrafica = tarjeta ? tarjeta.querySelector('.titulo-grafica')?.value || '' : '';
+      
+      // Preparar nuevos datos usando los resultados de la fórmula
+      const nuevosLabels = resultadoFormula.resultados.map((_, indice) => `Dato ${indice + 1}`);
+      const nuevosValores = resultadoFormula.resultados.filter(valor => typeof valor === 'number' && !isNaN(valor));
+      
+      // Actualizar la gráfica con los nuevos datos
+      graficaExistente.data.labels = nuevosLabels.slice(0, nuevosValores.length);
+      graficaExistente.data.datasets[0].data = nuevosValores;
+      graficaExistente.data.datasets[0].label = nombreFormula;
+      
+      // Actualizar el título si existe
+      if (tituloGrafica) {
+        graficaExistente.options.plugins.title.text = tituloGrafica;
+        graficaExistente.options.plugins.title.display = true;
+      }
+      
+      // Refrescar la gráfica
+      graficaExistente.update();
+      
+      mostrarAlerta('Éxito', `Fórmula "${nombreFormula}" aplicada correctamente a la gráfica.`, 'success');
+      
+      // Cerrar el cuadro de fórmulas
+      cuadroFormulas.remove();
+      
+    } else {
+      mostrarAlerta('Error', 'No se pudo encontrar la gráfica para actualizar o no hay resultados válidos.', 'error');
+    }
+    
+  } catch (error) {
+    console.error('Error al aplicar fórmula:', error);
+    mostrarAlerta('Error', `Error inesperado al aplicar la fórmula: ${error.message}`, 'error');
   }
 });
 
