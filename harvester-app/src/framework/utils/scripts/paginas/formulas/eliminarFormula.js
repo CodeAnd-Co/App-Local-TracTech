@@ -2,7 +2,7 @@
 const { eliminarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/eliminarFormula.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
-/* eslint-disable no-undef */
+ 
 
  
 async function manejarEliminarFormula(id) {

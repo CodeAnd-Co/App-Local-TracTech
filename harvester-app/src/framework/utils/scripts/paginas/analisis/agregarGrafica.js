@@ -6,8 +6,8 @@ const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+ 
+ 
 
 /**
  * Agrega una nueva tarjeta de gráfica y su previsualización.

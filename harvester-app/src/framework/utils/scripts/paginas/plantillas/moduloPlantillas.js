@@ -2,7 +2,7 @@
 // RF 21: Usuario elimina plantilla de reporte. - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF21
 
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+ 
 
 /**
  * Importa la función `plantillas` desde la capa de dominio para obtener las plantillas disponibles.
