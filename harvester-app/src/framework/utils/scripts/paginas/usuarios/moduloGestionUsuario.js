@@ -13,6 +13,7 @@ const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dis
 const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
 const { mostrarAlerta, mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
+const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 const validator = require(`${rutaBase}/node_modules/validator/validator.min.js`);
 
@@ -66,12 +67,7 @@ async function inicializarModuloGestionUsuarios() {
         configurarContadoresCampos();
         
     } catch {
-        Swal.fire({
-            title: 'Error al cargar usuarios',
-            text: 'Verifica tu conexión e inténtalo de nuevo.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error al cargar usuarios', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
         document.getElementById('lista-usuarios').innerHTML
             = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
@@ -983,27 +979,12 @@ async function deshabilitarDispositivoUsuario(idUsuario) {
         const respuesta = await deshabilitarDispositivo(idUsuario);
 
         if (respuesta.ok) {
-            Swal.fire({
-                title: 'Dispositivo deshabilitado',
-                text: respuesta.mensaje || 'El dispositivo del usuario ha sido deshabilitado exitosamente.',
-                icon: 'success',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Dispositivo deshabilitado', respuesta.mensaje || 'El dispositivo del usuario ha sido deshabilitado exitosamente.', 'success');
         } else {
-            Swal.fire({
-                title: 'Error al deshabilitar dispositivo',
-                text: respuesta.mensaje || 'No se pudo deshabilitar el dispositivo del usuario.',
-                icon: 'error',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Error al deshabilitar dispositivo', respuesta.mensaje || 'No se pudo deshabilitar el dispositivo del usuario.', 'error');
         }
     } catch {
-        Swal.fire({
-            title: 'Error de conexión',
-            text: 'Verifica tu conexión e inténtalo de nuevo.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
     }
 } 
 
