@@ -1,11 +1,14 @@
 // RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
 
 class Usuario {
-    constructor(id, nombre, correo, rol) {
+    constructor(id, nombre, correo, rol, tieneDispositivo = false, dispositivoId = null, dispositivoActivo = false) {
       this.id = id;
       this.nombre = nombre;
       this.correo = correo;
       this.rol = rol;
+      this.tieneDispositivo = tieneDispositivo;
+      this.dispositivoId = dispositivoId;
+      this.dispositivoActivo = dispositivoActivo;
     }
   }
 

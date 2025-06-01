@@ -45,6 +45,9 @@ function inicializarModuloUsuario() {
         const respuesta = await Promise.race([cerrarSesion(), timeoutPromise]);
         const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
         if (respuesta.ok) {
+          if (require('electron').remote && require('electron').remote.app.verificacionIntervalo) {
+              clearInterval(require('electron').remote.app.verificacionIntervalo);
+          }
           localStorage.removeItem('token');
           localStorage.removeItem('nombreUsuario');
           const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
