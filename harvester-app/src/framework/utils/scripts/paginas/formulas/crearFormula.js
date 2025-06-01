@@ -167,9 +167,7 @@ async function procesarFormula() {
     
     try{
         const respuesta = await guardarFormula(nombreFormula, formula);
-        if (respuesta.ok) {
-            window.cargarModulo('formulas');
-        } else {
+        if (!respuesta.ok) {
             Swal.fire({
                 title: 'Error',
                 text: 'Hubo un error al guardar la fórmula.',
@@ -193,11 +191,16 @@ async function procesarFormula() {
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
     }
+
     Swal.fire({
         title: 'Fórmula guardada',
         text: 'La fórmula ha sido guardada exitosamente.',
         icon: 'success',
         confirmButtonColor: '#a61930',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.cargarModulo('formulas');
+        }
     });
 }
 

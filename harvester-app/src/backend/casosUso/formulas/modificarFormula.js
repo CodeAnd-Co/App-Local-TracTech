@@ -67,8 +67,11 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
                 text: 'La fórmula ha sido modificada exitosamente.',
                 icon: 'success',
                 confirmButtonColor: '#a61930',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.cargarModulo('formulas');
+                }
             });
-            window.cargarModulo('formulas');
         } else {
             Swal.fire({
                 title: 'Error de conexión',
