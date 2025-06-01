@@ -4,9 +4,7 @@ const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/for
 const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/eliminarFormula.js`);
 const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/modificarFormula.js`);
 const { ipcRenderer } = require('electron');
-const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
- 
-const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+const { mostrarAlerta, mostrarAlertaConfirmacion } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 async function consultarFormulas() {
     const respuesta = await consultaFormulasCasoUso();
@@ -41,28 +39,16 @@ async function eliminarFormula(id) {
             if (formulaDiv) {
                 formulaDiv.remove();
             }
-            Swal.fire({
-                title: 'Fórmula eliminada',
-                text: 'La fórmula ha sido eliminada exitosamente.',
-                icon: 'success'
-            });
+            mostrarAlerta('Fórmula eliminada', 'La fórmula ha sido eliminada exitosamente.', 'success');
         } else {
-            Swal.fire({
-                title: 'Error de conexión',
-                text: respuesta.mensaje,
-                icon: 'error'
-            });
+            mostrarAlerta('Error de conexión', respuesta.mensaje, 'error');
         }
     } catch (error) {
         let errorMensaje = error.message || 'Error al consultar las fórmulas';
         if (error == undefined || error == null) {
             errorMensaje = 'Error desconocido.';
         }
-        Swal.fire({
-            title: 'Error de conexión',
-            text: `Verifica tu conexión e inténtalo de nuevo. ${errorMensaje}`,
-            icon: 'error'
-        });
+        mostrarAlerta('Error de conexión', `Verifica tu conexión e inténtalo de nuevo. ${errorMensaje}`, 'error');
     }
 }
 
@@ -148,32 +134,18 @@ async function renderizarFormulas() {
 
                 // Registrar event listeners para eliminar solo si hay fórmulas
                 document.querySelectorAll('.eliminar').forEach(btn => {
-                    btn.addEventListener('click', (evento) => {
+                    btn.addEventListener('click', async (evento) => {
                          
                         const formulaId = evento.currentTarget.getAttribute('data-id');
                         try {
-                            Swal.fire({
-                                title: '¿Estás seguro?',
-                                text: 'Esta acción no se puede deshacer.',
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Sí, eliminar',
-                                cancelButtonText: 'Cancelar',
-                                confirmButtonColor: '#A61930',
-                                
-                            }).then((resultado) => {
-                                if (resultado.isConfirmed) {
-                                    eliminarFormula(formulaId);
-                                    window.cargarModulo('formulas');
-                                }
-                            });
-                            // eslint-disable-next-line no-unused-vars
+                            const resultadoConfirmado = await mostrarAlertaConfirmacion('¿Estás seguro?', 'Esta acción no se puede deshacer.', 'warning', 'Sí, eliminar', 'Cancelar');
+                            if(resultadoConfirmado) {
+                                eliminarFormula(formulaId);
+                                window.cargarModulo('formulas');
+                            }
+                             
                         } catch (error) {
-                            Swal.fire({
-                                title: 'Error de conexión',
-                                text: 'Verifica tu conexión e inténtalo de nuevo: ',
-                                icon: 'error'
-                            });
+                            mostrarAlerta('Error de conexión', `Verifica tu conexión e inténtalo de nuevo: ${error}`, 'error');
                         }
                     });
                 });

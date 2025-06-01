@@ -3,7 +3,7 @@ const { modificarFormula } = require(`${rutaBase}src/backend/domain/formulasAPI/
 
 const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
     LONGITUD_MAXIMA_FORMULA} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
-const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 /**
  * @async
@@ -17,30 +17,15 @@ const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.
  */
 async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     if (!id || !nombre || !formula || id === '' || nombre === '' || formula === '') {
-        Swal.fire({
-            title: 'Error',
-            text: 'Por favor, completa todos los campos.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error', 'Por favor, completa todos los campos.', 'error');
         return;
     }
     if (nombre === '' || nombre.length > LONGITUD_MAXIMA_NOMBRE_FORMULA) {
-        Swal.fire({
-            title: 'Error',
-            text: `Verifica que la formula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error', `Verifica que la fórmula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`, 'error');
         return;
     }
     if (formula.length > LONGITUD_MAXIMA_FORMULA) {
-        Swal.fire({
-            title: 'Error',
-            text: `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`,
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error', `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`, 'error');
         return;
     }
     
@@ -48,13 +33,8 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     let formulasGuardadas = localStorage.getItem('nombresFormulas');
     formulasGuardadas = JSON.parse(formulasGuardadas);
     if (formulasGuardadas && formulasGuardadas.includes(nombre) && nombre !== nombreOriginal) {
-        Swal.fire({
-            title: 'Error',
-            text: 'Ya existe una fórmula con ese nombre.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
-        return
+        mostrarAlerta('Error', 'Ya existe una fórmula con ese nombre.', 'error');
+        return;
         
     }
     
@@ -62,29 +42,14 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     try {
         const respuesta = await modificarFormula(id, nombre, formula, token);
         if (respuesta.ok) {
-            Swal.fire({
-                title: 'Fórmula modificada',
-                text: 'La fórmula ha sido modificada exitosamente.',
-                icon: 'success',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Fórmula modificada', 'La fórmula ha sido modificada exitosamente.', 'success');
             window.cargarModulo('formulas');
         } else {
-            Swal.fire({
-                title: 'Error de conexión',
-                text: respuesta.mensaje,
-                icon: 'error',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Error de conexión', respuesta.mensaje, 'error');
             return;
         }
     } catch (error) {
-        Swal.fire({
-            title: 'Error',
-            text: `No se pudo modificar la fórmula. Inténtalo de nuevo más tarde: ${error}`,
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error', `No se pudo modificar la fórmula. Inténtalo de nuevo más tarde: ${error}`, 'error');
         return;
     }
 }

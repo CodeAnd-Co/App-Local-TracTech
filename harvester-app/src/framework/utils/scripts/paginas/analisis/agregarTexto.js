@@ -2,11 +2,9 @@
 // RF18 - Usuario modifica cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf18/
 // RF19 - Usuario elimina cuadro de texto del reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf19/
 
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-if (typeof Swal === 'undefined') {
-  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-}
+ 
+ 
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 
 /**
@@ -30,13 +28,8 @@ function agregarTexto(
   const contenedores = new Contenedores(contenedor, contenedorPrevia);
 
   if (!contenedor || !contenedorPrevia) {
-    Swal.fire({
-      title: 'Error',
-      text: 'Ocurrió un error al agregar cuadro de texto.',
-      icon: 'error',
-      confirmButtonColor: '#a61930',
-    });
-    return
+    mostrarAlerta('Error', 'Ocurrió un error al agregar cuadro de texto.', 'error');
+    return;
   }
 
   configurarObservadorLimite(contenedor)
