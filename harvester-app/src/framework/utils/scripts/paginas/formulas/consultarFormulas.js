@@ -1,11 +1,10 @@
 // RF 76 - Consultar fórmulas - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF76
 
-const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`); 
+const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`);
 const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/eliminarFormula.js`);
 const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/modificarFormula.js`);
 const { ipcRenderer } = require('electron');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-
  
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
@@ -200,7 +199,7 @@ async function renderizarFormulas() {
         btnCrearFormula.addEventListener('click', async () => {
             try {
                 const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono : 'Funcion', permisos});
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono: 'Funcion', permisos });
                 window.location.href = vista;
                 localStorage.setItem('seccion-activa', 'formulas');
             } catch (err) {

@@ -206,7 +206,7 @@
   position: relative;
 }
 .nombre-usuario {
-  background: var(--background-light, #dbdce0);
+  background: #fff;
   border-radius: 6.44px;
   border-style: solid;
   border-color: var(--texto-light, #000000);
