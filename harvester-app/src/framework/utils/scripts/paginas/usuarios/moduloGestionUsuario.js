@@ -221,8 +221,6 @@ function filtrarUsuarios() {
 async function eliminarUsuario(id) {
     try {
         const respuesta = await eliminarUsuarioCU(id);
-
-        console.log(respuesta);
         if (!respuesta.ok) {
             mostrarAlerta('Error', 'Error al eliminar el usuario.', 'error');
         } else {
