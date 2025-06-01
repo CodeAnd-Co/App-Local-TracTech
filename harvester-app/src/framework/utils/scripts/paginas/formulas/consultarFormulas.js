@@ -5,19 +5,30 @@ const { manejarEliminarFormula } = require(`${rutaBase}src/framework/utils/scrip
 const { inicializarModificarFormula } = require(`${rutaBase}src/framework/utils/scripts/paginas/formulas/modificarFormula.js`);
 const { ipcRenderer } = require('electron');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-
-
-
+ 
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 async function consultarFormulas() {
     const respuesta = await consultaFormulasCasoUso();
+    console.log('Respuesta de consultarFormulas:', respuesta);
+    
     if (respuesta.error) {
         throw new Error(respuesta.error);
     }
+    
+    // Manejar el caso específico de "no se encontraron fórmulas" como éxito
+    if (respuesta.mensaje === 'Error al consultar las fórmulas: no se encontraron fórmulas') {
+        return {
+            ok: true,
+            datos: [],
+            mensaje: respuesta.mensaje
+        };
+    }
+    
     if (!respuesta.ok) {
         throw new Error('Error en la respuesta de la API');
     }
+    
     return respuesta;
 }
 
@@ -39,16 +50,18 @@ async function eliminarFormula(id) {
             Swal.fire({
                 title: 'Error de conexión',
                 text: respuesta.mensaje,
-                icon: 'error',
-                confirmButtonColor: '#a61930',
+                icon: 'error'
             });
         }
-    } catch {
+    } catch (error) {
+        let errorMensaje = error.message || 'Error al consultar las fórmulas';
+        if (error == undefined || error == null) {
+            errorMensaje = 'Error desconocido.';
+        }
         Swal.fire({
             title: 'Error de conexión',
-            text: 'Verifica tu conexión e inténtalo de nuevo.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
+            text: `Verifica tu conexión e inténtalo de nuevo. ${errorMensaje}`,
+            icon: 'error'
         });
     }
 }
@@ -61,111 +74,119 @@ async function renderizarFormulas() {
         if (!respuesta.ok || !respuesta.datos) {
             throw new Error('Formato de respuesta inválido');
         }
-
-        // Obtener el arreglo de fórmulas de la respuesta
-        const formulas = respuesta.datos;
-        // Conseguir el nombre de todas las fórmulas
-        const nombresFormulas = formulas.map((formula) => formula.Nombre);
-        localStorage.setItem('nombresFormulas', JSON.stringify(nombresFormulas));
-
-
-        // Renderizar las fórmulas en el contenedor correspondiente
-        const contenedor = document.getElementById('frame-formulas');
-
-        // Solo renderizar fórmulas si existen
-        if (formulas && formulas.length > 0) {
-            formulas.forEach((formula) => {
-                const formulaDiv = document.createElement('div');
-                formulaDiv.innerHTML = `
-                    <div id='frameFormulas-${formula.idFormula}'  class='frame-f-rmulas'>
-                    <div class='nombre-usuario'>
-                        <div class='texto-usuario'>${formula.Nombre}</div>
-                    </div>
-                    <div class='nombre-usuario'>
-                        <div class='texto-usuario'>${formula.Datos}</div>
-                    </div>
-                    <button class='editar' data-id='${formula.idFormula}'>
-                        <img class='editar-icono' src='${rutaBase}src/framework/utils/iconos/Editar.svg' />
-                    </button>
-                    <button class='eliminar' data-id='${formula.idFormula}'>
-                        <img class='eliminar-icono' src='${rutaBase}src/framework/utils/iconos/BasuraBlanca.svg' />
-                    </button>
-                    </div>
-                `;
-                contenedor.appendChild(formulaDiv);
-            });
-
-            // Registrar event listeners para editar solo si hay fórmulas
-            document.querySelectorAll('.editar').forEach(btn => {
-                btn.addEventListener('click', async (evento) => {
-                    const formulaId = evento.currentTarget.getAttribute('data-id');
-
-                    if (!formulaId) {
-                        return;
-                    }
-
-                    const formulaSeleccionada = formulas.find(formula => formula.idFormula == formulaId);
-
-                    if (formulaSeleccionada) {
-                        const { idFormula, Nombre, Datos } = formulaSeleccionada;
-                        localStorage.setItem('modificarFormulaId', idFormula);
-                        localStorage.setItem('modificarFormulaNombre', Nombre);
-                        localStorage.setItem('modificarFormulaDatos', Datos);
-                        try {
-                            const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
-                            const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono: 'Funcion', permisos });
-                            window.location.href = vista;
-                            localStorage.setItem('seccion-activa', 'formulas');
-                        } catch (err) {
-                            mostrarAlerta('Error al cargar vista', `Verifica tu conexión e inténtalo de nuevo: ${err}`, 'error');
-                        }
-                        inicializarModificarFormula(idFormula, Nombre, Datos);
-                    } else {
-                        console.warn('No se encontró una fórmula con id:', formulaId);
-                    }
-                });
-            });
-
-            // Registrar event listeners para eliminar solo si hay fórmulas
-            document.querySelectorAll('.eliminar').forEach(btn => {
-                btn.addEventListener('click', (evento) => {
-
-                    const formulaId = evento.currentTarget.getAttribute('data-id');
-                    try {
-                        Swal.fire({
-                            title: '¿Estás seguro?',
-                            text: 'Esta acción no se puede deshacer.',
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Sí, eliminar',
-                            cancelButtonText: 'Cancelar',
-                            confirmButtonColor: '#1F4281',
-                            cancelButtonColor: '#A61930'
-
-                        }).then((resultado) => {
-                            if (resultado.isConfirmed) {
-                                eliminarFormula(formulaId);
-                                window.cargarModulo('formulas');
-                            }
-                        });
-                        // eslint-disable-next-line no-unused-vars
-                    } catch (error) {
-                        Swal.fire({
-                            title: 'Error de conexión',
-                            text: 'Verifica tu conexión e inténtalo de nuevo: ',
-                            icon: 'error'
-                        });
-                    }
-                });
-            });
+        if (respuesta.mensaje == 'Error al consultar las fórmulas: no se encontraron fórmulas'){
+            document.getElementById('frame-formulas').innerHTML = `<div class='mensaje-sin-formulas'>No hay fórmulas creadas</div>`;
+            mostrarAlerta('No hay fórmulas', 'No se encontraron fórmulas en la base de datos.', 'info');
+            // NO hacer return aquí, continuar para configurar el botón
+        } else if (respuesta.datos.length === 0) {
+            document.getElementById('frame-formulas').innerHTML = `<div class='mensaje-sin-formulas'>No hay fórmulas creadas</div>`;
+            mostrarAlerta('No hay fórmulas', 'No se encontraron fórmulas en la base de datos.', 'info');
         } else {
-            // Mostrar mensaje cuando no hay fórmulas
-            contenedor.innerHTML += `<div class='mensaje-sin-formulas'>No hay fórmulas creadas</div>`;
-            localStorage.setItem('nombresFormulas', JSON.stringify([]));
+            // Obtener el arreglo de fórmulas de la respuesta
+            const formulas = respuesta.datos;
+            // Conseguir el nombre de todas las fórmulas
+            const nombresFormulas = formulas.map((formula) => formula.Nombre);
+            localStorage.setItem('nombresFormulas', JSON.stringify(nombresFormulas));
+
+            // Renderizar las fórmulas en el contenedor correspondiente
+            const contenedor = document.getElementById('frame-formulas');
+
+            // Solo renderizar fórmulas si existen
+            if (formulas && formulas.length > 0) {
+                formulas.forEach((formula) => {
+                    const formulaDiv = document.createElement('div');
+                    formulaDiv.innerHTML = `
+                        <div id='frameFormulas-${formula.idFormula}'  class='frame-f-rmulas'>
+                        <div class='nombre-usuario'>
+                            <div class='texto-usuario'>${formula.Nombre}</div>
+                        </div>
+                        <div class='nombre-usuario'>
+                            <div class='texto-usuario'>${formula.Datos}</div>
+                        </div>
+                        <button class='editar' data-id='${formula.idFormula}'>
+                            <img class='editar-icono' src='${rutaBase}src/framework/utils/iconos/Editar.svg' />
+                        </button>
+                        <button class='eliminar' data-id='${formula.idFormula}'>
+                            <img class='eliminar-icono' src='${rutaBase}src/framework/utils/iconos/BasuraBlanca.svg' />
+                        </button>
+                        </div>
+                    `;
+                    contenedor.appendChild(formulaDiv);
+                });
+
+                // Registrar event listeners para editar solo si hay fórmulas
+                document.querySelectorAll('.editar').forEach(btn => {
+                    btn.addEventListener('click', async (evento) => {
+                        const formulaId = evento.currentTarget.getAttribute('data-id');
+
+                        if (!formulaId) {
+                            console.warn('No se encontró data-id en el botón.');
+                            return;
+                        }
+
+                        const formulaSeleccionada = formulas.find(formula => formula.idFormula == formulaId);
+
+                        if (formulaSeleccionada) {
+                            const { idFormula, Nombre, Datos } = formulaSeleccionada;
+                            localStorage.setItem('modificarFormulaId', idFormula);
+                            localStorage.setItem('modificarFormulaNombre', Nombre);
+                            localStorage.setItem('modificarFormulaDatos', Datos);
+                            try {
+                                const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
+                                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion', permisos});
+                                window.location.href = vista;
+                                localStorage.setItem('seccion-activa', 'formulas');
+                            } catch (err) {
+                                mostrarAlerta('Error al cargar vista', `Verifica tu conexión e inténtalo de nuevo: ${err}`, 'error');
+                            }
+                            inicializarModificarFormula(idFormula, Nombre, Datos);
+                        } else {
+                            console.warn('No se encontró una fórmula con id:', formulaId);
+                        }
+                    });
+                });
+
+                // Registrar event listeners para eliminar solo si hay fórmulas
+                document.querySelectorAll('.eliminar').forEach(btn => {
+                    btn.addEventListener('click', (evento) => {
+                         
+                        const formulaId = evento.currentTarget.getAttribute('data-id');
+                        try {
+                            Swal.fire({
+                                title: '¿Estás seguro?',
+                                text: 'Esta acción no se puede deshacer.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Sí, eliminar',
+                                cancelButtonText: 'Cancelar',
+                                confirmButtonColor: '#A61930',
+                                
+                            }).then((resultado) => {
+                                if (resultado.isConfirmed) {
+                                    eliminarFormula(formulaId);
+                                    window.cargarModulo('formulas');
+                                }
+                            });
+                            // eslint-disable-next-line no-unused-vars
+                        } catch (error) {
+                            Swal.fire({
+                                title: 'Error de conexión',
+                                text: 'Verifica tu conexión e inténtalo de nuevo: ',
+                                icon: 'error'
+                            });
+                        }
+                    });
+                });
+            } else {
+                // Mostrar mensaje cuando no hay fórmulas
+                contenedor.innerHTML += `<div class='mensaje-sin-formulas'>No hay fórmulas creadas</div>`;
+                localStorage.setItem('nombresFormulas', JSON.stringify([]));
+            }
         }
 
     } catch (error) {
-        mostrarAlerta('Error al cargar las fórmulas', `Verifica tu conexión e inténtalo de nuevo: ${error.mensaje}`, 'error');
+        // Manda este error aunque sea porque no hay fórmulas
+        mostrarAlerta('Error al cargar las fórmulas', `Verifica tu conexión e inténtalo de nuevo1: ${error.mensaje}`, 'error');
         document.getElementById('frame-formulas').innerHTML += `<div class='error-carga'>Error al cargar las fórmulas</div>`;
         // Asegurar que el array esté vacío en caso de error
         localStorage.setItem('nombresFormulas', JSON.stringify([]));
