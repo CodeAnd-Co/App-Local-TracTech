@@ -455,26 +455,58 @@ botonAplicarFormula.addEventListener('click', () => {
     const graficaExistente = Chart.getChart(contexto);
     
     if (graficaExistente && resultadoFormula.resultados) {
-      // Obtener el título actual de la gráfica
-      const tarjeta = document.getElementById(graficaId);
-      const tituloGrafica = tarjeta ? tarjeta.querySelector('.titulo-grafica')?.value || '' : '';
+      const resultados = resultadoFormula.resultados;
+      let labels = [];
+      let valores = [];
       
-      // Preparar nuevos datos usando los resultados de la fórmula
-      const nuevosLabels = resultadoFormula.resultados.map((_, indice) => `Dato ${indice + 1}`);
-      const nuevosValores = resultadoFormula.resultados.filter(valor => typeof valor === 'number' && !isNaN(valor));
+      // Detectar si todos los resultados son números
+      const todosNumeros = resultados.every(item => typeof item === 'number' && !isNaN(item));
       
-      // Actualizar la gráfica con los nuevos datos
-      graficaExistente.data.labels = nuevosLabels.slice(0, nuevosValores.length);
-      graficaExistente.data.datasets[0].data = nuevosValores;
-      graficaExistente.data.datasets[0].label = nombreFormula;
+      // Detectar si todos los resultados son strings
+      const todosStrings = resultados.every(item => typeof item === 'string');
       
-      // Actualizar el título si existe
-      if (tituloGrafica) {
-        graficaExistente.options.plugins.title.text = tituloGrafica;
-        graficaExistente.options.plugins.title.display = true;
+      if (todosNumeros) {
+        // Solo números: usar índices como labels
+        labels = resultados.map((_, index) => `Punto ${index + 1}`);
+        valores = resultados;
+      } else if (todosStrings) {
+        // Solo strings: contar frecuencias
+        const frecuencias = {};
+        resultados.forEach(item => {
+          frecuencias[item] = (frecuencias[item] || 0) + 1;
+        });
+        labels = Object.keys(frecuencias);
+        valores = Object.values(frecuencias);
+      } else {
+        // Mezcla de tipos: separar en pares label-valor
+        const pares = [];
+        for (let i = 0; i < resultados.length - 1; i += 2) {
+          const label = resultados[i];
+          const valor = resultados[i + 1];
+          
+          if (typeof label === 'string' && typeof valor === 'number') {
+            pares.push({ label, valor });
+          }
+        }
+        
+        if (pares.length > 0) {
+          labels = pares.map(par => par.label);
+          valores = pares.map(par => par.valor);
+        } else {
+          // Fallback: usar todos como strings con frecuencias
+          const frecuencias = {};
+          resultados.forEach(item => {
+            const str = String(item);
+            frecuencias[str] = (frecuencias[str] || 0) + 1;
+          });
+          labels = Object.keys(frecuencias);
+          valores = Object.values(frecuencias);
+        }
       }
       
-      // Refrescar la gráfica
+      // Actualizar la gráfica
+      graficaExistente.data.labels = labels;
+      graficaExistente.data.datasets[0].data = valores;
       graficaExistente.update();
       
       mostrarAlerta('Éxito', `Fórmula "${nombreFormula}" aplicada correctamente a la gráfica.`, 'success');
