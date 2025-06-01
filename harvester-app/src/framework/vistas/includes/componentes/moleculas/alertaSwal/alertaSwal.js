@@ -19,7 +19,7 @@ async function mostrarAlertaConfirmacion(titulo, texto, icono, textoBotonConfirm
     icon: icono,
     showCancelButton: true,
     confirmButtonText: (textoBotonConfirmar)? textoBotonConfirmar : 'Confirmar',
-    cancelButtonText: (textoBotonConfirmar)? textoBotonConfirmar : 'Cancelar',
+    cancelButtonText: (textoBotonCancelar)? textoBotonCancelar : 'Cancelar',
     confirmButtonColor: '#a61930'
   });
   if (resultado.isConfirmed){
