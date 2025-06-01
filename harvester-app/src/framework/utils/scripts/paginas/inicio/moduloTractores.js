@@ -354,9 +354,9 @@ async function botonReporte(datosExcel) {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         try {
             seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
-            var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
-            window.location.href = vista;
-            localStorage.setItem('seccion-activa', 'analisis');
+            // var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
+            // window.location.href = vista;
+            // localStorage.setItem('seccion-activa', 'analisis');
         } catch {
             mostrarAlerta('Ocurrió un problema', 'No se pudo cargar el módulo de análisis.', 'error');
         }

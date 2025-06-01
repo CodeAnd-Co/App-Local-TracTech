@@ -1,6 +1,7 @@
 // RF14: Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
 const { mostrarAlerta } = require("../../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal");
+const { extraerNumero } = require('../../servicios/extraerNumero.js');
 
 /**
  * Filtra los datos del excel por hojas(tractores) y columnas seleccionadas
@@ -10,6 +11,7 @@ const { mostrarAlerta } = require("../../../framework/vistas/includes/componente
  *                                                     y los valores son arreglos con los nombres de las columnas seleccionadas.
  */
 function seleccionaDatosAComparar(datosExcel, seleccion) {
+
     try {
         const nuevoJSON = { hojas: {} };
         for (const [nombreHoja, configuracionSeleccion] of Object.entries(seleccion)) {
@@ -24,21 +26,28 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
             const columnasDeseadas = configuracionSeleccion.columnas;
 
             const indicesValidos = obtenerIndicesDeColumnas(encabezados, columnasDeseadas);
-            
 
             const filasFiltradas = obtenerFilasFiltradas(datosHoja, indicesValidos);
             const encabezadosFiltrados = indicesValidos.map(indice => encabezados[indice]);
 
+            
+            // Limpiar datos de voltaje para tratarlos como números.
+            limpiarColumnas('Bat(V)', encabezadosFiltrados, filasFiltradas);
+            limpiarColumnas('ADC', encabezadosFiltrados, filasFiltradas);
+
+            
             // Guardar la hoja filtrada en el nuevo JSON
             nuevoJSON.hojas[nombreHoja] = [
                 encabezadosFiltrados,
                 // Usamos el operador de propagación para insertar cada fila como un elemento individual
                 ...filasFiltradas
             ];
+        
         }
 
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
+
     } catch {
         mostrarAlerta('Error al procesar los datos', 'Ocurrió un error al filtrar los datos del Excel.', 'error');
     }
@@ -69,6 +78,24 @@ function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
 function obtenerFilasFiltradas(hoja, indices) {
     return hoja.slice(1).map(fila =>
         indices.map(indice => fila?.[indice] ?? null));
+}
+
+
+/**
+ * Limpia las filas seleccionadas para quitarles los caracteres no numéricos de un campo específico.
+ * 
+ * @param {string} - Campo a limpiar.
+ * @param {Array<any>} encabezadosFiltrados - .
+ * @param {Array<number>} indices - Índices de columnas a conservar.
+ * @returns {Array<Array<any>>} Filas filtradas.
+ */
+function limpiarColumnas(campo, encabezadosFiltrados, filasFiltradas) {
+    if( encabezadosFiltrados.includes(campo) ){
+        const indice = obtenerIndicesDeColumnas(encabezadosFiltrados, [campo])[0];
+        filasFiltradas.forEach(fila => {
+            fila[indice] = extraerNumero(fila[indice]);
+        });
+    }
 }
 
 module.exports = {
