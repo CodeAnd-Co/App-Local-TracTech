@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
                 window.location.href = vista;
             } catch (err) {
-                return ("Error al cargar vista:", err);
+                return ('Error al cargar vista:', err);
             }
         }
     } catch {
