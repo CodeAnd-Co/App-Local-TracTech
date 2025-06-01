@@ -159,8 +159,7 @@ async function renderizarFormulas() {
                                 showCancelButton: true,
                                 confirmButtonText: 'Sí, eliminar',
                                 cancelButtonText: 'Cancelar',
-                                confirmButtonColor: '#1F4281',
-                                cancelButtonColor: '#A61930'
+                                confirmButtonColor: '#A61930',
                                 
                             }).then((resultado) => {
                                 if (resultado.isConfirmed) {
