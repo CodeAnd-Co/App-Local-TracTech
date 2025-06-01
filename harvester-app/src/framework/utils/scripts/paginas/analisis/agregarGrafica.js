@@ -305,7 +305,6 @@ function seleccionarFormula(radioBotton, contenedor) {
     cuadroFormulas.dataset.formulaSeleccionada = JSON.stringify(formulaSeleccionada);
   }
   
-  console.log('Fórmula seleccionada completa:', formulaSeleccionada);
 }
 
 /**
@@ -415,7 +414,6 @@ botonAplicarFormula.addEventListener('click', () => {
     return;
   }
 
-  console.log('Fórmula completa:', datosFormula); // Para verificar que está completa
 
   // Obtener la gráfica asociada
   const graficaId = cuadroFormulas.dataset.graficaId;
@@ -428,7 +426,6 @@ botonAplicarFormula.addEventListener('click', () => {
 
   try {
     // Aplicar la fórmula a los datos
-    console.log(`Aplicando fórmula ${nombreFormula} con datos: ${datosFormula}`);
     const resultadoFormula = aplicarFormula(nombreFormula, datosFormula);
     
     if (resultadoFormula.error) {
@@ -456,55 +453,69 @@ botonAplicarFormula.addEventListener('click', () => {
     
     if (graficaExistente && resultadoFormula.resultados) {
       const resultados = resultadoFormula.resultados;
+      const tipoGrafica = graficaExistente.config.type;
       let labels = [];
       let valores = [];
-      
+     
       // Detectar si todos los resultados son números
-      const todosNumeros = resultados.every(item => typeof item === 'number' && !isNaN(item));
+      const todosNumeros = resultados.every(objeto => typeof objeto === 'number' && !isNaN(objeto));
       
       // Detectar si todos los resultados son strings
-      const todosStrings = resultados.every(item => typeof item === 'string');
+      const todosCadena = resultados.every(objeto => typeof objeto === 'string');
       
-      if (todosNumeros) {
-        // Solo números: usar índices como labels
-        labels = resultados.map((_, index) => `Punto ${index + 1}`);
-        valores = resultados;
-      } else if (todosStrings) {
-        // Solo strings: contar frecuencias
+      // Para gráficas de pastel, dona y polar: SIEMPRE usar frecuencias basadas en valores únicos
+      if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut' || tipoGrafica === 'polarArea') {
+        
+        // Contar valores únicos independientemente del tipo de dato
         const frecuencias = {};
-        resultados.forEach(item => {
-          frecuencias[item] = (frecuencias[item] || 0) + 1;
+        resultados.forEach(valor => {
+          // Convertir todo a string para tener una clave consistente
+          const clave = String(valor);
+          frecuencias[clave] = (frecuencias[clave] || 0) + 1;
         });
+        
+        // Obtener las categorías y sus frecuencias
         labels = Object.keys(frecuencias);
         valores = Object.values(frecuencias);
-      } else {
-        // Mezcla de tipos: separar en pares label-valor
-        const pares = [];
-        for (let i = 0; i < resultados.length - 1; i += 2) {
-          const label = resultados[i];
-          const valor = resultados[i + 1];
-          
-          if (typeof label === 'string' && typeof valor === 'number') {
-            pares.push({ label, valor });
-          }
-        }
         
-        if (pares.length > 0) {
-          labels = pares.map(par => par.label);
-          valores = pares.map(par => par.valor);
+        
+      } else {
+        // Para otros tipos de gráfica: mantener lógica original
+        if (todosNumeros) {
+          // Verificar si todos los números son iguales
+          const valoresUnicos = [...new Set(resultados)];
+          
+          if (valoresUnicos.length === 1) {
+            // Si todos son iguales, mostrar el valor único
+            labels = ['Resultado'];
+            valores = [valoresUnicos[0]];
+          } else {
+            // Si hay valores diferentes, usar puntos individuales
+            labels = resultados.map((_, indice) => `Punto ${indice + 1}`);
+            valores = resultados;
+          }
+        } else if (todosCadena) {
+          const frecuencias = {};
+          resultados.forEach(objeto => {
+            frecuencias[objeto] = (frecuencias[objeto] || 0) + 1;
+          });
+          labels = Object.keys(frecuencias);
+          valores = Object.values(frecuencias);
         } else {
-          // Fallback: usar todos como strings con frecuencias
+          // Mezcla de tipos - usar también frecuencias por simplicidad
           const frecuencias = {};
           resultados.forEach(item => {
-            const str = String(item);
-            frecuencias[str] = (frecuencias[str] || 0) + 1;
+            const cadena = String(item);
+            frecuencias[cadena] = (frecuencias[cadena] || 0) + 1;
           });
           labels = Object.keys(frecuencias);
           valores = Object.values(frecuencias);
         }
       }
       
+     
       // Actualizar la gráfica
+      graficaExistente.options.plugins.title.text = nombreFormula; 
       graficaExistente.data.labels = labels;
       graficaExistente.data.datasets[0].data = valores;
       graficaExistente.update();
@@ -609,50 +620,56 @@ function crearGrafica(contexto, tipo, color) {
   const grafico = new Chart(contexto, {
     type: tipo,
     data: {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: ['Sin datos'], // Etiqueta inicial más clara
       datasets: [{
         label: 'Datos',
         backgroundColor: fondo => {
           if (tipo == 'line' || tipo == 'radar') {
             return color;
           } else {
-            return colores[fondo.dataIndex];
+            return colores[fondo.dataIndex % colores.length]; // Evitar errores de índice
           }
         },
         borderColor: borde => {
           if (tipo == 'line' || tipo == 'radar') {
             return color;
           } else {
-            return colores[borde.dataIndex];
+            return colores[borde.dataIndex % colores.length]; // Evitar errores de índice
           }
         },
-        data: [5, 10, 5, 2, 20, 30, 45]
+        data: [0] // Dato inicial más claro
       }]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
-        title: { display: true },
+        title: { 
+          display: true,
+          text: 'Gráfica sin datos - Aplica una fórmula para ver resultados',
+          font: {
+            size: 14
+          }
+        },
         tooltip: {
-          enabled: false,
+          enabled: true, // Habilitar tooltips para mejor UX
         },
         legend: {
+          display: true,
+          position: 'top',
           labels: {
-            generateLabels: chart =>
-              chart.data.datasets.map(ds => ({
-                text: ds.label || 'Datos',
+            generateLabels: chart => [
+              {
+                text: chart.data.datasets[0].label || 'Datos',
                 fillStyle: color,
                 strokeStyle: color,
-              })),
+                fontColor: '#333'
+              }
+            ],
           },
         },
         datalabels: {
-          display: () => {
-            if (['line', 'radar', 'polarArea'].includes(tipo)) {
-              return false;
-            } else {
-              return true;
-            }
-          },
+          display: true, // Always show labels
           anchor: () => {
             if (tipo == 'bar') {
               return 'end';
@@ -660,30 +677,80 @@ function crearGrafica(contexto, tipo, color) {
               return 'center';
             }
           },
+          align: () => {
+            if (tipo == 'bar') {
+              return 'top';
+            } else {
+              return 'center';
+            }
+          },
+          color: '#333',
           font: {
-            size: 12,
+            size: 12, // Slightly smaller to fit more text
             weight: 'bold'
           },
+          backgroundColor: 'rgba(255, 255, 255, 0.9)', // More opaque background
+          borderColor: '#333',
+          borderRadius: 4,
+          borderWidth: 1,
+          padding: 6, // More padding for better readability
           formatter: (value, context) => {
-            if (tipo == 'pie' || tipo == 'doughnut') {
+            if (tipo == 'pie' || tipo == 'doughnut' || tipo == 'polarArea') {
               const datos = context.chart.data.datasets[0].data;
+              const etiqueta = context.chart.data.labels[context.dataIndex];
+              
+              // Para gráficas de pastel/dona SIEMPRE mostrar frecuencias con porcentajes
               const valorTotal = datos.reduce((total, datapoint) => {
                 return total + datapoint;
               }, 0);
-              const porcentaje = ((value / valorTotal) * 100).toFixed(2);
-              return `${porcentaje}%`;
+              
+              if (valorTotal === 0) return '';
+              
+              const porcentaje = ((value / valorTotal) * 100).toFixed(1);
+              
+              // Mostrar directamente la etiqueta sin modificaciones adicionales
+              return `${etiqueta}\n${value} (${porcentaje}%)`;
             } else {
-              return value;
+              const etiqueta = context.chart.data.labels[context.dataIndex];
+              
+              // Para otros tipos de gráfica, si es "Resultado" solo mostrar el valor
+              if (etiqueta === 'Resultado') {
+                return `${etiqueta}\n${value}`;
+              } else {
+                return `${etiqueta}: ${value}`;
+              }
             }
           },
         }
       },
       scales: {
-        /* eslint-disable id-length */
-        x: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } },
-        /* eslint-disable id-length */
-        y: { ticks: { color: '#646464' }, grid: { color: '#9e9e9e' } }
-
+        x: { 
+          display: ['line', 'bar', 'radar'].includes(tipo),
+          ticks: { 
+            color: '#646464',
+            maxRotation: 45,
+            minRotation: 0
+          }, 
+          grid: { color: '#e0e0e0' },
+          title: {
+            display: true,
+            text: 'Categorías',
+            color: '#666'
+          }
+        },
+        y: { 
+          display: ['line', 'bar', 'radar'].includes(tipo),
+          ticks: { 
+            color: '#646464',
+            beginAtZero: true
+          }, 
+          grid: { color: '#e0e0e0' },
+          title: {
+            display: true,
+            text: 'Valores',
+            color: '#666'
+          }
+        }
       }
     },
   });
@@ -761,10 +828,30 @@ function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');
     const graficaOriginal = Chart.getChart(contexto);
+    
     if (graficaOriginal) {
+      // Preservar los datos actuales antes de destruir la gráfica
+      const datosActuales = {
+        labels: [...graficaOriginal.data.labels],
+        data: [...graficaOriginal.data.datasets[0].data],
+        label: graficaOriginal.data.datasets[0].label
+      };
+      
+      // Destruir la gráfica original
       graficaOriginal.destroy();
+      
+      // Crear nueva gráfica del tipo seleccionado
       const nuevaGrafica = crearGrafica(contexto, selectorTipo.value);
+      
+      // Aplicar los datos preservados
+      nuevaGrafica.data.labels = datosActuales.labels;
+      nuevaGrafica.data.datasets[0].data = datosActuales.data;
+      nuevaGrafica.data.datasets[0].label = datosActuales.label;
+      
+      // Aplicar el título
       nuevaGrafica.options.plugins.title.text = tituloGrafica;
+      
+      // Actualizar la gráfica
       nuevaGrafica.update();
     }
   }
