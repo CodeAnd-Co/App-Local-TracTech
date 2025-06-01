@@ -362,7 +362,7 @@ function mostrarUsuarios(usuarios) {
     }
 
     const fragmento = document.createDocumentFragment();
-    for (const usuario of usuarios) {
+    usuarios.forEach(usuario => {
         const { id, nombre, tieneDispositivo, dispositivoActivo } = usuario;
         const div = document.createElement('div');
         div.className = 'frame-usuario';
@@ -394,7 +394,7 @@ function mostrarUsuarios(usuarios) {
                 </button>
         `;
         fragmento.appendChild(div);
-    }
+    });
     listaUsuariosElemento.appendChild(fragmento);
 
     // Añadir eventos a los botones de editar

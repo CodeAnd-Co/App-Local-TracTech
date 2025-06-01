@@ -97,7 +97,7 @@ async function verificarEstadoUsuarioAutenticado() {
             deshabilitarAplicacion('Aplicación deshabilitada por seguridad');
         }
     } catch {
-        console.log('Error de conexión al verificar estado');
+        return ('Error de conexión al verificar estado');
     }
 }
 
