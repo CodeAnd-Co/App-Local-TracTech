@@ -244,16 +244,16 @@ function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '') {
 
 /**
  * Maneja la selección de una fórmula.
- * @param {HTMLInputElement} radioButton - Radio button de fórmula seleccionado.
+ * @param {HTMLInputElement} radioBotton - Radio button de fórmula seleccionado.
  * @param {HTMLDivElement} contenedor - Contenedor de fórmulas.
  * @returns {void}
  */
-function seleccionarFormula(radioButton, contenedor) {
+function seleccionarFormula(radioBotton, contenedor) {
   // Guardar la fórmula seleccionada para uso posterior
   const formulaSeleccionada = {
-    id: radioButton.value,
-    nombre: radioButton.dataset.formulaNombre,
-    datos: radioButton.dataset.formulaDatos
+    id: radioBotton.value,
+    nombre: radioBotton.dataset.formulaNombre,
+    datos: radioBotton.dataset.formulaDatos
   };
   
   // Almacenar en el elemento padre para acceso posterior
@@ -268,9 +268,11 @@ function seleccionarFormula(radioButton, contenedor) {
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
+ * @param {number} graficaId - ID de la gráfica asociada.
+ * @param {Array} datosGrafica - Datos de la gráfica.
  * @returns {void}
- */
-async function crearCuadroFormulas(columnas) {
+ */ // eslint-disable-next-line no-unused-vars
+async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
   eliminarCuadroFormulas();
 
   // Cargar fórmulas una sola vez al inicio
@@ -278,6 +280,9 @@ async function crearCuadroFormulas(columnas) {
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
+  
+  // Almacenar el ID de la gráfica en el dataset
+  cuadroFormulas.dataset.graficaId = graficaId;
 
   cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
@@ -298,7 +303,7 @@ async function crearCuadroFormulas(columnas) {
                       <div class='contenedor-busqueda'>
                           <div class="mensaje-inicial">Escribe para buscar fórmulas...</div>
                       </div>
-                      <div class='boton-agregar'>
+                      <div class='boton-agregar'id = 'btnAplicarFormula'>
                           <div>Aplicar Fórmula</div>
                       </div>
                   </div>
@@ -309,16 +314,51 @@ async function crearCuadroFormulas(columnas) {
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
   crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
+
+// Configurar búsqueda de fórmulas
+const campoBusqueda = cuadroFormulas.querySelector('.search-section');
+const contenedorBusqueda = cuadroFormulas.querySelector('.contenedor-busqueda');
+const botonAplicarFormula = cuadroFormulas.querySelector('#btnAplicarFormula');
+
+botonAplicarFormula.addEventListener('click', () => {
+  const formulaSeleccionada = contenedorBusqueda.querySelector('.formula-seleccionada');
+  if (!formulaSeleccionada) {
+    mostrarAlerta('Error', 'Debes buscar y seleccionar una fórmula antes de aplicar.', 'error');
+    return;
+  }
+
+  // Buscar el input radio en el elemento padre (formula-objeto)
+  const formulaObjeto = formulaSeleccionada.closest('.formula-objeto');
+  const inputRadio = formulaObjeto.querySelector('input[type="radio"]');
   
-  // Configurar búsqueda de fórmulas
-  const campoBusqueda = cuadroFormulas.querySelector('.search-section');
-  const contenedorBusqueda = cuadroFormulas.querySelector('.contenedor-busqueda');
+  if (!inputRadio) {
+    mostrarAlerta('Error', 'Error al obtener los datos de la fórmula seleccionada.', 'error');
+    return;
+  }
+
+  const idFormula = inputRadio.value;
+  const nombreFormula = formulaSeleccionada.querySelector('.formula-label').textContent;
+
+  // Obtener la gráfica asociada
+  const graficaId = cuadroFormulas.dataset.graficaId;
+  const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
   
+  if (graficaDiv) {
+    // Aquí puedes aplicar la fórmula a la gráfica
+    console.log(`Aplicando fórmula ${nombreFormula} (ID: ${idFormula}) a la gráfica ${graficaId}`);
+    // Lógica para aplicar la fórmula a la gráfica...
+  } else {
+    mostrarAlerta('Error', 'No se encontró la gráfica asociada.', 'error');
+  }
+});
+
   // Configurar evento de búsqueda (filtrado local)
   campoBusqueda.addEventListener('input', (evento) => {
     const terminoBusqueda = evento.target.value.trim();
     filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda);
   });
+
+
 
   const botonCerrarCuadroFormulas = cuadroFormulas.querySelector('.titulo-formulas');
   botonCerrarCuadroFormulas.addEventListener('click', () => {
@@ -332,6 +372,7 @@ async function crearCuadroFormulas(columnas) {
     document.querySelector('.frame-analisis').appendChild(cuadroFormulas);
   }
 }
+  
 
 /**
  * Crea un menú desplegable para seleccionar columnas.
@@ -343,9 +384,6 @@ async function crearCuadroFormulas(columnas) {
 function crearMenuDesplegable(contenedor, letra, columnas) {
   const nuevoMenu = document.createElement('div');
   nuevoMenu.className = 'opcion';
-  const divLetra = document.createElement('div');
-  divLetra.className = 'opcion-letra';
-  divLetra.innerHTML = letra;
   const seleccionValores = document.createElement('select');
   seleccionValores.className = 'opcion-texto';
   seleccionValores.innerHTML = '<option>-- Selecciona Columna --</option>'
@@ -354,7 +392,6 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
     <option> ${texto} </option>`
   });
 
-  nuevoMenu.appendChild(divLetra);
   nuevoMenu.appendChild(seleccionValores);
   contenedor.appendChild(nuevoMenu);
 }

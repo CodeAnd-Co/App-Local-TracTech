@@ -716,7 +716,6 @@ body,
 
 .search-section {
   background-color: #fafafa;
-  background-image: url(../utils/iconos/search.svg);
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: 95% 50%;
@@ -791,7 +790,7 @@ body,
 .mensaje-sin-formulas {
   padding: 16px;
   text-align: center;
-  color: #666;
+  color: #ffffff;
   font-style: italic;
   width: 100%;
   box-sizing: border-box;
