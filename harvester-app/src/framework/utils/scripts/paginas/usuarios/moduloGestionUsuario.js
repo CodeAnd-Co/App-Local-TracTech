@@ -12,7 +12,7 @@ const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/cas
 const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dispositivos/deshabilitarDispositivo.js`);
 const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
-
+const { mostrarAlerta, mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
 
 const validator = require(`${rutaBase}/node_modules/validator/validator.min.js`);
@@ -67,12 +67,7 @@ async function inicializarModuloGestionUsuarios() {
         configurarContadoresCampos();
         
     } catch {
-        Swal.fire({
-            title: 'Error al cargar usuarios',
-            text: 'Verifica tu conexión e inténtalo de nuevo.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error al cargar usuarios', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
         document.getElementById('lista-usuarios').innerHTML
             = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
@@ -226,29 +221,15 @@ function filtrarUsuarios() {
 async function eliminarUsuario(id) {
     try {
         const respuesta = await eliminarUsuarioCU(id);
-
         if (!respuesta.ok) {
-            return Swal.fire({
-                title: 'Error',
-                text: 'Error al eliminar el usuario.',
-                icon: 'error',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Error', 'Error al eliminar el usuario.', 'error');
+        } else {
+            mostrarAlerta('Eliminación exitosa', 'El usuario ha sido eliminado.', 'success');
         }
-
-        return Swal.fire({
-            title: 'Eliminación exitosa',
-            text: 'El usuario ha sido eliminado.',
-            icon: 'success',
-            confirmButtonColor: '#a61930',
-        });
+        return;
     } catch {
-        return Swal.fire({
-                title: 'Error de conexión',
-                text: 'Verifica tu conexión e inténtalo de nuevo.',
-                icon: 'error',
-                confirmButtonColor: '#a61930',
-            });
+        mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
+        return;
     }
 }
 
@@ -406,22 +387,13 @@ function mostrarUsuarios(usuarios) {
         boton.addEventListener('click', async evento => {
             evento.preventDefault();
             const id = boton.getAttribute('data-id');
-            Swal.fire({
-                title: '¿Eliminar usuario?',
-                text: 'Esta acción no se puede deshacer.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#a61930',
-                confirmButtonText: 'Confirmar',
-                cancelButtonText: 'Cancelar'
-            }).then(async (resultado) => {
-                if (resultado.isConfirmed) {
-                    await eliminarUsuario(id);
-                    setTimeout(() => {
-                        inicializarModuloGestionUsuarios();
-                    }, 500);
-                }
-            });
+            const respuesta = await mostrarAlertaBorrado('Esta acción no se puede deshacer.', 'Eliminar', 'Cancelar');
+            if (respuesta) {
+                await eliminarUsuario(id); // Ahora puedes usar await aquí
+                setTimeout(() => {
+                    inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
+                }, 500);
+            }
         });
     });
 
@@ -549,12 +521,7 @@ async function editarUsuario() {
     });
 
     if (hayErroresVisibles) {
-        return Swal.fire({
-            title: 'Formulario con errores',
-            text: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
-            icon: 'warning',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Formulario con errores', 'Por favor, corrige los errores señalados en el formulario antes de continuar.', 'warning');
     }
 
     const nombreIngresado = document.getElementById('username').value.trim();
@@ -566,12 +533,8 @@ async function editarUsuario() {
     // Verificar que las contraseñas coincidan si se está cambiando la contraseña
     if (contraseniaIngresada !== '') {
         if (contraseniaIngresada !== contraseniaConfirmada) {
-            return Swal.fire({
-                title: 'Contraseñas no coinciden',
-                text: 'La contraseña y su confirmación deben ser iguales.',
-                icon: 'warning',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Las contraseñas no coinciden', 'Por favor, asegúrate de que la contraseña y su confirmación sean iguales.', 'warning');
+            return;
         }
     }
 
@@ -584,12 +547,7 @@ async function editarUsuario() {
     });
 
     if (error) {
-        Swal.fire({
-            title: 'Error',
-            text: error,
-            icon: 'warning',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error', error, 'warning');
     }
 
     const { idUsuario, nombre, correo, contrasenia, idRol } = datos;
@@ -597,12 +555,7 @@ async function editarUsuario() {
     try {
         const resultado = await modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol);
         if (resultado.ok) {
-            Swal.fire({
-                title: 'Usuario modificado',
-                text: resultado.mensaje || 'El usuario fue modificado correctamente.',
-                icon: 'success',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Usuario modificado', resultado.mensaje || 'El usuario fue modificado correctamente.', 'success');
 
             // Limpiar los campos del formulario
             document.getElementById('username').value = '';
@@ -619,20 +572,10 @@ async function editarUsuario() {
             // Ocultar el formulario tras una modificación exitosa
             document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
         } else {
-            Swal.fire({
-                title: 'Error al modificar usuario',
-                text: resultado.mensaje || 'No se pudo modificar el usuario.',
-                icon: 'error',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Error al modificar usuario', resultado.mensaje || 'No se pudo modificar el usuario.', 'error');
         }
     } catch (error) {
-        Swal.fire({
-            title: 'Error de red',
-            text: error.message || 'Hubo un problema al conectar con el servidor.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error de conexión', error.message || 'Hubo un problema al conectar con el servidor.', 'error');
     }
 }
 
@@ -877,79 +820,46 @@ async function crearUsuario() {
     });
 
     if (hayErroresVisibles) {
-        return Swal.fire({
-            title: 'Formulario con errores',
-            text: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
-            icon: 'warning',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Formulario con errores', 'Por favor, corrige los errores señalados en el formulario antes de continuar.', 'warning');
+        return;
     }
 
     // Verificar si las contraseñas coinciden (si existe el campo de confirmación)
     if (confirmPasswordInput && contrasenia !== confirmContrasenia) {
-        return Swal.fire({
-            title: 'Contraseñas no coinciden',
-            text: 'La contraseña y su confirmación deben ser iguales.',
-            icon: 'warning',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Las contraseñas no coinciden', 'Por favor, asegúrate de que la contraseña y su confirmación sean iguales.', 'warning');
+        return;
     }
 
     // Verificar campos obligatorios
     if (!nombre || !correo || !contrasenia || !confirmContrasenia || isNaN(idRolFK)) {
-        return Swal.fire({
-            title: 'Datos incompletos',
-            text: 'Por favor, completa todos los campos.',
-            icon: 'warning',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Datos incompletos', 'Por favor, completa todos los campos.', 'warning');
+        return;
     }
 
 
     if (listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correo.toLowerCase())) {
-        await Swal.fire({
-            title: 'Correo ya registrado',
-            text: 'El correo ingresado ya existe. Por favor, usa otro correo.',
-            icon: 'error',
-        });
+        mostrarAlerta('Correo ya registrado', 'El correo ingresado ya existe. Por favor, usa otro correo.', 'error');;
         return;
     }
 
     if (nombre.length > 45) {
-        await Swal.fire({
-            title: 'Nombre demasiado largo',
-            text: 'El nombre no puede tener más de 55 caracteres.',
-            icon: 'error',
-        });
+        mostrarAlerta('Nombre demasiado largo', 'El nombre no puede tener más de 45 caracteres.', 'error');
         return;
     }
 
     if (correo.length > 50) {
-        await Swal.fire({ 
-            title: 'Correo demasiado largo',
-            text: 'El correo no puede tener más de 55 caracteres.',
-            icon: 'error',
-        });
+        mostrarAlerta('Correo demasiado largo', 'El correo no puede tener más de 50 caracteres.', 'error');
         return
-
     }
 
 
     if (contrasenia.length < 8) {
-        await Swal.fire({
-            title: 'Contraseña demasiado corta',
-            text: 'La contraseña debe de tener más de 5 caracteres.',
-            icon: 'error',
-        });
+        mostrarAlerta('Contraseña demasiado corta', 'La contraseña debe de tener más de 8 caracteres.', 'error');
         return
     }
 
     if (contrasenia.length > 512) {
-        await Swal.fire({
-            title: 'Contraseña demasiado larga',
-            text: 'La contraseña no puede tener más de 55 caracteres.',
-            icon: 'error',
-        });
+        mostrarAlerta('Contraseña demasiado larga', 'La contraseña no puede tener más de 512 caracteres.', 'error');
         return
     }
 
@@ -957,12 +867,7 @@ async function crearUsuario() {
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
         if (resultado.ok) {
-            Swal.fire({
-                title: 'Usuario creado',
-                text: resultado.mensaje || 'El usuario fue registrado correctamente.',
-                icon: 'success',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Usuario creado', resultado.mensaje || 'El usuario fue registrado correctamente.', 'success');
 
             // Limpiar los campos del formulario
             nombreInput.value = '';
@@ -978,20 +883,10 @@ async function crearUsuario() {
                 inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
             }, 500);
         } else {
-            Swal.fire({
-                title: 'Error al crear usuario',
-                text: resultado.mensaje || 'No se pudo registrar el usuario.',
-                icon: 'error',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Error al crear usuario', resultado.mensaje || 'No se pudo registrar el usuario.', 'error');
         }
     } catch {
-        Swal.fire({
-            title: 'Error de red',
-            text: 'Hubo un problema al conectar con el servidor.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error de conexión', 'Hubo un problema al conectar con el servidor.', 'error');
     }
 }
 
@@ -1105,27 +1000,12 @@ async function deshabilitarDispositivoUsuario(idUsuario) {
         const respuesta = await deshabilitarDispositivo(idUsuario);
 
         if (respuesta.ok) {
-            Swal.fire({
-                title: 'Dispositivo deshabilitado',
-                text: respuesta.mensaje || 'El dispositivo del usuario ha sido deshabilitado exitosamente.',
-                icon: 'success',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Dispositivo deshabilitado', respuesta.mensaje || 'El dispositivo del usuario ha sido deshabilitado exitosamente.', 'success');
         } else {
-            Swal.fire({
-                title: 'Error al deshabilitar dispositivo',
-                text: respuesta.mensaje || 'No se pudo deshabilitar el dispositivo del usuario.',
-                icon: 'error',
-                confirmButtonColor: '#a61930',
-            });
+            mostrarAlerta('Error al deshabilitar dispositivo', respuesta.mensaje || 'No se pudo deshabilitar el dispositivo del usuario.', 'error');
         }
     } catch {
-        Swal.fire({
-            title: 'Error de conexión',
-            text: 'Verifica tu conexión e inténtalo de nuevo.',
-            icon: 'error',
-            confirmButtonColor: '#a61930',
-        });
+        mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
     }
 } 
 
