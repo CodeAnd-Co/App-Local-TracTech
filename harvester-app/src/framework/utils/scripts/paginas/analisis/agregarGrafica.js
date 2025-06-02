@@ -5,6 +5,7 @@
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
+const { retirarDatos } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/retiraFormula.js`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
@@ -368,8 +369,13 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
                       <div class='contenedor-busqueda'>
                           <div class="mensaje-inicial">Escribe para buscar fórmulas...</div>
                       </div>
-                      <div class='boton-agregar'id = 'btnAplicarFormula'>
-                          <div>Aplicar Fórmula</div>
+                      <div style='display: flex; justify-content: space-between; gap: 1rem;'>
+                        <div class='boton-agregar'id = 'btnAplicarFormula'>
+                            <div>Aplicar Fórmula</div>
+                        </div>
+                        <div class='boton-agregar' id='btnRetirarDatos'>
+                            <div>Retirar datos</div>
+                        </div>
                       </div>
                   </div>
               </div>
@@ -384,6 +390,11 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
   const campoBusqueda = cuadroFormulas.querySelector('.search-section');
   const contenedorBusqueda = cuadroFormulas.querySelector('.contenedor-busqueda');
   const botonAplicarFormula = cuadroFormulas.querySelector('#btnAplicarFormula');
+  const botonRetirarDatos = cuadroFormulas.querySelector('#btnRetirarDatos');
+
+  botonRetirarDatos.addEventListener('click', () => {
+    retirarDatos(graficaId, datosOriginalesFormulas);
+  })
 
   botonAplicarFormula.addEventListener('click', () => {
     const formulaSeleccionada = contenedorBusqueda.querySelector('.formula-seleccionada');
@@ -391,7 +402,6 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
       mostrarAlerta('Error', 'Debes buscar y seleccionar una fórmula antes de aplicar.', 'error');
       return;
     }
-
     // Verificar que hay datos disponibles
     const datosExcel = localStorage.getItem('datosExcel');
     const hojaSeleccionada = localStorage.getItem('hojaSeleccionada'); // Obtener la hoja seleccionada
@@ -501,9 +511,8 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
         graficaExistente.update();
         
         mostrarAlerta('Éxito', `Fórmula "${nombreFormula}" aplicada correctamente a la gráfica.`, 'success');
-        
+        cuadroFormulas.remove(); 
         // Cerrar el cuadro de fórmulas
-        cuadroFormulas.remove();
         
       } else {
         mostrarAlerta('Error', 'No se pudo encontrar la gráfica para actualizar o no hay resultados válidos.', 'error');
