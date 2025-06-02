@@ -178,7 +178,7 @@
 .pop-out form.modificacion {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 15px;
 }
 
 .pop-out .campo {

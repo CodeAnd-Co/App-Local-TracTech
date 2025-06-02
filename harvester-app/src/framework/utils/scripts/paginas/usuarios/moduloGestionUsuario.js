@@ -96,6 +96,7 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('username').value = '';
         document.getElementById('username').placeholder = 'Nombre del nuevo usuario'
         document.getElementById('email').value = '';
+        document.getElementById('email').placeholder = 'Correo del nuevo contacto';
         document.getElementById('password').value = '';
         document.getElementById('passwordConfirmar').value = '';
         document.getElementById('rol').value = '';
@@ -501,6 +502,7 @@ function modoEditar(idUsuario) {
     document.getElementById('username').value = usuario.nombre;
     document.getElementById('username').placeholder = usuario.nombre;
     document.getElementById('email').value = usuario.correo;
+    document.getElementById('email').placeholder = usuario.correo;
     document.getElementById('password').value = ''; // Por seguridad, no se muestra
     document.getElementById('passwordConfirmar').value = '';
     document.getElementById('rol').value = usuario.rol;
@@ -587,6 +589,7 @@ async function editarUsuario() {
             document.getElementById('username').value = '';
             document.getElementById('username').placeholder = 'Nombre del nuevo usuario';
             document.getElementById('email').value = '';
+            document.getElementById('email').placeholder = 'Correo del nuevo contacto';
             document.getElementById('password').value = '';
             document.getElementById('passwordConfirmar').value = '';
             document.getElementById('rol').value = '';
