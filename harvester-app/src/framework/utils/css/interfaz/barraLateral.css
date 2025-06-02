@@ -96,3 +96,8 @@ body {
   .sidebar-logo:hover .flecha-atras {
     opacity: 1;
   }  
+
+/* Oculta completamente un elemento, sin ocupar espacio */
+.oculto {
+  display: none !important;
+}

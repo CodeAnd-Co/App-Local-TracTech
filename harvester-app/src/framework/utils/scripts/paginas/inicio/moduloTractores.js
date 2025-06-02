@@ -418,6 +418,7 @@ async function botonReporte(datosExcel) {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
         window.location.href = vista;
+        localStorage.setItem('modulo-analisis-habilitado', 'true');
         localStorage.setItem('seccion-activa', 'analisis');
     });
 }
