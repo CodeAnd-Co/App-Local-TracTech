@@ -9,7 +9,7 @@ Chart.register(ChartDataLabels);
  * @param {string} nombreColumna - Nombre de la columna seleccionada.
  * @returns {void}
  */
-function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFormulas) {
+function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFormulas, tractorSeleccionado) {
   // Obtener la gráfica
   const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
   if (!graficaDiv) {
@@ -32,8 +32,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
   }
 
   // Obtener la hoja seleccionada del localStorage
-  const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
-  const datos = localStorage.getItem('datosExcel');
+  const datos = localStorage.getItem('datosFiltradosExcel');
   
   if (!datos) {
     mostrarAlerta('Error', 'No hay datos cargados para mostrar en la gráfica.', 'error');
@@ -47,12 +46,12 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     const datosParseados = JSON.parse(datos);
     
     // Determinar qué hoja usar
-    if (hojaSeleccionada && hojaSeleccionada.trim() !== '') {
+    if (tractorSeleccionado && tractorSeleccionado.trim() !== '') {
       // Usar la hoja seleccionada específica
-      if (datosParseados.hojas && datosParseados.hojas[hojaSeleccionada]) {
-        datosHoja = datosParseados.hojas[hojaSeleccionada];
+      if (datosParseados.hojas && datosParseados.hojas[tractorSeleccionado]) {
+        datosHoja = datosParseados.hojas[tractorSeleccionado];
       } else {
-        mostrarAlerta('Error', `No se encontró la hoja "${hojaSeleccionada}" en los datos.`, 'error');
+        mostrarAlerta('Error', `No se encontró la hoja "${tractorSeleccionado}" en los datos.`, 'error');
         return;
       }
     } else {
@@ -78,7 +77,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     const indiceColumna = encabezados.indexOf(nombreColumna);
     
     if (indiceColumna === -1) {
-      mostrarAlerta('Error', `No se encontró la columna "${nombreColumna}" en la hoja "${hojaSeleccionada || 'seleccionada'}".`, 'error');
+      mostrarAlerta('Error', `No se encontró la columna "${nombreColumna}" en la hoja "${tractorSeleccionado || 'seleccionada'}".`, 'error');
       return;
     }
 
@@ -90,7 +89,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
       datos: datosColumna,
       nombre: nombreColumna,
       tipo: 'columna',
-      hoja: hojaSeleccionada || 'Hoja por defecto'
+      hoja: tractorSeleccionado || 'Hoja por defecto'
     });
 
     const tipoGraficaActual = graficaExistente.config.type;
@@ -99,7 +98,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     const datosRebuild = procesarDatosUniversal(datosColumna, tipoGraficaActual, nombreColumna);
 
     // Actualizar la gráfica
-    const tituloHoja = hojaSeleccionada ? ` (${hojaSeleccionada})` : '';
+    const tituloHoja = tractorSeleccionado ? ` (${tractorSeleccionado})` : '';
     graficaExistente.options.plugins.title.text = `Datos de: ${nombreColumna}${tituloHoja}`;
     graficaExistente.data.labels = datosRebuild.labels;
     graficaExistente.data.datasets[0].data = datosRebuild.valores;

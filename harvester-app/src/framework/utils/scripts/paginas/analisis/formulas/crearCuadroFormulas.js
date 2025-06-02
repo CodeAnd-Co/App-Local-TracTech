@@ -4,6 +4,7 @@ const { filtrarYRenderizarFormulas } = require(`${rutaBase}/src/framework/utils/
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
 const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
+const {obtenerParametrosTractor } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/obtenerParametrosTractor.js`);
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
@@ -32,22 +33,8 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
   cuadroFormulas.dataset.graficaId = graficaId;
 
   // Obtener las columnas de la hoja seleccionada
-  const datos = localStorage.getItem('datosFiltradosExcel');
-  let columnasActualizadas = columnas;
-
-  if (datos && tractorSeleccionado) {
-    try {
-      const datosParseados = JSON.parse(datos);
-      if (datosParseados.hojas && datosParseados.hojas[tractorSeleccionado]) {
-        const datosHoja = datosParseados.hojas[tractorSeleccionado];
-        if (datosHoja.length > 0) {
-          columnasActualizadas = datosHoja[0].slice(3); // Omitir las primeras 3 columnas
-        }
-      }
-    } catch (error) {
-      console.error('Error al obtener columnas de la hoja seleccionada:', error);
-    }
-  }
+  const datos = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
+  let columnasActualizadas = obtenerParametrosTractor(datos, tractorSeleccionado);
 
   cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
@@ -78,7 +65,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
   const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
-  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnasActualizadas, graficaId, datosOriginalesFormulas);
+  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnasActualizadas, graficaId, datosOriginalesFormulas, tractorSeleccionado);
 
   // Configurar búsqueda de fórmulas
   const campoBusqueda = cuadroFormulas.querySelector('.search-section');
@@ -107,7 +94,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
         if (Array.isArray(datosParseados)) {
           window.datosExcelGlobal = {
             hojas: {
-              'Hoja1': datosParseados
+              datosParseados
             }
           };
         } else {
@@ -250,7 +237,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
  * @param {number} graficaId - ID de la gráfica asociada.
  * @returns {void}
  */
-function crearMenuDesplegable(contenedor, letra, columnas, graficaId, datosOriginalesFormulas) {
+function crearMenuDesplegable(contenedor, letra, columnas, graficaId, datosOriginalesFormulas, tractorSeleccionado) {
   const nuevoMenu = document.createElement('div');
   nuevoMenu.className = 'opcion';
   const seleccionValores = document.createElement('select');
@@ -265,7 +252,7 @@ function crearMenuDesplegable(contenedor, letra, columnas, graficaId, datosOrigi
   seleccionValores.addEventListener('change', (evento) => {
     const columnaSeleccionada = evento.target.value;
     if (columnaSeleccionada && columnaSeleccionada !== '') {
-      actualizarGraficaConColumna(graficaId, columnaSeleccionada, datosOriginalesFormulas);
+      actualizarGraficaConColumna(graficaId, columnaSeleccionada, datosOriginalesFormulas, tractorSeleccionado);
     } else {
       // Si se deselecciona, resetear la gráfica a estado inicial
       const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);

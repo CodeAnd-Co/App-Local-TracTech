@@ -107,8 +107,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   `;
 
   // Datos disponibles para fórmulas
-  const datos = localStorage.getItem('datosExcel'); 
-  const hoja = localStorage.getItem('hojaSeleccionada'); // Obtener la hoja seleccionada 
+  const datos = localStorage.getItem('datosFiltradosExcel'); 
   let columnas = [];
 
   // Cargar y parsear los datos del localStorage
@@ -119,8 +118,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
       // Si es un objeto con hojas (estructura compleja)
       if (datosParseados && typeof datosParseados === 'object' && datosParseados.hojas) {
         window.datosExcelGlobal = datosParseados;
-        const nombrePrimeraHoja = Object.keys(datosParseados.hojas)[0];
-        window.datosGrafica = datosParseados.hojas[nombrePrimeraHoja];
+        window.datosGrafica = datosParseados.hojas[tractorSeleccionado];
         
         // La primera fila contiene las columnas
         if (window.datosGrafica && window.datosGrafica.length > 0) {
@@ -130,13 +128,13 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         window.datosGrafica = datosParseados;
         window.datosExcelGlobal = {
           hojas: {
-            'Hoja1': datosParseados
+            datosParseados
           }
         };
         
         // La primera fila contiene las columnas
         if (datosParseados.length > 0) {
-          columnas = datosParseados[0].slice(3); // Omitir las primeras 3 columnas
+          columnas = datosParseados[0]; // Omitir las primeras 3 columnas
         }
       }
     } catch (error) {
@@ -178,7 +176,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
     tractorSeleccionado = selectorTractor.value;
     console.log('Tractor seleccionado:', tractorSeleccionado);
-    await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
     modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica);
   })
 
