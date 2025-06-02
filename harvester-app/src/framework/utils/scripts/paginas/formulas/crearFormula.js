@@ -630,26 +630,64 @@ function traducirFuncion(nombre) {
  * @throws {Error} Si el elemento no es un elemento HTML válido.
 */
 function popularDropdown(elementoSeleccionado) {
-    // Aquí se pondrá la lógica para llenar el dropdown con las variables en el archivo TODO()
-    let columnas = localStorage.getItem('columnas') ? JSON.parse(localStorage.getItem('columnas')) : [];
     const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
     if (nombreArchivo === null || nombreArchivo === undefined) {
-        columnas = [];
-        columnas.push('No hay archivo cargado');
         elementoSeleccionado.innerHTML = '<option value="">No hay un archivo cargado</option>';
         document.getElementById('btnGuardar').disabled = true;
         document.getElementById('btnGenerar').disabled = true;
         return;
     }
-    if (!Array.isArray(columnas)) {
+
+    let columnas = [];
+    
+    // Intentar obtener columnas del nuevo formato con hojas
+    const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
+    const datos = localStorage.getItem('datosExcel');
+    
+    if (datos && hojaSeleccionada) {
+        try {
+            const datosParseados = JSON.parse(datos);
+            if (datosParseados.hojas && datosParseados.hojas[hojaSeleccionada]) {
+                const datosHoja = datosParseados.hojas[hojaSeleccionada];
+                if (datosHoja.length > 0) {
+                    // Obtener encabezados de la primera fila
+                    columnas = datosHoja[0];
+                }
+            }
+        } catch (error) {
+            console.error('Error al parsear datos de Excel:', error);
+        }
+    }
+    
+    // Fallback: intentar usar el formato anterior
+    if (columnas.length === 0) {
+        const columnasGuardadas = localStorage.getItem('columnas');
+        if (columnasGuardadas) {
+            try {
+                columnas = JSON.parse(columnasGuardadas);
+            } catch (error) {
+
+                mostrarAlerta('Error', `No se pudieron cargar las columnas guardadas. Verifica el formato del archivo: ${error}`, 'error');
+                columnas = [];
+            }
+        }
+    }
+    
+    // Verificar si tenemos columnas válidas
+    if (!Array.isArray(columnas) || columnas.length === 0) {
+        elementoSeleccionado.innerHTML = '<option value="">No hay columnas disponibles</option>';
         mostrarAlerta('Error', 'El archivo seleccionado no tiene parámetros.', 'error');
         return;
     }
+    
+    // Poblar el dropdown
     elementoSeleccionado.innerHTML = '<option value="">Seleccionar</option>';
     columnas.forEach(columna => {
-        const opcion = document.createElement('option');
-        opcion.value = `[@${columna}]`;
-        opcion.textContent = columna;
-        elementoSeleccionado.appendChild(opcion);
+        if (columna && columna.trim() !== '') {
+            const opcion = document.createElement('option');
+            opcion.value = `[@${columna}]`;
+            opcion.textContent = columna;
+            elementoSeleccionado.appendChild(opcion);
+        }
     });
 }

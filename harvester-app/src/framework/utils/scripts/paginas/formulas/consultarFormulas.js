@@ -8,7 +8,6 @@ const { mostrarAlerta, mostrarAlertaConfirmacion } = require(`${rutaBase}/src/fr
 
 async function consultarFormulas() {
     const respuesta = await consultaFormulasCasoUso();
-    console.log('Respuesta de consultarFormulas:', respuesta);
     
     if (respuesta.error) {
         throw new Error(respuesta.error);
@@ -106,7 +105,6 @@ async function renderizarFormulas() {
                         const formulaId = evento.currentTarget.getAttribute('data-id');
 
                         if (!formulaId) {
-                            console.warn('No se encontró data-id en el botón.');
                             return;
                         }
 
@@ -127,7 +125,7 @@ async function renderizarFormulas() {
                             }
                             inicializarModificarFormula(idFormula, Nombre, Datos);
                         } else {
-                            console.warn('No se encontró una fórmula con id:', formulaId);
+                            mostrarAlerta('Error', `No se encontró la fórmula.`, 'error');
                         }
                     });
                 });
@@ -174,7 +172,7 @@ async function renderizarFormulas() {
                 window.location.href = vista;
                 localStorage.setItem('seccion-activa', 'formulas');
             } catch (err) {
-                console.error('Error al cargar vista:', err);
+                mostrarAlerta('Error al cargar vista', `Verifica tu conexión e inténtalo de nuevo: ${err}`, 'error');
             }
         });
         // Marcar que ya se agregó el listener para evitar duplicados

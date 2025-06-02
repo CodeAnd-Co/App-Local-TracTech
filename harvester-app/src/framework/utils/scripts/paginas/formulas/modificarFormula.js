@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @returns {Promise<void>}
  */
 async function inicializarModificarFormula(id, nombre, formula) {
-  localStorage.setItem('secccion-activa', 'modificarFormula');
+  localStorage.setItem('seccion-activa', 'modificarFormula');
 
   const botonGuardar = document.getElementById('btnGuardar');
   const nombreInput = document.getElementById('nombreFormula');
@@ -86,7 +86,6 @@ function actualizarCaracteres(areaEscritura) {
   const contador = areaEscritura.parentElement?.querySelector('.contador-caracteres');
 
   if (!contador) {
-    console.warn('No se encontró el elemento con clase .contador-caracteres');
     return;
   }
 
