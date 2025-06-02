@@ -174,8 +174,13 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const selectorTractor = tarjetaGrafica.querySelector('.tractor-grafica');
   selectorTractor.addEventListener('input', async () => {
     const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
+    const botonAplicarFormula = document.querySelector('#btnAplicarFormula');
     tractorSeleccionado = selectorTractor.value;
     console.log('Tractor seleccionado:', tractorSeleccionado);
+
+    if ( botonAplicarFormula ){
+      await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
+    }
     modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica);
   })
 
