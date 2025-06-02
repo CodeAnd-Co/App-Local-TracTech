@@ -491,6 +491,9 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
         graficaExistente.options.plugins.title.text = nombreFormula; 
         graficaExistente.data.labels = datosRebuild.labels;
         graficaExistente.data.datasets[0].data = datosRebuild.valores;
+        
+        // CORRECCIÓN: Actualizar también la etiqueta del dataset
+        graficaExistente.data.datasets[0].label = nombreFormula;
 
         // Configurar etiquetas: ocultar SOLO en gráficas de línea
         graficaExistente.options.plugins.datalabels.display = tipoGrafica !== 'line';
