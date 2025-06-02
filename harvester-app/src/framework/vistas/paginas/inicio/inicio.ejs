@@ -7,7 +7,11 @@
       <div class='frame-excel'>
           <div class='usar-excel'>
             <div class='texto-usar-excel'>Usar Excel</div>
-            <img class='FolderPlusRojo' src='<%= rutaBase %>src/framework/utils/iconos/FolderMasRojo.svg' />
+            <label>
+              <img class='FolderPlusRojo' src='<%= rutaBase %>src/framework/utils/iconos/FolderMasRojo.svg' />
+              <input type='file' accept='.xlsx' class='cargar-excel' />
+            </label>
+
             <div class='nombre-archivo'>
               <div class='texto-archivo'>Sin Archivo Seleccionado</div>
                 <button id='boton-borrar' class='boton-borrar'>
