@@ -16,20 +16,16 @@
           <img src='<%= rutaBase %>src/framework/utils/iconos/GraficaBarras.svg' alt='Análisis' />
           <span>Análisis</span>
         </button>
+        <!--
         <button class='boton-sidebar' data-seccion='plantillas'>
-          <img src='<%= rutaBase %>src/framework/utils/iconos/Portapapeles.svg' alt='Plantillas' />
+          <img src='<%= //rutaBase %>src/framework/utils/iconos/Portapapeles.svg' alt='Plantillas' />
           <span>Plantillas</span>
         </button>
+        -->
         <button class='boton-sidebar' data-seccion='formulas'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Funcion.svg' alt='Fórmulas' />
           <span>Fórmulas</span>
         </button>
-        <!--
-        <button class='boton-sidebar' data-seccion='envios'>
-          <img src='../utils/iconos/Correo.svg' alt='Envíos' />
-          <span>Envíos</span>
-        </button>
-        -->
         <% if (permisos.includes('ADMIN')) { %>
         <button class='boton-sidebar' data-seccion='usuarios'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Gestión Usuarios' />
@@ -60,9 +56,11 @@
         <button class='boton-sidebar' data-seccion='analisis'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/GraficaBarras.svg' alt='Análisis' />
         </button>
+        <!--
         <button class='boton-sidebar' data-seccion='plantillas'>
-          <img src='<%= rutaBase %>src/framework/utils/iconos/Portapapeles.svg' alt='Plantillas' />
+          <img src='<%=// rutaBase %>src/framework/utils/iconos/Portapapeles.svg' alt='Plantillas' />
         </button>
+        -->
         <button class='boton-sidebar' data-seccion='formulas'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/Funcion.svg' alt='Fórmulas' />
         </button>
@@ -71,11 +69,6 @@
           <img src='<%= rutaBase %>src/framework/utils/iconos/Usuario.svg' alt='Gestión Usuarios' />
         </button>
         <% } %>
-        <!---
-        <button class='boton-sidebar' data-seccion='envios'>
-          <img src='../utils/iconos/Correo.svg' alt='Envíos' />
-        </button>
-        -->
       </div>
     </div>
     <div class='sidebar-inferior'>

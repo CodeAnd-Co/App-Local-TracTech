@@ -1,16 +1,13 @@
 // RF71 Eliminar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF71
 const { eliminarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/eliminarFormula.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
-/* eslint-disable no-undef */
+ 
 
  
 async function manejarEliminarFormula(id) {
     if (!id) {
-        Swal.fire({
-            title: 'Campo faltante',
-            text: 'Por favor, completa el campo ID.',
-            icon: 'warning'
-        });
+        mostrarAlerta('Campo faltante', 'Por favor, completa el campo ID.', 'warning');
         return;
     }
 
@@ -18,25 +15,13 @@ async function manejarEliminarFormula(id) {
         const respuesta = await eliminarFormula(id);
 
         if (respuesta.ok) {
-            Swal.fire({
-                title: 'Fórmula eliminada',
-                text: 'La fórmula ha sido eliminada exitosamente.',
-                icon: 'success'
-            });
+            mostrarAlerta('Fórmula eliminada', 'La fórmula ha sido eliminada exitosamente.', 'success');
             return respuesta;
         } else {
-            Swal.fire({
-                title: 'Error',
-                text: respuesta.mensaje,
-                icon: 'error'
-            });
+            mostrarAlerta('Error', respuesta.mensaje, 'error');
         }
     } catch {
-        Swal.fire({
-            title: 'Error de conexión',
-            text: 'Verifica tu conexión e inténtalo de nuevo.',
-            icon: 'error'
-        });
+        mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
     }
 }
 

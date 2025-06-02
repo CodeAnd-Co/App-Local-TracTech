@@ -1,25 +1,25 @@
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.js`);
 
 
-function mostrarAlerta(titulo, texto, icono) {
+function mostrarAlerta(titulo, texto, icono, textoBotonConfirmar=null) {
   Swal.fire({
     title: titulo,
     text: texto,
     icon: icono,
-    confirmButtonText: 'Aceptar',
+    confirmButtonText: (textoBotonConfirmar)? textoBotonConfirmar : 'Aceptar',
     confirmButtonColor: '#a61930',
   });
   return;
 }
 
-async function mostrarAlertaConfirmacion(titulo, texto, icono) {
+async function mostrarAlertaConfirmacion(titulo, texto, icono, textoBotonConfirmar=null, textoBotonCancelar=null) {
   const resultado = await Swal.fire({
     title: titulo,
     text: texto,
     icon: icono,
     showCancelButton: true,
-    confirmButtonText: 'Confirmar',
-    cancelButtonText: 'Cancelar',
+    confirmButtonText: (textoBotonConfirmar)? textoBotonConfirmar : 'Confirmar',
+    cancelButtonText: (textoBotonCancelar)? textoBotonCancelar : 'Cancelar',
     confirmButtonColor: '#a61930'
   });
   if (resultado.isConfirmed){
@@ -29,14 +29,14 @@ async function mostrarAlertaConfirmacion(titulo, texto, icono) {
   }
 }
 
-async function mostrarAlertaBorrado(){
+async function mostrarAlertaBorrado(texto=null, textoBotonConfirmar=null, textoBotonCancelar=null){
     const resultado = await Swal.fire({
-        title: '¿Está seguro?',
-        text: "No podrá recuperar este registro después de borrarlo.",
+        title: '¿Estás seguro?',
+        text: (texto)? texto : 'No podrá recuperar este registro después de borrarlo.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Confirmar',
-        cancelButtonText: 'Cancelar',
+        confirmButtonText: (textoBotonConfirmar)? textoBotonConfirmar : 'Borrar',
+        cancelButtonText: (textoBotonCancelar)? textoBotonCancelar : 'Cancelar',
         confirmButtonColor: '#a61930',
     });
     if (resultado.isConfirmed){

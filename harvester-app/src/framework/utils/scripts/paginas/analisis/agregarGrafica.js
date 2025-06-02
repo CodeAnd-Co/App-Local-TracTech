@@ -12,12 +12,11 @@ const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/ap
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-if (typeof Swal === 'undefined') {
-  const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-}
-
 // Variable global para almacenar las fórmulas consultadas
 let formulasDisponibles = [];
+
+// Variable global para almacenar los datos originales de fórmulas por gráfica
+let datosOriginalesFormulas = new Map();
 
 /**
  * Consulta las fórmulas una sola vez y las almacena globalmente.
@@ -59,13 +58,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const contenedores = new Contenedores(contenedor, previsualizacion);
 
   if (!contenedor || !previsualizacion) {
-    Swal.fire({
-      title: 'Error',
-      text: 'Ocurrió un error al agregar cuadro de texto.',
-      icon: 'error',
-      confirmButtonColor: '#a61930',
-    });
-    return
+    mostrarAlerta('Error', 'Ocurrió un error al agregar la gráfica.', 'error');
+    return;
   }
 
   const tarjetaGrafica = document.createElement('div');
@@ -444,12 +438,13 @@ botonAplicarFormula.addEventListener('click', () => {
       return;
     }
 
-    // Actualizar los datos globales con los resultados solo si existen
-    if (resultadoFormula.datosActualizados && window.datosExcelGlobal && window.datosExcelGlobal.hojas) {
-      // Actualizar los datos en la estructura global
-      const nombreHoja = Object.keys(window.datosExcelGlobal.hojas)[0];
-      window.datosExcelGlobal.hojas[nombreHoja] = resultadoFormula.datosActualizados;
-      window.datosGrafica = resultadoFormula.datosActualizados;
+    // GUARDAR DATOS ORIGINALES DE LA FÓRMULA
+    if (resultadoFormula.resultados) {
+      datosOriginalesFormulas.set(parseInt(graficaId), {
+        datos: resultadoFormula.resultados,
+        nombre: nombreFormula,
+        tipo: 'formula'
+      });
     }
 
     // Obtener el canvas y la gráfica existente
@@ -465,73 +460,17 @@ botonAplicarFormula.addEventListener('click', () => {
     if (graficaExistente && resultadoFormula.resultados) {
       const resultados = resultadoFormula.resultados;
       const tipoGrafica = graficaExistente.config.type;
-      let labels = [];
-      let valores = [];
-     
-      // Detectar si todos los resultados son números
-      const todosNumeros = resultados.every(objeto => typeof objeto === 'number' && !isNaN(objeto));
       
-      // Detectar si todos los resultados son strings
-      const todosCadena = resultados.every(objeto => typeof objeto === 'string');
+      // Usar el procesamiento universal
+      const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, nombreFormula);
       
-      // Para gráficas de pastel, dona y polar: SIEMPRE usar frecuencias con porcentajes
-      if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut' || tipoGrafica === 'polarArea') {
-        
-        // Contar valores únicos independientemente del tipo de dato
-        const frecuencias = {};
-        resultados.forEach(valor => {
-          // Convertir todo a string para tener una clave consistente
-          const clave = String(valor);
-          frecuencias[clave] = (frecuencias[clave] || 0) + 1;
-        });
-        
-        // Obtener las categorías y sus frecuencias
-        labels = Object.keys(frecuencias);
-        valores = Object.values(frecuencias);
-        
-        
-      } else {
-        // Para otros tipos de gráfica: mantener lógica original
-        if (todosNumeros) {
-          // Verificar si todos los números son iguales
-          const valoresUnicos = [...new Set(resultados)];
-          
-          if (valoresUnicos.length === 1) {
-            // Si todos son iguales, mostrar el valor único
-            labels = ['Resultado'];
-            valores = [valoresUnicos[0]];
-          } else {
-            // Si hay valores diferentes, usar puntos individuales
-            labels = resultados.map((_, indice) => `Punto ${indice + 1}`);
-            valores = resultados;
-          }
-        } else if (todosCadena) {
-          const frecuencias = {};
-          resultados.forEach(objeto => {
-            frecuencias[objeto] = (frecuencias[objeto] || 0) + 1;
-          });
-          labels = Object.keys(frecuencias);
-          valores = Object.values(frecuencias);
-        } else {
-          // Mezcla de tipos - usar también frecuencias por simplicidad
-          const frecuencias = {};
-          resultados.forEach(item => {
-            const cadena = String(item);
-            frecuencias[cadena] = (frecuencias[cadena] || 0) + 1;
-          });
-          labels = Object.keys(frecuencias);
-          valores = Object.values(frecuencias);
-        }
-      }
-      
-     
       // Actualizar la gráfica
       graficaExistente.options.plugins.title.text = nombreFormula; 
-      graficaExistente.data.labels = labels;
-      graficaExistente.data.datasets[0].data = valores;
+      graficaExistente.data.labels = datosRebuild.labels;
+      graficaExistente.data.datasets[0].data = datosRebuild.valores;
 
-      // REACTIVAR las etiquetas de datos para fórmulas
-      graficaExistente.options.plugins.datalabels.display = true;
+      // Configurar etiquetas: ocultar SOLO en gráficas de línea
+      graficaExistente.options.plugins.datalabels.display = tipoGrafica !== 'line';
 
       graficaExistente.update();
       
@@ -619,137 +558,158 @@ function crearMenuDesplegable(contenedor, letra, columnas, graficaId) {
 }
 
 /**
- * Actualiza la gráfica con los datos de una columna específica.
- * @param {number} graficaId - ID de la gráfica a actualizar.
- * @param {string} nombreColumna - Nombre de la columna seleccionada.
- * @returns {void}
+ * Formateador universal para etiquetas de datos según el tipo de gráfica
+ * @param {*} value - Valor del dato
+ * @param {*} context - Contexto de Chart.js
+ * @param {string} tipo - Tipo de gráfica
+ * @returns {string} - Etiqueta formateada
  */
-function actualizarGraficaConColumna(graficaId, nombreColumna) {
-  // Obtener la gráfica
-  const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
-  if (!graficaDiv) {
-    console.error('No se encontró la gráfica con ID:', graficaId);
-    return;
-  }
-
-  const canvas = graficaDiv.querySelector('canvas');
-  if (!canvas) {
-    console.error('No se encontró el canvas de la gráfica');
-    return;
-  }
-
-  const contexto = canvas.getContext('2d');
-  const graficaExistente = Chart.getChart(contexto);
+function formatearEtiquetaUniversal(value, context, tipo) {
+  const etiqueta = context.chart.data.labels[context.dataIndex];
   
-  if (!graficaExistente) {
-    console.error('No se encontró la instancia de Chart.js');
-    return;
+  // Para gráficas circulares Y DE BARRAS - SIEMPRE frecuencias con porcentajes/valores
+  if (tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea') {
+    const datos = context.chart.data.datasets[0].data;
+    const valorTotal = datos.reduce((total, datapoint) => total + datapoint, 0);
+    
+    if (valorTotal === 0) return '';
+    
+    const porcentaje = ((value / valorTotal) * 100).toFixed(1);
+    return `${etiqueta}\n${value} (${porcentaje}%)`;
+  }
+  
+  // Para gráficas de barras - solo mostrar categoría y frecuencia
+  if (tipo === 'bar') {
+    return `${etiqueta}: ${value}`;
+  }
+  
+  // Para gráficas lineales - Mostrar categoría y valor (aunque ya no se mostrarán las etiquetas)
+  if (etiqueta === 'Resultado') {
+    return `${etiqueta}\n${value}`;
+  } else {
+    return `${etiqueta}: ${value}`;
+  }
+}
+
+/**
+ * Procesa datos universalmente según el tipo de gráfica
+ * @param {Array} datosOriginales - Datos originales de la fórmula o columna
+ * @param {string} tipoGrafica - Tipo de gráfica
+ * @param {string} nombreColumna - Nombre de la columna o fórmula
+ * @returns {Object} - Objeto con labels y valores procesados
+ */
+function procesarDatosUniversal(datosOriginales, tipoGrafica, nombreColumna = 'Datos') {
+  if (!datosOriginales || datosOriginales.length === 0) {
+    return { labels: ['Sin datos'], valores: [0] };
   }
 
-  // Obtener los datos de la columna
-  if (!window.datosGrafica || window.datosGrafica.length === 0) {
-    mostrarAlerta('Error', 'No hay datos cargados para mostrar en la gráfica.', 'error');
-    return;
+  // Filtrar valores vacíos, null o undefined
+  const datosLimpios = datosOriginales.filter(valor => 
+    valor !== null && valor !== undefined && valor !== ''
+  );
+
+  if (datosLimpios.length === 0) {
+    return { labels: ['Sin datos'], valores: [0] };
   }
 
-  try {
-    // Encontrar el índice de la columna (recordando que omitimos las primeras 3)
-    const encabezados = window.datosGrafica[0];
-    const indiceColumna = encabezados.indexOf(nombreColumna);
+  // Para gráficas circulares Y DE BARRAS: SIEMPRE usar frecuencias (agrupamiento por categoría)
+  if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut' || tipoGrafica === 'polarArea' || tipoGrafica === 'bar') {
+    const frecuencias = {};
+    datosLimpios.forEach(valor => {
+      const clave = String(valor);
+      frecuencias[clave] = (frecuencias[clave] || 0) + 1;
+    });
     
-    if (indiceColumna === -1) {
-      mostrarAlerta('Error', `No se encontró la columna "${nombreColumna}" en los datos.`, 'error');
-      return;
-    }
+    return {
+      labels: Object.keys(frecuencias),
+      valores: Object.values(frecuencias)
+    };
+  }
 
-    // Extraer los datos de la columna (omitiendo el encabezado)
-    const datosColumna = window.datosGrafica.slice(1).map(fila => fila[indiceColumna]);
+  // Para gráficas lineales y radar - usar filas numeradas SOLO si son números diferentes
+  const todosNumeros = datosLimpios.every(valor => 
+    !isNaN(parseFloat(valor)) && isFinite(valor)
+  );
+
+  if (todosNumeros) {
+    // Si son números, verificar si todos son iguales
+    const valoresUnicos = [...new Set(datosLimpios)];
     
-    // Filtrar valores vacíos, null o undefined
-    const datosLimpios = datosColumna.filter(valor => 
-      valor !== null && valor !== undefined && valor !== ''
-    );
-
-    if (datosLimpios.length === 0) {
-      mostrarAlerta('Error', `La columna "${nombreColumna}" no contiene datos válidos.`, 'error');
-      return;
-    }
-
-    console.log('Datos de la columna:', datosLimpios);
-
-    // FORZAR CONVERSIÓN A LÍNEA SI NO LO ES
-    const tipoGraficaActual = graficaExistente.config.type;
-    let graficaParaProcesar = graficaExistente;
-
-    if (tipoGraficaActual !== 'line') {
-      // Preservar título actual
-      const tituloActual = graficaExistente.options.plugins.title.text;
-      
-      // Destruir gráfica actual
-      graficaExistente.destroy();
-      
-      // Crear nueva gráfica de línea
-      graficaParaProcesar = crearGrafica(contexto, 'line');
-      
-      // Restaurar título si existía
-      if (tituloActual && tituloActual !== 'Gráfica sin datos - Aplica una fórmula para ver resultados') {
-        graficaParaProcesar.options.plugins.title.text = tituloActual;
-      }
-
-      // Actualizar el selector en la tarjeta para reflejar el cambio
-      const tarjetaGrafica = document.getElementById(graficaId);
-      if (tarjetaGrafica) {
-        const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
-        if (selectorTipo) {
-          selectorTipo.value = 'line';
-        }
-      }
-    }
-
-    // Detectar el tipo de datos
-    const todosNumeros = datosLimpios.every(valor => 
-      !isNaN(parseFloat(valor)) && isFinite(valor)
-    );
-
-    let labels = [];
-    let valores = [];
-
-    // Para gráficas de línea con parámetros, usar siempre puntos numerados
-    if (todosNumeros) {
-      // Si son números, crear puntos numerados
-      labels = datosLimpios.map((_, indice) => `Punto ${indice + 1}`);
-      valores = datosLimpios.map(valor => parseFloat(valor));
+    if (valoresUnicos.length === 1) {
+      // Si todos son iguales, mostrar el valor único
+      return {
+        labels: ['Resultado'],
+        valores: [valoresUnicos[0]]
+      };
     } else {
-      // Si son texto o mixto, usar frecuencias pero manteniendo formato línea
-      const frecuencias = {};
-      datosLimpios.forEach(valor => {
-        const clave = String(valor);
-        frecuencias[clave] = (frecuencias[clave] || 0) + 1;
-      });
-      
-      labels = Object.keys(frecuencias);
-      valores = Object.values(frecuencias);
+      // Si hay valores diferentes, usar filas numeradas SOLO para líneas y radar
+      // AJUSTE: Empezar desde "Fila 1" porque la primera fila del Excel son encabezados
+      return {
+        labels: datosLimpios.map((_, indice) => `Fila ${indice + 2}`),
+        valores: datosLimpios.map(valor => parseFloat(valor))
+      };
     }
-
-    // Actualizar la gráfica
-    graficaParaProcesar.options.plugins.title.text = `Datos de: ${nombreColumna}`;
-    graficaParaProcesar.data.labels = labels;
-    graficaParaProcesar.data.datasets[0].data = valores;
-    graficaParaProcesar.data.datasets[0].label = nombreColumna;
+  } else {
+    // Si son texto o mixto, usar frecuencias
+    const frecuencias = {};
+    datosLimpios.forEach(valor => {
+      const clave = String(valor);
+      frecuencias[clave] = (frecuencias[clave] || 0) + 1;
+    });
     
-    // DESACTIVAR las etiquetas de datos para columnas (no fórmulas)
-    graficaParaProcesar.options.plugins.datalabels.display = false;
-    
-    graficaParaProcesar.update();
-
-    console.log('Gráfica actualizada con columna:', nombreColumna);
-    console.log('Labels:', labels);
-    console.log('Valores:', valores);
-
-  } catch (error) {
-    console.error('Error al procesar los datos de la columna:', error);
-    mostrarAlerta('Error', 'Error al procesar los datos de la columna seleccionada.', 'error');
+    return {
+      labels: Object.keys(frecuencias),
+      valores: Object.values(frecuencias)
+    };
   }
+}
+
+/**
+ * Actualiza una gráfica aplicando los datos originales según el nuevo tipo
+ * @param {number} graficaId - ID de la gráfica
+ * @param {string} nuevoTipo - Nuevo tipo de gráfica
+ * @param {Chart} graficaExistente - Instancia de la gráfica existente
+ * @returns {Chart} - Nueva instancia de la gráfica
+ */
+function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
+  const canvas = graficaExistente.canvas;
+  const contexto = canvas.getContext('2d');
+  
+  // Preservar información importante
+  const tituloActual = graficaExistente.options.plugins.title.text;
+  
+  // Obtener datos originales si existen
+  const datosOriginales = datosOriginalesFormulas.get(graficaId);
+  
+  // Destruir gráfica actual
+  graficaExistente.destroy();
+  
+  // Crear nueva gráfica
+  const nuevaGrafica = crearGrafica(contexto, nuevoTipo);
+  
+  // Si hay datos originales, reprocesarlos para el nuevo tipo
+  if (datosOriginales) {
+    const datosRebuild = procesarDatosUniversal(
+      datosOriginales.datos, 
+      nuevoTipo, 
+      datosOriginales.nombre
+    );
+    
+    nuevaGrafica.data.labels = datosRebuild.labels;
+    nuevaGrafica.data.datasets[0].data = datosRebuild.valores;
+    nuevaGrafica.data.datasets[0].label = datosOriginales.nombre;
+  }
+  
+  // Restaurar título
+  nuevaGrafica.options.plugins.title.text = tituloActual;
+  
+  // CONFIGURAR ETIQUETAS SEGÚN EL NUEVO TIPO DE GRÁFICA
+  nuevaGrafica.options.plugins.datalabels.display = nuevoTipo !== 'line';
+  
+  // Actualizar
+  nuevaGrafica.update();
+  
+  return nuevaGrafica;
 }
 
 /**
@@ -826,7 +786,11 @@ function crearGrafica(contexto, tipo, color) {
           },
         },
         datalabels: {
-          display: true, // Always show labels
+          // SOLO ocultar etiquetas en gráficas de línea, mostrar en todas las demás
+          display: (context) => {
+            const tipoGrafica = context.chart.config.type;
+            return tipoGrafica !== 'line'; // Ocultar SOLO en líneas
+          },
           anchor: () => {
             if (tipo == 'bar') {
               return 'end';
@@ -852,31 +816,8 @@ function crearGrafica(contexto, tipo, color) {
           borderWidth: 1,
           padding: 6, // More padding for better readability
           formatter: (value, context) => {
-            if (tipo == 'pie' || tipo == 'doughnut' || tipo == 'polarArea') {
-              const datos = context.chart.data.datasets[0].data;
-              const etiqueta = context.chart.data.labels[context.dataIndex];
-              
-              // Para gráficas de pastel/dona SIEMPRE mostrar frecuencias con porcentajes
-              const valorTotal = datos.reduce((total, datapoint) => {
-                return total + datapoint;
-              }, 0);
-              
-              if (valorTotal === 0) return '';
-              
-              const porcentaje = ((value / valorTotal) * 100).toFixed(1);
-              
-              // Mostrar directamente la etiqueta sin modificaciones adicionales
-              return `${etiqueta}\n${value} (${porcentaje}%)`;
-            } else {
-              const etiqueta = context.chart.data.labels[context.dataIndex];
-              
-              // Para otros tipos de gráfica, si es "Resultado" solo mostrar el valor
-              if (etiqueta === 'Resultado') {
-                return `${etiqueta}\n${value}`;
-              } else {
-                return `${etiqueta}: ${value}`;
-              }
-            }
+            // Aplicar formato universal según el tipo de gráfica
+            return formatearEtiquetaUniversal(value, context, tipo);
           },
         }
       },
@@ -987,40 +928,14 @@ function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
     const graficaOriginal = Chart.getChart(contexto);
     
     if (graficaOriginal) {
-      // Preservar los datos actuales antes de destruir la gráfica
-      const datosActuales = {
-        labels: [...graficaOriginal.data.labels],
-        data: [...graficaOriginal.data.datasets[0].data],
-        label: graficaOriginal.data.datasets[0].label
-      };
+      // Obtener ID de la gráfica desde el contenedor
+      const graficaId = parseInt(grafica.id.replace('previsualizacion-grafica-', ''));
       
-      // Determinar si es una gráfica de fórmula o de parámetros
-      const esGraficaFormula = graficaOriginal.options.plugins.datalabels.display === true;
-      
-      // Destruir la gráfica original
-      graficaOriginal.destroy();
-      
-      // Crear nueva gráfica del tipo seleccionado
-      const nuevaGrafica = crearGrafica(contexto, selectorTipo.value);
-      
-      // Aplicar los datos preservados
-      nuevaGrafica.data.labels = datosActuales.labels;
-      nuevaGrafica.data.datasets[0].data = datosActuales.data;
-      nuevaGrafica.data.datasets[0].label = datosActuales.label;
+      // Usar la función universal de actualización
+      const nuevaGrafica = actualizarGraficaConTipo(graficaId, selectorTipo.value, graficaOriginal);
       
       // Aplicar el título
       nuevaGrafica.options.plugins.title.text = tituloGrafica;
-      
-      // Configurar las etiquetas de datos según el tipo original
-      if (esGraficaFormula) {
-        // Es una gráfica de fórmula - mantener etiquetas habilitadas
-        nuevaGrafica.options.plugins.datalabels.display = true;
-      } else {
-        // Es una gráfica de parámetros - deshabilitar etiquetas
-        nuevaGrafica.options.plugins.datalabels.display = false;
-      }
-      
-      // Actualizar la gráfica
       nuevaGrafica.update();
     }
   }
@@ -1076,6 +991,83 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
   } else {
     contenedores.contenedorTarjeta.appendChild(elementoReporte.tarjeta);
     contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
+  }
+}
+
+/**
+ * Actualiza la gráfica con los datos de una columna específica.
+ * @param {number} graficaId - ID de la gráfica a actualizar.
+ * @param {string} nombreColumna - Nombre de la columna seleccionada.
+ * @returns {void}
+ */
+function actualizarGraficaConColumna(graficaId, nombreColumna) {
+  // Obtener la gráfica
+  const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
+  if (!graficaDiv) {
+    console.error('No se encontró la gráfica con ID:', graficaId);
+    return;
+  }
+
+  const canvas = graficaDiv.querySelector('canvas');
+  if (!canvas) {
+    console.error('No se encontró el canvas de la gráfica');
+    return;
+  }
+
+  const contexto = canvas.getContext('2d');
+  const graficaExistente = Chart.getChart(contexto);
+  
+  if (!graficaExistente) {
+    console.error('No se encontró la instancia de Chart.js');
+    return;
+  }
+
+  // Obtener los datos de la columna
+  if (!window.datosGrafica || window.datosGrafica.length === 0) {
+    mostrarAlerta('Error', 'No hay datos cargados para mostrar en la gráfica.', 'error');
+    return;
+  }
+
+  try {
+    // Encontrar el índice de la columna
+    const encabezados = window.datosGrafica[0];
+    const indiceColumna = encabezados.indexOf(nombreColumna);
+    
+    if (indiceColumna === -1) {
+      mostrarAlerta('Error', `No se encontró la columna "${nombreColumna}" en los datos.`, 'error');
+      return;
+    }
+
+    // Extraer los datos de la columna (omitiendo el encabezado)
+    const datosColumna = window.datosGrafica.slice(1).map(fila => fila[indiceColumna]);
+    
+    // GUARDAR DATOS ORIGINALES DE LA COLUMNA
+    datosOriginalesFormulas.set(graficaId, {
+      datos: datosColumna,
+      nombre: nombreColumna,
+      tipo: 'columna'
+    });
+
+    const tipoGraficaActual = graficaExistente.config.type;
+    
+    // Usar el procesamiento universal
+    const datosRebuild = procesarDatosUniversal(datosColumna, tipoGraficaActual, nombreColumna);
+
+    // Actualizar la gráfica
+    graficaExistente.options.plugins.title.text = `Datos de: ${nombreColumna}`;
+    graficaExistente.data.labels = datosRebuild.labels;
+    graficaExistente.data.datasets[0].data = datosRebuild.valores;
+    graficaExistente.data.datasets[0].label = nombreColumna;
+    
+    // Configurar etiquetas: ocultar SOLO en gráficas de línea
+    const tipoActual = graficaExistente.config.type;
+    graficaExistente.options.plugins.datalabels.display = tipoActual !== 'line';
+    
+    graficaExistente.update();
+
+  } catch (error) {
+    console.error('Error al procesar los datos de la columna:', error);
+    mostrarAlerta('Error', 'Error al procesar los datos de la columna seleccionada.', 'error');
   }
 }
 
