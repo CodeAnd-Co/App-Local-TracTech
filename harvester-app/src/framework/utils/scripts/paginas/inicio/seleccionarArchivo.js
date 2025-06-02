@@ -35,7 +35,7 @@ function botonBorrar() {
     setTimeout(() => {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const botonBorrar = document.getElementById('boton-borrar');
-        const entradaArchivo = document.querySelector('.cargar-excel');
+        const entradaArchivos = document.querySelectorAll('.cargar-excel');
 
         botonBorrar.addEventListener('click', async () => {
             // Modal de confirmación para eliminar el archivo
@@ -51,8 +51,11 @@ function botonBorrar() {
                 botonBorrar.style.display = 'none';
 
                 // Reiniciar el valor del input de archivos para que se pueda volver a seleccionar el mismo archivo
-                if (entradaArchivo) {
-                entradaArchivo.value = '';
+                if (entradaArchivos) {
+                    entradaArchivos.forEach(entradaArchivo => {
+                        entradaArchivo.value = '';
+                    });
+
                 }
             }
         });
@@ -67,12 +70,12 @@ function botonBorrar() {
  */
 function botonCargar() {
     setTimeout(() => {
-        const entradaArchivo = document.querySelector('.cargar-excel');
+        const entradaArchivos = document.querySelectorAll('.cargar-excel');
         const elementoNombreArchivo = document.querySelector('.texto-archivo');
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const botonBorrar = document.getElementById('boton-borrar');
 
-        if (!entradaArchivo || !elementoNombreArchivo) {
+        if (!entradaArchivos || !elementoNombreArchivo) {
             return ('No se encontraron los elementos necesarios');
         }
         
@@ -88,54 +91,44 @@ function botonCargar() {
         // Eliminar cualquier dato de sección activa al cargar el módulo inicio
         localStorage.removeItem('seccion-activa');
 
-        entradaArchivo.addEventListener('change', async () => {
-            if (entradaArchivo.files && entradaArchivo.files[0]) {
-                const archivo = entradaArchivo.files[0];
-                
-                // Cambiar el texto mientras se procesa el archivo
-                if (elementoNombreArchivo) {
-                    elementoNombreArchivo.textContent = 'Verificando archivo...';
-                }
-                
-                try {
-                    // Llamamos a leerExcel que ahora devuelve un objeto con el resultado
-                    const resultado = await leerExcel(archivo);
-                    
-                    if (resultado.exito) {
-                        // Si fue exitoso, configuramos la UI
-                        elementoNombreArchivo.textContent = archivo.name;
-                        botonAnalisis.removeAttribute('disabled');
-                        botonBorrar.style.display = 'block';
-                    } else {
-                        // Si hubo error de validación, mostramos el mensaje
-                        elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
-                        botonBorrar.style.display = 'none';
-                        botonAnalisis.setAttribute('disabled', 'true');
-                        botonAnalisis.style.cursor = 'default';
-                        localStorage.removeItem('nombreArchivoExcel');
-                        localStorage.removeItem('datosExcel');
-                        
-                        // Mostrar modal con el error de validación
-                        mostrarAlerta('Archivo no válido', resultado.mensaje, 'error', 'Entendido');
-                        
-                        // Resetear el input
-                        entradaArchivo.value = '';
-                    }
-                } catch (error) {
-                  
-                    // Actualizar UI
-                    elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
-                    botonAnalisis.setAttribute('disabled', 'true');
-                    localStorage.removeItem('nombreArchivoExcel');
-                    localStorage.removeItem('datosExcel');
-                    
-                    // Mostrar modal con el error
-                    mostrarAlerta('Error al procesar archivo', error.mensaje || 'Ha ocurrido un error al procesar el archivo.', 'error');
-                    
-                    // Reiniciar el valor del input
-                    entradaArchivo.value = '';
-                }
+        entradaArchivos.forEach(entradaArchivo => {
+
+            entradaArchivo.addEventListener('change', async () => {
+    if (entradaArchivo.files && entradaArchivo.files[0]) {
+        const archivo = entradaArchivo.files[0];
+
+        // Texto mientras se procesa
+        elementoNombreArchivo.textContent = 'Verificando archivo...';
+
+        try {
+            const resultado = await leerExcel(archivo);
+
+            if (resultado.exito) {
+                elementoNombreArchivo.textContent = archivo.name;
+                botonAnalisis.removeAttribute('disabled');
+                botonBorrar.style.display = 'block';
+                localStorage.setItem('nombreArchivoExcel', archivo.name);
+                entradaArchivos.forEach(input => input.value = '');
+            } else {
+                elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+                botonBorrar.style.display = 'none';
+                botonAnalisis.setAttribute('disabled', 'true');
+                localStorage.removeItem('nombreArchivoExcel');
+                localStorage.removeItem('datosExcel');
+                mostrarAlerta('Archivo no válido', resultado.mensaje, 'error', 'Entendido');
+                entradaArchivo.value = '';
             }
+        } catch (error) {
+            elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+            botonAnalisis.setAttribute('disabled', 'true');
+            localStorage.removeItem('nombreArchivoExcel');
+            localStorage.removeItem('datosExcel');
+            mostrarAlerta('Error al procesar archivo', error.mensaje || 'Ha ocurrido un error al procesar el archivo.', 'error');
+            entradaArchivo.value = '';
+        }
+    }
+});
+
         });
     }, 100);
 }
