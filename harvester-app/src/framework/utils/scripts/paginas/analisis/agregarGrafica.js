@@ -308,6 +308,17 @@ function seleccionarFormula(radioBotton, contenedor) {
 }
 
 /**
+ * Elimina el cuadro de fórmulas si existe.
+ * @returns {void}
+ */
+function eliminarCuadroFormulas() {
+  const cuadroFormulasExistente = document.querySelector('.contenedor-formulas');
+  if (cuadroFormulasExistente) {
+    cuadroFormulasExistente.remove();
+  }
+}
+
+/**
  * Crea un cuadro de fórmulas asociado a una gráfica.
  * @param {string[]} columnas - Lista de columnas disponibles en los datos.
  * @param {number} graficaId - ID de la gráfica asociada.
@@ -315,7 +326,7 @@ function seleccionarFormula(radioBotton, contenedor) {
  * @returns {void}
  */ // eslint-disable-next-line no-unused-vars
 async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
-  eliminarCuadroFormulas();
+  eliminarCuadroFormulas(); // Ahora esta función ya está definida
 
   // Cargar fórmulas una sola vez al inicio
   await cargarFormulasIniciales();
@@ -355,7 +366,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
   const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
-  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas);
+  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas, graficaId);
 
 // Configurar búsqueda de fórmulas
 const campoBusqueda = cuadroFormulas.querySelector('.search-section');
@@ -463,7 +474,7 @@ botonAplicarFormula.addEventListener('click', () => {
       // Detectar si todos los resultados son strings
       const todosCadena = resultados.every(objeto => typeof objeto === 'string');
       
-      // Para gráficas de pastel, dona y polar: SIEMPRE usar frecuencias basadas en valores únicos
+      // Para gráficas de pastel, dona y polar: SIEMPRE usar frecuencias con porcentajes
       if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut' || tipoGrafica === 'polarArea') {
         
         // Contar valores únicos independientemente del tipo de dato
@@ -518,6 +529,10 @@ botonAplicarFormula.addEventListener('click', () => {
       graficaExistente.options.plugins.title.text = nombreFormula; 
       graficaExistente.data.labels = labels;
       graficaExistente.data.datasets[0].data = valores;
+
+      // REACTIVAR las etiquetas de datos para fórmulas
+      graficaExistente.options.plugins.datalabels.display = true;
+
       graficaExistente.update();
       
       mostrarAlerta('Éxito', `Fórmula "${nombreFormula}" aplicada correctamente a la gráfica.`, 'success');
@@ -562,17 +577,41 @@ botonAplicarFormula.addEventListener('click', () => {
  * @param {HTMLDivElement} contenedor - Contenedor donde se agregará el menú desplegable.
  * @param {string} letra - Letra identificadora del menú.
  * @param {string[]} columnas - Lista de columnas disponibles.
+ * @param {number} graficaId - ID de la gráfica asociada.
  * @returns {void}
  */
-function crearMenuDesplegable(contenedor, letra, columnas) {
+function crearMenuDesplegable(contenedor, letra, columnas, graficaId) {
   const nuevoMenu = document.createElement('div');
   nuevoMenu.className = 'opcion';
   const seleccionValores = document.createElement('select');
   seleccionValores.className = 'opcion-texto';
-  seleccionValores.innerHTML = '<option>-- Selecciona Columna --</option>'
+  seleccionValores.innerHTML = '<option value="">-- Selecciona Columna --</option>'
   columnas.forEach((texto) => {
     seleccionValores.innerHTML = `${seleccionValores.innerHTML}
-    <option> ${texto} </option>`
+    <option value="${texto}"> ${texto} </option>`
+  });
+
+  // Agregar evento de cambio para actualizar la gráfica
+  seleccionValores.addEventListener('change', (evento) => {
+    const columnaSeleccionada = evento.target.value;
+    if (columnaSeleccionada && columnaSeleccionada !== '') {
+      actualizarGraficaConColumna(graficaId, columnaSeleccionada);
+    } else {
+      // Si se deselecciona, resetear la gráfica a estado inicial
+      const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
+      if (graficaDiv) {
+        const canvas = graficaDiv.querySelector('canvas');
+        const contexto = canvas.getContext('2d');
+        const graficaExistente = Chart.getChart(contexto);
+        
+        if (graficaExistente) {
+          graficaExistente.destroy();
+          const nuevaGrafica = crearGrafica(contexto, 'line');
+          nuevaGrafica.options.plugins.title.text = '';
+          nuevaGrafica.update();
+        }
+      }
+    }
   });
 
   nuevoMenu.appendChild(seleccionValores);
@@ -580,18 +619,136 @@ function crearMenuDesplegable(contenedor, letra, columnas) {
 }
 
 /**
- * Verifica si existe un cuadro de fórmulas y lo elimina si existe.
- * 
- * @returns {void} True si existía un cuadro de fórmulas, false en caso contrario.
+ * Actualiza la gráfica con los datos de una columna específica.
+ * @param {number} graficaId - ID de la gráfica a actualizar.
+ * @param {string} nombreColumna - Nombre de la columna seleccionada.
+ * @returns {void}
  */
-function eliminarCuadroFormulas() {
-  const contenedorAnalisis = document.querySelector('.frame-analisis');
-  if (!contenedorAnalisis) return false;
+function actualizarGraficaConColumna(graficaId, nombreColumna) {
+  // Obtener la gráfica
+  const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
+  if (!graficaDiv) {
+    console.error('No se encontró la gráfica con ID:', graficaId);
+    return;
+  }
 
-  const cuadrosExistentes = Array.from(contenedorAnalisis.children);
-  const cuadros = cuadrosExistentes.filter(cuadro => cuadro.className == 'contenedor-formulas');
-  if (cuadros.length == 1) {
-    cuadros[0].remove()
+  const canvas = graficaDiv.querySelector('canvas');
+  if (!canvas) {
+    console.error('No se encontró el canvas de la gráfica');
+    return;
+  }
+
+  const contexto = canvas.getContext('2d');
+  const graficaExistente = Chart.getChart(contexto);
+  
+  if (!graficaExistente) {
+    console.error('No se encontró la instancia de Chart.js');
+    return;
+  }
+
+  // Obtener los datos de la columna
+  if (!window.datosGrafica || window.datosGrafica.length === 0) {
+    mostrarAlerta('Error', 'No hay datos cargados para mostrar en la gráfica.', 'error');
+    return;
+  }
+
+  try {
+    // Encontrar el índice de la columna (recordando que omitimos las primeras 3)
+    const encabezados = window.datosGrafica[0];
+    const indiceColumna = encabezados.indexOf(nombreColumna);
+    
+    if (indiceColumna === -1) {
+      mostrarAlerta('Error', `No se encontró la columna "${nombreColumna}" en los datos.`, 'error');
+      return;
+    }
+
+    // Extraer los datos de la columna (omitiendo el encabezado)
+    const datosColumna = window.datosGrafica.slice(1).map(fila => fila[indiceColumna]);
+    
+    // Filtrar valores vacíos, null o undefined
+    const datosLimpios = datosColumna.filter(valor => 
+      valor !== null && valor !== undefined && valor !== ''
+    );
+
+    if (datosLimpios.length === 0) {
+      mostrarAlerta('Error', `La columna "${nombreColumna}" no contiene datos válidos.`, 'error');
+      return;
+    }
+
+    console.log('Datos de la columna:', datosLimpios);
+
+    // FORZAR CONVERSIÓN A LÍNEA SI NO LO ES
+    const tipoGraficaActual = graficaExistente.config.type;
+    let graficaParaProcesar = graficaExistente;
+
+    if (tipoGraficaActual !== 'line') {
+      // Preservar título actual
+      const tituloActual = graficaExistente.options.plugins.title.text;
+      
+      // Destruir gráfica actual
+      graficaExistente.destroy();
+      
+      // Crear nueva gráfica de línea
+      graficaParaProcesar = crearGrafica(contexto, 'line');
+      
+      // Restaurar título si existía
+      if (tituloActual && tituloActual !== 'Gráfica sin datos - Aplica una fórmula para ver resultados') {
+        graficaParaProcesar.options.plugins.title.text = tituloActual;
+      }
+
+      // Actualizar el selector en la tarjeta para reflejar el cambio
+      const tarjetaGrafica = document.getElementById(graficaId);
+      if (tarjetaGrafica) {
+        const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
+        if (selectorTipo) {
+          selectorTipo.value = 'line';
+        }
+      }
+    }
+
+    // Detectar el tipo de datos
+    const todosNumeros = datosLimpios.every(valor => 
+      !isNaN(parseFloat(valor)) && isFinite(valor)
+    );
+
+    let labels = [];
+    let valores = [];
+
+    // Para gráficas de línea con parámetros, usar siempre puntos numerados
+    if (todosNumeros) {
+      // Si son números, crear puntos numerados
+      labels = datosLimpios.map((_, indice) => `Punto ${indice + 1}`);
+      valores = datosLimpios.map(valor => parseFloat(valor));
+    } else {
+      // Si son texto o mixto, usar frecuencias pero manteniendo formato línea
+      const frecuencias = {};
+      datosLimpios.forEach(valor => {
+        const clave = String(valor);
+        frecuencias[clave] = (frecuencias[clave] || 0) + 1;
+      });
+      
+      labels = Object.keys(frecuencias);
+      valores = Object.values(frecuencias);
+    }
+
+    // Actualizar la gráfica
+    graficaParaProcesar.options.plugins.title.text = `Datos de: ${nombreColumna}`;
+    graficaParaProcesar.data.labels = labels;
+    graficaParaProcesar.data.datasets[0].data = valores;
+    graficaParaProcesar.data.datasets[0].label = nombreColumna;
+    
+    // DESACTIVAR las etiquetas de datos para columnas (no fórmulas)
+    graficaParaProcesar.options.plugins.datalabels.display = false;
+    
+    graficaParaProcesar.update();
+
+    console.log('Gráfica actualizada con columna:', nombreColumna);
+    console.log('Labels:', labels);
+    console.log('Valores:', valores);
+
+  } catch (error) {
+    console.error('Error al procesar los datos de la columna:', error);
+    mostrarAlerta('Error', 'Error al procesar los datos de la columna seleccionada.', 'error');
   }
 }
 
@@ -909,6 +1066,8 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
     contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
   }
 }
+
+
 
 module.exports = { 
   agregarGrafica,
