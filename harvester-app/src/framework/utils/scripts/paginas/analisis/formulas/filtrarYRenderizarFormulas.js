@@ -4,7 +4,7 @@
  * @param {string} terminoBusqueda - Término de búsqueda para filtrar fórmulas.
  * @returns {void}
  */
-function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '') {
+function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDisponibles) {
   // Limpiar contenedor
   contenedor.innerHTML = '';
 

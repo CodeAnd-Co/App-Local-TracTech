@@ -5,7 +5,7 @@
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
-const { retirarDatos } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/retiraFormula.js`);
+const { limpiarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/limpiarGrafica.js`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/cargarFormulasIniciales.js`);
@@ -182,7 +182,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     if ( botonAplicarFormula ){
       await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
     }
-    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica);
+    console.log('graficaDiv: ', graficaDiv, 'graficaDiv.id: ', graficaDiv.id, 'grafica', grafico, 'nuevaId: ', nuevaId);
+    limpiarGrafica(nuevaId, datosOriginalesFormulas);
   })
 
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () =>

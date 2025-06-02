@@ -5,6 +5,7 @@ const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/ap
 const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
 const {obtenerParametrosTractor } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/obtenerParametrosTractor.js`);
+const { retirarDatos } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/retirarDatos.js`);
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
@@ -36,7 +37,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
   const datos = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
   let columnasActualizadas = obtenerParametrosTractor(datos, tractorSeleccionado);
 
-  cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
+cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
               <p class='texto'>Fórmulas</p>
           </div>
@@ -55,8 +56,13 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
                       <div class='contenedor-busqueda'>
                           <div class="mensaje-inicial">Escribe para buscar fórmulas...</div>
                       </div>
-                      <div class='boton-agregar'id = 'btnAplicarFormula'>
-                          <div>Aplicar Fórmula</div>
+                      <div style='display: flex; justify-content: space-between; gap: 1rem;'>
+                        <div class='boton-agregar'id = 'btnAplicarFormula'>
+                            <div>Aplicar Fórmula</div>
+                        </div>
+                        <div class='boton-agregar' id='btnRetirarDatos'>
+                            <div>Retirar datos</div>
+                        </div>
                       </div>
                   </div>
               </div>
@@ -71,6 +77,11 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
   const campoBusqueda = cuadroFormulas.querySelector('.search-section');
   const contenedorBusqueda = cuadroFormulas.querySelector('.contenedor-busqueda');
   const botonAplicarFormula = cuadroFormulas.querySelector('#btnAplicarFormula');
+  const botonRetirarDatos = cuadroFormulas.querySelector('#btnRetirarDatos');
+
+  botonRetirarDatos.addEventListener('click', () => {
+    retirarDatos(graficaId, datosOriginalesFormulas);
+  })
 
   botonAplicarFormula.addEventListener('click', () => {
     const formulaSeleccionada = contenedorBusqueda.querySelector('.formula-seleccionada');
@@ -207,7 +218,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
   // Configurar evento de búsqueda (filtrado local)
   campoBusqueda.addEventListener('input', (evento) => {
     const terminoBusqueda = evento.target.value.trim();
-    filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda);
+    filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda, formulasDisponibles);
   });
 
 
