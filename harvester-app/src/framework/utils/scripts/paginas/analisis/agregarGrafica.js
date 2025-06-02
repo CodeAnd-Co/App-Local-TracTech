@@ -829,7 +829,19 @@ function crearGrafica(contexto, tipo, color) {
             maxRotation: 45,
             minRotation: 0
           }, 
-          grid: { color: '#e0e0e0' },
+          // CONFIGURACIÓN MEJORADA DE GRID PARA EJE X - MÁS VISIBLE
+          grid: { 
+            display: ['line', 'bar'].includes(tipo), // Mostrar grid solo en líneas y barras
+            color: '#d0d0d0', // Color más oscuro para mejor visibilidad
+            lineWidth: 1,
+            drawBorder: true,
+            drawOnChartArea: true,
+            drawTicks: true,
+            // Añadir configuración adicional para mayor visibilidad
+            borderColor: '#999',
+            borderWidth: 2,
+            tickColor: '#d0d0d0'
+          },
           title: {
             display: true,
             text: 'Categorías',
@@ -842,7 +854,19 @@ function crearGrafica(contexto, tipo, color) {
             color: '#646464',
             beginAtZero: true
           }, 
-          grid: { color: '#e0e0e0' },
+          // CONFIGURACIÓN MEJORADA DE GRID PARA EJE Y - MÁS VISIBLE
+          grid: { 
+            display: ['line', 'bar'].includes(tipo), // Mostrar grid solo en líneas y barras
+            color: '#d0d0d0', // Color más oscuro para mejor visibilidad
+            lineWidth: 1,
+            drawBorder: true,
+            drawOnChartArea: true,
+            drawTicks: true,
+            // Añadir configuración adicional para mayor visibilidad
+            borderColor: '#999',
+            borderWidth: 2,
+            tickColor: '#d0d0d0'
+          },
           title: {
             display: true,
             text: 'Valores',
