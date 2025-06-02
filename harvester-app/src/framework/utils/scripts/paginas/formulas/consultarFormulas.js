@@ -173,7 +173,6 @@ async function renderizarFormulas() {
                 window.location.href = vista;
                 localStorage.setItem('seccion-activa', 'formulas');
             } catch (err) {
-                console.error('Error al cargar vista:', err);
                 mostrarAlerta('Error al cargar vista', `Verifica tu conexión e inténtalo de nuevo: ${err}`, 'error');
             }
         });
