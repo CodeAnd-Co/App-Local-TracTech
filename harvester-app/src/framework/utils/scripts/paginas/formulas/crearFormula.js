@@ -133,7 +133,15 @@ async function procesarFormula() {
     try {
         const respuesta = await guardarFormula(nombreFormula, formula);
         if (respuesta.ok) {
-            window.cargarModulo('formulas');
+
+            try{
+                await mostrarAlerta('Fórmula guardada', 'La fórmula ha sido guardada exitosamente.', 'success');
+                window.cargarModulo('formulas'); 
+            }catch (error) {
+                mostrarAlerta('Error', `Se pudo guardar la fórmula. Pero sucedio un error inesperado: ${error}`, 'error');
+                return;
+            }
+
         } else {
             mostrarAlerta('Error', 'Hubo un error al guardar la fórmula.', 'error');
             btnGuardar.innerHTML = contenidoOriginal;
@@ -144,7 +152,6 @@ async function procesarFormula() {
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;
     }
-    mostrarAlerta('Fórmula guardada', 'La fórmula ha sido guardada exitosamente.', 'success');
 }
 
 /**

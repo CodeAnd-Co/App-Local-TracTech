@@ -33,7 +33,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     let formulasGuardadas = localStorage.getItem('nombresFormulas');
     formulasGuardadas = JSON.parse(formulasGuardadas);
     if (formulasGuardadas && formulasGuardadas.includes(nombre) && nombre !== nombreOriginal) {
-        mostrarAlerta('Error', 'Ya existe una fórmula con ese nombre.', 'error');
+        await mostrarAlerta('Error', 'Ya existe una fórmula con ese nombre.', 'error');
         return;
         
     }
@@ -42,8 +42,14 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     try {
         const respuesta = await modificarFormula(id, nombre, formula, token);
         if (respuesta.ok) {
-            mostrarAlerta('Fórmula modificada', 'La fórmula ha sido modificada exitosamente.', 'success');
-            window.cargarModulo('formulas');
+            try{
+                await mostrarAlerta('Fórmula modificada', 'La fórmula ha sido modificada exitosamente.', 'success');
+                window.cargarModulo('formulas'); 
+            }catch (error) {
+                mostrarAlerta('Error', `Se pudo modificar la fórmula. Pero sucedio un error inesperado: ${error}`, 'error');
+                return;
+            }
+
         } else {
             mostrarAlerta('Error de conexión', respuesta.mensaje, 'error');
             return;
