@@ -1,13 +1,8 @@
-// RF - Usuario retira fórmula de gráfica
+// RF31 - Usuario retira fórmula - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf31/
 
-// Dependencias necesarias
 const Chart = require('chart.js/auto');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 
-// IMPORTANTE: Esta función necesita acceso a la variable global datosOriginalesFormulas
-// que está definida en agregarGrafica.js. Tienes dos opciones:
-
-// OPCIÓN 1: Recibir datosOriginalesFormulas como parámetro
 /**
  * Retira la fórmula aplicada de una gráfica y la restaura a su estado inicial.
  * @param {number} graficaId - ID de la gráfica de la cual retirar la fórmula.
