@@ -18,7 +18,7 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
         }
         
         if (!seleccion || typeof seleccion !== 'object') {
-            throw new Error('seleccion no es válida');
+            throw new Error('Selección no es válida');
         }
 
         const nuevoJSON = { hojas: {} };
@@ -43,12 +43,6 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 continue;
             }
 
-            // Verificar si es un array válido
-            if (!Array.isArray(datosHoja) || datosHoja.length === 0) {
-                console.warn(`Hoja ${nombreHoja} no tiene datos válidos`);
-                continue;
-            }
-
             const encabezados = datosHoja[0];
             const columnasDeseadas = configuracionSeleccion.columnas || [];
 
@@ -62,10 +56,6 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 indicesValidos = obtenerIndicesDeColumnas(encabezados, columnasDeseadas);
             }
             
-            if (indicesValidos.length === 0) {
-                console.warn(`No se encontraron columnas válidas en la hoja ${nombreHoja}`);
-                continue;
-            }
 
             // Filtrar las filas de datos (excluyendo encabezados)
             const filasFiltradas = obtenerFilasFiltradas(datosHoja, indicesValidos);
@@ -80,7 +70,6 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
 
         // Validar que se procesó al menos una hoja
         if (Object.keys(nuevoJSON.hojas).length === 0) {
-            console.warn('No se procesó ninguna hoja');
             mostrarAlerta('Advertencia', 'No se seleccionaron datos válidos para comparar.', 'warning');
             return nuevoJSON;
         }
@@ -112,10 +101,6 @@ function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
         const nombreLimpio = String(nombre).trim();
         const indice = encabezados.findIndex(encabezado => 
             String(encabezado).trim() === nombreLimpio);
-        
-        if (indice === -1) {
-            console.warn(`Columna "${nombre}" no encontrada en encabezados:`, encabezados);
-        }
         
         return indice;
     }).filter(indice => indice !== -1); // Filtrar los indices que se encontraron

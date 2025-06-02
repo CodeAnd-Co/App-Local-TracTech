@@ -666,7 +666,8 @@ function popularDropdown(elementoSeleccionado) {
             try {
                 columnas = JSON.parse(columnasGuardadas);
             } catch (error) {
-                console.error('Error al parsear columnas guardadas:', error);
+
+                mostrarAlerta('Error', `No se pudieron cargar las columnas guardadas. Verifica el formato del archivo: ${error}`, 'error');
                 columnas = [];
             }
         }
