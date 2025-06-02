@@ -6,9 +6,9 @@ const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
-const { consultaFormulasCasoUso } = require(`${rutaBase}src/backend/casosUso/formulas/consultaFormulas.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
+const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/cargarFormulasIniciales.js`);
 
 /* eslint-disable no-unused-vars */
  
@@ -17,31 +17,6 @@ let formulasDisponibles = [];
 
 // Variable global para almacenar los datos originales de fórmulas por gráfica
 const datosOriginalesFormulas = new Map();
-
-/**
- * Consulta las fórmulas una sola vez y las almacena globalmente.
- * @returns {Promise<void>}
- */
-async function cargarFormulasIniciales() {
-  try {
-    if (formulasDisponibles.length > 0) {
-      return; 
-    }
-
-    const respuesta = await consultaFormulasCasoUso();
-    
-    
-    if (!respuesta.ok || !respuesta.datos) {
-      throw new Error('Error al consultar fórmulas');
-    }
-
-    formulasDisponibles = respuesta.datos;
-  } catch (error) {
-    
-    formulasDisponibles = [];    
-    mostrarAlerta('Error', 'No se pudieron cargar las fórmulas disponibles. Revisa que sí haya fórmulas guardadas y estes conectado a internet', 'error');
-  }
-}
 
 /**
  * Agrega una nueva tarjeta de gráfica y su previsualización.
@@ -322,7 +297,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
   eliminarCuadroFormulas(); // Ahora esta función ya está definida
 
   // Cargar fórmulas una sola vez al inicio
-  await cargarFormulasIniciales();
+  await cargarFormulasIniciales(formulasDisponibles);
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
