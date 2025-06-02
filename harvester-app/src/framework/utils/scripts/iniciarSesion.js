@@ -26,9 +26,11 @@ async function manejarInicioSesion() {
     mostrarAlerta('Campos incompletos', 'Por favor, completa todos los campos.', 'warning');
     return;
   }
-
-  try {    // Intentar iniciar sesión llamando a la función iniciarSesion
-    const respuesta = await iniciarSesion(correo, contrasenia);
+  try {
+    // Obtener el ID del dispositivo antes del login para enviarlo al servidor
+    const dispositivoID = obtenerID();
+    // Intentar iniciar sesión enviando también el ID del dispositivo para registro
+    const respuesta = await iniciarSesion(correo, contrasenia, dispositivoID);
     if (respuesta.ok) {
       // Guardar el token en localStorage
       localStorage.setItem('token', respuesta.token);
@@ -39,14 +41,11 @@ async function manejarInicioSesion() {
       localStorage.setItem('permisos', JSON.stringify(listaPermisos));
       const usuario = resultado.usuario;
       localStorage.setItem('nombreUsuario', usuario);
-
       // Verificar si el usuario es superadministrador
       const esSuperAdmin = listaPermisos.includes(PERMISOS.SUPERADMIN);
       
       // Solo verificar estado del dispositivo si NO es superadministrador
       if (!esSuperAdmin) {
-        const dispositivoID = obtenerID();
-        
         const verificacion = await verificarEstado(respuesta.token, dispositivoID);
         if (!verificacion.estado) {
           mostrarAlerta('Aplicación deshabilitada', 'La aplicación ha sido deshabilitada por el administrador. Por favor, contacta al soporte técnico.', 'error');
@@ -54,7 +53,10 @@ async function manejarInicioSesion() {
           return;
         }
       }
-      
+
+      // Reiniciar verificación periódica después del login exitoso
+      await ipcRenderer.invoke('reiniciar-verificacion-periodica');
+
       const rutaInicio = `${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`;
       try {
           const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio,{Seccion: 'Inicio', Icono: 'Casa', permisos: listaPermisos});

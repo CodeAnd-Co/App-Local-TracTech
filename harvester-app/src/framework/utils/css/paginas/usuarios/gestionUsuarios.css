@@ -92,6 +92,25 @@
   font-size: 1.125rem;
 }
 
+
+/* Estilos para botón deshabilitado */
+.boton-deshabilitado {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    filter: grayscale(100%);
+}
+
+.boton-deshabilitado:hover {
+    background-color: #a61930 !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.boton-deshabilitado img {
+    opacity: 0.6;
+}
+
+
 .boton-editar,
 .boton-deshabilitar,
 .boton-eliminar {
