@@ -1,7 +1,7 @@
-// RF36 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF36
-// RF37 - Usuario modifica gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf37/
-// RF38 - Usuario elimina gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf38/
-// RF70 - Usuario carga formula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf70/
+// RF10 - Usuario añade gráfica a reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF10
+// RF12 - Usuario modifica gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF12/
+// RF11 - Usuario elimina gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF11/
+// RF30 - Usuario carga formula - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/RF30
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 Chart.register(ChartDataLabels);
@@ -114,7 +114,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   `;
 
   // Datos disponibles para fórmulas
-  const datos = localStorage.getItem('datosExcel');  
+  const datos = localStorage.getItem('datosExcel'); 
+  const hoja = localStorage.getItem('hojaSeleccionada'); // Obtener la hoja seleccionada 
   let columnas = [];
 
   // Cargar y parsear los datos del localStorage
@@ -331,6 +332,25 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
   // Almacenar el ID de la gráfica en el dataset
   cuadroFormulas.dataset.graficaId = graficaId;
 
+  // Obtener las columnas de la hoja seleccionada
+  const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
+  const datos = localStorage.getItem('datosExcel');
+  let columnasActualizadas = columnas;
+
+  if (datos && hojaSeleccionada) {
+    try {
+      const datosParseados = JSON.parse(datos);
+      if (datosParseados.hojas && datosParseados.hojas[hojaSeleccionada]) {
+        const datosHoja = datosParseados.hojas[hojaSeleccionada];
+        if (datosHoja.length > 0) {
+          columnasActualizadas = datosHoja[0].slice(3); // Omitir las primeras 3 columnas
+        }
+      }
+    } catch (error) {
+      console.error('Error al obtener columnas de la hoja seleccionada:', error);
+    }
+  }
+
   cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
               <p class='texto'>Fórmulas</p>
@@ -360,134 +380,139 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
   const contenedoesSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
-  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnas, graficaId);
+  crearMenuDesplegable(contenedoesSeleccion[0], 'A', columnasActualizadas, graficaId);
 
-// Configurar búsqueda de fórmulas
-const campoBusqueda = cuadroFormulas.querySelector('.search-section');
-const contenedorBusqueda = cuadroFormulas.querySelector('.contenedor-busqueda');
-const botonAplicarFormula = cuadroFormulas.querySelector('#btnAplicarFormula');
+  // Configurar búsqueda de fórmulas
+  const campoBusqueda = cuadroFormulas.querySelector('.search-section');
+  const contenedorBusqueda = cuadroFormulas.querySelector('.contenedor-busqueda');
+  const botonAplicarFormula = cuadroFormulas.querySelector('#btnAplicarFormula');
 
-botonAplicarFormula.addEventListener('click', () => {
-  const formulaSeleccionada = contenedorBusqueda.querySelector('.formula-seleccionada');
-  if (!formulaSeleccionada) {
-    mostrarAlerta('Error', 'Debes buscar y seleccionar una fórmula antes de aplicar.', 'error');
-    return;
-  }
+  botonAplicarFormula.addEventListener('click', () => {
+    const formulaSeleccionada = contenedorBusqueda.querySelector('.formula-seleccionada');
+    if (!formulaSeleccionada) {
+      mostrarAlerta('Error', 'Debes buscar y seleccionar una fórmula antes de aplicar.', 'error');
+      return;
+    }
 
-  // Verificar que hay datos disponibles
-  const datosExcel = localStorage.getItem('datosExcel');
-  if (!datosExcel) {
-    mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
-    return;
-  }
+    // Verificar que hay datos disponibles
+    const datosExcel = localStorage.getItem('datosExcel');
+    const hojaSeleccionada = localStorage.getItem('hojaSeleccionada'); // Obtener la hoja seleccionada
+    if (!datosExcel) {
+      mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
+      return;
+    }
 
-  // Asegurar que window.datosExcelGlobal existe
-  if (!window.datosExcelGlobal) {
-    try {
-      const datosParseados = JSON.parse(datosExcel);
-      if (Array.isArray(datosParseados)) {
-        window.datosExcelGlobal = {
-          hojas: {
-            'Hoja1': datosParseados
-          }
-        };
-      } else {
-        window.datosExcelGlobal = datosParseados;
+    // Asegurar que window.datosExcelGlobal existe
+    if (!window.datosExcelGlobal) {
+      try {
+        const datosParseados = JSON.parse(datosExcel);
+        if (Array.isArray(datosParseados)) {
+          window.datosExcelGlobal = {
+            hojas: {
+              'Hoja1': datosParseados
+            }
+          };
+        } else {
+          window.datosExcelGlobal = datosParseados;
+        }
+      } catch (error) {
+        mostrarAlerta('Error', 'Error al procesar los datos de Excel.', 'error');
+        return;
       }
+    }
+
+    // Buscar el input radio en el elemento padre (formula-objeto)
+    const formulaObjeto = formulaSeleccionada.closest('.formula-objeto');
+    const inputRadio = formulaObjeto.querySelector('input[type="radio"]');
+    
+    if (!inputRadio) {
+      mostrarAlerta('Error', 'Error al obtener los datos de la fórmula seleccionada.', 'error');
+      return;
+    }
+
+    // Obtener los datos directamente de las propiedades del elemento
+    const nombreFormula = inputRadio.formulaNombre;
+    const datosFormula = inputRadio.formulaDatos;
+
+    // Verificar que los datos están completos
+    if (!datosFormula || datosFormula.trim() === '') {
+      mostrarAlerta('Error', 'Los datos de la fórmula están vacíos o incompletos.', 'error');
+      return;
+    }
+
+
+    // Obtener la gráfica asociada
+    const graficaId = cuadroFormulas.dataset.graficaId;
+    const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
+    
+    if (!graficaDiv) {
+      mostrarAlerta('Error', 'No se encontró la gráfica asociada.', 'error');
+      return;
+    }
+
+    try {
+      let resultadoFormula;
+      if (hojaSeleccionada.length != 0) {
+        resultadoFormula = aplicarFormula(nombreFormula, datosFormula, hojaSeleccionada);
+      } else {
+        resultadoFormula = aplicarFormula(nombreFormula, datosFormula);
+      }
+      // Aplicar la fórmula a los datos
+      if (resultadoFormula.error) {
+        mostrarAlerta('Error', `Error al aplicar la fórmula: ${resultadoFormula.error}`, 'error');
+        return;
+      }
+
+      // GUARDAR DATOS ORIGINALES DE LA FÓRMULA
+      if (resultadoFormula.resultados) {
+        datosOriginalesFormulas.set(parseInt(graficaId), {
+          datos: resultadoFormula.resultados,
+          nombre: nombreFormula,
+          tipo: 'formula'
+        });
+      }
+
+      // Obtener el canvas y la gráfica existente
+      const canvas = graficaDiv.querySelector('canvas');
+      if (!canvas) {
+        mostrarAlerta('Error', 'No se encontró el canvas de la gráfica.', 'error');
+        return;
+      }
+
+      const contexto = canvas.getContext('2d');
+      const graficaExistente = Chart.getChart(contexto);
+      
+      if (graficaExistente && resultadoFormula.resultados) {
+        const resultados = resultadoFormula.resultados;
+        const tipoGrafica = graficaExistente.config.type;
+        
+        // Usar el procesamiento universal
+        const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, nombreFormula);
+        
+        // Actualizar la gráfica
+        graficaExistente.options.plugins.title.text = nombreFormula; 
+        graficaExistente.data.labels = datosRebuild.labels;
+        graficaExistente.data.datasets[0].data = datosRebuild.valores;
+
+        // Configurar etiquetas: ocultar SOLO en gráficas de línea
+        graficaExistente.options.plugins.datalabels.display = tipoGrafica !== 'line';
+
+        graficaExistente.update();
+        
+        mostrarAlerta('Éxito', `Fórmula "${nombreFormula}" aplicada correctamente a la gráfica.`, 'success');
+        
+        // Cerrar el cuadro de fórmulas
+        cuadroFormulas.remove();
+        
+      } else {
+        mostrarAlerta('Error', 'No se pudo encontrar la gráfica para actualizar o no hay resultados válidos.', 'error');
+      }
+      
     } catch (error) {
-      mostrarAlerta('Error', 'Error al procesar los datos de Excel.', 'error');
-      return;
+      console.error('Error al aplicar fórmula:', error);
+      mostrarAlerta('Error', `Error inesperado al aplicar la fórmula: ${error.message}`, 'error');
     }
-  }
-
-  // Buscar el input radio en el elemento padre (formula-objeto)
-  const formulaObjeto = formulaSeleccionada.closest('.formula-objeto');
-  const inputRadio = formulaObjeto.querySelector('input[type="radio"]');
-  
-  if (!inputRadio) {
-    mostrarAlerta('Error', 'Error al obtener los datos de la fórmula seleccionada.', 'error');
-    return;
-  }
-
-  // Obtener los datos directamente de las propiedades del elemento
-  const nombreFormula = inputRadio.formulaNombre;
-  const datosFormula = inputRadio.formulaDatos;
-
-  // Verificar que los datos están completos
-  if (!datosFormula || datosFormula.trim() === '') {
-    mostrarAlerta('Error', 'Los datos de la fórmula están vacíos o incompletos.', 'error');
-    return;
-  }
-
-
-  // Obtener la gráfica asociada
-  const graficaId = cuadroFormulas.dataset.graficaId;
-  const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
-  
-  if (!graficaDiv) {
-    mostrarAlerta('Error', 'No se encontró la gráfica asociada.', 'error');
-    return;
-  }
-
-  try {
-    // Aplicar la fórmula a los datos
-    const resultadoFormula = aplicarFormula(nombreFormula, datosFormula);
-    
-    if (resultadoFormula.error) {
-      mostrarAlerta('Error', `Error al aplicar la fórmula: ${resultadoFormula.error}`, 'error');
-      return;
-    }
-
-    // GUARDAR DATOS ORIGINALES DE LA FÓRMULA
-    if (resultadoFormula.resultados) {
-      datosOriginalesFormulas.set(parseInt(graficaId), {
-        datos: resultadoFormula.resultados,
-        nombre: nombreFormula,
-        tipo: 'formula'
-      });
-    }
-
-    // Obtener el canvas y la gráfica existente
-    const canvas = graficaDiv.querySelector('canvas');
-    if (!canvas) {
-      mostrarAlerta('Error', 'No se encontró el canvas de la gráfica.', 'error');
-      return;
-    }
-
-    const contexto = canvas.getContext('2d');
-    const graficaExistente = Chart.getChart(contexto);
-    
-    if (graficaExistente && resultadoFormula.resultados) {
-      const resultados = resultadoFormula.resultados;
-      const tipoGrafica = graficaExistente.config.type;
-      
-      // Usar el procesamiento universal
-      const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, nombreFormula);
-      
-      // Actualizar la gráfica
-      graficaExistente.options.plugins.title.text = nombreFormula; 
-      graficaExistente.data.labels = datosRebuild.labels;
-      graficaExistente.data.datasets[0].data = datosRebuild.valores;
-
-      // Configurar etiquetas: ocultar SOLO en gráficas de línea
-      graficaExistente.options.plugins.datalabels.display = tipoGrafica !== 'line';
-
-      graficaExistente.update();
-      
-      mostrarAlerta('Éxito', `Fórmula "${nombreFormula}" aplicada correctamente a la gráfica.`, 'success');
-      
-      // Cerrar el cuadro de fórmulas
-      cuadroFormulas.remove();
-      
-    } else {
-      mostrarAlerta('Error', 'No se pudo encontrar la gráfica para actualizar o no hay resultados válidos.', 'error');
-    }
-    
-  } catch (error) {
-    console.error('Error al aplicar fórmula:', error);
-    mostrarAlerta('Error', `Error inesperado al aplicar la fórmula: ${error.message}`, 'error');
-  }
-});
+  });
 
   // Configurar evento de búsqueda (filtrado local)
   campoBusqueda.addEventListener('input', (evento) => {
@@ -1046,30 +1071,66 @@ function actualizarGraficaConColumna(graficaId, nombreColumna) {
     return;
   }
 
-  // Obtener los datos de la columna
-  if (!window.datosGrafica || window.datosGrafica.length === 0) {
+  // Obtener la hoja seleccionada del localStorage
+  const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
+  const datos = localStorage.getItem('datosExcel');
+  
+  if (!datos) {
     mostrarAlerta('Error', 'No hay datos cargados para mostrar en la gráfica.', 'error');
     return;
   }
 
   try {
+    let datosHoja = null;
+    
+    // Parsear los datos del localStorage
+    const datosParseados = JSON.parse(datos);
+    
+    // Determinar qué hoja usar
+    if (hojaSeleccionada && hojaSeleccionada.trim() !== '') {
+      // Usar la hoja seleccionada específica
+      if (datosParseados.hojas && datosParseados.hojas[hojaSeleccionada]) {
+        datosHoja = datosParseados.hojas[hojaSeleccionada];
+      } else {
+        mostrarAlerta('Error', `No se encontró la hoja "${hojaSeleccionada}" en los datos.`, 'error');
+        return;
+      }
+    } else {
+      // Fallback: usar la primera hoja disponible o los datos directos
+      if (datosParseados.hojas) {
+        const nombrePrimeraHoja = Object.keys(datosParseados.hojas)[0];
+        datosHoja = datosParseados.hojas[nombrePrimeraHoja];
+      } else if (Array.isArray(datosParseados)) {
+        datosHoja = datosParseados;
+      } else {
+        mostrarAlerta('Error', 'No se pudieron cargar los datos de la hoja.', 'error');
+        return;
+      }
+    }
+
+    if (!datosHoja || datosHoja.length === 0) {
+      mostrarAlerta('Error', 'La hoja seleccionada no contiene datos.', 'error');
+      return;
+    }
+
     // Encontrar el índice de la columna
-    const encabezados = window.datosGrafica[0];
+    const encabezados = datosHoja[0];
     const indiceColumna = encabezados.indexOf(nombreColumna);
     
     if (indiceColumna === -1) {
-      mostrarAlerta('Error', `No se encontró la columna "${nombreColumna}" en los datos.`, 'error');
+      mostrarAlerta('Error', `No se encontró la columna "${nombreColumna}" en la hoja "${hojaSeleccionada || 'seleccionada'}".`, 'error');
       return;
     }
 
     // Extraer los datos de la columna (omitiendo el encabezado)
-    const datosColumna = window.datosGrafica.slice(1).map(fila => fila[indiceColumna]);
+    const datosColumna = datosHoja.slice(1).map(fila => fila[indiceColumna]);
     
     // GUARDAR DATOS ORIGINALES DE LA COLUMNA
     datosOriginalesFormulas.set(graficaId, {
       datos: datosColumna,
       nombre: nombreColumna,
-      tipo: 'columna'
+      tipo: 'columna',
+      hoja: hojaSeleccionada || 'Hoja por defecto'
     });
 
     const tipoGraficaActual = graficaExistente.config.type;
@@ -1078,7 +1139,8 @@ function actualizarGraficaConColumna(graficaId, nombreColumna) {
     const datosRebuild = procesarDatosUniversal(datosColumna, tipoGraficaActual, nombreColumna);
 
     // Actualizar la gráfica
-    graficaExistente.options.plugins.title.text = `Datos de: ${nombreColumna}`;
+    const tituloHoja = hojaSeleccionada ? ` (${hojaSeleccionada})` : '';
+    graficaExistente.options.plugins.title.text = `Datos de: ${nombreColumna}${tituloHoja}`;
     graficaExistente.data.labels = datosRebuild.labels;
     graficaExistente.data.datasets[0].data = datosRebuild.valores;
     graficaExistente.data.datasets[0].label = nombreColumna;

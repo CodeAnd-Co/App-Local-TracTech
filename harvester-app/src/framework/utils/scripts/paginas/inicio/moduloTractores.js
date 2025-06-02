@@ -1,13 +1,16 @@
 // RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
 // RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
-const tractoresSeleccionados = {};
 const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
 const { seleccionaDatosAComparar } = require(`${rutaBase}/src/backend/casosUso/excel/seleccionaDatosAComparar.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 
 /* eslint-disable no-undef*/
+
+// VARIABLES GLOBALES SIMPLIFICADAS
+let hojaSeleccionada = null; // Solo una hoja a la vez
+let columnasSeleccionadas = []; // Array simple de nombres de columnas
 
 inicializarModuloTractores();
 
@@ -156,7 +159,7 @@ function crearElementoTractor(nombreTractor, datosExcel) {
 }
 
 /**
- * Cambia la seleccion de un tractor dentro del arreglo global tractoresSeleccionados
+ * Cambia la seleccion de un tractor - versión ultra simple
  * 
  * @function cambiarSeleccionTractor 
  * @param {string} nombreTractor
@@ -164,32 +167,118 @@ function crearElementoTractor(nombreTractor, datosExcel) {
  * @returns {void}
  */
 function cambiarSeleccionTractor(nombreTractor, casillaVerificacion) {
-    // Verificar si el tractor ya existe en tractoresSeleccionados
-    if (!tractoresSeleccionados[nombreTractor]) {
-        tractoresSeleccionados[nombreTractor] = {
-            seleccionado: false,
-            columnas: []
-        };
+    console.log(`Click en tractor: ${nombreTractor}`);
+    
+    // Verificar si ya está en el arreglo
+    const indice = tractoresParaAnalisis.indexOf(nombreTractor);
+    
+    if (indice === -1) {
+        // Si NO está, lo agregamos
+        tractoresParaAnalisis.push(nombreTractor);
+        console.log(`${nombreTractor} AGREGADO. Arreglo actual:`, tractoresParaAnalisis);
+    } else {
+        // Si YA está, lo sacamos
+        tractoresParaAnalisis.splice(indice, 1);
+        console.log(`${nombreTractor} ELIMINADO. Arreglo actual:`, tractoresParaAnalisis);
     }
-
-    // Alternar estado de la selección
-    const estadoActual = tractoresSeleccionados[nombreTractor].seleccionado;
-    tractoresSeleccionados[nombreTractor].seleccionado = !estadoActual;
-
-    // Actualizar el ícono en el DOM
+    
+    // Actualizar el ícono
     cambiarIconoMarcadoADesmarcado(casillaVerificacion);
-
-    // Guardar el estado de selección en localStorage
-    localStorage.setItem('tractoresSeleccionados', JSON.stringify(tractoresSeleccionados));
+    
+    // Guardar en localStorage para el análisis
+    localStorage.setItem('tractoresParaAnalisis', JSON.stringify(tractoresParaAnalisis));
+    console.log('Guardado en localStorage:', tractoresParaAnalisis);
 }
 
 /**
- * Muestra las colmunas de un tractor específico en el contenedor de columnas
+ * Procesa todos los tractores seleccionados y guarda los datos filtrados
+ */
+function procesarYGuardarDatos() {
+    const datosExcel = cargarDatosExcel();
+    const nuevoJSON = { hojas: {} };
+    
+    // Recorrer todos los tractores seleccionados
+    Object.keys(tractoresSeleccionados).forEach(nombreTractor => {
+        const config = tractoresSeleccionados[nombreTractor];
+        
+        // Solo procesar si está seleccionado
+        if (config.seleccionado) {
+            const datosHoja = datosExcel.hojas[nombreTractor];
+            
+            if (datosHoja && Array.isArray(datosHoja) && datosHoja.length > 0) {
+                // Si no hay columnas específicas, usar todas
+                if (config.columnas.length === 0) {
+                    console.log(`${nombreTractor}: Usando todas las columnas`);
+                    nuevoJSON.hojas[nombreTractor] = datosHoja; // Toda la hoja
+                } else {
+                    console.log(`${nombreTractor}: Usando columnas específicas:`, config.columnas);
+                    // Filtrar solo las columnas seleccionadas
+                    const encabezados = datosHoja[0];
+                    const indices = config.columnas.map(col => encabezados.indexOf(col)).filter(i => i !== -1);
+                    
+                    if (indices.length > 0) {
+                        const hojaFiltrada = datosHoja.map(fila => 
+                            indices.map(indice => fila[indice])
+                        );
+                        nuevoJSON.hojas[nombreTractor] = hojaFiltrada;
+                    }
+                }
+            }
+        }
+    });
+    
+    // Guardar en localStorage
+    localStorage.setItem('tractoresSeleccionados', JSON.stringify(tractoresSeleccionados));
+    localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
+    
+    console.log('Datos procesados y guardados:', nuevoJSON);
+}
+
+/**
+ * Mostrar u ocultar las columnas de una hoja perteneciente a un tractor
+ * 
+ * @function manejarClickTractor
+ * @param {string} nombreTractor
+ * @param {object} datosExcel - objeto con las hojas del excel
+ * @returns {void}
+ */
+function manejarClickTractor(tractorNombre, datosExcel) {
+    const contenedor = document.getElementById('contenedorColumnas');
+
+    // Si ya se muestran las columnas de una hoja, la ocultamos
+    if (contenedor.dataset.tractorActual === tractorNombre) {
+        contenedor.style.display = 'none';
+        contenedor.dataset.tractorActual = '';
+        
+        // Limpiar selección
+        hojaSeleccionada = null;
+        columnasSeleccionadas = [];
+        localStorage.removeItem('hojaSeleccionada');
+        localStorage.removeItem('columnasSeleccionadas');
+    } else {
+        // Seleccionar nueva hoja
+        hojaSeleccionada = tractorNombre;
+        columnasSeleccionadas = []; // Reset columnas al cambiar de hoja
+        
+        // Guardar en localStorage
+        localStorage.setItem('hojaSeleccionada', hojaSeleccionada);
+        localStorage.setItem('columnasSeleccionadas', JSON.stringify(columnasSeleccionadas));
+        
+        console.log(`Hoja seleccionada: ${hojaSeleccionada}`);
+        
+        mostrarColumnasTractor(tractorNombre, datosExcel);
+        contenedor.style.display = 'block';
+        contenedor.dataset.tractorActual = tractorNombre;
+    }
+}
+
+/**
+ * Muestra las columnas de un tractor específico en el contenedor de columnas
  * Permite la seleccion individual
  * 
  * @function mostrarColumnasTractor
  * @param {string} nombreTractor
- * @param {object} datosExcel - objeto con als hojas del excel
+ * @param {object} datosExcel - objeto con las hojas del excel
  * @returns {void}
  */
 function mostrarColumnasTractor(nombreTractor, datosExcel) {
@@ -204,25 +293,13 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
         return;
     }
 
-    // Guardar los datos del tractor seleccionado en localStorage
-    localStorage.setItem('datosFiltradosExcel', JSON.stringify({
-        nombreTractor: nombreTractor,
-        datos: datosHoja
-    }));
-
     // Obtener las columnas del primer objeto
     const columnas = obtenerColumnas(datosHoja);
     if (!columnas.length) {
         mostrarMensaje(columnasContenedor, 'Formato de datos no reconocido')
         return;
     }
-
-    // Asegurarse de que el objeto para este tractor exista en tractoresSeleccionados
-    if (!tractoresSeleccionados[nombreTractor]) {
-        tractoresSeleccionados[nombreTractor] = { 
-            seleccionado: false, columnas: [] 
-        };
-    }
+    
     columnas.forEach(nombreColumna => {
         const columnaDiv = crearElementoColumna(nombreTractor, nombreColumna);
         columnasContenedor.appendChild(columnaDiv);
@@ -266,8 +343,8 @@ function crearElementoColumna(nombreTractor, nombreColumna) {
     const casillaVerificacion = document.createElement('img');
     casillaVerificacion.className = 'check-box';
 
-    // Verificar si la columna ya está seleccionada en tractoresSeleccionados
-    if (tractoresSeleccionados[nombreTractor]?.columnas.includes(nombreColumna)) {
+    // Verificar si la columna ya está seleccionada
+    if (columnasSeleccionadas.includes(nombreColumna)) {
         casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box.svg`; // Marcado
     } else {
         casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Desmarcado
@@ -275,14 +352,7 @@ function crearElementoColumna(nombreTractor, nombreColumna) {
 
     // Agregar evento para alternar la selección de la columna
     columnaDiv.addEventListener('click', () => {
-        seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion);
-
-        // Actualizar visualmente el estado del checkbox
-        if (tractoresSeleccionados[nombreTractor]?.columnas.includes(nombreColumna)) {
-            casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box.svg`; // Marcado
-        } else {
-            casillaVerificacion.src = `${rutaBase}src/framework/utils/iconos/check_box_outline_blank.svg`; // Desmarcado
-        }
+        seleccionarColumna(nombreColumna, casillaVerificacion);
     });
 
     columnaDiv.appendChild(nombreColumnaDiv);
@@ -291,84 +361,86 @@ function crearElementoColumna(nombreTractor, nombreColumna) {
 }
 
 /**
- * Selecciona o deselecciona una columna en el panel de columnas de un tractor.
- * Esta función actualiza la lista de columnas seleccionadas para el tractor específico,
- * y cambia el icono del checkbox de acuerdo con el estado de selección de la columna.
- * 
- * @function seleccionarColumna
- * @param {string} nombreTractor - El nombre del tractor cuya columna se va a seleccionar o deseleccionar.
- * @param {string} nombreColumna - El nombre de la columna que se desea seleccionar o deseleccionar.
- * @param {HTMLElement} casillaVerificacion - El elemento de imagen (checkbox) que refleja el estado de selección de la columna.
- * @returns {void}
+ * Selecciona o deselecciona una columna - versión ultra simple
  */
-function seleccionarColumna(nombreTractor, nombreColumna, casillaVerificacion) {
-    // Verificamos si el tractor está seleccionado
-    if (!tractoresSeleccionados[nombreTractor]) {
-        tractoresSeleccionados[nombreTractor] = {
-            seleccionado: false, // El tractor no está seleccionado por defecto
-            columnas: [] // No tiene columnas seleccionadas inicialmente
-        };
-    }
-
-    // Verificamos si la columna ya está seleccionada
-    const seleccion = tractoresSeleccionados[nombreTractor];
-    const indice = seleccion.columnas.indexOf(nombreColumna);
+function seleccionarColumna(nombreColumna, casillaVerificacion) {
+    console.log(`Click en columna: ${nombreColumna}`);
+    
+    const indice = columnasSeleccionadas.indexOf(nombreColumna);
+    
     if (indice === -1) {
-        // Si la columna no está seleccionada, la agregamos
-        seleccion.columnas.push(nombreColumna);
+        // Agregar columna
+        columnasSeleccionadas.push(nombreColumna);
+        console.log(`Columna ${nombreColumna} AGREGADA. Columnas actuales:`, columnasSeleccionadas);
     } else {
-        // Si la columna ya está seleccionada, la deseleccionamos
-        seleccion.columnas.splice(indice, 1);
+        // Quitar columna
+        columnasSeleccionadas.splice(indice, 1);
+        console.log(`Columna ${nombreColumna} ELIMINADA. Columnas actuales:`, columnasSeleccionadas);
     }
-    seleccion.columnas.sort();
-
-    cambiarIconoMarcadoADesmarcado(casillaVerificacion)
+    
+    // Actualizar ícono
+    cambiarIconoMarcadoADesmarcado(casillaVerificacion);
+    
+    // Guardar en localStorage
+    localStorage.setItem('columnasSeleccionadas', JSON.stringify(columnasSeleccionadas));
+    console.log('Columnas guardadas en localStorage:', columnasSeleccionadas);
 }
 
 /**
- * Mostrar u ocultar las columnas de una hoja perteneciente a un tractor
- * 
- * @function manejarClickTractor
- * @param {string} nombreTractor
- * @param {object} datosExcel - objeto con las hojas del excel
- * @returns {void}
- */
-function manejarClickTractor(tractorNombre, datosExcel) {
-    const contenedor = document.getElementById('contenedorColumnas');
-
-    // Si ya se muestran las columnas de una hoja, la ocultamos
-    if (contenedor.dataset.tractorActual === tractorNombre) {
-        contenedor.style.display = 'none';
-        contenedor.dataset.tractorActual = '';
-    } else {
-        mostrarColumnasTractor(tractorNombre, datosExcel);
-        contenedor.style.display = 'block';
-        contenedor.dataset.tractorActual = tractorNombre;
-    }
-}
-
-
-/**
- * Inicializa la funcionalidad del botón de reporte 
- * Configura el evento click para navegar al módulo de análisis
- * 
- * @function botonReporte
- * @param {Object} datosExcel - Los datos del excel
- * @returns {void}
+ * Botón de reporte ultra simple
  */
 async function botonReporte(datosExcel) {
     const botonAnalisis = document.querySelector('.primario');
     botonAnalisis.addEventListener('click', async () => {
-        const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
-        try {
-            seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
-            var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
-            window.location.href = vista;
-            localStorage.setItem('seccion-activa', 'analisis');
-        } catch {
-            mostrarAlerta('Ocurrió un problema', 'No se pudo cargar el módulo de análisis.', 'error');
+        
+        // Cargar datos desde localStorage
+        const hoja = localStorage.getItem('hojaSeleccionada');
+        const columnas = JSON.parse(localStorage.getItem('columnasSeleccionadas') || '[]');
+        
+        if (!hoja) {
+            mostrarAlerta('Error', 'No hay hoja seleccionada. Haz clic en un tractor para seleccionarlo.', 'error');
+            return;
         }
-    })
+        
+        console.log('Hoja seleccionada:', hoja);
+        console.log('Columnas seleccionadas:', columnas);
+        
+        // Crear objeto con los datos para análisis
+        const datosHoja = datosExcel.hojas[hoja];
+        let datosParaAnalisis = { hojas: {} };
+        
+        if (columnas.length === 0) {
+            // Si no hay columnas específicas, usar toda la hoja
+            console.log('No hay columnas específicas, usando toda la hoja');
+            datosParaAnalisis.hojas[hoja] = datosHoja;
+        } else {
+            // Filtrar solo las columnas seleccionadas
+            console.log('Filtrando columnas específicas:', columnas);
+            const encabezados = datosHoja[0];
+            const indices = columnas.map(col => encabezados.indexOf(col)).filter(i => i !== -1);
+            
+            if (indices.length > 0) {
+                const hojaFiltrada = datosHoja.map(fila => 
+                    indices.map(indice => fila[indice])
+                );
+                datosParaAnalisis.hojas[hoja] = hojaFiltrada;
+            } else {
+                // Si no se encontraron columnas válidas, usar toda la hoja
+                datosParaAnalisis.hojas[hoja] = datosHoja;
+            }
+        }
+        
+        // Guardar los datos para el análisis
+        localStorage.setItem('datosFiltradosExcel', JSON.stringify(datosParaAnalisis));
+        
+        console.log('Navegando a análisis con datos:', datosParaAnalisis);
+        
+        // Navegar
+        const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
+        var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
+        window.location.href = vista;
+        localStorage.setItem('seccion-activa', 'analisis');
+    });
 }
 
 /**
