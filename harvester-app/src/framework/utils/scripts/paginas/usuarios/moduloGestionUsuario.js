@@ -391,6 +391,8 @@ function mostrarUsuarios(usuarios) {
             if (respuesta) {
                 await eliminarUsuario(id); // Ahora puedes usar await aquí
                 setTimeout(() => {
+                    const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
+                    columnaCrear.style.display = 'none';
                     inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
                 }, 500);
             }
