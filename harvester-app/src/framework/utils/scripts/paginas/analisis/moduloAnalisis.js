@@ -47,6 +47,7 @@ async function inicializarModuloAnalisis() {
       botonPDF.disabled = false;
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
+      mostrarAlerta('Reporte descargado', 'El reporte se ha guardado correctamente.', 'success');
     });
   });
 
