@@ -6,6 +6,8 @@ const { verificarEstado } = require('./backend/servicios/verificarEstado');
 const { obtenerID } = require('./backend/servicios/generadorID');
 const { PERMISOS } = require('./framework/utils/scripts/middleware/auth');
 
+const INTERVALOTIEMPO = 120000; // 2 minutos en milisegundos
+
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
 if (require('electron-squirrel-startup')) {
@@ -56,7 +58,7 @@ function iniciarVerificacionPeriodica() {
     // Verificar cada 2 minutos solo para usuarios autenticados
     const verificacionIntervalo = setInterval(async () => {
         await verificarEstadoUsuarioAutenticado();
-    }, 2 * 60 * 1000);
+    }, INTERVALOTIEMPO);
 
     // Verificación inicial después de 15 segundos
     setTimeout(verificarEstadoUsuarioAutenticado, 15000);
