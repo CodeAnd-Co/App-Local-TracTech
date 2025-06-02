@@ -602,7 +602,6 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
 
     const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
-    // TODO: Utilizar estructuras de control en lugar de operadores ternarios
     // Flags de “campo modificado”
     const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
     const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
@@ -718,10 +717,12 @@ function configurarValidacionesCampos() {
         campoEntrada.addEventListener(evento, () => {
             const valor = campoEntrada.value;
 
-            if (valor.trim() === '') {
-                campoEntrada.classList.add('inputError');
-                mensajeError.textContent = 'El campo no puede estar vacío';
-                return;
+            if(modoActual !== modoFormulario.EDITAR) {
+                if (valor.trim() === '') {
+                    campoEntrada.classList.add('inputError');
+                    mensajeError.textContent = 'El campo no puede estar vacío';
+                    return;
+                }
             }
 
             // Validar el campo
