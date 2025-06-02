@@ -105,7 +105,6 @@ async function renderizarFormulas() {
                         const formulaId = evento.currentTarget.getAttribute('data-id');
 
                         if (!formulaId) {
-                            console.warn('No se encontró data-id en el botón.');
                             return;
                         }
 
@@ -126,7 +125,7 @@ async function renderizarFormulas() {
                             }
                             inicializarModificarFormula(idFormula, Nombre, Datos);
                         } else {
-                            console.warn('No se encontró una fórmula con id:', formulaId);
+                            mostrarAlerta('Error', `No se encontró la fórmula.`, 'error');
                         }
                     });
                 });

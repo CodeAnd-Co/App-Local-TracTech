@@ -86,7 +86,6 @@ function actualizarCaracteres(areaEscritura) {
   const contador = areaEscritura.parentElement?.querySelector('.contador-caracteres');
 
   if (!contador) {
-    console.warn('No se encontró el elemento con clase .contador-caracteres');
     return;
   }
 

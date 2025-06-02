@@ -36,12 +36,7 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 continue;
             }
 
-            // Verificar si la hoja existe en los datos
-            const datosHoja = hojas[nombreHoja];
-            if (!datosHoja) {
-                console.warn(`Hoja ${nombreHoja} no encontrada en los datos`);
-                continue;
-            }
+          
 
             const encabezados = datosHoja[0];
             const columnasDeseadas = configuracionSeleccion.columnas || [];
@@ -125,7 +120,6 @@ function obtenerFilasFiltradas(hoja, indices) {
     // Tomar todas las filas excepto la primera (encabezados) y filtrar por las columnas seleccionadas
     const filasFiltradas = hoja.slice(1).map(fila => {
         if (!Array.isArray(fila)) {
-            console.warn('Fila no es un array válido:', fila);
             return indices.map(() => null); // Devolver nulls para mantener estructura
         }
         
