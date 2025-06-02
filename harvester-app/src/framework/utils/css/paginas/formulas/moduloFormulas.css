@@ -220,7 +220,7 @@
   flex: 1;
   position: relative;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: pre;
   
 }
 .texto-usuario {
