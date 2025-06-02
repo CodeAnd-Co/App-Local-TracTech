@@ -2,6 +2,7 @@
 
 const { mostrarAlerta } = require("../../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal");
 const { extraerNumero } = require('../../servicios/extraerNumero.js');
+const { obtenerParametrosSeleccionados, obtenerTractoresSeleccionados } = require('./obtenerDatosSeleccionados.js');
 
 /**
  * Filtra los datos del excel por hojas(tractores) y columnas seleccionadas
@@ -31,10 +32,9 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
             const encabezadosFiltrados = indicesValidos.map(indice => encabezados[indice]);
 
             
-            // Limpiar datos de voltaje para tratarlos como números.
+            // Limpiar datos de voltaje para tratarlos como números.4
             limpiarColumnas('Bat(V)', encabezadosFiltrados, filasFiltradas);
             limpiarColumnas('ADC', encabezadosFiltrados, filasFiltradas);
-
             
             // Guardar la hoja filtrada en el nuevo JSON
             nuevoJSON.hojas[nombreHoja] = [
@@ -42,13 +42,20 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 // Usamos el operador de propagación para insertar cada fila como un elemento individual
                 ...filasFiltradas
             ];
-        
+            
         }
 
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
 
-    } catch {
+        // Guardar todos los parámetros que hayan sido seleccionados para todos los tractores en localStorage
+        const parametrosSeleccionados = obtenerParametrosSeleccionados(nuevoJSON);
+        localStorage.setItem('parametrosSeleccionados', JSON.stringify(parametrosSeleccionados));
+
+        const tractoresSeleccionados = obtenerTractoresSeleccionados(nuevoJSON);
+        localStorage.setItem('tractoresSeleccionados', JSON.stringify(tractoresSeleccionados));
+
+    } catch(error) {
         mostrarAlerta('Error al procesar los datos', 'Ocurrió un error al filtrar los datos del Excel.', 'error');
     }
 }
@@ -85,9 +92,9 @@ function obtenerFilasFiltradas(hoja, indices) {
  * Limpia las filas seleccionadas para quitarles los caracteres no numéricos de un campo específico.
  * 
  * @param {string} - Campo a limpiar.
- * @param {Array<any>} encabezadosFiltrados - .
- * @param {Array<number>} indices - Índices de columnas a conservar.
- * @returns {Array<Array<any>>} Filas filtradas.
+ * @param {Array<any>} encabezadosFiltrados - Encabezados filtrados.
+ * @param {Array<number>} filasFiltradas - Filas de datos filtrados.
+ * @returns {Array<Array<any>>} Filas filtradas con las columnas correspondientes limpiadas.
  */
 function limpiarColumnas(campo, encabezadosFiltrados, filasFiltradas) {
     if( encabezadosFiltrados.includes(campo) ){

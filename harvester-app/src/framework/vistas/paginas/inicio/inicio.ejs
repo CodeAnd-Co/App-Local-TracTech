@@ -27,4 +27,6 @@
       </div>
     </div>
     <script src='<%= rutaBase %>src/framework/utils/scripts/paginas/inicio/seleccionarArchivo.js'></script>
+
+<%- include('../../includes/componentes/moleculas/botonTextoConIcono/botonTextoConIcono.ejs', { idBoton: 'eliminar', color: 'rojo', configElementos: { nombreIcono: 'Delete', textoInterior: 'Eliminar',direccion: 'derecha', tamano: 'lg'}}) %>
 <%- include ('../../includes/piePagina.ejs')%>
