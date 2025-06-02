@@ -105,12 +105,13 @@ async function descargarPDF() {
 
   Array.from(contenedorPrevisualizacion.children).forEach(elemento => {
     if (elemento.classList.contains('previsualizacion-texto')) {
+      const espaciadoArriba = 15;
+      const espaciadoAbajo = 30;
       let tamanoFuente = 11.5;
       let estiloFuente = 'normal';
-      let espaciado = 50;
       let alineado = 'left';
-      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 50; }
-      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 45; }
+      if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold' }
+      if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold' }
       if (elemento.style?.getPropertyValue('text-align') == 'center') { alineado =  'center'}
       if (elemento.style?.getPropertyValue('text-align') == 'right') { alineado =  'right'}
 
@@ -122,8 +123,9 @@ async function descargarPDF() {
         if (!texto) return;
 
         const lineas = documentoPDF.splitTextToSize(texto, anchoPagina);
+        const posicionYAgregar = (lineas.length * tamanoFuente) + espaciadoAbajo + espaciadoArriba
 
-        if (posicionY + lineas.length * tamanoFuente + espaciado > altoPagina + margen) {
+        if (posicionY + posicionYAgregar > altoPagina + margen) {
           documentoPDF.addPage();
           posicionY = margen;
         }
@@ -138,9 +140,9 @@ async function descargarPDF() {
           ejeXPdf = (anchoPagina + (margen));
         } 
 
-        documentoPDF.text(lineas, ejeXPdf, posicionY, { align: alineado });
+        documentoPDF.text(lineas, ejeXPdf, posicionY + tamanoFuente + espaciadoArriba, { align: alineado });
 
-        posicionY += lineas.length * tamanoFuente + espaciado;
+        posicionY += posicionYAgregar;
       })
 
     } else if (elemento.classList.contains('previsualizacion-grafica')) {
@@ -150,18 +152,14 @@ async function descargarPDF() {
 
       const imagen = lienzo.toDataURL('image/png');
       const proporcion = lienzo.height / lienzo.width;
-      let anchoImagen = anchoPagina;
-      let altoImagen = anchoPagina * proporcion;
-      let desplazamiento = 0;
-      if (proporcion == 1) {
-        anchoImagen /= 2
-        altoImagen /= 2;
-        desplazamiento = anchoImagen / 2
-      }
-      const espaciado = 15;
-      const anchoFondo = 520;
-      const altoFondo = 265 + espaciado;
+      const anchoImagen = anchoPagina;
+      const altoImagen = anchoPagina * proporcion;
+      const espaciado = 10;
+      const espaciadoFonodo = 5;
+      const anchoFondo = anchoImagen;
+      const altoFondo = altoImagen + (espaciado * 2) + espaciadoFonodo;
       const radioFondo = 6;
+      const margenAbajo = 15;
 
       if (posicionY + altoImagen > altoPagina + margen) {
         documentoPDF.addPage();
@@ -170,8 +168,8 @@ async function descargarPDF() {
 
       documentoPDF.setFillColor(224, 224, 224);
       documentoPDF.roundedRect(margen, posicionY, anchoFondo, altoFondo, radioFondo, radioFondo, 'F');
-      documentoPDF.addImage(imagen, 'PNG', margen + desplazamiento, posicionY, anchoImagen, altoImagen);
-      posicionY += altoFondo + espaciado * 2;
+      documentoPDF.addImage(imagen, 'PNG', margen, posicionY + espaciado, anchoImagen, altoImagen);
+      posicionY += altoFondo + margenAbajo;
     }
   });
 
