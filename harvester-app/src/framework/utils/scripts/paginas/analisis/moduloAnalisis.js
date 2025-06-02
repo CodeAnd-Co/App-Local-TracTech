@@ -104,8 +104,11 @@ async function descargarPDF() {
       let tamanoFuente = 11.5;
       let estiloFuente = 'normal';
       let espaciado = 50;
+      let alineado = 'left';
       if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 50; }
       if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 45; }
+      if (elemento.style?.getPropertyValue('text-align') == 'center') { alineado =  'center'}
+      if (elemento.style?.getPropertyValue('text-align') == 'right') { alineado =  'right'}
 
       documentoPDF.setFontSize(tamanoFuente);
       documentoPDF.setFont(undefined, estiloFuente);
@@ -121,7 +124,17 @@ async function descargarPDF() {
           posicionY = margen;
         }
 
-        documentoPDF.text(lineas, margen, posicionY);
+        let ejeXPdf = margen
+
+        if(alineado == 'center'){
+          ejeXPdf = (anchoPagina + (margen * 2))/2;
+        } 
+
+        if(alineado == 'right'){
+          ejeXPdf = (anchoPagina + (margen));
+        } 
+
+        documentoPDF.text(lineas, ejeXPdf, posicionY, { align: alineado });
 
         posicionY += lineas.length * tamanoFuente + espaciado;
       })
