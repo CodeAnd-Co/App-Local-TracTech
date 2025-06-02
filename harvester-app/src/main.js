@@ -6,6 +6,8 @@ const { verificarEstado } = require('./backend/servicios/verificarEstado');
 const { obtenerID } = require('./backend/servicios/generadorID');
 const { PERMISOS } = require('./framework/utils/scripts/middleware/auth');
 
+const INTERVALOTIEMPO = 120000; // 2 minutos en milisegundos
+
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
 if (require('electron-squirrel-startup')) {
@@ -44,36 +46,44 @@ const createWindow = async () => {
   mainWindow.maximize();
 
   iniciarVerificacionPeriodica();
-  // Abrir las herramientas de desarrollo.
-  // mainWindow.webContents.openDevTools();
 };
 
-// Este método se llamará cuando Electron haya terminado de inicializar
-// y esté listo para crear ventanas del navegador.
 
 function iniciarVerificacionPeriodica() {
-    // Verificar cada 2 minutos
+    // Limpiar cualquier verificación existente antes de crear una nueva
+    if (app.verificacionIntervalo) {
+        clearInterval(app.verificacionIntervalo);
+    }
+    
+    // Verificar cada 2 minutos solo para usuarios autenticados
     const verificacionIntervalo = setInterval(async () => {
-        await verificarYManejarEstado();
-    }, 2 * 60 * 1000);
+        await verificarEstadoUsuarioAutenticado();
+    }, INTERVALOTIEMPO);
 
-    // Verificación inicial
-    setTimeout(verificarYManejarEstado, 15000); // 15 segundos después del inicio
+    // Verificación inicial después de 15 segundos
+    setTimeout(verificarEstadoUsuarioAutenticado, 15000);
     
     // Guardar el intervalo para poder limpiarlo si es necesario
     app.verificacionIntervalo = verificacionIntervalo;
 }
 
 /**
- * Verifica el estado y maneja la deshabilitación si es necesario
+ * Verifica el estado solo para usuarios autenticados
  */
-async function verificarYManejarEstado() {
+async function verificarEstadoUsuarioAutenticado() {
     const token = await obtenerTokenAlmacenado();
-    const dispositivoId = obtenerID();
     
+    // Solo verificar si hay token (usuario autenticado)
     if (!token) {
+        // Si no hay token, detener la verificación periódica
+        if (app.verificacionIntervalo) {
+            clearInterval(app.verificacionIntervalo);
+            app.verificacionIntervalo = null;
+        }
         return;
     }
+    
+    const dispositivoId = obtenerID();
     
     // Verificar si el usuario es superadministrador
     const permisos = await obtenerPermisosAlmacenados();
@@ -89,9 +99,10 @@ async function verificarYManejarEstado() {
             deshabilitarAplicacion('Aplicación deshabilitada por seguridad');
         }
     } catch {
-        return ('Error de conexión', 'No se pudo verificar el estado de la aplicación. Por favor, inténtalo de nuevo más tarde.', 'error');
+        return ('Error de conexión al verificar estado');
     }
 }
+
 
 /**
  * Deshabilita la aplicación mostrando una pantalla de bloqueo
@@ -229,4 +240,11 @@ ipcMain.handle('verificar-estado-aplicacion', async () => {
 // IPC para obtener el ID del dispositivo
 ipcMain.handle('obtener-dispositivo-id', () => {
     return obtenerID();
+});
+
+
+// IPC para reiniciar verificación periódica después del login
+ipcMain.handle('reiniciar-verificacion-periodica', () => {
+    iniciarVerificacionPeriodica();
+    return { ok: true };
 });

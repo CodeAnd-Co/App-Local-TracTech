@@ -325,6 +325,8 @@ function cargarPagina(pagina) {
  * @function mostrarUsuarios
  * @param {Array<Object>} usuarios - Lista de usuarios a mostrar
  * @param {string} usuarios[].nombre - Nombre del usuario
+ * @param {boolean} usuarios[].tieneDispositivo - Si el usuario tiene dispositivo vinculado
+ * @param {boolean} usuarios[].dispositivoActivo - Si el dispositivo está activo
  * @returns {void}
  */
 function mostrarUsuarios(usuarios) {
@@ -341,14 +343,24 @@ function mostrarUsuarios(usuarios) {
     }
 
     const fragmento = document.createDocumentFragment();
-    for (const { id, nombre } of usuarios) {
+    usuarios.forEach(usuario => {
+        const { id, nombre, tieneDispositivo, dispositivoActivo } = usuario;
         const div = document.createElement('div');
         div.className = 'frame-usuario';
         
-        const botonDeshabilitar =  `
-                <button class='boton-deshabilitar' data-id='${id}'>
-                  <img src='${rutaBase}src/framework/utils/iconos/Deshabilitar.svg' alt='Deshabilitar Dispositivo'/>
-                </button>` ;
+        // Determinar si el botón debe estar habilitado o deshabilitado
+        const dispositivoHabilitado = tieneDispositivo && dispositivoActivo;
+        const claseBotonDeshabilitar = dispositivoHabilitado 
+            ? 'boton-deshabilitar' 
+            : 'boton-deshabilitar boton-deshabilitado';
+        const tituloBoton = dispositivoHabilitado 
+            ? 'Deshabilitar dispositivo vinculado' 
+            : 'Sin dispositivo vinculado';
+        
+        const botonDeshabilitar = `
+            <button class='${claseBotonDeshabilitar}' data-id='${id}' title='${tituloBoton}'>
+              <img src='${rutaBase}src/framework/utils/iconos/Deshabilitar.svg' alt='Deshabilitar Dispositivo'/>
+            </button>`;
         
         div.innerHTML = `
             <div class='nombre-usuario'>
@@ -363,7 +375,7 @@ function mostrarUsuarios(usuarios) {
                 </button>
         `;
         fragmento.appendChild(div);
-    }
+    });
     listaUsuariosElemento.appendChild(fragmento);
 
     // Añadir eventos a los botones de editar
@@ -390,11 +402,18 @@ function mostrarUsuarios(usuarios) {
     botonesDeshabilitarDispositivo.forEach(boton => {
         boton.addEventListener('click', async evento => {
             evento.preventDefault();
+            
+            // Si el botón está deshabilitado, no hacer nada
+            if (boton.classList.contains('boton-deshabilitado')) {
+                return;
+            }
+            
             const idUsuario = boton.getAttribute('data-id');
+            const usuario = usuarios.find(usuario => usuario.id == idUsuario);
 
             Swal.fire({
                 title: '¿Deshabilitar dispositivo?',
-                html: `La aplicación Harvester en el dispositivo vinculado al usuario será inaccesible.<br><br><strong>SOLO DESHABILITAR EN CASO DE ROBO O PÉRDIDA DEL DISPOSITIVO.</strong>`,
+                html: `La aplicación Harvester en el dispositivo vinculado al usuario <strong>${usuario ? usuario.nombre : ''}</strong> será inaccesible.<br><br><strong>SOLO DESHABILITAR EN CASO DE ROBO O PÉRDIDA DEL DISPOSITIVO.</strong>`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#a61930',
@@ -403,6 +422,10 @@ function mostrarUsuarios(usuarios) {
             }).then(async (resultado) => {
                 if (resultado.isConfirmed) {
                     await deshabilitarDispositivoUsuario(idUsuario);
+                    // Recargar la lista después de deshabilitar
+                    setTimeout(() => {
+                        inicializarModuloGestionUsuarios();
+                    }, 1000);
                 }
             });
         });
