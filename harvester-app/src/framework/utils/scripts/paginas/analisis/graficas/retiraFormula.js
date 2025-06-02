@@ -80,7 +80,6 @@ function retirarDatos(graficaId, datosOriginalesFormulas) {
       mostrarAlerta('Éxito', 'La fórmula ha sido retirada correctamente de la gráfica.', 'success');
       
     } catch (error) {
-      console.error('Error al retirar la fórmula:', error);
       mostrarAlerta('Error', `Error inesperado al retirar la fórmula: ${error.message}`, 'error');
     }
 }
