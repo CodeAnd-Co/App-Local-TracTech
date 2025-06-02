@@ -11,12 +11,12 @@ const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/com
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
 
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+ 
 // Variable global para almacenar las fórmulas consultadas
 let formulasDisponibles = [];
 
 // Variable global para almacenar los datos originales de fórmulas por gráfica
-let datosOriginalesFormulas = new Map();
+const datosOriginalesFormulas = new Map();
 
 /**
  * Consulta las fórmulas una sola vez y las almacena globalmente.
@@ -133,9 +133,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         if (window.datosGrafica && window.datosGrafica.length > 0) {
           columnas = window.datosGrafica[0].slice(3); // Omitir las primeras 3 columnas
         }
-      }
-      // Si es un array directo (matriz simple)
-      else if (Array.isArray(datosParseados)) {
+      } else if (Array.isArray(datosParseados)) {
         window.datosGrafica = datosParseados;
         window.datosExcelGlobal = {
           hojas: {
@@ -319,7 +317,7 @@ function eliminarCuadroFormulas() {
  * @param {number} graficaId - ID de la gráfica asociada.
  * @param {Array} datosGrafica - Datos de la gráfica.
  * @returns {void}
- */ // eslint-disable-next-line no-unused-vars
+ */  
 async function crearCuadroFormulas(columnas, graficaId, datosGrafica) {
   eliminarCuadroFormulas(); // Ahora esta función ya está definida
 
@@ -630,8 +628,7 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica, nombreColumna = 'D
 
   // Filtrar valores vacíos, null o undefined
   const datosLimpios = datosOriginales.filter(valor => 
-    valor !== null && valor !== undefined && valor !== ''
-  );
+    valor !== null && valor !== undefined && valor !== '');
 
   if (datosLimpios.length === 0) {
     return { labels: ['Sin datos'], valores: [0] };
@@ -653,8 +650,7 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica, nombreColumna = 'D
 
   // Para gráficas lineales y radar - usar filas numeradas SOLO si son números diferentes
   const todosNumeros = datosLimpios.every(valor => 
-    !isNaN(parseFloat(valor)) && isFinite(valor)
-  );
+    !isNaN(parseFloat(valor)) && isFinite(valor));
 
   if (todosNumeros) {
     // Si son números, verificar si todos son iguales
@@ -670,7 +666,7 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica, nombreColumna = 'D
       // Si hay valores diferentes, usar filas numeradas SOLO para líneas y radar
       // AJUSTE: Empezar desde "Fila 1" porque la primera fila del Excel son encabezados
       return {
-        labels: datosLimpios.map((_, indice) => `Fila ${indice + 2}`),
+        labels: datosLimpios.map((_encabezado, indice) => `Fila ${indice + 2}`),
         valores: datosLimpios.map(valor => parseFloat(valor))
       };
     }
@@ -847,6 +843,7 @@ function crearGrafica(contexto, tipo, color) {
         }
       },
       scales: {
+         // eslint-disable-next-line id-length
         x: { 
           display: ['line', 'bar', 'radar'].includes(tipo),
           ticks: { 
@@ -873,6 +870,7 @@ function crearGrafica(contexto, tipo, color) {
             color: '#666'
           }
         },
+        // eslint-disable-next-line id-length
         y: { 
           display: ['line', 'bar', 'radar'].includes(tipo),
           ticks: { 

@@ -2,6 +2,7 @@
 // RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
 const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
+// eslint-disable-next-line no-unused-vars
 const { seleccionaDatosAComparar } = require(`${rutaBase}/src/backend/casosUso/excel/seleccionaDatosAComparar.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
@@ -167,19 +168,15 @@ function crearElementoTractor(nombreTractor, datosExcel) {
  * @returns {void}
  */
 function cambiarSeleccionTractor(nombreTractor, casillaVerificacion) {
-    console.log(`Click en tractor: ${nombreTractor}`);
-    
     // Verificar si ya está en el arreglo
     const indice = tractoresParaAnalisis.indexOf(nombreTractor);
     
     if (indice === -1) {
         // Si NO está, lo agregamos
         tractoresParaAnalisis.push(nombreTractor);
-        console.log(`${nombreTractor} AGREGADO. Arreglo actual:`, tractoresParaAnalisis);
     } else {
         // Si YA está, lo sacamos
         tractoresParaAnalisis.splice(indice, 1);
-        console.log(`${nombreTractor} ELIMINADO. Arreglo actual:`, tractoresParaAnalisis);
     }
     
     // Actualizar el ícono
@@ -187,12 +184,12 @@ function cambiarSeleccionTractor(nombreTractor, casillaVerificacion) {
     
     // Guardar en localStorage para el análisis
     localStorage.setItem('tractoresParaAnalisis', JSON.stringify(tractoresParaAnalisis));
-    console.log('Guardado en localStorage:', tractoresParaAnalisis);
 }
 
 /**
  * Procesa todos los tractores seleccionados y guarda los datos filtrados
  */
+// eslint-disable-next-line no-unused-vars
 function procesarYGuardarDatos() {
     const datosExcel = cargarDatosExcel();
     const nuevoJSON = { hojas: {} };
@@ -208,18 +205,15 @@ function procesarYGuardarDatos() {
             if (datosHoja && Array.isArray(datosHoja) && datosHoja.length > 0) {
                 // Si no hay columnas específicas, usar todas
                 if (config.columnas.length === 0) {
-                    console.log(`${nombreTractor}: Usando todas las columnas`);
                     nuevoJSON.hojas[nombreTractor] = datosHoja; // Toda la hoja
                 } else {
-                    console.log(`${nombreTractor}: Usando columnas específicas:`, config.columnas);
                     // Filtrar solo las columnas seleccionadas
                     const encabezados = datosHoja[0];
-                    const indices = config.columnas.map(col => encabezados.indexOf(col)).filter(i => i !== -1);
+                    const indices = config.columnas.map(columna => encabezados.indexOf(columna)).filter(indice => indice !== -1);
                     
                     if (indices.length > 0) {
                         const hojaFiltrada = datosHoja.map(fila => 
-                            indices.map(indice => fila[indice])
-                        );
+                            indices.map(indice => fila[indice]));
                         nuevoJSON.hojas[nombreTractor] = hojaFiltrada;
                     }
                 }
@@ -230,8 +224,6 @@ function procesarYGuardarDatos() {
     // Guardar en localStorage
     localStorage.setItem('tractoresSeleccionados', JSON.stringify(tractoresSeleccionados));
     localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
-    
-    console.log('Datos procesados y guardados:', nuevoJSON);
 }
 
 /**
@@ -264,7 +256,6 @@ function manejarClickTractor(tractorNombre, datosExcel) {
         localStorage.setItem('hojaSeleccionada', hojaSeleccionada);
         localStorage.setItem('columnasSeleccionadas', JSON.stringify(columnasSeleccionadas));
         
-        console.log(`Hoja seleccionada: ${hojaSeleccionada}`);
         
         mostrarColumnasTractor(tractorNombre, datosExcel);
         contenedor.style.display = 'block';
@@ -364,18 +355,15 @@ function crearElementoColumna(nombreTractor, nombreColumna) {
  * Selecciona o deselecciona una columna - versión ultra simple
  */
 function seleccionarColumna(nombreColumna, casillaVerificacion) {
-    console.log(`Click en columna: ${nombreColumna}`);
     
     const indice = columnasSeleccionadas.indexOf(nombreColumna);
     
     if (indice === -1) {
         // Agregar columna
         columnasSeleccionadas.push(nombreColumna);
-        console.log(`Columna ${nombreColumna} AGREGADA. Columnas actuales:`, columnasSeleccionadas);
     } else {
         // Quitar columna
         columnasSeleccionadas.splice(indice, 1);
-        console.log(`Columna ${nombreColumna} ELIMINADA. Columnas actuales:`, columnasSeleccionadas);
     }
     
     // Actualizar ícono
@@ -383,7 +371,6 @@ function seleccionarColumna(nombreColumna, casillaVerificacion) {
     
     // Guardar en localStorage
     localStorage.setItem('columnasSeleccionadas', JSON.stringify(columnasSeleccionadas));
-    console.log('Columnas guardadas en localStorage:', columnasSeleccionadas);
 }
 
 /**
@@ -402,27 +389,21 @@ async function botonReporte(datosExcel) {
             return;
         }
         
-        console.log('Hoja seleccionada:', hoja);
-        console.log('Columnas seleccionadas:', columnas);
-        
         // Crear objeto con los datos para análisis
         const datosHoja = datosExcel.hojas[hoja];
-        let datosParaAnalisis = { hojas: {} };
+        const datosParaAnalisis = { hojas: {} };
         
         if (columnas.length === 0) {
             // Si no hay columnas específicas, usar toda la hoja
-            console.log('No hay columnas específicas, usando toda la hoja');
             datosParaAnalisis.hojas[hoja] = datosHoja;
         } else {
             // Filtrar solo las columnas seleccionadas
-            console.log('Filtrando columnas específicas:', columnas);
             const encabezados = datosHoja[0];
-            const indices = columnas.map(col => encabezados.indexOf(col)).filter(i => i !== -1);
+            const indices = columnas.map(col => encabezados.indexOf(col)).filter(indice => indice !== -1);
             
             if (indices.length > 0) {
                 const hojaFiltrada = datosHoja.map(fila => 
-                    indices.map(indice => fila[indice])
-                );
+                    indices.map(indice => fila[indice]));
                 datosParaAnalisis.hojas[hoja] = hojaFiltrada;
             } else {
                 // Si no se encontraron columnas válidas, usar toda la hoja
@@ -432,8 +413,6 @@ async function botonReporte(datosExcel) {
         
         // Guardar los datos para el análisis
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(datosParaAnalisis));
-        
-        console.log('Navegando a análisis con datos:', datosParaAnalisis);
         
         // Navegar
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;

@@ -12,8 +12,6 @@ const { mostrarAlerta } = require("../../../framework/vistas/includes/componente
  */
 function seleccionaDatosAComparar(datosExcel, seleccion) {
     try {
-        console.log('Datos de entrada:', { datosExcel, seleccion });
-        
         // Validar entrada
         if (!datosExcel || typeof datosExcel !== 'object') {
             throw new Error('datosExcel no es válido');
@@ -32,15 +30,9 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
             throw new Error('No se encontraron hojas en los datos del Excel');
         }
 
-        console.log('Hojas disponibles:', Object.keys(hojas));
-        console.log('Selección recibida:', seleccion);
-
         for (const [nombreHoja, configuracionSeleccion] of Object.entries(seleccion)) {
-            console.log(`Procesando hoja: ${nombreHoja}`, configuracionSeleccion);
-            
             // Verificar si la hoja está seleccionada
             if (!configuracionSeleccion || !configuracionSeleccion.seleccionado) {
-                console.log(`Hoja ${nombreHoja} no seleccionada, saltando...`);
                 continue;
             }
 
@@ -60,17 +52,12 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
             const encabezados = datosHoja[0];
             const columnasDeseadas = configuracionSeleccion.columnas || [];
 
-            console.log(`Encabezados en ${nombreHoja}:`, encabezados);
-            console.log(`Columnas deseadas en ${nombreHoja}:`, columnasDeseadas);
-
             // NUEVA LÓGICA: Si no hay columnas específicas seleccionadas, usar todas
             let indicesValidos = [];
             if (columnasDeseadas.length === 0) {
-                console.log(`No hay columnas específicas seleccionadas para ${nombreHoja}, usando todas las columnas`);
                 // Usar todos los índices disponibles
-                indicesValidos = encabezados.map((_, index) => index);
+                indicesValidos = encabezados.map((_encabezado, index) => index);
             } else {
-                console.log(`Hay columnas específicas seleccionadas para ${nombreHoja}, filtrando...`);
                 // Obtener índices de las columnas seleccionadas
                 indicesValidos = obtenerIndicesDeColumnas(encabezados, columnasDeseadas);
             }
@@ -80,14 +67,9 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 continue;
             }
 
-            console.log(`Índices válidos para ${nombreHoja}:`, indicesValidos);
-
             // Filtrar las filas de datos (excluyendo encabezados)
             const filasFiltradas = obtenerFilasFiltradas(datosHoja, indicesValidos);
             const encabezadosFiltrados = indicesValidos.map(indice => encabezados[indice]);
-
-            console.log(`Encabezados filtrados para ${nombreHoja}:`, encabezadosFiltrados);
-            console.log(`Filas filtradas para ${nombreHoja}:`, filasFiltradas.length, 'filas');
 
             // Guardar la hoja filtrada en el nuevo JSON
             nuevoJSON.hojas[nombreHoja] = [
@@ -95,8 +77,6 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
                 ...filasFiltradas
             ];
         }
-
-        console.log('Datos filtrados completos:', nuevoJSON);
 
         // Validar que se procesó al menos una hoja
         if (Object.keys(nuevoJSON.hojas).length === 0) {
@@ -107,12 +87,9 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
 
         // Guardar el nuevo JSON en localStorage
         localStorage.setItem('datosFiltradosExcel', JSON.stringify(nuevoJSON));
-        console.log('Datos guardados en localStorage bajo clave: datosFiltradosExcel');
-        
         return nuevoJSON;
         
     } catch (error) {
-        console.error('Error en seleccionaDatosAComparar:', error);
         mostrarAlerta('Error al procesar los datos', `Ocurrió un error al filtrar los datos del Excel: ${error.message}`, 'error');
         return { hojas: {} };
     }
@@ -126,7 +103,7 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
  */
 function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
     if (!Array.isArray(encabezados) || !Array.isArray(columnasDeseadas)) {
-        console.error('Encabezados o columnas deseadas no son arrays válidos');
+        mostrarAlerta('Error', 'Encabezados o columnas deseadas no son válidos', 'error');
         return [];
     }
 
@@ -134,8 +111,7 @@ function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
         // Buscar la posicion del encabezado (manejo de string/trim para evitar espacios)
         const nombreLimpio = String(nombre).trim();
         const indice = encabezados.findIndex(encabezado => 
-            String(encabezado).trim() === nombreLimpio
-        );
+            String(encabezado).trim() === nombreLimpio);
         
         if (indice === -1) {
             console.warn(`Columna "${nombre}" no encontrada en encabezados:`, encabezados);
@@ -144,7 +120,6 @@ function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
         return indice;
     }).filter(indice => indice !== -1); // Filtrar los indices que se encontraron
 
-    console.log('Índices obtenidos:', indices);
     return indices;
 }
 
@@ -158,7 +133,7 @@ function obtenerIndicesDeColumnas(encabezados, columnasDeseadas) {
  */
 function obtenerFilasFiltradas(hoja, indices) {
     if (!Array.isArray(hoja) || !Array.isArray(indices)) {
-        console.error('Hoja o índices no son arrays válidos');
+        mostrarAlerta('Error', 'Hoja o índices no son válidos', 'error');
         return [];
     }
 
