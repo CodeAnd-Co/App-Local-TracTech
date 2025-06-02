@@ -17,8 +17,9 @@ Chart.register(ChartDataLabels);
  * @param {Array} formulasDisponibles - Lista de fórmulas disponibles.
  * @returns {void}
  */  
-async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDisponibles, datosOriginalesFormulas) {
+async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado) {
   console.log('datos originales formulas', datosOriginalesFormulas);
+  console.log('tractor seleccionado 2', tractorSeleccionado);
   eliminarCuadroFormulas(); // Ahora esta función ya está definida
 
   // Cargar fórmulas una sola vez al inicio
@@ -31,15 +32,14 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
   cuadroFormulas.dataset.graficaId = graficaId;
 
   // Obtener las columnas de la hoja seleccionada
-  const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
-  const datos = localStorage.getItem('datosExcel');
+  const datos = localStorage.getItem('datosFiltradosExcel');
   let columnasActualizadas = columnas;
 
-  if (datos && hojaSeleccionada) {
+  if (datos && tractorSeleccionado) {
     try {
       const datosParseados = JSON.parse(datos);
-      if (datosParseados.hojas && datosParseados.hojas[hojaSeleccionada]) {
-        const datosHoja = datosParseados.hojas[hojaSeleccionada];
+      if (datosParseados.hojas && datosParseados.hojas[tractorSeleccionado]) {
+        const datosHoja = datosParseados.hojas[tractorSeleccionado];
         if (datosHoja.length > 0) {
           columnasActualizadas = datosHoja[0].slice(3); // Omitir las primeras 3 columnas
         }
@@ -93,7 +93,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
     }
 
     // Verificar que hay datos disponibles
-    const datosExcel = localStorage.getItem('datosExcel');
+    const datosExcel = localStorage.getItem('datosFiltradosExcel');
     const hojaSeleccionada = localStorage.getItem('hojaSeleccionada'); // Obtener la hoja seleccionada
     if (!datosExcel) {
       mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');

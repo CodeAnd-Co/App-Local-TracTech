@@ -55,7 +55,9 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   }
 
   const tractores = JSON.parse(localStorage.getItem('tractoresSeleccionados') || []);
+  let tractorSeleccionado = tractores[0];
   console.log('tractores: ', tractores);
+  console.log('tractor seleccionado: ', tractorSeleccionado);
 
   let opcionesTractores = '';
   for (const tractor of tractores) {
@@ -145,7 +147,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   // Actualizar la llamada en el event listener del botón de fórmulas
   tarjetaGrafica.querySelector('.boton-formulas').addEventListener('click', async () =>
-    await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas)
+    await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
   );
 
   const graficaDiv = document.createElement('div');
@@ -167,7 +169,17 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   selectorTipo.value = grafico.config.type;
   selectorTipo.addEventListener('change', () => {
     const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
-    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica)
+    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica);
+  })
+
+  // Obtener el dato del tractor seleccionado para la gráfica
+  const selectorTractor = tarjetaGrafica.querySelector('.tractor-grafica');
+  selectorTractor.addEventListener('input', async () => {
+    const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
+    tractorSeleccionado = selectorTractor.value;
+    console.log('Tractor seleccionado:', tractorSeleccionado);
+    await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
+    modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica);
   })
 
   tarjetaGrafica.querySelector('.eliminar').addEventListener('click', () =>
@@ -179,6 +191,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   return tarjetaGrafica;
 }
   
+
+function seleccionarTractor() {}
 
 /**
  * Formateador universal para etiquetas de datos según el tipo de gráfica
