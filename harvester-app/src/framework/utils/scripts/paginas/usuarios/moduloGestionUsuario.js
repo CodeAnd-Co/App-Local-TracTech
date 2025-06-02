@@ -714,7 +714,7 @@ function configurarValidacionesCampos() {
         }
 
         // Configurar el evento para validación en tiempo real
-        campoEntrada.addEventListener('input', () => {
+        campoEntrada.addEventListener(evento, () => {
             const valor = campoEntrada.value.trim();
         
             // Si estamos en modo EDITAR y el campo está vacío, quitamos clases/mensajes y retornamos sin más validación.
