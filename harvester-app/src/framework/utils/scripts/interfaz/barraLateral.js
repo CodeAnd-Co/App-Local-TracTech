@@ -21,7 +21,8 @@ async function cargarModulo(modulo){
     }
 }
 
-configurarBotonesLaterales()
+desocultarBotonAnalisis();
+configurarBotonesLaterales();
 function configurarBotonesLaterales(){
   const estadoBarraLateral = localStorage.getItem('estado-barra-lateral');
   if(!estadoBarraLateral){
@@ -104,5 +105,36 @@ function aplicarActivoDesdeAlmacenamiento() {
     .forEach(botonItem => botonItem.classList.add('activo'));
 
 }
+
+/**
+ * Oculta el botón de análisis en ambas vistas (expandida y colapsada)
+ * si la variable localStorage 'modulo-analisis-habilitado' no es true.
+ */
+function desocultarBotonAnalisis() {
+  const puedeMostrarAnalisis = localStorage.getItem('modulo-analisis-habilitado') === 'true';
+
+  const botonExpandido = document.getElementById('botonAnalisisExpandido');
+  const botonColapsado = document.getElementById('botonAnalisisColapsado');
+
+  if (botonExpandido) {
+    const estaOculto = botonExpandido.classList.contains('oculto');
+    if (puedeMostrarAnalisis && estaOculto) {
+      botonExpandido.classList.remove('oculto');
+    } else if (!puedeMostrarAnalisis && !estaOculto) {
+      botonExpandido.classList.add('oculto');
+    }
+  }
+
+  if (botonColapsado) {
+    const estaOculto = botonColapsado.classList.contains('oculto');
+    if (puedeMostrarAnalisis && estaOculto) {
+      botonColapsado.classList.remove('oculto');
+    } else if (!puedeMostrarAnalisis && !estaOculto) {
+      botonColapsado.classList.add('oculto');
+    }
+  }
+}
+
+window.desocultarBotonAnalisis = desocultarBotonAnalisis;
 
 aplicarActivoDesdeAlmacenamiento()

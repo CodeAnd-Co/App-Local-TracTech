@@ -8,6 +8,7 @@ if (typeof ipcRenderer === 'undefined') {
   const { ipcRenderer } = require('electron');
 }
 const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
+const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
 
 /**
  * Inicializa la interfaz de análisis:
@@ -15,17 +16,20 @@ const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framewor
  * - Configura el listener de descarga de PDF.
  * - Inserta una tarjeta de texto y una de gráfica si el contenedor está vacío.
  * - Configura delegación de eventos para mostrar/ocultar botones flotantes en tarjetas.
+ * - Carga las fórmulas disponibles.
 *
 * @returns {void}
 */
 /* eslint-disable no-undef */
-function inicializarModuloAnalisis() {
-
+async function inicializarModuloAnalisis() {
   const idContenedor = 'contenedorElementos';
   const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
 
   const contenedor = document.getElementById(idContenedor);
   if (!contenedor) return;
+
+  // Cargar fórmulas al inicializar el módulo
+  await cargarFormulasIniciales();
 
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
@@ -104,8 +108,11 @@ async function descargarPDF() {
       let tamanoFuente = 11.5;
       let estiloFuente = 'normal';
       let espaciado = 50;
+      let alineado = 'left';
       if (elemento.classList.contains('preview-titulo')) { tamanoFuente = 18; estiloFuente = 'bold', espaciado = 50; }
       if (elemento.classList.contains('preview-subtitulo')) { tamanoFuente = 15; estiloFuente = 'bold', espaciado = 45; }
+      if (elemento.style?.getPropertyValue('text-align') == 'center') { alineado =  'center'}
+      if (elemento.style?.getPropertyValue('text-align') == 'right') { alineado =  'right'}
 
       documentoPDF.setFontSize(tamanoFuente);
       documentoPDF.setFont(undefined, estiloFuente);
@@ -121,7 +128,17 @@ async function descargarPDF() {
           posicionY = margen;
         }
 
-        documentoPDF.text(lineas, margen, posicionY);
+        let ejeXPdf = margen
+
+        if(alineado == 'center'){
+          ejeXPdf = (anchoPagina + (margen * 2))/2;
+        } 
+
+        if(alineado == 'right'){
+          ejeXPdf = (anchoPagina + (margen));
+        } 
+
+        documentoPDF.text(lineas, ejeXPdf, posicionY, { align: alineado });
 
         posicionY += lineas.length * tamanoFuente + espaciado;
       })

@@ -43,6 +43,10 @@ function botonBorrar() {
             if (resultado) {
                 mostrarAlerta('Eliminado', 'El archivo ha sido eliminado.', 'success');
                 borrarExcel();
+                localStorage.setItem('modulo-analisis-habilitado', 'false');
+                if (window.desocultarBotonAnalisis) {
+                    window.desocultarBotonAnalisis();
+                }
                 botonAnalisis.setAttribute('disabled', 'true');
                 botonBorrar.style.display = 'none';
 

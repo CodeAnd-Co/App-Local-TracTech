@@ -539,7 +539,7 @@ body,
   padding: 25px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   align-items: center;
   justify-content: flex-start;
   height: 650px;
@@ -585,7 +585,7 @@ body,
   padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 45px;
+  gap: 10px;
   align-items: flex-start;
   justify-content: flex-start;
   flex: 1;
@@ -716,7 +716,6 @@ body,
 
 .search-section {
   background-color: #fafafa;
-  background-image: url(../utils/iconos/search.svg);
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: 95% 50%;
@@ -743,36 +742,60 @@ body,
 }
 
 .contenedor-busqueda {
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  align-items: center;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  width: 302px;
-  position: relative;
+  height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 8px;
+  width: 100%; /* Asegurar que ocupe todo el ancho del padre */
+  box-sizing: border-box; /* Incluir padding y border en el ancho total */
 }
+
 .formula {
   background: #fafafa;
   border-radius: 10px;
-  padding: 10px;
+  padding: 15px;
   display: flex;
   flex-direction: row;
-  gap: 0px;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 302px;
-  position: relative;
-  color: #000000;
-  text-align: left;
-  font-family: 'SegoeUi-Regular', sans-serif;
-  font-size: 18px;
-  line-height: 100%;
-  letter-spacing: -0.02em;
-  font-weight: 400;
+  justify-content: flex-start;
+  width: 100%; /* Asegurar que las fórmulas ocupen todo el ancho disponible */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-sizing: border-box;
 }
+
+.formula-objeto {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px; /* Aumentado de 8px a 12px para más espacio */
+  width: 100%; /* Asegurar que el item ocupe todo el ancho */
+}
+
+.formula:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formula-seleccionada {
+  background-color: #e8e8e8 !important;
+  border-color: #a61930 !important;
+  box-shadow: 0 0 0 1px rgba(166, 25, 48, 0.3) !important;
+}
+
+/* Asegurar que todos los mensajes también ocupen el ancho completo */
+.mensaje-inicial,
+.mensaje-sin-resultados,
+.mensaje-sin-formulas {
+  padding: 16px;
+  text-align: center;
+  color: #ffffff;
+  font-style: italic;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* — Oculta los botones globales de “Agregar” — */
 .contenedor-botones-agregar {
   display: none;
