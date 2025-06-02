@@ -994,6 +994,9 @@ function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
         label: graficaOriginal.data.datasets[0].label
       };
       
+      // Determinar si es una gráfica de fórmula o de parámetros
+      const esGraficaFormula = graficaOriginal.options.plugins.datalabels.display === true;
+      
       // Destruir la gráfica original
       graficaOriginal.destroy();
       
@@ -1007,6 +1010,15 @@ function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
       
       // Aplicar el título
       nuevaGrafica.options.plugins.title.text = tituloGrafica;
+      
+      // Configurar las etiquetas de datos según el tipo original
+      if (esGraficaFormula) {
+        // Es una gráfica de fórmula - mantener etiquetas habilitadas
+        nuevaGrafica.options.plugins.datalabels.display = true;
+      } else {
+        // Es una gráfica de parámetros - deshabilitar etiquetas
+        nuevaGrafica.options.plugins.datalabels.display = false;
+      }
       
       // Actualizar la gráfica
       nuevaGrafica.update();
