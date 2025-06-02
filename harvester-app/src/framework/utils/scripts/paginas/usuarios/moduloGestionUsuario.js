@@ -602,7 +602,6 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
 
     const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
-    // TODO: Utilizar estructuras de control en lugar de operadores ternarios
     // Flags de “campo modificado”
     const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
     const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
@@ -716,17 +715,24 @@ function configurarValidacionesCampos() {
 
         // Configurar el evento para validación en tiempo real
         campoEntrada.addEventListener(evento, () => {
-            const valor = campoEntrada.value;
-
-            if (valor.trim() === '') {
+            const valor = campoEntrada.value.trim();
+        
+            // Si estamos en modo EDITAR y el campo está vacío, quitamos clases/mensajes y retornamos sin más validación.
+            if (modoActual === modoFormulario.EDITAR && valor === '') {
+                campoEntrada.classList.remove('inputError');
+                mensajeError.textContent = '';
+                return;
+            }
+        
+            // Si NO estamos en EDITAR (es decir, modo CREAR) y está vacío, mostramos el mensaje de "no puede estar vacío" y salimos.
+            if (modoActual !== modoFormulario.EDITAR && valor === '') {
                 campoEntrada.classList.add('inputError');
                 mensajeError.textContent = 'El campo no puede estar vacío';
                 return;
             }
-
-            // Validar el campo
+        
+            // Si llegamos hasta aquí, validamos con la función correspondiente.
             const mensaje = validador(valor);
-
             if (mensaje) {
                 campoEntrada.classList.add('inputError');
                 mensajeError.textContent = mensaje;
@@ -735,6 +741,7 @@ function configurarValidacionesCampos() {
                 mensajeError.textContent = '';
             }
         });
+        
     });
 }
 
