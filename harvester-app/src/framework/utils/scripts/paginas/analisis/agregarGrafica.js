@@ -16,7 +16,7 @@ const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scri
 /* eslint-disable no-unused-vars */
  
 // Variable global para almacenar las fórmulas consultadas
-let formulasDisponibles = [];
+let formulasDisponibles = JSON.parse(localStorage.getItem('formulasDisponibles')) || [];
 
 // Variable global para almacenar los datos originales de fórmulas por gráfica
 const datosOriginalesFormulas = new Map();

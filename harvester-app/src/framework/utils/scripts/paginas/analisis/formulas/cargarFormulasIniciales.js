@@ -18,6 +18,7 @@ async function cargarFormulasIniciales(formulasDisponibles) {
     }
 
     formulasDisponibles = respuesta.datos;
+    localStorage.setItem('formulasDisponibles', JSON.stringify(formulasDisponibles));
   } catch (error) {
     
     formulasDisponibles = [];    
