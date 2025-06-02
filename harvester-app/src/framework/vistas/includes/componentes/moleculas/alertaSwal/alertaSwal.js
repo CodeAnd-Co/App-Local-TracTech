@@ -1,16 +1,18 @@
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.js`);
 
 
-function mostrarAlerta(titulo, texto, icono, textoBotonConfirmar=null) {
-  Swal.fire({
+async function mostrarAlerta(titulo, texto, icono, textoBotonConfirmar = null) {
+  const result = await Swal.fire({
     title: titulo,
     text: texto,
     icon: icono,
-    confirmButtonText: (textoBotonConfirmar)? textoBotonConfirmar : 'Aceptar',
+    confirmButtonText: textoBotonConfirmar ?? 'Aceptar',
     confirmButtonColor: '#a61930',
   });
-  return;
+
+  return result; // esto sí retorna un objeto con isConfirmed, etc.
 }
+
 
 async function mostrarAlertaConfirmacion(titulo, texto, icono, textoBotonConfirmar=null, textoBotonCancelar=null) {
   const resultado = await Swal.fire({
