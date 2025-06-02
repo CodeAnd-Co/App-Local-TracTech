@@ -12,17 +12,21 @@ const token = localStorage.getItem('token');
  * @throws {Error} Si hay un error en la comunicación con el servidor
  */
 async function obtenerUsuarios() {
-    const respuesta = await fetch(`${URL_BASE}/usuarios/consultarUsuarios`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-        },
-    });
+    try {
+        const respuesta = await fetch(`${URL_BASE}/usuarios/consultarUsuarios`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        
+        const datos = await respuesta.json();
     
-    const datos = await respuesta.json();
-
-    return { ok: respuesta.ok, ...datos };
+        return { ok: respuesta.ok, ...datos };
+    } catch {
+        return { ok: false, mensaje: 'Error de conexión con el servidor' };
+    }
 }
 
 /**
