@@ -441,12 +441,6 @@ function busquedaTractores() {
         contadorCaracteres = document.createElement('div');
         contadorCaracteres.id = 'contadorCaracteresTractor';
         contadorCaracteres.className = 'contador-caracteres';
-        contadorCaracteres.style.cssText = `
-            font-size: 12px;
-            color: #666;
-            text-align: right;
-            margin-top: 4px;
-        `;
         contadorCaracteres.textContent = '0/60 caracteres';
         
         // Insertar el contador después del campo de búsqueda
@@ -461,13 +455,14 @@ function busquedaTractores() {
         const caracteresActuales = texto.length;
         contadorCaracteres.textContent = `${caracteresActuales}/60 caracteres`;
         
-        // Cambiar color del contador según proximidad al límite
+        // Remover clases anteriores
+        contadorCaracteres.classList.remove('warning', 'danger');
+        
+        // Agregar clase según proximidad al límite
         if (caracteresActuales >= 55) {
-            contadorCaracteres.style.color = '#d32f2f'; // Rojo
+            contadorCaracteres.classList.add('danger');
         } else if (caracteresActuales >= 45) {
-            contadorCaracteres.style.color = '#f57c00'; // Naranja
-        } else {
-            contadorCaracteres.style.color = '#666'; // Gris normal
+            contadorCaracteres.classList.add('warning');
         }
     }
 
