@@ -25,7 +25,7 @@ function validarNombreCampo(nombre) {
     if (nombre[0] === ' ') {
         return 'El nombre no puede comenzar con un espacio.';
     }
-    const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ .][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
+    const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
     if (!regex.test(valor)) {
         return 'El nombre solo puede contener letras, espacios y puntos.';
     }
