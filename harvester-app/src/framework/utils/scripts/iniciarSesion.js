@@ -164,6 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Configurar eventos para validación en tiempo real
   if (entradaCorreo) {
     entradaCorreo.addEventListener('input', () => actualizarCaracteres(entradaCorreo));
+    
+    // Prevenir espacios en el campo de correo
+    entradaCorreo.addEventListener('keydown', (evento) => {
+      if (evento.key === ' ' || evento.keyCode === 32) {
+        evento.preventDefault();
+      }
+    });
   }
   
   if (entradaContrasenia) {
