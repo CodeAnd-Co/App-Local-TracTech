@@ -53,6 +53,8 @@ async function eliminarFormula(id) {
 
 
 async function renderizarFormulas() {
+    const tractores = JSON.parse(localStorage.getItem('tractoresSeleccionados'))
+    console.log('Tractores seleccionados:', tractores, typeof tractores);
     try {
         const respuesta = await consultarFormulas();
         // Verificar que la respuesta tenga la estructura correcta
@@ -116,8 +118,8 @@ async function renderizarFormulas() {
                             localStorage.setItem('modificarFormulaNombre', Nombre);
                             localStorage.setItem('modificarFormulaDatos', Datos);
                             try {
-                                const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
-                                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion', permisos});
+                                const rutaModificarFormula = `${rutaBase}src/framework/vistas/paginas/formulas/modificarFormula.ejs`
+                                const vista = await ipcRenderer.invoke('precargar-ejs', rutaModificarFormula, { Seccion: 'Modificar fórmula', Icono : 'Funcion', permisos});
                                 window.location.href = vista;
                                 localStorage.setItem('seccion-activa', 'formulas');
                             } catch (err) {
@@ -168,7 +170,8 @@ async function renderizarFormulas() {
         btnCrearFormula.addEventListener('click', async () => {
             try {
                 const rutaCrearFormula = `${rutaBase}src/framework/vistas/paginas/formulas/crearFormula.ejs`
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono: 'Funcion', permisos });
+                const tractores = JSON.parse(localStorage.getItem('tractoresSeleccionados'))
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaCrearFormula, { Seccion: 'Crear fórmula', Icono: 'Funcion', permisos, hojas: tractores });
                 window.location.href = vista;
                 localStorage.setItem('seccion-activa', 'formulas');
             } catch (err) {

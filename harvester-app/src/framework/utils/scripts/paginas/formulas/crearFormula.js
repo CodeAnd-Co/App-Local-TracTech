@@ -680,6 +680,7 @@ function popularDropdown(elementoSeleccionado) {
     // Intentar obtener columnas del nuevo formato con hojas
     const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
     const datos = localStorage.getItem('datosExcel');
+    console.log(datos)
     
     if (datos && hojaSeleccionada) {
         try {

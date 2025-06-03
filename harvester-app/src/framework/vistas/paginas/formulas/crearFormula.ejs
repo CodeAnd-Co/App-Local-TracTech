@@ -21,15 +21,25 @@
             )
             %>
             </div>
-            <div class='formula-entrada-nombre'>
-                <label for='nombreFormula'>Nombre de la fórmula</label>
-                <input type='text' id='nombreFormula' placeholder='Ingrese un nombre descriptivo' />
-
-                <div class="info-error-contador">
-                    <small id="mensajeErrorNombre" class="mensajeError"></small>
-                    <div class="contador-caracteres"></div>
+            <div class='prueba'>
+                <div class="formula-entrada-nombre">
+                    <label for='nombreFormula'>Nombre de la fórmula</label>
+                    <input type='text' id='nombreFormula' placeholder='Ingrese un nombre descriptivo' />
+                    <div class="info-error-contador">
+                        <small id="mensajeErrorNombre" class="mensajeError"></small>
+                        <div class="contador-caracteres"></div>
+                    </div>
                 </div>
-                
+                <div class="contenedor-menu-desplegable">
+                    <%- include('../../includes/componentes/moleculas/menuDesplegableFormulario/menuDesplegableFormulario.ejs', {
+                        idTexto: 'texto-hoja',
+                        textoSuperior: 'Hoja seleccionada',
+                        textoAyuda: 'Selecciona una hoja',
+                        opciones: hojas,
+                        placeholder: '',
+                        className: 'selector-hoja'
+                    })%>
+                </div>
             </div>
         </div>
 

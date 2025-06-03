@@ -112,7 +112,7 @@
 .nombre-de-la-f-rmula {
   color: var(--texto-porllenar, #9c9c9c);
   text-align: left;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 100%;
   font-weight: 400;
@@ -170,7 +170,7 @@
 .nombre {
   color: var(--texto-light, #000000);
   text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 32px;
   line-height: 112%;
   letter-spacing: -0.02em;
@@ -184,7 +184,7 @@
 .par-metros {
   color: var(--texto-light, #000000);
   text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 32px;
   line-height: 112%;
   letter-spacing: -0.02em;
@@ -226,7 +226,7 @@
 .texto-usuario {
   color: var(--texto-light, #000000);
   text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 112%;
   letter-spacing: -0.02em;
@@ -309,7 +309,7 @@
 
 .formula-encabezado h2 {
   color: var(--texto-light, #000000);
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 32px;
   line-height: 112%;
   letter-spacing: -0.02em;
@@ -321,11 +321,12 @@
   flex-direction: column;
   gap: 8px;
   width: 100%;
+  flex: 7 0 80%;
 }
 
 .formula-entrada-nombre label {
   color: var(--texto-light, #000000);
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   line-height: 112%;
 }
@@ -357,7 +358,7 @@
 
 .formula-selector label {
   color: var(--texto-light, #000000);
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
   min-width: 150px;
 }
@@ -370,6 +371,27 @@
   font-size: 16px;
   min-width: 250px;
   flex-grow: 1;
+}
+
+.selector-hoja {
+  background: var(--box-textoporllenar, #e8e8e8);
+  border-radius: 8px;
+  border: 2px solid var(--bordenegro, rgba(0, 0, 0, 0.2));
+  padding: 12px 10px;
+  font-size: 16px;
+  flex-grow: 1;
+  
+}
+
+.contenedor-menu-desplegable{
+  flex: 3 1 100%;
+}
+
+.prueba{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
 }
 
 .formula-area-construccion {
@@ -394,7 +416,7 @@
 
 .formula-seccion-resultado label {
   color: var(--texto-light, #000000);
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 18px;
 }
 
@@ -426,7 +448,7 @@
   border-radius: 8px;
   border: 2px solid;
   padding: 12px 20px;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 16px;
   cursor: pointer;
   display: flex;
@@ -461,7 +483,7 @@
 }
 
 .argumentoEncabezado label {
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 16px;
   font-weight: 500;
   color: #333;
