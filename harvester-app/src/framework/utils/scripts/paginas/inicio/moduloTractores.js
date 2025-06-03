@@ -353,11 +353,6 @@ async function botonReporte(datosExcel) {
     botonAnalisis.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         try {
-            // Validar si hay tractores con columnas seleccionadas pero no marcados como seleccionados
-             
-            for( tractor of Object.entries(tractoresSeleccionados)){
-                console.log('tractor', tractor);
-            }
             // eslint-disable-next-line no-unused-vars
             const tractoresParametrosDiferentes = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
                 return datos.seleccionado && datos.columnas.length === 0;
@@ -430,7 +425,11 @@ function busquedaTractores() {
     if (!entradaBusqueda || !contenedorTractores) {
         return;
     }
-    entradaBusqueda.addEventListener('input', aplicarFiltrosCombinados);
+    
+    entradaBusqueda.addEventListener('input', () => {
+        actualizarCaracteresBuscador(entradaBusqueda);
+        aplicarFiltrosCombinados();
+    });
 }
 
 /**
@@ -557,4 +556,22 @@ function cambiarSeleccionVisualUnica(contenedor) {
         contenedor.classList.add('seleccionado');
     }
 
+}
+
+/**
+ * Actualiza el contador de caracteres restantes para el buscador de tractores.
+ * @param {HTMLInputElement} campoEntrada - Campo de entrada a validar.
+ * @returns {void}
+ */
+function actualizarCaracteresBuscador(campoEntrada) {
+    const caracteresUsados = campoEntrada.value.length;
+    const limite = parseInt(campoEntrada.getAttribute('maxlength'), 10);
+
+    // Verificación cuando se alcanza el maxlength
+    if (caracteresUsados >= limite) {
+        // Usar setTimeout para evitar conflictos con el evento input
+        setTimeout(() => {
+            mostrarAlerta('Límite alcanzado', `Has alcanzado el límite máximo de caracteres para la búsqueda de tractores (${limite} caracteres).`, 'warning');
+        }, 100);
+    }
 }

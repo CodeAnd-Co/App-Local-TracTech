@@ -159,6 +159,7 @@ async function inicializarModuloGestionUsuarios() {
     // Configurar el campo de búsqueda
     const inputBusqueda = document.getElementById('buscar-usuario');
     inputBusqueda.addEventListener('input', evento => {
+        actualizarCaracteresBuscador(inputBusqueda);
         terminoBusqueda = evento.target.value.toLowerCase().trim();
         filtrarUsuarios();
     });
@@ -178,6 +179,24 @@ async function inicializarModuloGestionUsuarios() {
 }
 
 /**
+ * Actualiza el contador de caracteres restantes para el buscador de usuarios.
+ * @param {HTMLInputElement} campoEntrada - Campo de entrada a validar.
+ * @returns {void}
+ */
+function actualizarCaracteresBuscador(campoEntrada) {
+    const caracteresUsados = campoEntrada.value.length;
+    const limite = parseInt(campoEntrada.getAttribute('maxlength'), 10);
+
+    // Verificación cuando se alcanza el maxlength
+    if (caracteresUsados >= limite) {
+        // Usar setTimeout para evitar conflictos con el evento input
+        setTimeout(() => {
+            mostrarAlerta('Límite alcanzado', `Has alcanzado el límite máximo de caracteres para la búsqueda de usuarios (${limite} caracteres).`, 'warning');
+        }, 100);
+    }
+}
+
+/**
  * Actualiza los contadores de caracteres que ya existen en el HTML.
  * No inserta nada, solo los inicializa y los mantiene al día.
  */
@@ -187,7 +206,6 @@ document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
     const contador = input.parentNode.querySelector('.contador-caracteres');
     if (!contador) return;
 
-    console.log('input: ', input);
 
     // Inicializa una sola llamada a la función extraída
     actualizarContador(input, contador, maximoCaracteres);
@@ -1091,7 +1109,6 @@ function cargarRoles() {
  * @param {number|string} maximoCaracteres
  */
 function actualizarContador(input, contador, maximoCaracteres) {
-    console.log('Actualizando contador para:', input.id, input.value.length);
     contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
 }
 
