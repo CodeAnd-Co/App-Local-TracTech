@@ -45,7 +45,7 @@ async function inicializarModuloAnalisis() {
     // Mostrar alerta de descarga en progreso
     mostrarAlertaSinBoton(
       'Descargando reporte',
-      'Por favor espera mientras se descarga el reporte...',
+      'Seleccione la ubicación para guardar el reporte.',
       'info'
     );
 
