@@ -23,7 +23,7 @@ function inicializarBotones() {
     botonCargar();
     botonBorrar();
     botonTractores();
-    configurarDropZone();
+    configurarZonaParaSoltar();
 }
 
 /**
@@ -154,7 +154,18 @@ function botonTractores() {
     })
 }
 
-function configurarDropZone() {
+/**
+ * Configura la zona para arrastrar y soltar archivos Excel.
+ *
+ * Busca el contenedor con la clase 'zona-para-soltar' y, si existe:
+ *  - Previene el comportamiento predeterminado de arrastrar y soltar.
+ *  - Agrega o quita un estilo visual cuando se arrastra un archivo sobre la zona.
+ *  - Procesa el archivo .xlsx soltado: lo valida con leerExcel(), actualiza la interfaz
+ *    (muestra nombre, habilita botones, guarda en localStorage) o muestra alertas de error.
+ *
+ * @returns {void}
+ */
+function configurarZonaParaSoltar() {
     // Seleccionamos el elemento que actuará como zona de soltado
     const zonaParaSoltar = document.querySelector('.zona-para-soltar');
     const elementoNombreArchivo = document.querySelector('.texto-archivo');
@@ -180,10 +191,16 @@ function configurarDropZone() {
     });
 
     // Procesar el archivo
-    zonaParaSoltar.addEventListener('drop', async e => {
+    zonaParaSoltar.addEventListener('drop', async evento => {
         zonaParaSoltar.classList.remove('zona-para-soltar--resaltada');
-        const archivos = e.dataTransfer.files;
+        const archivos = evento.dataTransfer.files;
         if (!archivos || archivos.length === 0) return;
+
+        // Prevenir que se procesen múltiples archivos
+        if (archivos.length > 1) {
+            mostrarAlerta('Solo se permite un archivo', 'Por favor, suelta un solo archivo Excel a la vez.', 'error');
+            return;
+        }
 
         // Escoger el primer archivo .xlsx
         const archivo = Array.from(archivos).find(f => f.name.endsWith('.xlsx'));
