@@ -352,6 +352,30 @@ async function botonReporte(datosExcel) {
     botonAnalisis.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         try {
+            // Validar si hay tractores con columnas seleccionadas pero no marcados como seleccionados
+            const tractoresConProblema = Object.entries(tractoresSeleccionados).filter(([_, datos]) => {
+                return datos.columnas.length > 0 && !datos.seleccionado;
+            });
+            if (tractoresConProblema.length > 0) {
+                mostrarAlerta('No hay tractores seleccionados', 'Por favor, selecciona al menos un tractor y una columna para generar el reporte.', 'warning');
+                return; 
+            }
+            // Validar si hay tractores seleccionados pero sin ninguna columna seleccionada
+            const tractoresSinColumnas = Object.entries(tractoresSeleccionados).filter(([_, datos]) => {
+                return datos.seleccionado && datos.columnas.length === 0;
+            });
+            if (tractoresSinColumnas.length > 0) {
+                mostrarAlerta('No hay columnas seleccionadas', 'Por favor, selecciona al menos una columna para generar el reporte.', 'warning');
+                return;
+            }
+            // Validar si no hay ninguna selección válida
+            const seleccionValida = Object.values(tractoresSeleccionados).some(datos => datos.seleccionado && datos.columnas.length > 0);
+            if (!seleccionValida) {
+                mostrarAlerta('No se ha seleccionado ningún tractor ni columnas', 'Por favor, realiza una selección antes de continuar.', 'warning');
+                return;
+            }
+
+            // Continuar con la operación si no hay problemas
             seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
             var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
             window.location.href = vista;
@@ -360,7 +384,7 @@ async function botonReporte(datosExcel) {
         } catch {
             mostrarAlerta('Ocurrió un problema', 'No se pudo cargar el módulo de análisis.', 'error');
         }
-    })
+    });
 }
 
 /**
