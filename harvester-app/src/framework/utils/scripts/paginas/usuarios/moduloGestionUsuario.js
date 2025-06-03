@@ -715,24 +715,33 @@ function configurarValidacionesCampos() {
 
         // Configurar el evento para validación en tiempo real
         campoEntrada.addEventListener(evento, () => {
-            const valor = campoEntrada.value.trim();
-        
+            const valor = campoEntrada.value;
+
+            // Si el campo empieza con espacio, mostrar error y salir
+            if (valor.length > 0 && valor[0] === ' ') {
+                campoEntrada.classList.add('inputError');
+                mensajeError.textContent = 'El campo no puede comenzar con un espacio.';
+                return;
+            }
+
+            const valorTrim = valor.trim();
+
             // Si estamos en modo EDITAR y el campo está vacío, quitamos clases/mensajes y retornamos sin más validación.
-            if (modoActual === modoFormulario.EDITAR && valor === '') {
+            if (modoActual === modoFormulario.EDITAR && valorTrim === '') {
                 campoEntrada.classList.remove('inputError');
                 mensajeError.textContent = '';
                 return;
             }
         
             // Si NO estamos en EDITAR (es decir, modo CREAR) y está vacío, mostramos el mensaje de "no puede estar vacío" y salimos.
-            if (modoActual !== modoFormulario.EDITAR && valor === '') {
+            if (modoActual !== modoFormulario.EDITAR && valorTrim === '') {
                 campoEntrada.classList.add('inputError');
                 mensajeError.textContent = 'El campo no puede estar vacío';
                 return;
             }
         
             // Si llegamos hasta aquí, validamos con la función correspondiente.
-            const mensaje = validador(valor);
+            const mensaje = validador(valorTrim);
             if (mensaje) {
                 campoEntrada.classList.add('inputError');
                 mensajeError.textContent = mensaje;
@@ -818,7 +827,16 @@ async function crearUsuario() {
     const confirmPasswordInput = document.getElementById('passwordConfirmar');
     const rolInput = document.getElementById('rol');
 
-    const nombre = nombreInput.value.trim();
+    // OBTENER EL VALOR SIN TRIM
+    const nombreSinTrim = nombreInput.value;
+    // VALIDAR ESPACIO INICIAL ANTES DE TRIM
+    if (nombreSinTrim.length > 0 && nombreSinTrim[0] === ' ') {
+        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        return;
+    }
+
+    // AHORA SÍ HAZ EL TRIM PARA EL RESTO DE VALIDACIONES
+    const nombre = nombreSinTrim.trim();
     const correo = correoInput.value.trim();
     const contrasenia = contraseniaInput.value.trim();
     const confirmContrasenia = confirmPasswordInput ? confirmPasswordInput.value.trim() : '';
@@ -859,6 +877,15 @@ async function crearUsuario() {
 
     if (nombre.length > 45) {
         mostrarAlerta('Nombre demasiado largo', 'El nombre no puede tener más de 45 caracteres.', 'error');
+        return;
+    }
+
+    if (nombre[0] === ' ') {
+        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (nombre.trim().length <= 0) {
+        mostrarAlerta('Nombre vacío', 'El nombre no puede estar vacío.', 'error');
         return;
     }
 
