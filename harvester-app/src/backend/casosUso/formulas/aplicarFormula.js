@@ -80,6 +80,9 @@ function aplicarFormula(nombreFormula, formulaEstructurada, tractorSeleccionado,
             datosActualizados
         };
     } catch (error) {
+        if (error.tipo == 'columnaNoEncontrada') {
+            throw error;
+        }
         return {
             error: error.message,
             tractorSeleccionado: tractorSeleccionado || 'desconocida'
@@ -120,7 +123,14 @@ function encontrarColumnaVacia(datos) {
 function traducirFormulaEstructurada(formula, encabezados, filaActiva) {
     return formula.replace(/\[@([^\]]+)\]/g, (_restoFormula, nombreColumna) => {
         const columna = encabezados.indexOf(nombreColumna);
-        if (columna === -1) throw new Error(`Columna no encontrada: ${nombreColumna}`);
+        if (columna === -1){
+            const err = new Error(`Columna no encontrada: ${nombreColumna}`);
+            err.tipo = 'columnaNoEncontrada';
+            mostrarAlerta(`Columna no encontrada: ${nombreColumna}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar esta fórmula.', 'error');
+            throw err;
+            console.log(`Columna no encontrada: ${nombreColumna}`);
+            throw new Error(`Columna no encontrada: ${nombreColumna}`);
+        }    
         const letraColumna = indiceALetraColumna(columna);
         const fila = filaActiva + 1; // Excel empieza en 1
         return `${letraColumna}${fila}`;
