@@ -136,21 +136,19 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
         resultadoFormula = aplicarFormula(nombreFormula, datosFormula, null, JSON.parse(datosExcel));
       }
       let contadorErrores = 0;
-      const resultados = resultadoFormula.resultados;//[0].value;
+      const resultados = resultadoFormula.resultados;
       resultados.forEach((fila, indice) => {
         // Verificar que el objeto tiene la propiedad value y que empiece con '#'}
         if (fila && fila.value && fila.value.startsWith('#')) {
           contadorErrores += 1;
         }
       })
-      console.log('contadorErrores', contadorErrores)
       if (contadorErrores > 0) {
         mostrarAlerta('Advertencia', `Se encontraron ${contadorErrores} errores al aplicar la fórmula. Revisa la fórmula y los datos que estés utilizando.`, 'warning');
         return;
       }
       // Aplicar la fórmula a los datos
       if (resultadoFormula.error) {
-        console.log(`Error al aplicar la fórmula: ${resultadoFormula.error}`);
         mostrarAlerta('Error', `Error al aplicar la fórmula: ${resultadoFormula.error}`, 'error');
         return;
       }
