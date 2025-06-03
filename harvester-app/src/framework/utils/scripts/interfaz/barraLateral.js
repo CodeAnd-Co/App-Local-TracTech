@@ -97,7 +97,9 @@ function aplicarActivoDesdeAlmacenamiento() {
   const botonesSidebarTodos = document.querySelectorAll('.boton-sidebar');
 
   botonesSidebarTodos.forEach(botonItem => botonItem.classList.remove('activo'));
-  if (!seccion || seccion === 'tema') return;
+  if (!seccion || seccion === 'tema') {
+    seccion = 'inicio';
+  }
 
   const seccionVisual = seccion === 'gestionUsuarios' ? 'usuarios' : seccion;
   document
