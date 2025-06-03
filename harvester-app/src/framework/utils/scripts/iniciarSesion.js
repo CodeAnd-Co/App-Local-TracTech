@@ -137,3 +137,36 @@ function onClick(evento) {
 // Seleccionar el elemento dialog y agregar evento de cierre al hacer clic fuera
 const dialogo = document.querySelector('dialog');
 dialogo.addEventListener('click', onClick);
+
+/**
+ * Actualiza el contador de caracteres restantes.
+ * @param {HTMLInputElement} campoEntrada - Campo de entrada a validar.
+ * @returns {void}
+ */
+function actualizarCaracteres(campoEntrada) {
+  const caracteresUsados = campoEntrada.value.length;
+  const limite = parseInt(campoEntrada.getAttribute('maxlength'), 10);
+
+  // Verificación cuando se alcanza el maxlength
+  if (caracteresUsados >= limite) {
+    const esCorreo = campoEntrada.classList.contains('correo');
+    const tipoElemento = esCorreo ? 'correo electrónico' : 'contraseña';
+    
+    // Usar setTimeout para evitar conflictos con el evento input
+    setTimeout(() => {
+      mostrarAlerta('Límite alcanzado', `Has alcanzado el límite máximo de caracteres para el ${tipoElemento} (${limite} caracteres).`, 'warning');
+    }, 100);
+  }
+}
+
+// Inicializar validadores al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  // Configurar eventos para validación en tiempo real
+  if (entradaCorreo) {
+    entradaCorreo.addEventListener('input', () => actualizarCaracteres(entradaCorreo));
+  }
+  
+  if (entradaContrasenia) {
+    entradaContrasenia.addEventListener('input', () => actualizarCaracteres(entradaContrasenia));
+  }
+});
