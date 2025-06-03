@@ -23,7 +23,8 @@ const createWindow = async () => {
     height: 1080,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false, // Desactivar el aislamiento de contexto para permitir el uso de Node.js en el frontend
+      contextIsolation: false,
+      devTools: false
     },
   });
 
