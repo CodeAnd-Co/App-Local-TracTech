@@ -136,7 +136,7 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
         resultadoFormula = aplicarFormula(nombreFormula, datosFormula);
       }
       let contadorErrores = 0;
-      const resultados = resultadoFormula.resultados;//[0].value;
+      const resultados = resultadoFormula.resultados;
       resultados.forEach((fila, indice) => {
         // Verificar que el objeto tiene la propiedad value y que empiece con '#'}
         if (fila && fila.value && fila.value.startsWith('#')) {
