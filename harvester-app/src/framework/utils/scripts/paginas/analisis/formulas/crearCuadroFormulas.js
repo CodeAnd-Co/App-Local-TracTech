@@ -1,5 +1,4 @@
 const { eliminarCuadroFormulas } = require('./eliminarCuadroFormulas');
-const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/cargarFormulasIniciales.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const { filtrarYRenderizarFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/filtrarYRenderizarFormulas.js`);
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
@@ -137,7 +136,8 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
       }
       let contadorErrores = 0;
       const resultados = resultadoFormula.resultados;
-      resultados.forEach((fila, indice) => {
+      // eslint-disable-next-line no-unused-vars
+      resultados.forEach((fila, _indice) => {
         // Verificar que el objeto tiene la propiedad value y que empiece con '#'}
         if (fila && fila.value && fila.value.startsWith('#')) {
           contadorErrores += 1;

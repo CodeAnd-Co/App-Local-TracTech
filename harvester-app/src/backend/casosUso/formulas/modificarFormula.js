@@ -48,11 +48,11 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         return;
         
     }
-    console.log(`Modificando fórmula con ID: ${id}, Nombre: ${nombre}, Fórmula: ${formula}`);
     const respuesta = await mostrarAlertaConfirmacion(
         'Modificar fórmula', 
         `¿Estás seguro de que deseas modificar la fórmula "${nombreOriginal}"? Asegúrate de que sea una fórmula válida.`, 
-        'warning')
+        'warning'
+)
     
     
     
@@ -67,7 +67,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
                 await mostrarAlerta('Fórmula modificada', 'La fórmula ha sido modificada exitosamente.', 'success');
                 window.cargarModulo('formulas'); 
             }catch (error) {
-                mostrarAlerta('Error', `Se pudo modificar la fórmula. Pero sucedio un error inesperado: ${error}`, 'error');
+                mostrarAlerta('Error', `Sucedio un error inesperado: ${error}`, 'error');
                 return;
             }
 
