@@ -675,7 +675,7 @@ function popularDropdown(elementoSeleccionado) {
         return;
     }
 
-    let columnas = [];
+    let columnas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));
     
     // Intentar obtener columnas del nuevo formato con hojas
     const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
@@ -699,7 +699,7 @@ function popularDropdown(elementoSeleccionado) {
     
     // Fallback: intentar usar el formato anterior
     if (columnas.length === 0) {
-        const columnasGuardadas = localStorage.getItem('columnas');
+        const columnasGuardadas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));;
         if (columnasGuardadas) {
             try {
                 columnas = JSON.parse(columnasGuardadas);
