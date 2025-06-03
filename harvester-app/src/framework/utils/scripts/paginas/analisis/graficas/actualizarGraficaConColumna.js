@@ -1,6 +1,7 @@
 const Chart = require('chart.js/auto');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 Chart.register(ChartDataLabels);
 
 /**
@@ -107,7 +108,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     
     graficaExistente.update();
 
-  } catch (error) {
+  } catch {
     mostrarAlerta('Error', 'Error al procesar los datos de la columna seleccionada.', 'error');
   }
 }

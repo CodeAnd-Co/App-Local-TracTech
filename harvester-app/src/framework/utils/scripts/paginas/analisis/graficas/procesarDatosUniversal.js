@@ -5,7 +5,7 @@
  * @param {string} nombreColumna - Nombre de la columna o fórmula
  * @returns {Object} - Objeto con labels y valores procesados
  */
-function procesarDatosUniversal(datosOriginales, tipoGrafica, nombreColumna = 'Datos') {
+function procesarDatosUniversal(datosOriginales, tipoGrafica) {
   if (!datosOriginales || datosOriginales.length === 0) {
     return { labels: ['Sin datos'], valores: [0] };
   }
