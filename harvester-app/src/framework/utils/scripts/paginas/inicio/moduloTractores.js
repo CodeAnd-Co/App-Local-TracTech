@@ -353,7 +353,8 @@ async function botonReporte(datosExcel) {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         try {
             // Validar si hay tractores con columnas seleccionadas pero no marcados como seleccionados
-            const tractoresConProblema = Object.entries(tractoresSeleccionados).filter(([_, datos]) => {
+            // eslint-disable-next-line no-unused-vars
+            const tractoresConProblema = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
                 return datos.columnas.length > 0 && !datos.seleccionado;
             });
             if (tractoresConProblema.length > 0) {
@@ -361,7 +362,8 @@ async function botonReporte(datosExcel) {
                 return; 
             }
             // Validar si hay tractores seleccionados pero sin ninguna columna seleccionada
-            const tractoresSinColumnas = Object.entries(tractoresSeleccionados).filter(([_, datos]) => {
+            // eslint-disable-next-line no-unused-vars
+            const tractoresSinColumnas = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
                 return datos.seleccionado && datos.columnas.length === 0;
             });
             if (tractoresSinColumnas.length > 0) {
