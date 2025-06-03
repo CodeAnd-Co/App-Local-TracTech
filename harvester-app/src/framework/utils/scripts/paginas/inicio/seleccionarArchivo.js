@@ -175,9 +175,9 @@ function configurarZonaParaSoltar() {
     if (!zonaParaSoltar) return;
 
     // Prevenimos el comportamiento por defecto para drag & drop
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evento => {
-        zonaParaSoltar.addEventListener(evento, e => e.preventDefault());
-        zonaParaSoltar.addEventListener(evento, e => e.stopPropagation());
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(tipoDeEvento => {
+        zonaParaSoltar.addEventListener(tipoDeEvento, evento => evento.preventDefault());
+        zonaParaSoltar.addEventListener(tipoDeEvento, evento => evento.stopPropagation());
     });
 
     // Aplicar un efecto visual a la zona
@@ -203,7 +203,7 @@ function configurarZonaParaSoltar() {
         }
 
         // Escoger el primer archivo .xlsx
-        const archivo = Array.from(archivos).find(f => f.name.endsWith('.xlsx'));
+        const archivo = Array.from(archivos).find(archivo => archivo.name.endsWith('.xlsx'));
         if (!archivo) {
             mostrarAlerta('Formato no válido', 'Solo se aceptan archivos .xlsx', 'error');
             return;
