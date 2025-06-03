@@ -89,6 +89,9 @@ function agregarTexto(
   const botonAlinear = tarjetaTexto.querySelector('.alinear');
   const iconoAlineacion = botonAlinear.querySelector('.icono-align');
 
+  // Inicializar el botón alinear deshabilitado
+  validarBotonAlinear(areaEscritura, botonAlinear);
+
   selectorTipo.addEventListener('change', () => {
     vistaPrevia.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
     vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
@@ -97,9 +100,21 @@ function agregarTexto(
   areaEscritura.addEventListener('input', () => {
     actualizarTexto(vistaPrevia, areaEscritura);
     actualizarCaracteres(tarjetaTexto, areaEscritura);
+    // Validar el botón alinear cada vez que se modifica el texto
+    validarBotonAlinear(areaEscritura, botonAlinear);
   });
 
   botonAlinear.addEventListener('click', () => {
+    // Verificar si hay texto antes de permitir alineación
+    const textoActual = areaEscritura.value.trim();
+    
+    if (textoActual === '' || textoActual.length === 0) {
+      // Si no hay texto, mostrar mensaje informativo
+      mostrarAlerta('Información', 'Agrega texto antes de usar la alineación.', 'info');
+      return; // Salir de la función sin ejecutar la alineación
+    }
+    
+    // Si hay texto, proceder con la alineación normal
     const alineaciones = ['left', 'center', 'right'];
     vistaPrevia.alignIndex = (vistaPrevia.alignIndex + 1) % alineaciones.length;
     const alineado = alineaciones[vistaPrevia.alignIndex];
@@ -113,6 +128,29 @@ function agregarTexto(
   });
 
   return tarjetaTexto;
+}
+
+/**
+ * Valida y actualiza el estado visual del botón alinear según si hay texto o no.
+ * 
+ * @param {HTMLTextAreaElement} areaEscritura - Área de texto a validar
+ * @param {HTMLDivElement} botonAlinear - Botón alinear a validar
+ * @returns {void}
+ */
+function validarBotonAlinear(areaEscritura, botonAlinear) {
+  const hayTexto = areaEscritura.value.trim().length > 0;
+  
+  if (hayTexto) {
+    // Habilitar el botón
+    botonAlinear.style.opacity = '1';
+    botonAlinear.style.pointerEvents = 'auto';
+    botonAlinear.style.cursor = 'pointer';
+  } else {
+    // Deshabilitar el botón visualmente
+    botonAlinear.style.opacity = '0.5';
+    botonAlinear.style.pointerEvents = 'none';
+    botonAlinear.style.cursor = 'not-allowed';
+  }
 }
 
 /**

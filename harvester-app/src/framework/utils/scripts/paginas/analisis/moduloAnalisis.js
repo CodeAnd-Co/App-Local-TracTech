@@ -48,7 +48,12 @@ async function inicializarModuloAnalisis() {
       botonPDF.disabled = false;
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
-      mostrarAlerta('Reporte descargado', 'El reporte se ha guardado correctamente.', 'success');
+      
+      if (exito) {
+        mostrarAlerta('Reporte descargado', 'El reporte se ha guardado correctamente.', 'success');
+      } else {
+        mostrarAlerta('Reporte cancelado', 'La descarga del reporte ha sido cancelada.', 'info');
+      }
     });
   });
 
