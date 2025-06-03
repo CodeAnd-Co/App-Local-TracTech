@@ -7,7 +7,7 @@
  */
 function borrarExcel() {
     const nombreArchivo = localStorage.getItem('nombreArchivoExcel');
-    const elemtnoBotonCargar = document.querySelector('.texto-cargar');
+    const elementoBotonCargar = document.querySelector('.texto-cargar');
 
     if (nombreArchivo) {
         // Limpiar el nombre del archivo de localStorage
@@ -19,7 +19,7 @@ function borrarExcel() {
         const elementoNombreArchivo = document.querySelector('.texto-archivo');
         if (elementoNombreArchivo) {
             elementoNombreArchivo.textContent = 'Sin Archivo Seleccionado';
-            elemtnoBotonCargar.textContent = "Cargar Archivo"
+            elementoBotonCargar.textContent = "Cargar Archivo"
         }
     }
 }
