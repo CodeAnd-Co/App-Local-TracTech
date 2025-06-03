@@ -38,6 +38,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         return;
     }
 
+
     
     
     let formulasGuardadas = localStorage.getItem('nombresFormulas');
@@ -47,8 +48,17 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         return;
         
     }
+    console.log(`Modificando fórmula con ID: ${id}, Nombre: ${nombre}, Fórmula: ${formula}`);
+    const respuesta = await mostrarAlertaConfirmacion(
+        'Modificar fórmula', 
+        `¿Estás seguro de que deseas modificar la fórmula "${nombreOriginal}"? Asegúrate de que sea una fórmula válida.`, 
+        'warning')
     
     
+    
+    if (!respuesta) {
+        return; // Si la alerta fue cancelada, no continuar
+    }
     const token = localStorage.getItem('token');
     try {
         const respuesta = await modificarFormula(id, nombre, formula, token);
