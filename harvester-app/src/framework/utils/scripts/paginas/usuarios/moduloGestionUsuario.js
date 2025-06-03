@@ -97,11 +97,12 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('username').value = '';
         document.getElementById('username').placeholder = 'Nombre del nuevo usuario'
         document.getElementById('email').value = '';
-        document.getElementById('email').placeholder = 'Correo del nuevo contacto';
+        document.getElementById('email').placeholder = 'Correo del nuevo usuario';
         document.getElementById('password').value = '';
         document.getElementById('passwordConfirmar').value = '';
         document.getElementById('rol').value = '';
 
+        
         actualizarTodosContadores();
         limpiarMensajesError();
 
@@ -109,6 +110,21 @@ async function inicializarModuloGestionUsuarios() {
         cargarRoles(); // Cargar roles al abrir el formulario
         listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
     });
+
+      const emailInput = document.getElementById('email');
+        if (emailInput) {
+            // Evita escribir espacios con el teclado
+            emailInput.addEventListener('keydown', (entrada) => {
+            if (entrada.key === ' ') {
+                entrada.preventDefault();
+            }
+            });
+            // Elimina espacios al pegar
+            // eslint-disable-next-line no-unused-vars
+            emailInput.addEventListener('input', function(entrada) {
+            this.value = this.value.replace(/\s/g, '');
+            });
+        }
 
     const botonCancelar = document.querySelector('.btn-cancelar');
     // Eliminar event listeners anteriores y agregar uno nuevo
@@ -170,6 +186,8 @@ document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
     const maximoCaracteres = input.getAttribute('maxlength');
     const contador = input.parentNode.querySelector('.contador-caracteres');
     if (!contador) return;
+
+    console.log('input: ', input);
 
     // Inicializa una sola llamada a la función extraída
     actualizarContador(input, contador, maximoCaracteres);
@@ -522,6 +540,42 @@ function modoEditar(idUsuario) {
  * @returns {Promise<void>}
  */
 async function editarUsuario() {
+    // Obtener los valores SIN trim
+    const nombreSinTrim = document.getElementById('username').value;
+    const correoSinTrim = document.getElementById('email').value;
+    const contraseniaSinTrim = document.getElementById('password').value;
+    const confirmContraseniaSinTrim = document.getElementById('passwordConfirmar').value;
+    const rolSinTrim = document.getElementById('rol').value;
+
+    // Validar espacio inicial en todos los campos de texto
+    if (nombreSinTrim.length > 0 && nombreSinTrim[0] === ' ') {
+        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (correoSinTrim.length > 0 && correoSinTrim[0] === ' ') {
+        mostrarAlerta('Correo inválido', 'El correo no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (contraseniaSinTrim.length > 0 && contraseniaSinTrim[0] === ' ') {
+        mostrarAlerta('Contraseña inválida', 'La contraseña no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (confirmContraseniaSinTrim.length > 0 && confirmContraseniaSinTrim[0] === ' ') {
+        mostrarAlerta('Confirmación inválida', 'La confirmación de contraseña no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (rolSinTrim.length > 0 && rolSinTrim[0] === ' ') {
+        mostrarAlerta('Rol inválido', 'El rol no puede comenzar con un espacio.', 'error');
+        return;
+    }
+
+    
+    const nombreIngresado = nombreSinTrim.trim();
+    const correoIngresado = correoSinTrim.trim();
+    const contraseniaIngresada = contraseniaSinTrim.trim();
+    const contraseniaConfirmada = confirmContraseniaSinTrim.trim();
+    const rolIngresado = rolSinTrim.trim();
+
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
     let hayErroresVisibles = false;
@@ -534,13 +588,8 @@ async function editarUsuario() {
 
     if (hayErroresVisibles) {
         mostrarAlerta('Formulario con errores', 'Por favor, corrige los errores señalados en el formulario antes de continuar.', 'warning');
+        return;
     }
-
-    const nombreIngresado = document.getElementById('username').value.trim();
-    const correoIngresado = document.getElementById('email').value.trim();
-    const contraseniaIngresada = document.getElementById('password').value.trim();
-    const contraseniaConfirmada = document.getElementById('passwordConfirmar').value.trim();
-    const rolIngresado = document.getElementById('rol').value.trim();
 
     // Verificar que las contraseñas coincidan si se está cambiando la contraseña
     if (contraseniaIngresada !== '') {
@@ -560,6 +609,7 @@ async function editarUsuario() {
 
     if (error) {
         mostrarAlerta('Error', error, 'warning');
+        return;
     }
 
     const { idUsuario, nombre, correo, contrasenia, idRol } = datos;
@@ -721,24 +771,33 @@ function configurarValidacionesCampos() {
 
         // Configurar el evento para validación en tiempo real
         campoEntrada.addEventListener(evento, () => {
-            const valor = campoEntrada.value.trim();
-        
+            const valor = campoEntrada.value;
+
+            // Si el campo empieza con espacio, mostrar error y salir
+            if (valor.length > 0 && valor[0] === ' ') {
+                campoEntrada.classList.add('inputError');
+                mensajeError.textContent = 'El campo no puede comenzar con un espacio.';
+                return;
+            }
+
+            const valorTrim = valor.trim();
+
             // Si estamos en modo EDITAR y el campo está vacío, quitamos clases/mensajes y retornamos sin más validación.
-            if (modoActual === modoFormulario.EDITAR && valor === '') {
+            if (modoActual === modoFormulario.EDITAR && valorTrim === '') {
                 campoEntrada.classList.remove('inputError');
                 mensajeError.textContent = '';
                 return;
             }
         
             // Si NO estamos en EDITAR (es decir, modo CREAR) y está vacío, mostramos el mensaje de "no puede estar vacío" y salimos.
-            if (modoActual !== modoFormulario.EDITAR && valor === '') {
+            if (modoActual !== modoFormulario.EDITAR && valorTrim === '') {
                 campoEntrada.classList.add('inputError');
-                mensajeError.textContent = 'El campo no puede estar vacío';
+                mensajeError.textContent = 'El campo no puede estar vacío.';
                 return;
             }
         
             // Si llegamos hasta aquí, validamos con la función correspondiente.
-            const mensaje = validador(valor);
+            const mensaje = validador(valorTrim);
             if (mensaje) {
                 campoEntrada.classList.add('inputError');
                 mensajeError.textContent = mensaje;
@@ -784,7 +843,7 @@ function validarCoincidenciaContrasenas() {
         // Si el campo de confirmación está vacío, no mostrar error
         if (confirmPassword.trim() === '') {
             confirmPasswordInput.classList.add('inputError');
-            mensajeError.textContent = 'El campo no puede estar vacío';
+            mensajeError.textContent = 'El campo no puede estar vacío.';
             return;
         }
 
@@ -824,11 +883,41 @@ async function crearUsuario() {
     const confirmPasswordInput = document.getElementById('passwordConfirmar');
     const rolInput = document.getElementById('rol');
 
-    const nombre = nombreInput.value.trim();
-    const correo = correoInput.value.trim();
-    const contrasenia = contraseniaInput.value.trim();
-    const confirmContrasenia = confirmPasswordInput ? confirmPasswordInput.value.trim() : '';
-    const idRolFK = parseInt(rolInput.value, 10);
+    // OBTENER LOS VALORES SIN TRIM
+    const nombreSinTrim = nombreInput.value;
+    const correoSinTrim = correoInput.value;
+    const contraseniaSinTrim = contraseniaInput.value;
+    const confirmContraseniaSinTrim = confirmPasswordInput ? confirmPasswordInput.value : '';
+    const rolSinTrim = rolInput.value;
+
+    // VALIDAR ESPACIO INICIAL EN TODOS LOS CAMPOS DE TEXTO
+    if (nombreSinTrim.length > 0 && nombreSinTrim[0] === ' ') {
+        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (correoSinTrim.length > 0 && correoSinTrim[0] === ' ') {
+        mostrarAlerta('Correo inválido', 'El correo no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (contraseniaSinTrim.length > 0 && contraseniaSinTrim[0] === ' ') {
+        mostrarAlerta('Contraseña inválida', 'La contraseña no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (confirmContraseniaSinTrim.length > 0 && confirmContraseniaSinTrim[0] === ' ') {
+        mostrarAlerta('Confirmación inválida', 'La confirmación de contraseña no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (rolSinTrim.length > 0 && rolSinTrim[0] === ' ') {
+        mostrarAlerta('Rol inválido', 'El rol no puede comenzar con un espacio.', 'error');
+        return;
+    }
+
+    // AHORA SÍ HAZ EL TRIM PARA EL RESTO DE VALIDACIONES
+    const nombre = nombreSinTrim.trim();
+    const correo = correoSinTrim.trim();
+    const contrasenia = contraseniaSinTrim.trim();
+    const confirmContrasenia = confirmContraseniaSinTrim.trim();
+    const idRolFK = parseInt(rolSinTrim, 10);
 
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
@@ -865,6 +954,15 @@ async function crearUsuario() {
 
     if (nombre.length > 45) {
         mostrarAlerta('Nombre demasiado largo', 'El nombre no puede tener más de 45 caracteres.', 'error');
+        return;
+    }
+
+    if (nombre[0] === ' ') {
+        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (nombre.trim().length <= 0) {
+        mostrarAlerta('Nombre vacío', 'El nombre no puede estar vacío.', 'error');
         return;
     }
 
@@ -993,6 +1091,7 @@ function cargarRoles() {
  * @param {number|string} maximoCaracteres
  */
 function actualizarContador(input, contador, maximoCaracteres) {
+    console.log('Actualizando contador para:', input.id, input.value.length);
     contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
 }
 
