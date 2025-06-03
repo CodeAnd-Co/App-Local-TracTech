@@ -54,11 +54,25 @@ async function manejarInicioSesion() {
           const verificacion = await verificarEstado(respuesta.token, dispositivoID);
           
           if (!verificacion.estado) {
-            // Si el estado es false, verificar si es por vinculación múltiple
-            if (verificacion.mensaje && verificacion.mensaje.includes('dispositivo vinculado')) {
-              mostrarAlerta('Dispositivo no autorizado', verificacion.mensaje, 'error');
+            // Manejar diferentes tipos de error según el código
+            if (verificacion.codigo === 'DISPOSITIVO_AJENO') {
+              mostrarAlerta(
+                'Dispositivo no autorizado', 
+                'Este dispositivo pertenece a otro usuario. Por favor, utiliza tu dispositivo asignado o contacta al administrador.', 
+                'error'
+              );
+            } else if (verificacion.codigo === 'MULTIPLES_DISPOSITIVOS') {
+              mostrarAlerta(
+                'Múltiples dispositivos detectados', 
+                'Ya tienes un dispositivo vinculado a tu cuenta. Solo puedes usar un dispositivo por cuenta de usuario.', 
+                'warning'
+              );
             } else {
-              mostrarAlerta('Aplicación deshabilitada', 'La aplicación ha sido deshabilitada por el administrador. Por favor, contacta al soporte técnico.', 'error');
+              mostrarAlerta(
+                'Aplicación deshabilitada', 
+                'La aplicación ha sido deshabilitada por el administrador. Por favor, contacta al soporte técnico.', 
+                'error'
+              );
             }
             localStorage.clear();
             return;
@@ -84,7 +98,7 @@ async function manejarInicioSesion() {
     } else {
       mostrarAlerta('Verifica tus datos', respuesta.mensaje, 'warning');
     }
-  } catch{
+  } catch {
     mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
   }
 }
