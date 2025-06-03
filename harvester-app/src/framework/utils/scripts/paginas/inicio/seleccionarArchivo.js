@@ -23,6 +23,7 @@ function inicializarBotones() {
     botonCargar();
     botonBorrar();
     botonTractores();
+    configurarDropZone();
 }
 
 /**
@@ -151,4 +152,73 @@ function botonTractores() {
             return ('Error al cargar vista:', err);
         }
     })
+}
+
+function configurarDropZone() {
+    // Seleccionamos el elemento que actuará como zona de soltado
+    const zonaParaSoltar = document.querySelector('.zona-para-soltar');
+    const elementoNombreArchivo = document.querySelector('.texto-archivo');
+    const botonAnalisis = document.querySelector('.avanzar-analisis');
+    const botonBorrar = document.getElementById('boton-borrar');
+
+    if (!zonaParaSoltar) return;
+
+    // Prevenimos el comportamiento por defecto para drag & drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evento => {
+        zonaParaSoltar.addEventListener(evento, e => e.preventDefault());
+        zonaParaSoltar.addEventListener(evento, e => e.stopPropagation());
+    });
+
+    // Aplicar un efecto visual a la zona
+    zonaParaSoltar.addEventListener('dragover', () => {
+        zonaParaSoltar.classList.add('zona-para-soltar--resaltada');
+    });
+
+    // Quitar el efecto si el usuario sale de la zona
+    zonaParaSoltar.addEventListener('dragleave', () => {
+        zonaParaSoltar.classList.remove('zona-para-soltar--resaltada');
+    });
+
+    // Procesar el archivo
+    zonaParaSoltar.addEventListener('drop', async e => {
+        zonaParaSoltar.classList.remove('zona-para-soltar--resaltada');
+        const archivos = e.dataTransfer.files;
+        if (!archivos || archivos.length === 0) return;
+
+        // Escoger el primer archivo .xlsx
+        const archivo = Array.from(archivos).find(f => f.name.endsWith('.xlsx'));
+        if (!archivo) {
+            mostrarAlerta('Formato no válido', 'Solo se aceptan archivos .xlsx', 'error');
+            return;
+        }
+
+        // Retroalimentación visual del procesamiento
+        elementoNombreArchivo.textContent = 'Verificando archivo...';
+
+        try {
+            const resultado = await leerExcel(archivo);
+
+            if (resultado.exito) {
+                elementoNombreArchivo.textContent = archivo.name;
+                botonAnalisis.removeAttribute('disabled');
+                botonBorrar.style.display = 'block';
+                localStorage.setItem('nombreArchivoExcel', archivo.name);
+                // Limpiar cualquier otra entrada
+                document.querySelectorAll('.cargar-excel').forEach(input => input.value = '');
+            } else {
+                elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+                botonBorrar.style.display = 'none';
+                botonAnalisis.setAttribute('disabled', 'true');
+                localStorage.removeItem('nombreArchivoExcel');
+                localStorage.removeItem('datosExcel');
+                mostrarAlerta('Archivo no válido', resultado.mensaje, 'error', 'Entendido');
+            }
+        } catch (error) {
+            elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+            botonAnalisis.setAttribute('disabled', 'true');
+            localStorage.removeItem('nombreArchivoExcel');
+            localStorage.removeItem('datosExcel');
+            mostrarAlerta('Error al procesar archivo', error.mensaje || 'Ha ocurrido un error al procesar el archivo.', 'error');
+        }
+    });
 }
