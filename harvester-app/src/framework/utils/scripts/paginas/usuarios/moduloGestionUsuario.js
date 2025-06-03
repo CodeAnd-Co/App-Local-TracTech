@@ -55,6 +55,13 @@ async function inicializarModuloGestionUsuarios() {
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
 
+        if(listaUsuarios.length === 0) {
+            mostrarAlerta('No existen usuarios registrados en el sistema', '', 'warning');
+            document.getElementById('lista-usuarios').innerHTML
+                = '<div class="error-carga">No existen usuarios registrados en el sistema.</div>';
+            return;
+        }
+
         // No mostrar el usuario que consulta la lista
         const usuarioActual = localStorage.getItem('nombreUsuario');
         listaUsuarios = listaUsuarios.filter(usuario => usuario.nombre !== usuarioActual.trim());
@@ -66,8 +73,8 @@ async function inicializarModuloGestionUsuarios() {
         configurarValidacionesCampos();
         configurarContadoresCampos();
         
-    } catch {
-        mostrarAlerta('Error al cargar usuarios', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
+    } catch (error) {
+        mostrarAlerta('Error al cargar usuarios', error.message || 'Verifica tu conexión e inténtalo de nuevo.', 'error');
         document.getElementById('lista-usuarios').innerHTML
             = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }

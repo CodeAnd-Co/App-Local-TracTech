@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+const {  mostrarAlertaConfirmacion } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 // Diccionario que incluye la ruta de la vista de cada módulo, el nombre de la sección, y el nombre del ícono de la sección.
 const informacionModulos = {
@@ -23,6 +24,7 @@ async function cargarModulo(modulo){
 
 desocultarBotonAnalisis();
 configurarBotonesLaterales();
+
 function configurarBotonesLaterales(){
   const estadoBarraLateral = localStorage.getItem('estado-barra-lateral');
   if(!estadoBarraLateral){
@@ -38,21 +40,49 @@ function configurarBotonesLaterales(){
 
   const botonesBarraLateral = document.querySelectorAll('.boton-sidebar');
   botonesBarraLateral.forEach(boton => {
-    boton.addEventListener('click', () => {
-      const modulo = boton.getAttribute('data-seccion');
-      if (!modulo) return;
+    boton.addEventListener('click', async() => {
+      const seccion = localStorage.getItem('seccion-activa');
+      console.log(boton.classList.contains('sidebar-logo'))
 
-      // Determinar cuál botón mostrar como activo visualmente
-      const seccionVisual = modulo === 'gestionUsuarios' ? 'usuarios' : modulo;
-      
-      // Desactivar todos los botones
-      botonesBarraLateral.forEach(boton => boton.classList.remove('activo'));
-      cargarModulo(modulo);
+      if(seccion == 'analisis' && boton.classList.contains('sidebar-logo') == false){
+        const resultadoConfirmado = await mostrarAlertaConfirmacion('¿Estás seguro de salir?', 'Se perdera el reporte si sales de este', 'warning', 'Sí, salir', 'Cancelar');
+        if(resultadoConfirmado) {
 
-      // Activar el botón correspondiente
-      document
-        .querySelectorAll(`.boton-sidebar[data-seccion='${seccionVisual}']`)
-        .forEach(botonItem => botonItem.classList.add('activo'));
+          const modulo = boton.getAttribute('data-seccion');
+          if (!modulo) return;
+
+          // Determinar cuál botón mostrar como activo visualmente
+          const seccionVisual = modulo === 'gestionUsuarios' ? 'usuarios' : modulo;
+          
+          // Desactivar todos los botones
+          botonesBarraLateral.forEach(boton => boton.classList.remove('activo'));
+          cargarModulo(modulo);
+
+          // Activar el botón correspondiente
+          document
+            .querySelectorAll(`.boton-sidebar[data-seccion='${seccionVisual}']`)
+            .forEach(botonItem => botonItem.classList.add('activo'));
+
+          return
+        } else{
+          return
+        }
+      }
+
+          const modulo = boton.getAttribute('data-seccion');
+          if (!modulo) return;
+
+          // Determinar cuál botón mostrar como activo visualmente
+          const seccionVisual = modulo === 'gestionUsuarios' ? 'usuarios' : modulo;
+          
+          // Desactivar todos los botones
+          botonesBarraLateral.forEach(boton => boton.classList.remove('activo'));
+          cargarModulo(modulo);
+
+          // Activar el botón correspondiente
+          document
+            .querySelectorAll(`.boton-sidebar[data-seccion='${seccionVisual}']`)
+            .forEach(botonItem => botonItem.classList.add('activo'));
     })
   });
 }
