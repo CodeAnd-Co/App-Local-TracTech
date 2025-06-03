@@ -68,6 +68,19 @@ async function inicializarCrearFormula() {
         document.getElementById('btnGenerar').disabled = true;
         return;
     }
+
+    const selectorHojas = document.querySelector('.selector-hoja');
+    selectorHojas.addEventListener('change', (evento) => {
+        const hojaSeleccionada = evento.target.value;
+        if (hojaSeleccionada) {
+            const selectoresVariables = document.querySelectorAll('.variable-selector');
+            selectoresVariables.forEach(selector => { 
+                popularDropdown(selector);
+            })
+        } else {
+            mostrarAlerta('Error', 'Por favor, selecciona una hoja válida.', 'error');
+        }
+    });
 }       
 
 /**

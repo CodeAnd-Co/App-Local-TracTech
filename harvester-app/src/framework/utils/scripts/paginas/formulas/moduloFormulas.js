@@ -8,30 +8,27 @@ const { filtrarFormulas } = require(`${rutaBase}src/framework/utils/scripts/pagi
  * @function inicializarModuloFormulas
  * @returns {Promise<void>}
  */
-async function inicializarModuloFormulas(){
+async function inicializarModuloFormulas() {
   const barraBusqueda = document.getElementById('busqueda-formulas');
 
-  
+  localStorage.setItem('seccion-activa', 'formulas');
+  const ventanaPrincipal = document.getElementById('ventana-principal');
+  if (!ventanaPrincipal) return;
 
-    localStorage.setItem('seccion-activa', 'formulas');
-    const ventanaPrincipal = document.getElementById('ventana-principal');
-    if (!ventanaPrincipal) return;
+  try {
+    await renderizarFormulas();
 
-    try{
-      await renderizarFormulas();
-
-    } catch{
-      mostrarAlerta('Error al cargar fórmulas', 'Verifica tu conexión e inténtalo de nuevo.', 'error', 'Aceptar');
-      document.getElementById('frame-formulas').innerHTML  
+  } catch {
+    mostrarAlerta('Error al cargar fórmulas', 'Verifica tu conexión e inténtalo de nuevo.', 'error', 'Aceptar');
+    document.getElementById('frame-formulas').innerHTML
       = `<div class='error-carga'>Error al cargar las fórmulas</div>`;
-    }
+  }
 
-    if (barraBusqueda){
-      barraBusqueda.addEventListener('input', function(){
-        filtrarFormulas(this.value.toLowerCase());
-      })
-    }
-
+  if (barraBusqueda) {
+    barraBusqueda.addEventListener('input', function () {
+      filtrarFormulas(this.value.toLowerCase());
+    })
+  }
 }
 
 inicializarModuloFormulas()
