@@ -20,10 +20,22 @@ async function obtenerUsuarios() {
                 'Authorization': `Bearer ${token}`,
             },
         });
+
+        if (respuesta.status === 404) {
+            return { ok: true, usuarios: [] };
+        }
         
         const datos = await respuesta.json();
+
+        if (respuesta.ok) {
+            return { ok: respuesta.ok, ...datos };
+        }
     
-        return { ok: respuesta.ok, ...datos };
+        return {
+            ok: false,
+            mensaje: datos.mensaje || 'Error al obtener usuarios'
+        };
+        
     } catch {
         return { ok: false, mensaje: 'Error de conexión con el servidor' };
     }

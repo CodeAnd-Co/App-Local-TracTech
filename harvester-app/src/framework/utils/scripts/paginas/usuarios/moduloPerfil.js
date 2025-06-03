@@ -46,6 +46,7 @@ function inicializarModuloUsuario() {
           if (require('electron').remote && require('electron').remote.app.verificacionIntervalo) {
               clearInterval(require('electron').remote.app.verificacionIntervalo);
           }
+          localStorage.removeItem('seccion-activa')
           localStorage.removeItem('token');
           localStorage.removeItem('nombreUsuario');
           const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
