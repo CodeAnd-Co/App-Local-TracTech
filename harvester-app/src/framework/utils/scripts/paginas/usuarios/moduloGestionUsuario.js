@@ -516,6 +516,42 @@ function modoEditar(idUsuario) {
  * @returns {Promise<void>}
  */
 async function editarUsuario() {
+    // Obtener los valores SIN trim
+    const nombreSinTrim = document.getElementById('username').value;
+    const correoSinTrim = document.getElementById('email').value;
+    const contraseniaSinTrim = document.getElementById('password').value;
+    const confirmContraseniaSinTrim = document.getElementById('passwordConfirmar').value;
+    const rolSinTrim = document.getElementById('rol').value;
+
+    // Validar espacio inicial en todos los campos de texto
+    if (nombreSinTrim.length > 0 && nombreSinTrim[0] === ' ') {
+        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (correoSinTrim.length > 0 && correoSinTrim[0] === ' ') {
+        mostrarAlerta('Correo inválido', 'El correo no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (contraseniaSinTrim.length > 0 && contraseniaSinTrim[0] === ' ') {
+        mostrarAlerta('Contraseña inválida', 'La contraseña no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (confirmContraseniaSinTrim.length > 0 && confirmContraseniaSinTrim[0] === ' ') {
+        mostrarAlerta('Confirmación inválida', 'La confirmación de contraseña no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (rolSinTrim.length > 0 && rolSinTrim[0] === ' ') {
+        mostrarAlerta('Rol inválido', 'El rol no puede comenzar con un espacio.', 'error');
+        return;
+    }
+
+    
+    const nombreIngresado = nombreSinTrim.trim();
+    const correoIngresado = correoSinTrim.trim();
+    const contraseniaIngresada = contraseniaSinTrim.trim();
+    const contraseniaConfirmada = confirmContraseniaSinTrim.trim();
+    const rolIngresado = rolSinTrim.trim();
+
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
     let hayErroresVisibles = false;
@@ -528,13 +564,8 @@ async function editarUsuario() {
 
     if (hayErroresVisibles) {
         mostrarAlerta('Formulario con errores', 'Por favor, corrige los errores señalados en el formulario antes de continuar.', 'warning');
+        return;
     }
-
-    const nombreIngresado = document.getElementById('username').value.trim();
-    const correoIngresado = document.getElementById('email').value.trim();
-    const contraseniaIngresada = document.getElementById('password').value.trim();
-    const contraseniaConfirmada = document.getElementById('passwordConfirmar').value.trim();
-    const rolIngresado = document.getElementById('rol').value.trim();
 
     // Verificar que las contraseñas coincidan si se está cambiando la contraseña
     if (contraseniaIngresada !== '') {
@@ -554,6 +585,7 @@ async function editarUsuario() {
 
     if (error) {
         mostrarAlerta('Error', error, 'warning');
+        return;
     }
 
     const { idUsuario, nombre, correo, contrasenia, idRol } = datos;
@@ -827,20 +859,41 @@ async function crearUsuario() {
     const confirmPasswordInput = document.getElementById('passwordConfirmar');
     const rolInput = document.getElementById('rol');
 
-    // OBTENER EL VALOR SIN TRIM
+    // OBTENER LOS VALORES SIN TRIM
     const nombreSinTrim = nombreInput.value;
-    // VALIDAR ESPACIO INICIAL ANTES DE TRIM
+    const correoSinTrim = correoInput.value;
+    const contraseniaSinTrim = contraseniaInput.value;
+    const confirmContraseniaSinTrim = confirmPasswordInput ? confirmPasswordInput.value : '';
+    const rolSinTrim = rolInput.value;
+
+    // VALIDAR ESPACIO INICIAL EN TODOS LOS CAMPOS DE TEXTO
     if (nombreSinTrim.length > 0 && nombreSinTrim[0] === ' ') {
         mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (correoSinTrim.length > 0 && correoSinTrim[0] === ' ') {
+        mostrarAlerta('Correo inválido', 'El correo no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (contraseniaSinTrim.length > 0 && contraseniaSinTrim[0] === ' ') {
+        mostrarAlerta('Contraseña inválida', 'La contraseña no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (confirmContraseniaSinTrim.length > 0 && confirmContraseniaSinTrim[0] === ' ') {
+        mostrarAlerta('Confirmación inválida', 'La confirmación de contraseña no puede comenzar con un espacio.', 'error');
+        return;
+    }
+    if (rolSinTrim.length > 0 && rolSinTrim[0] === ' ') {
+        mostrarAlerta('Rol inválido', 'El rol no puede comenzar con un espacio.', 'error');
         return;
     }
 
     // AHORA SÍ HAZ EL TRIM PARA EL RESTO DE VALIDACIONES
     const nombre = nombreSinTrim.trim();
-    const correo = correoInput.value.trim();
-    const contrasenia = contraseniaInput.value.trim();
-    const confirmContrasenia = confirmPasswordInput ? confirmPasswordInput.value.trim() : '';
-    const idRolFK = parseInt(rolInput.value, 10);
+    const correo = correoSinTrim.trim();
+    const contrasenia = contraseniaSinTrim.trim();
+    const confirmContrasenia = confirmContraseniaSinTrim.trim();
+    const idRolFK = parseInt(rolSinTrim, 10);
 
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
