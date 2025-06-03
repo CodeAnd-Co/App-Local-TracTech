@@ -97,11 +97,12 @@ async function inicializarModuloGestionUsuarios() {
         document.getElementById('username').value = '';
         document.getElementById('username').placeholder = 'Nombre del nuevo usuario'
         document.getElementById('email').value = '';
-        document.getElementById('email').placeholder = 'Correo del nuevo contacto';
+        document.getElementById('email').placeholder = 'Correo del nuevo usuario';
         document.getElementById('password').value = '';
         document.getElementById('passwordConfirmar').value = '';
         document.getElementById('rol').value = '';
 
+        
         actualizarTodosContadores();
         limpiarMensajesError();
 
@@ -109,6 +110,20 @@ async function inicializarModuloGestionUsuarios() {
         cargarRoles(); // Cargar roles al abrir el formulario
         listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
     });
+
+      const emailInput = document.getElementById('email');
+        if (emailInput) {
+            // Evita escribir espacios con el teclado
+            emailInput.addEventListener('keydown', function(e) {
+            if (e.key === ' ') {
+                e.preventDefault();
+            }
+            });
+            // Elimina espacios al pegar
+            emailInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/\s/g, '');
+            });
+        }
 
     const botonCancelar = document.querySelector('.btn-cancelar');
     // Eliminar event listeners anteriores y agregar uno nuevo
@@ -170,6 +185,8 @@ document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
     const maximoCaracteres = input.getAttribute('maxlength');
     const contador = input.parentNode.querySelector('.contador-caracteres');
     if (!contador) return;
+
+    console.log('input: ', input);
 
     // Inicializa una sola llamada a la función extraída
     actualizarContador(input, contador, maximoCaracteres);
@@ -1073,6 +1090,7 @@ function cargarRoles() {
  * @param {number|string} maximoCaracteres
  */
 function actualizarContador(input, contador, maximoCaracteres) {
+    console.log('Actualizando contador para:', input.id, input.value.length);
     contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
 }
 
