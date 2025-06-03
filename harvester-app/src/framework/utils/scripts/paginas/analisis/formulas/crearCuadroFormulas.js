@@ -143,14 +143,12 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
           contadorErrores += 1;
         }
       })
-      console.log('contadorErrores', contadorErrores)
       if (contadorErrores > 0) {
         mostrarAlerta('Advertencia', `Se encontraron ${contadorErrores} errores al aplicar la fórmula. Revisa la fórmula y los datos que estés utilizando.`, 'warning');
         return;
       }
       // Aplicar la fórmula a los datos
       if (resultadoFormula.error) {
-        console.log(`Error al aplicar la fórmula: ${resultadoFormula.error}`);
         mostrarAlerta('Error', `Error al aplicar la fórmula: ${resultadoFormula.error}`, 'error');
         return;
       }
