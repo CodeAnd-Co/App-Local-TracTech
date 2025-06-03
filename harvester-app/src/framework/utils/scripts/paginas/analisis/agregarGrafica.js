@@ -57,8 +57,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   const tractores = JSON.parse(localStorage.getItem('tractoresSeleccionados') || []);
   let tractorSeleccionado = tractores[0];
-  console.log('tractores: ', tractores);
-  console.log('tractor seleccionado: ', tractorSeleccionado);
 
   let opcionesTractores = '';
   for (const tractor of tractores) {
@@ -139,7 +137,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         }
       }
     } catch (error) {
-      console.error('Error al parsear los datos del Excel:', error);
       columnas = [];
     }
   }
@@ -177,12 +174,11 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     const tituloGrafica = tarjetaGrafica.querySelector('.titulo-grafica').value;
     const botonAplicarFormula = document.querySelector('#btnAplicarFormula');
     tractorSeleccionado = selectorTractor.value;
-    console.log('Tractor seleccionado:', tractorSeleccionado);
 
     if ( botonAplicarFormula ){
       await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
     }
-    console.log('graficaDiv: ', graficaDiv, 'graficaDiv.id: ', graficaDiv.id, 'grafica', grafico, 'nuevaId: ', nuevaId);
+
     limpiarGrafica(nuevaId, datosOriginalesFormulas);
   })
 

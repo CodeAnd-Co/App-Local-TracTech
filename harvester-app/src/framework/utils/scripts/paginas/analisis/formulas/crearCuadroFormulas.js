@@ -20,8 +20,7 @@ Chart.register(ChartDataLabels);
  * @returns {void}
  */  
 async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado) {
-  console.log('datos originales formulas', datosOriginalesFormulas);
-  console.log('tractor seleccionado 2', tractorSeleccionado);
+
   eliminarCuadroFormulas(); // Ahora esta función ya está definida
 
   // Cargar fórmulas una sola vez al inicio
@@ -159,7 +158,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
         return;
       }
 
-      console.log('Datos originales de la fórmula guardados:', datosOriginalesFormulas);
       // GUARDAR DATOS ORIGINALES DE LA FÓRMULA
       if (resultadoFormula.resultados) {
         datosOriginalesFormulas.set(parseInt(graficaId), {
@@ -168,7 +166,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
           tipo: 'formula'
         });
       }
-      console.log('Datos originales de la fórmula guardados:', datosOriginalesFormulas);
 
       // Obtener el canvas y la gráfica existente
       const canvas = graficaDiv.querySelector('canvas');
@@ -210,7 +207,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
       }
       
     } catch (error) {
-      console.error('Error al aplicar fórmula:', error);
       mostrarAlerta('Error', `Error inesperado al aplicar la fórmula: ${error.message}`, 'error');
     }
   });

@@ -8,7 +8,6 @@
 function obtenerParametrosTractor(JSONfiltrado, tractor) {
     const datosHoja = JSONfiltrado.hojas[tractor];
     const parametrosTractor  = datosHoja[0];
-    console.log(`Parámetros del tractor ${tractor}:`, parametrosTractor);
 
     return parametrosTractor ;
 }

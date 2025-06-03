@@ -13,13 +13,11 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
   // Obtener la gráfica
   const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
   if (!graficaDiv) {
-    console.error('No se encontró la gráfica con ID:', graficaId);
     return;
   }
 
   const canvas = graficaDiv.querySelector('canvas');
   if (!canvas) {
-    console.error('No se encontró el canvas de la gráfica');
     return;
   }
 
@@ -27,7 +25,6 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
   const graficaExistente = Chart.getChart(contexto);
   
   if (!graficaExistente) {
-    console.error('No se encontró la instancia de Chart.js');
     return;
   }
 
@@ -111,7 +108,6 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     graficaExistente.update();
 
   } catch (error) {
-    console.error('Error al procesar los datos de la columna:', error);
     mostrarAlerta('Error', 'Error al procesar los datos de la columna seleccionada.', 'error');
   }
 }
