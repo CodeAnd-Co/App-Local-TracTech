@@ -587,4 +587,5 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
 module.exports = { 
   agregarGrafica,
   cargarFormulasIniciales,
+  crearGrafica
  };
