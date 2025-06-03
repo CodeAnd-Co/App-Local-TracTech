@@ -159,6 +159,7 @@ async function inicializarModuloGestionUsuarios() {
     // Configurar el campo de búsqueda
     const inputBusqueda = document.getElementById('buscar-usuario');
     inputBusqueda.addEventListener('input', evento => {
+        actualizarCaracteresBuscador(inputBusqueda);
         terminoBusqueda = evento.target.value.toLowerCase().trim();
         filtrarUsuarios();
     });
@@ -175,6 +176,24 @@ async function inicializarModuloGestionUsuarios() {
     // Configurar el botón de ver contraseña
     verContrasenia();
     validarCoincidenciaContrasenas();
+}
+
+/**
+ * Actualiza el contador de caracteres restantes para el buscador de usuarios.
+ * @param {HTMLInputElement} campoEntrada - Campo de entrada a validar.
+ * @returns {void}
+ */
+function actualizarCaracteresBuscador(campoEntrada) {
+    const caracteresUsados = campoEntrada.value.length;
+    const limite = parseInt(campoEntrada.getAttribute('maxlength'), 10);
+
+    // Verificación cuando se alcanza el maxlength
+    if (caracteresUsados >= limite) {
+        // Usar setTimeout para evitar conflictos con el evento input
+        setTimeout(() => {
+            mostrarAlerta('Límite alcanzado', `Has alcanzado el límite máximo de caracteres para la búsqueda de usuarios (${limite} caracteres).`, 'warning');
+        }, 100);
+    }
 }
 
 /**
