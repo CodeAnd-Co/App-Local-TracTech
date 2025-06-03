@@ -1,5 +1,5 @@
 const { eliminarCuadroFormulas } = require('./eliminarCuadroFormulas');
-const { cargarFormulasIniciales } = require('./cargarFormulasIniciales');
+const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/cargarFormulasIniciales.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const { filtrarYRenderizarFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/filtrarYRenderizarFormulas.js`);
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
@@ -21,12 +21,9 @@ Chart.register(ChartDataLabels);
  * @param {Array} formulasDisponibles - Lista de fórmulas disponibles.
  * @returns {void}
  */  
-async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado) {
+async function crearCuadroFormulas( graficaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado) {
 
-  eliminarCuadroFormulas(); // Ahora esta función ya está definida
-
-  // Cargar fórmulas una sola vez al inicio
-  await cargarFormulasIniciales(formulasDisponibles);
+  eliminarCuadroFormulas(); 
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
@@ -96,25 +93,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
     if (!datosExcel) {
       mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
       return;
-    }
-
-    // Asegurar que window.datosExcelGlobal existe
-    if (!window.datosExcelGlobal) {
-      try {
-        const datosParseados = JSON.parse(datosExcel);
-        if (Array.isArray(datosParseados)) {
-          window.datosExcelGlobal = {
-            hojas: {
-              datosParseados
-            }
-          };
-        } else {
-          window.datosExcelGlobal = datosParseados;
-        }
-      } catch (error) {
-        mostrarAlerta('Error', `Error al procesar los datos de Excel: ${error}.`, 'error');
-        return;
-      }
     }
 
     // Buscar el input radio en el elemento padre (formula-objeto)
@@ -215,6 +193,8 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
   // Configurar evento de búsqueda (filtrado local)
   campoBusqueda.addEventListener('input', (evento) => {
     const terminoBusqueda = evento.target.value.trim();
+    console.log('Término de búsqueda:', terminoBusqueda);
+    console.log('Formulas disponibles:', formulasDisponibles);
     filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda, formulasDisponibles);
   });
 
@@ -250,7 +230,7 @@ function crearMenuDesplegable(contenedor, letra, columnas, graficaId, datosOrigi
   nuevoMenu.className = 'opcion';
   const seleccionValores = document.createElement('select');
   seleccionValores.className = 'opcion-texto';
-  seleccionValores.innerHTML = '<option value="">-- Selecciona Columna --</option>'
+  seleccionValores.innerHTML = '<option value="">-- Selecciona una columna --</option>'
   columnas.forEach((texto) => {
     seleccionValores.innerHTML = `${seleccionValores.innerHTML}
     <option value="${texto}"> ${texto} </option>`

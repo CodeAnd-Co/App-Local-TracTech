@@ -8,7 +8,6 @@ Chart.register(ChartDataLabels);
 const { limpiarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/limpiarGrafica.js`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
-const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/cargarFormulasIniciales.js`);
 const { eliminarCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/eliminarCuadroFormulas.js`);
 const { crearCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/crearCuadroFormulas.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
@@ -143,7 +142,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   // Actualizar la llamada en el event listener del botón de fórmulas
   tarjetaGrafica.querySelector('.boton-formulas').addEventListener('click', async () =>
-    await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado));
+    await crearCuadroFormulas( nuevaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado));
 
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
@@ -186,7 +185,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     tractorSeleccionado = selectorTractor.value;
 
     if ( botonAplicarFormula ){
-      await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
+      await crearCuadroFormulas(nuevaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
     }
 
     limpiarGrafica(nuevaId, datosOriginalesFormulas);
@@ -597,6 +596,5 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
 
 module.exports = { 
   agregarGrafica,
-  cargarFormulasIniciales,
   crearGrafica
  };

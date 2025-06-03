@@ -1,5 +1,5 @@
 // RF25 - Usuario descarga reporte en PDF - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/rf25/
-
+const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/cargarFormulasIniciales.js`);
 /* eslint-disable no-unused-vars */
 const { jsPDF } = require(`${rutaBase}/node_modules/jspdf/dist/jspdf.umd.min.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
@@ -8,7 +8,6 @@ if (typeof ipcRenderer === 'undefined') {
   const { ipcRenderer } = require('electron');
 }
 const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
-const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
 
 /**
  * Inicializa la interfaz de análisis:
