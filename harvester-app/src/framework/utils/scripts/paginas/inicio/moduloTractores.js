@@ -354,11 +354,31 @@ async function botonReporte(datosExcel) {
         try {
             // Validar si hay tractores con columnas seleccionadas pero no marcados como seleccionados
             // eslint-disable-next-line no-unused-vars
+            for( tractor of Object.entries(tractoresSeleccionados)){
+                console.log('tractor', tractor);
+            }
+            const tractoresParametrosDiferentes = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
+                return datos.seleccionado && datos.columnas.length === 0;
+            });
+
             const tractoresConProblema = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
                 return datos.columnas.length > 0 && !datos.seleccionado;
             });
-            if (tractoresConProblema.length > 0) {
-                mostrarAlerta('No hay tractores seleccionados', 'Por favor, selecciona al menos un tractor y una columna para generar el reporte.', 'warning');
+
+            const tractoresValidos = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
+                return datos.columnas.length > 0 && datos.seleccionado;
+            });
+
+            if (tractoresParametrosDiferentes.length > 0 && tractoresConProblema.length > 0) {
+                mostrarAlerta('No hay columnas seleccionadas para los tractores seleccionados', 'Por favor, selecciona al menos una columna de cada tractor para generar el reporte.', 'warning');
+                return; 
+            }
+            if (tractoresConProblema.length > 0 && tractoresValidos.length === 0) {
+                mostrarAlerta('No hay tractores seleccionados', 'Por favor, selecciona al menos un tractor y una columna de ese tractor para generar el reporte.', 'warning');
+                return; 
+            }
+            if (tractoresConProblema.length > 0 && tractoresValidos.length > 0) {
+                mostrarAlerta('Hay un tractor que no está seleccionado pero tiene columnas seleccionadas', 'Por favor revisa que los tractores no seleccionados no tengan columnas seleccionadas, o selecciona los tractores que falten.', 'warning');
                 return; 
             }
             // Validar si hay tractores seleccionados pero sin ninguna columna seleccionada
@@ -367,7 +387,7 @@ async function botonReporte(datosExcel) {
                 return datos.seleccionado && datos.columnas.length === 0;
             });
             if (tractoresSinColumnas.length > 0) {
-                mostrarAlerta('No hay columnas seleccionadas', 'Por favor, selecciona al menos una columna para generar el reporte.', 'warning');
+                mostrarAlerta('No hay columnas seleccionadas', 'Por favor, selecciona al menos una columna de cada tractor seleccionado para generar el reporte.', 'warning');
                 return;
             }
             // Validar si no hay ninguna selección válida
@@ -376,6 +396,8 @@ async function botonReporte(datosExcel) {
                 mostrarAlerta('No se ha seleccionado ningún tractor ni columnas', 'Por favor, realiza una selección antes de continuar.', 'warning');
                 return;
             }
+
+
 
             // Continuar con la operación si no hay problemas
             seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
