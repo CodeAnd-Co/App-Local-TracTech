@@ -25,7 +25,7 @@ async function consultarFormulas() {
     if (!respuesta.ok) {
         throw new Error('Error en la respuesta de la API');
     }
-    
+    localStorage.setItem('formulasDisponibles', JSON.stringify(respuesta.datos));
     return respuesta;
 }
 

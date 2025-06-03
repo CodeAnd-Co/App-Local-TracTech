@@ -19,8 +19,7 @@ async function cargarFormulasIniciales(formulasDisponibles) {
       throw new Error('Error al consultar fórmulas');
     }
 
-    formulasDisponibles = respuesta.datos;
-    localStorage.setItem('formulasDisponibles', JSON.stringify(formulasDisponibles));
+    localStorage.setItem('formulasDisponibles', JSON.stringify(respuesta.datos));
     // eslint-disable-next-line no-unused-vars
   } catch (error) {
     formulasDisponibles = [];    
