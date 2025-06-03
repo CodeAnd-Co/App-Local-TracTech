@@ -2,41 +2,66 @@ name: Build and Sign Windows App
 
 on:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   build-windows:
-    runs-on: windows-latest  # CAMBIADO: Necesitas Windows
+    runs-on: windows-latest
     
     steps:
     - name: Checkout código
-      uses: actions/checkout@v4  # ACTUALIZADO a v4
+      uses: actions/checkout@v4
     
     - name: Set up Node.js
-      uses: actions/setup-node@v4  # ACTUALIZADO a v4
+      uses: actions/setup-node@v4
       with:
           node-version: 20.x
     
     - name: Install dependencies
       run: cd harvester-app && npm install
     
+    - name: Verificar secretos
+      run: |
+        echo "Verificando secretos..."
+        if ("${{ secrets.WINDOWS_CERT_BASE64 }}" -eq "") {
+          Write-Error "❌ WINDOWS_CERT_BASE64 no está configurado"
+          exit 1
+        }
+        if ("${{ secrets.WINDOWS_CERT_PASSWORD }}" -eq "") {
+          Write-Error "❌ WINDOWS_CERT_PASSWORD no está configurado"
+          exit 1
+        }
+        echo "✅ Todos los secretos están configurados"
+      shell: pwsh
+    
     - name: Decodificar certificado
+      working-directory: harvester-app
       env:
         CERTIFICATE_BASE64: ${{ secrets.WINDOWS_CERT_BASE64 }}
       run: |
-        echo $env:CERTIFICATE_BASE64 | base64 -d > harvester-app/certificate.pfx
-      shell: bash
+        try {
+          $certBytes = [System.Convert]::FromBase64String($env:CERTIFICATE_BASE64)
+          [System.IO.File]::WriteAllBytes("certificate.pfx", $certBytes)
+          echo "✅ Certificado decodificado: $(Get-Item certificate.pfx).Length bytes"
+        } catch {
+          Write-Error "❌ Error al decodificar el certificado: $_"
+          exit 1
+        }
+      shell: pwsh
     
     - name: Construir y firmar app
+      working-directory: harvester-app
       env:
         WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
         CI: true
-      run: cd harvester-app && npm run make
+      run: npm run make
     
     - name: Subir instalador
-      uses: actions/upload-artifact@v4  # ACTUALIZADO a v4
+      uses: actions/upload-artifact@v4
       with:
         name: windows-installer
         path: |
-          harvester-app/out/make/squirrel.windows/**/*.exe
-          harvester-app/out/make/squirrel.windows/**/*.nupkg
-          harvester-app/out/make/squirrel.windows/**/RELEASES
+          harvester-app/out/make/**/*.exe
+          harvester-app/out/make/**/*.nupkg
+          harvester-app/out/make/**/RELEASES
+        if-no-files-found: error
