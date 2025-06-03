@@ -102,21 +102,19 @@ function configurarBusquedaFormulas() {
  */
 function filtrarFormulas(termino) {
     const formulasElementos = document.querySelectorAll('.frame-f-rmulas');
-    const terminoLowerCase = termino.toLowerCase().trim();
-    const terminoOriginal = termino.trim();
+    const terminoOriginal = termino;
     
     // Verificar si son solo espacios
     const hayTerminoEscrito = termino.length > 0;
     const sonSoloEspacios = termino.length > 0 && termino.trim() === '';
-    
+
     // SIEMPRE procesar todas las fórmulas, independientemente del estado anterior
     formulasElementos.forEach(formulaElemento => {
         const nombreFormula = formulaElemento.querySelector('.texto-usuario')?.textContent?.toLowerCase() || '';
-        
         if (sonSoloEspacios) {
             // Si son solo espacios, ocultar todas
             formulaElemento.style.display = 'none';
-        } else if (terminoLowerCase === '' || nombreFormula.includes(terminoLowerCase)) {
+        } else if (nombreFormula.includes(terminoOriginal)) {
             // Si no hay término o el nombre coincide, mostrar
             formulaElemento.style.display = 'flex';
         } else {
