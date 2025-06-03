@@ -152,7 +152,6 @@ async function limpiarDatosSensibles() {
             `);
         } catch (error) {
 
-            console.error('Error al limpiar datos sensibles:', error);
         }
     }
 }
@@ -165,7 +164,6 @@ async function obtenerTokenAlmacenado() {
         try {
             return await mainWindow.webContents.executeJavaScript('localStorage.getItem("token")');
         } catch (error) {
-            console.error('Error al obtener token:', error);
             return null;
         }
     }
@@ -181,7 +179,6 @@ async function obtenerPermisosAlmacenados() {
             const permisos = await mainWindow.webContents.executeJavaScript('localStorage.getItem("permisos")');
             return permisos ? JSON.parse(permisos) : [];
         } catch (error) {
-            console.error('Error al obtener permisos:', error);
             return [];
         }
     }

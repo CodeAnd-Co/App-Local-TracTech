@@ -29,7 +29,8 @@ async function inicializarModuloAnalisis() {
   if (!contenedor) return;
 
   // Cargar fórmulas al inicializar el módulo
-  await cargarFormulasIniciales();
+  await cargarFormulasIniciales([]);
+  
 
   const botonPDF = document.getElementById('descargarPDF')
   const pantallaBloqueo = document.getElementById('pantalla-bloqueo');
