@@ -131,10 +131,12 @@ async function leerExcel(archivo) {
                         const hoja = libro.Sheets[nombreHoja];
                         // Convertimos la hoja a JSON
                         const datosHojaJSON = XLSX.utils.sheet_to_json(hoja, { header: 1 });
-                        if (verificarExcel(datosHojaJSON)) {
+
+                        const verificacionExcel = verificarExcel(datosHojaJSON);
+                        if (verificacionExcel.hayPeligro) {
                             reject({
                                 exito: false,
-                                mensaje: 'El archivo Excel contiene caracteres inválidos.'
+                                mensaje: `El archivo subido contiene el siguiente carácter inválido: ${verificacionExcel.lugarDetectado} Caracter: ${verificacionExcel.caracterDetectado}`
                             });
                         }
                         // Almacenamos los datos usando el nombre de la hoja como clave
@@ -185,31 +187,47 @@ async function leerExcel(archivo) {
 }
 
 function verificarExcel(hojaJSON) {
-    // Verificar que el JSON tenga al menos una hoja
+    // Validación inicial
     if (!hojaJSON || typeof hojaJSON !== 'object' || Object.keys(hojaJSON).length === 0) {
-        return false
+        return { hayPeligro: false }
     }
-    let hayPeligro = false
 
-    hojaJSON.forEach((colmunas) => {
-        if (!hayPeligro) {
-            colmunas.forEach((dato) => {
-                if (typeof dato === 'string') {
-                    const patron = /[<>&"'`]/g
-                    if (patron.test(dato)) {
-                        hayPeligro = true
-                    } else if (dato.startsWith('=') || dato.startsWith('+') || dato.startsWith('-')) {
-                        hayPeligro = true
+    const patron = /[<>&"'`#]/g 
+    let contadorFilas = 0;
+    let contadorCeldas = 0;
+    
+    for (const fila of hojaJSON) {
+        contadorFilas = contadorFilas + 1;
+        contadorCeldas = 0;
+
+        for (const celda of fila) {
+            contadorCeldas = contadorCeldas + 1;
+            if (typeof celda === 'string') {
+                // 1. Buscar caracteres especiales
+                const match = celda.match(patron)
+                if (match) {
+                    return {
+                        hayPeligro: true,
+                        caracterDetectado: match[0],
+                        lugarDetectado: `Fila: ${contadorFilas} Celda: ${contadorCeldas}`
                     }
                 }
-            })
-        } else {
-            return
-        }
-    })
 
-    return hayPeligro
+                // 2. Verificar si comienza con = + -
+                if (celda.startsWith('=') || celda.startsWith('+') || celda.startsWith('-')) {
+                    return {
+                        hayPeligro: true,
+                        caracterDetectado: celda[0],
+                        lugarDetectado: `Fila: ${contadorFilas}, Celda: ${contadorCeldas}`
+                    }
+                }
+            }
+        }
+    }
+
+    return { hayPeligro: false }
 }
+
 
 module.exports = {
     leerExcel,
