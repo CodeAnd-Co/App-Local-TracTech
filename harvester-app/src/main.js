@@ -150,9 +150,8 @@ async function limpiarDatosSensibles() {
             await mainWindow.webContents.executeJavaScript(`
                 localStorage.clear();
             `);
-        } catch (error) {
-
-            console.error('Error al limpiar datos sensibles:', error);
+        } catch  {
+            return   
         }
     }
 }
@@ -164,8 +163,7 @@ async function obtenerTokenAlmacenado() {
     if (mainWindow && mainWindow.webContents && !mainWindow.isDestroyed()) {
         try {
             return await mainWindow.webContents.executeJavaScript('localStorage.getItem("token")');
-        } catch (error) {
-            console.error('Error al obtener token:', error);
+        } catch  {
             return null;
         }
     }
@@ -180,8 +178,7 @@ async function obtenerPermisosAlmacenados() {
         try {
             const permisos = await mainWindow.webContents.executeJavaScript('localStorage.getItem("permisos")');
             return permisos ? JSON.parse(permisos) : [];
-        } catch (error) {
-            console.error('Error al obtener permisos:', error);
+        } catch  {
             return [];
         }
     }
