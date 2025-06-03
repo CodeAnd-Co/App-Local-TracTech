@@ -1,3 +1,4 @@
+const { mostrarAlerta } = require('../../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal');
 const { HyperFormula } = require('hyperformula');
 
 const opciones = {
@@ -8,42 +9,25 @@ const opciones = {
  * Aplica una fórmula estructurada a una hoja de Excel almacenada en localStorage.
  * @param {string} nombreFormula - Nombre de la fórmula a aplicar.
  * @param {string} formulaEstructurada - Fórmula estructurada a aplicar.
- * @param {string|null} nombreHoja - Nombre de la hoja donde se aplicará la fórmula (opcional).
+ * @param {string|null} tractorSeleccionado - Nombre de la hoja donde se aplicará la fórmula (opcional).
  * @returns {Object} Resultado de la aplicación de la fórmula.
  */
-function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
+function aplicarFormula(nombreFormula, formulaEstructurada, tractorSeleccionado, datosExcel) {
     try {
-        // Obtener datos del localStorage
-        const datosExcelCadena = localStorage.getItem('datosExcel');
-        if (!datosExcelCadena) {
-            throw new Error('No se encontraron datos en localStorage');
-        }
-        
-        let datosExcel;
-        try {
-            datosExcel = JSON.parse(datosExcelCadena);
-        } catch {
 
-            throw new Error('Los datos en localStorage no son un JSON válido');
-        }
-        
-   
-        let hojas = datosExcel;
-        if (datosExcel.hojas) {
-            hojas = datosExcel.hojas;
-        }
-        
+        const hojas = datosExcel.hojas;
+
         // Si no se especifica hoja, usar la primera disponible
         let datos = [];
-        let nombreHojaUsada = '';
+        let tractorUsado = '';
         
-        if (nombreHoja && hojas[nombreHoja]) {
-            datos = hojas[nombreHoja];
-            nombreHojaUsada = nombreHoja;
+        if (tractorSeleccionado && hojas[tractorSeleccionado]) {
+            datos = hojas[tractorSeleccionado];
+            tractorUsado = tractorSeleccionado;
         } else {
             // Tomar la primera hoja disponible
-            nombreHojaUsada = Object.keys(hojas)[0];
-            datos = hojas[nombreHojaUsada];
+            tractorUsado = Object.keys(hojas)[0];
+            datos = hojas[tractorUsado];
         }
         
         // Verificar que datos sea un array
@@ -77,6 +61,14 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
         for (let fila = 1; fila < datos.length; fila = fila + 1) {
             // Traducir fórmula estructurada a fórmula clásica para esta fila específica
             const formulaTraducida = traducirFormulaEstructurada(formulaEstructurada, encabezados, fila);
+            // Si hay un error en la traducción y no se encontró alguna columna, mostrar alerta y lanzar error
+            if (formulaTraducida.error) {
+                const columnasFaltantes = formulaTraducida.columnasNoEncontradas.join(', ');
+                const err = new Error(`Columna no encontrada: ${columnasFaltantes}`);
+                err.tipo = 'columnaNoEncontrada';
+                mostrarAlerta(`Columnas no encontradas: ${columnasFaltantes}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar esta fórmula.', 'error');
+                throw err;
+            }
             
             // Aplicar la fórmula a esta fila
             hyperFormula.setCellContents({ row: fila, col: indiceColumnaVacio, sheet: 0 }, formulaTraducida);
@@ -86,18 +78,22 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
         
         // Obtener los datos actualizados con la nueva columna para devolverlos
         const datosActualizados = hyperFormula.getSheetValues(0);
+
         
         return {
             indiceColumna: indiceColumnaVacio,
             nombreColumna: nombreColumnaResultado,
-            nombreHoja: nombreHojaUsada,
+            tractorSeleccionado: tractorUsado,
             resultados,
             datosActualizados
         };
     } catch (error) {
+        if (error.tipo == 'columnaNoEncontrada') {
+            throw error;
+        }
         return {
             error: error.message,
-            nombreHoja: nombreHoja || 'desconocida'
+            tractorSeleccionado: tractorSeleccionado || 'desconocida'
         };
     }
 }
@@ -133,13 +129,22 @@ function encontrarColumnaVacia(datos) {
  * @returns {string} Fórmula traducida a formato clásico de Excel.
  */
 function traducirFormulaEstructurada(formula, encabezados, filaActiva) {
-    return formula.replace(/\[@([^\]]+)\]/g, (_restoFormula, nombreColumna) => {
+    const columnasNoEncontradas = [];
+    const formulaTraducida = formula.replace(/\[@([^\]]+)\]/g, (_restoFormula, nombreColumna) => {
         const columna = encabezados.indexOf(nombreColumna);
-        if (columna === -1) throw new Error(`Columna no encontrada: ${nombreColumna}`);
+        // Si la columna no se encuentra, agregarla a la lista de no encontradas
+        if (columna === -1){
+            columnasNoEncontradas.push(nombreColumna);
+            return `#NO_ENCONTRADA#`;
+        }    
         const letraColumna = indiceALetraColumna(columna);
         const fila = filaActiva + 1; // Excel empieza en 1
         return `${letraColumna}${fila}`;
     });
+    if (columnasNoEncontradas.length > 0) {
+        return { error: true, columnasNoEncontradas };
+    }
+    return  formulaTraducida;
 }
 
 /**

@@ -1,5 +1,6 @@
 // RF68 Modificar fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF68 
 const { modificarFormula } = require(`${rutaBase}src/backend/domain/formulasAPI/formulaAPI.js`);
+const { mostrarAlertaConfirmacion } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 
 const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
     LONGITUD_MAXIMA_FORMULA} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
@@ -28,6 +29,16 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         mostrarAlerta('Error', `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`, 'error');
         return;
     }
+    if (formula.trim() === '') {
+        mostrarAlerta('Error', 'La fórmula no puede estar vacía.', 'error');
+    }
+    formula = formula.trim();
+    if (!formula.startsWith('=')) {
+        mostrarAlerta('Error', 'La fórmula debe comenzar con un signo igual ( = ).', 'error');
+        return;
+    }
+
+
     
     
     let formulasGuardadas = localStorage.getItem('nombresFormulas');
@@ -37,7 +48,17 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         return;
         
     }
+    const respuesta = await mostrarAlertaConfirmacion(
+        'Modificar fórmula', 
+        `¿Estás seguro de que deseas modificar la fórmula "${nombreOriginal}"? Asegúrate de que sea una fórmula válida.`, 
+        'warning'
+)
     
+    
+    
+    if (!respuesta) {
+        return; // Si la alerta fue cancelada, no continuar
+    }
     const token = localStorage.getItem('token');
     try {
         const respuesta = await modificarFormula(id, nombre, formula, token);
@@ -46,7 +67,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
                 await mostrarAlerta('Fórmula modificada', 'La fórmula ha sido modificada exitosamente.', 'success');
                 window.cargarModulo('formulas'); 
             }catch (error) {
-                mostrarAlerta('Error', `Se pudo modificar la fórmula. Pero sucedio un error inesperado: ${error}`, 'error');
+                mostrarAlerta('Error', `Sucedio un error inesperado: ${error}`, 'error');
                 return;
             }
 

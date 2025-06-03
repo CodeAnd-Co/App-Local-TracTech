@@ -10,16 +10,11 @@ async function cargarFormulasIniciales(formulasDisponibles) {
     if (formulasDisponibles.length > 0) {
       return; 
     }
-
     const respuesta = await consultaFormulasCasoUso();
-    
     
     if (!respuesta.ok || !respuesta.datos) {
       throw new Error('Error al consultar fórmulas');
     }
-
-    formulasDisponibles = respuesta.datos;
-    localStorage.setItem('formulasDisponibles', JSON.stringify(formulasDisponibles));
     // eslint-disable-next-line no-unused-vars
   } catch (error) {
     formulasDisponibles = [];    
