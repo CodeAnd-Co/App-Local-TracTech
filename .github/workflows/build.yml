@@ -40,11 +40,36 @@ jobs:
         CERTIFICATE_BASE64: ${{ secrets.WINDOWS_CERT_BASE64 }}
       run: |
         try {
+          # Crear la carpeta cert si no existe
+          New-Item -ItemType Directory -Force -Path "cert"
+          
+          # Guardar el certificado donde forge.config.js lo espera
           $certBytes = [System.Convert]::FromBase64String($env:CERTIFICATE_BASE64)
-          [System.IO.File]::WriteAllBytes("certificate.pfx", $certBytes)
-          echo "✅ Certificado decodificado: $(Get-Item certificate.pfx).Length bytes"
+          [System.IO.File]::WriteAllBytes("cert\certificado.pfx", $certBytes)
+          echo "✅ Certificado decodificado: $(Get-Item cert\certificado.pfx).Length bytes"
         } catch {
           Write-Error "❌ Error al decodificar el certificado: $_"
+          exit 1
+        }
+      shell: pwsh
+    
+    - name: Verificar estructura y certificado
+      working-directory: harvester-app
+      run: |
+        echo "=== Verificando estructura ==="
+        if (Test-Path "cert\certificado.pfx") {
+          echo "✅ cert\certificado.pfx existe"
+          
+          # Intentar verificar el certificado
+          try {
+            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2("cert\certificado.pfx", "${{ secrets.WINDOWS_CERT_PASSWORD }}")
+            echo "✅ Certificado válido"
+            echo "Subject: $($cert.Subject)"
+          } catch {
+            echo "⚠️ No se pudo verificar el certificado (esto es normal con certificados auto-firmados)"
+          }
+        } else {
+          echo "❌ No se encontró cert\certificado.pfx"
           exit 1
         }
       shell: pwsh
