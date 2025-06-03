@@ -4,6 +4,7 @@
 
  
  
+// Importamos el componente de Swal para mostrar alertas
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 
@@ -11,11 +12,11 @@ const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/an
  * Crea y agrega una tarjeta de texto al contenedor de edición y su correspondiente
  * previsualización. Puede insertarse antes o después de otra tarjeta.
  *
- * @param {string} idContenedor           - ID del elemento donde se añadirán las tarjetas de edición.
+ * @param {string} idContenedor                - ID del elemento donde se añadirán las tarjetas de edición.
  * @param {string} idContenedorPrevisualizacion - ID del elemento donde se mostrará la previsualización.
- * @param {HTMLDivElement|null} tarjetaRef       - Nodo de tarjeta existente junto al cual insertar.
- * @param {'antes'|'despues'} posicion    - 'antes' para arriba, 'despues' para abajo.
- * @returns {HTMLDivElement} tarjetaTexto - La tarjeta de texto creada.
+ * @param {HTMLDivElement|null} tarjetaRef      - Nodo de tarjeta existente junto al cual insertar (null = al final).
+ * @param {'antes'|'despues'} posicion          - 'antes' para arriba, 'despues' para abajo.
+ * @returns {HTMLDivElement|null} tarjetaTexto  - La tarjeta de texto creada, o null si no se agregó.
  */
 function agregarTexto(
   idContenedor,
@@ -28,20 +29,29 @@ function agregarTexto(
   const contenedores = new Contenedores(contenedor, contenedorPrevia);
 
   if (!contenedor || !contenedorPrevia) {
-    mostrarAlerta('Error', 'Ocurrió un error al agregar cuadro de texto.', 'error');
-    return;
+    mostrarAlerta('Advertencia', 'Ocurrió un error al agregar cuadro de texto.', 'error');
+    return null;
   }
 
-  configurarObservadorLimite(contenedor)
+  const tarjetasTextoExistentes = contenedor.querySelectorAll('.tarjeta-texto').length;
+  const tarjetasGraficaExistentes = contenedor.querySelectorAll('.tarjeta-grafica').length;
+  const totalTarjetas = tarjetasTextoExistentes + tarjetasGraficaExistentes;
+  if (totalTarjetas >= 30) {
+    mostrarAlerta('Advertencia', 'Llegaste al límite de tarjetas, el reporte no puede tener más de 30 tarjetas en total.', 'info');
+    return null;
+  }
 
-  const idsTarjetasTexto =Array.from(contenedor.querySelectorAll('.tarjeta-texto'), (tarjeta) => {
-    return parseInt(tarjeta.id, 10);
-  });
+  configurarObservadorLimite(contenedor);
+
+  const idsTarjetasTexto = Array.from(
+    contenedor.querySelectorAll('.tarjeta-texto'),
+    (tarjeta) => parseInt(tarjeta.id, 10)
+  );
     
   let nuevoId;
 
   if (idsTarjetasTexto.length > 0) {
-    const idAnterior = Math.max(...idsTarjetasTexto)
+    const idAnterior = Math.max(...idsTarjetasTexto);
     nuevoId = idAnterior + 1;
   } else {
     nuevoId = 1;
@@ -81,7 +91,7 @@ function agregarTexto(
   vistaPrevia.alignIndex = 0;
 
   const elementoReporte = new ElementoNuevo(tarjetaTexto, vistaPrevia);
-  agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion)
+  agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion);
 
   const selectorTipo = tarjetaTexto.querySelector('.tipo-texto');
   const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
@@ -97,15 +107,13 @@ function agregarTexto(
     vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
   });
 
-    areaEscritura.addEventListener('input', (evento) => {
-    // Prevenir que el texto comience con espacios sin mover el cursor
-      if (evento.target.value.startsWith(' ')) {
+  areaEscritura.addEventListener('input', (evento) => {
+    if (evento.target.value.startsWith(' ')) {
       const posicionCursor = evento.target.selectionStart;
-        evento.target.value = evento.target.value.replace(/^ +/, ''); // Eliminar solo espacios del inicio
-      // Restaurar posición del cursor (ajustada por los espacios eliminados)
+      evento.target.value = evento.target.value.replace(/^ +/, '');
       const nuevaPosicion = Math.max(0, posicionCursor - 1);
-        evento.target.setSelectionRange(nuevaPosicion, nuevaPosicion);
-      }
+      evento.target.setSelectionRange(nuevaPosicion, nuevaPosicion);
+    }
     
     actualizarTexto(vistaPrevia, areaEscritura);
     actualizarCaracteres(tarjetaTexto, areaEscritura);
@@ -114,16 +122,11 @@ function agregarTexto(
   });
 
   botonAlinear.addEventListener('click', () => {
-    // VALIDACIÓN: Verificar si hay texto antes de permitir alineación
     const textoActual = areaEscritura.value.trim();
-    
     if (textoActual === '' || textoActual.length === 0) {
-      // Si no hay texto, mostrar mensaje informativo
       mostrarAlerta('Información', 'Agrega texto antes de usar la alineación.', 'info');
-      return; // Salir de la función sin ejecutar la alineación
+      return;
     }
-    
-    // Si hay texto, proceder con la alineación normal
     const alineaciones = ['left', 'center', 'right'];
     vistaPrevia.alignIndex = (vistaPrevia.alignIndex + 1) % alineaciones.length;
     const alineado = alineaciones[vistaPrevia.alignIndex];
