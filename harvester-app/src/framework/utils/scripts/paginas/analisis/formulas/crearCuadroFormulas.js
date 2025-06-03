@@ -34,6 +34,11 @@ async function crearCuadroFormulas( graficaId, formulasDisponibles, datosOrigina
   // Obtener las columnas de la hoja seleccionada
   const datos = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
   const columnasActualizadas = obtenerParametrosTractor(datos, tractorSeleccionado);
+  let mensajeInicial = 'No hay fórmulas disponibles.';
+  console.log(formulasDisponibles);
+  if (formulasDisponibles.length > 0) {
+    mensajeInicial = 'Escribe para buscar fórmulas...';
+  } 
 
 cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
@@ -52,7 +57,7 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
                   <div class='opciones-carta'>
                       <input class='search-section' placeholder='Encuentra una fórmula' />
                       <div class='contenedor-busqueda'>
-                          <div class="mensaje-inicial">Escribe para buscar fórmulas...</div>
+                          <div class="mensaje-inicial">${mensajeInicial}</div>
                       </div>
                       <div style='display: flex; justify-content: space-between; gap: 1rem;'>
                         <div class='boton-agregar'id = 'btnAplicarFormula'>
