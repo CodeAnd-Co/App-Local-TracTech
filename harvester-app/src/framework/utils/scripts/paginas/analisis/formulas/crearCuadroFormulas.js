@@ -202,9 +202,8 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
       }
       
     } catch (error) {
-      console.log(`Columna no encontrada?, ${error.tipo}`);
+      console.log(`error, ${error}`);
       if (error.tipo == 'columnaNoEncontrada') {
-        console.log(`Columna no encontrada!!`);
         // Ya se mostró la alerta específica, no mostrar la genérica
         return;
       }
