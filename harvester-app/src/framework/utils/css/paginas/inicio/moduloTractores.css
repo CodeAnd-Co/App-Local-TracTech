@@ -70,6 +70,7 @@ input:focus {
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+  gap: 10px;
 }
 .icon {
   flex-shrink: 0;
