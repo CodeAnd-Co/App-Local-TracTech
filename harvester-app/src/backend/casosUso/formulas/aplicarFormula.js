@@ -9,42 +9,25 @@ const opciones = {
  * Aplica una fórmula estructurada a una hoja de Excel almacenada en localStorage.
  * @param {string} nombreFormula - Nombre de la fórmula a aplicar.
  * @param {string} formulaEstructurada - Fórmula estructurada a aplicar.
- * @param {string|null} nombreHoja - Nombre de la hoja donde se aplicará la fórmula (opcional).
+ * @param {string|null} tractorSeleccionado - Nombre de la hoja donde se aplicará la fórmula (opcional).
  * @returns {Object} Resultado de la aplicación de la fórmula.
  */
-function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
+function aplicarFormula(nombreFormula, formulaEstructurada, tractorSeleccionado, datosExcel) {
     try {
-        // Obtener datos del localStorage
-        const datosExcelCadena = localStorage.getItem('datosExcel');
-        if (!datosExcelCadena) {
-            throw new Error('No se encontraron datos en localStorage');
-        }
-        
-        let datosExcel;
-        try {
-            datosExcel = JSON.parse(datosExcelCadena);
-        } catch {
 
-            throw new Error('Los datos en localStorage no son un JSON válido');
-        }
-        
-   
-        let hojas = datosExcel;
-        if (datosExcel.hojas) {
-            hojas = datosExcel.hojas;
-        }
-        
+        const hojas = datosExcel.hojas;
+
         // Si no se especifica hoja, usar la primera disponible
         let datos = [];
-        let nombreHojaUsada = '';
+        let tractorUsado = '';
         
-        if (nombreHoja && hojas[nombreHoja]) {
-            datos = hojas[nombreHoja];
-            nombreHojaUsada = nombreHoja;
+        if (tractorSeleccionado && hojas[tractorSeleccionado]) {
+            datos = hojas[tractorSeleccionado];
+            tractorUsado = tractorSeleccionado;
         } else {
             // Tomar la primera hoja disponible
-            nombreHojaUsada = Object.keys(hojas)[0];
-            datos = hojas[nombreHojaUsada];
+            tractorUsado = Object.keys(hojas)[0];
+            datos = hojas[tractorUsado];
         }
         
         // Verificar que datos sea un array
@@ -92,14 +75,14 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
         return {
             indiceColumna: indiceColumnaVacio,
             nombreColumna: nombreColumnaResultado,
-            nombreHoja: nombreHojaUsada,
+            tractorSeleccionado: tractorUsado,
             resultados,
             datosActualizados
         };
     } catch (error) {
         return {
             error: error.message,
-            nombreHoja: nombreHoja || 'desconocida'
+            tractorSeleccionado: tractorSeleccionado || 'desconocida'
         };
     }
 }
