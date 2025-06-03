@@ -28,6 +28,14 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         mostrarAlerta('Error', `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`, 'error');
         return;
     }
+    if (formula.trim() === '') {
+        mostrarAlerta('Error', 'La fórmula no puede estar vacía.', 'error');
+    }
+    formula = formula.trim();
+    if (!formula.startsWith('=')) {
+        mostrarAlerta('Error', 'La fórmula debe comenzar con un signo igual ( = ).', 'error');
+        return;
+    }
     
     
     let formulasGuardadas = localStorage.getItem('nombresFormulas');
@@ -37,6 +45,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         return;
         
     }
+    
     
     const token = localStorage.getItem('token');
     try {
