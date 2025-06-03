@@ -1,3 +1,4 @@
+const { mostrarAlerta } = require('../../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal');
 const { HyperFormula } = require('hyperformula');
 
 const opciones = {
@@ -86,6 +87,7 @@ function aplicarFormula(nombreFormula, formulaEstructurada, nombreHoja = null) {
         
         // Obtener los datos actualizados con la nueva columna para devolverlos
         const datosActualizados = hyperFormula.getSheetValues(0);
+
         
         return {
             indiceColumna: indiceColumnaVacio,
