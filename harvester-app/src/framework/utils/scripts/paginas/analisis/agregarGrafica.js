@@ -206,9 +206,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   return tarjetaGrafica;
 }
-  
-
-function seleccionarTractor() {}
 
 /**
  * Formateador universal para etiquetas de datos según el tipo de gráfica
