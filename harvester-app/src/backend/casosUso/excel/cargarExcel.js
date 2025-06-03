@@ -99,6 +99,12 @@ async function leerExcel(archivo) {
                         const hoja = libro.Sheets[nombreHoja];
                         // Convertimos la hoja a JSON
                         const datosHojaJSON = XLSX.utils.sheet_to_json(hoja, { header: 1 });
+                        if (verificarExcel(datosHojaJSON)) {
+                            reject({
+                                exito: false,
+                                mensaje: 'El archivo Excel contiene caracteres inválidos.'
+                            });
+                        }
                         // Almacenamos los datos usando el nombre de la hoja como clave
                         todasLasHojas[nombreHoja] = datosHojaJSON;
                     });
@@ -144,6 +150,33 @@ async function leerExcel(archivo) {
             mensaje: 'Error al verificar el archivo. Es posible que esté dañado.'
         };
     }
+}
+
+function verificarExcel(hojaJSON) {
+    // Verificar que el JSON tenga al menos una hoja
+    if (!hojaJSON || typeof hojaJSON !== 'object' || Object.keys(hojaJSON).length === 0) {
+        return false
+    }
+    let hayPeligro = false
+
+    hojaJSON.forEach((colmunas) => {
+        if (!hayPeligro) {
+            colmunas.forEach((dato) => {
+                if (typeof dato === 'string') {
+                    const patron = /[<>&"'`]/g
+                    if (patron.test(dato)) {
+                        hayPeligro = true
+                    } else if (dato.startsWith('=') || dato.startsWith('+') || dato.startsWith('-')) {
+                        hayPeligro = true
+                    }
+                }
+            })
+        } else {
+            return
+        }
+    })
+
+    return hayPeligro
 }
 
 module.exports = {

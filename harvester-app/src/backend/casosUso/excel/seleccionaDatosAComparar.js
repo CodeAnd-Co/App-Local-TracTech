@@ -31,7 +31,6 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
             const filasFiltradas = obtenerFilasFiltradas(datosHoja, indicesValidos);
             const encabezadosFiltrados = indicesValidos.map(indice => encabezados[indice]);
 
-            
             // Limpiar datos de voltaje para tratarlos como números.4
             limpiarColumnas('Bat(V)', encabezadosFiltrados, filasFiltradas);
             limpiarColumnas('ADC', encabezadosFiltrados, filasFiltradas);

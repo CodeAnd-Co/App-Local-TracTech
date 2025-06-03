@@ -97,7 +97,16 @@ function agregarTexto(
     vistaPrevia.classList.add(`preview-${selectorTipo.value}`);
   });
 
-  areaEscritura.addEventListener('input', () => {
+    areaEscritura.addEventListener('input', (evento) => {
+    // Prevenir que el texto comience con espacios sin mover el cursor
+      if (evento.target.value.startsWith(' ')) {
+      const posicionCursor = evento.target.selectionStart;
+        evento.target.value = evento.target.value.replace(/^ +/, ''); // Eliminar solo espacios del inicio
+      // Restaurar posición del cursor (ajustada por los espacios eliminados)
+      const nuevaPosicion = Math.max(0, posicionCursor - 1);
+        evento.target.setSelectionRange(nuevaPosicion, nuevaPosicion);
+      }
+    
     actualizarTexto(vistaPrevia, areaEscritura);
     actualizarCaracteres(tarjetaTexto, areaEscritura);
     // Validar el botón alinear cada vez que se modifica el texto
@@ -105,7 +114,7 @@ function agregarTexto(
   });
 
   botonAlinear.addEventListener('click', () => {
-    // Verificar si hay texto antes de permitir alineación
+    // VALIDACIÓN: Verificar si hay texto antes de permitir alineación
     const textoActual = areaEscritura.value.trim();
     
     if (textoActual === '' || textoActual.length === 0) {
@@ -131,16 +140,17 @@ function agregarTexto(
 }
 
 /**
- * Valida y actualiza el estado visual del botón alinear según si hay texto o no.
+ * Valida y actualiza el estado visual del botón alinear según si hay texto válido o no.
  * 
  * @param {HTMLTextAreaElement} areaEscritura - Área de texto a validar
  * @param {HTMLDivElement} botonAlinear - Botón alinear a validar
  * @returns {void}
  */
 function validarBotonAlinear(areaEscritura, botonAlinear) {
-  const hayTexto = areaEscritura.value.trim().length > 0;
+  const textoSinEspacios = areaEscritura.value.trim();
+  const hayTextoValido = textoSinEspacios.length > 0;
   
-  if (hayTexto) {
+  if (hayTextoValido) {
     // Habilitar el botón
     botonAlinear.style.opacity = '1';
     botonAlinear.style.pointerEvents = 'auto';
