@@ -40,6 +40,13 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     return;
   }
 
+  const tarjetasTextoExistentes = contenedor.querySelectorAll('.tarjeta-texto').length;
+  const tarjetasGraficaExistentes = contenedor.querySelectorAll('.tarjeta-grafica').length;
+  const totalTarjetas = tarjetasTextoExistentes + tarjetasGraficaExistentes;
+  if (totalTarjetas >= 30) {
+    mostrarAlerta('Advertencia', 'No puedes agregar más de 30 tarjetas en total.', 'info');
+    return;
+  }
   const tarjetaGrafica = document.createElement('div');
   tarjetaGrafica.classList.add('tarjeta-grafica');
   const idsTarjetasExistentes = Array.from(contenedor.querySelectorAll('.tarjeta-grafica'), (tarjeta) => {
@@ -133,7 +140,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         
         // La primera fila contiene las columnas
         if (datosParseados.length > 0) {
-          columnas = datosParseados[0]; // Omitir las primeras 3 columnas
+          columnas = datosParseados[0];
         }
       }
     } catch (error) {
