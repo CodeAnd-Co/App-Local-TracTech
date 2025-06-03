@@ -4,7 +4,7 @@
  * @param {string} terminoBusqueda - Término de búsqueda para filtrar fórmulas.
  * @returns {void}
  */
-function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDisponibles) {
+function filtrarYRenderizarFormulas(contenedor, formulasDisponibles, terminoBusqueda = '') {
   // Limpiar contenedor
   contenedor.innerHTML = '';
 
@@ -30,7 +30,7 @@ function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDi
     contenedor.innerHTML = '<div class="mensaje-sin-resultados">No hay fórmulas con ese nombre</div>';
     return;
   }
-
+  // eslint-disable-next-line no-unused-vars
   formulasFiltradas.forEach((formula, indice) => {
   const elementoFormula = document.createElement('div');
   elementoFormula.className = 'formula-objeto';
