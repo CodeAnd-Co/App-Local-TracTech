@@ -187,7 +187,6 @@ document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
     const contador = input.parentNode.querySelector('.contador-caracteres');
     if (!contador) return;
 
-    console.log('input: ', input);
 
     // Inicializa una sola llamada a la función extraída
     actualizarContador(input, contador, maximoCaracteres);
@@ -1091,7 +1090,6 @@ function cargarRoles() {
  * @param {number|string} maximoCaracteres
  */
 function actualizarContador(input, contador, maximoCaracteres) {
-    console.log('Actualizando contador para:', input.id, input.value.length);
     contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
 }
 

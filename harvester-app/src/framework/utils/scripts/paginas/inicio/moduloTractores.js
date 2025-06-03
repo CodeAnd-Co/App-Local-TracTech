@@ -353,11 +353,6 @@ async function botonReporte(datosExcel) {
     botonAnalisis.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         try {
-            // Validar si hay tractores con columnas seleccionadas pero no marcados como seleccionados
-             
-            for( tractor of Object.entries(tractoresSeleccionados)){
-                console.log('tractor', tractor);
-            }
             // eslint-disable-next-line no-unused-vars
             const tractoresParametrosDiferentes = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
                 return datos.seleccionado && datos.columnas.length === 0;
