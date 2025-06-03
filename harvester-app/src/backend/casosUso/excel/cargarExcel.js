@@ -99,8 +99,14 @@ async function leerExcel(archivo) {
                         const hoja = libro.Sheets[nombreHoja];
                         // Convertimos la hoja a JSON
                         const datosHojaJSON = XLSX.utils.sheet_to_json(hoja, { header: 1 });
+                        if(datosHojaJSON[0].length == null || datosHojaJSON[0].length == 0){
+                            reject({
+                                exito:false,
+                                mensaje: 'El archivo se encuentra vacio'
+                            })
+                        }
 
-                        const verificacionExcel = verificarExcel(datosHojaJSON);
+                        const verificacionExcel = verificarCaracteresExcel(datosHojaJSON);
                         if (verificacionExcel.hayPeligro) {
                             reject({
                                 exito: false,
@@ -154,7 +160,7 @@ async function leerExcel(archivo) {
     }
 }
 
-function verificarExcel(hojaJSON) {
+function verificarCaracteresExcel(hojaJSON) {
     // Validación inicial
     if (!hojaJSON || typeof hojaJSON !== 'object' || Object.keys(hojaJSON).length === 0) {
         return { hayPeligro: false }
