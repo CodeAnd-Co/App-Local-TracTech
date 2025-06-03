@@ -59,7 +59,6 @@ async function inicializarModuloGestionUsuarios() {
             mostrarAlerta('No existen usuarios registrados en el sistema', '', 'warning');
             document.getElementById('lista-usuarios').innerHTML
                 = '<div class="error-carga">No existen usuarios registrados en el sistema.</div>';
-            return;
         }
 
         // No mostrar el usuario que consulta la lista
