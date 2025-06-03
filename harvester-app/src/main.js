@@ -5,6 +5,7 @@ const {precargarEJS} = require('./framework/utils/scripts/middleware/precargarEJ
 const { verificarEstado } = require('./backend/servicios/verificarEstado');
 const { obtenerID } = require('./backend/servicios/generadorID');
 const { PERMISOS } = require('./framework/utils/scripts/middleware/auth');
+const os = require('os');
 
 const INTERVALOTIEMPO = 120000; // 2 minutos en milisegundos
 
@@ -200,20 +201,22 @@ app.on('window-all-closed', () => {
 });
 
 // Manejar la apertura del diálogo de selección de archivos cuando se descarga un pdf
-ipcMain.on('guardar-pdf', async (evento, bufer) => {
-  const resultado = await dialog.showSaveDialog(mainWindow, {
-    title: 'Guardar PDF',
-    defaultPath: 'reporte.pdf',
-    filters: [
-      { name: 'PDF', extensions: ['pdf'] }
-    ]
+ipcMain.on('guardar-pdf', async (event, buffer) => {
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: 'Guardar reporte PDF',
+    defaultPath: path.join(os.homedir(), 'Downloads', 'reporte.pdf'),
+    filters: [{ name: 'PDF', extensions: ['pdf'] }]
   });
-
-  if (!resultado.canceled) {
-    fs.writeFileSync(resultado.filePath, bufer);
+  if (canceled) {
+    event.reply('pdf-guardado', false);
+    return;
   }
-    
-  evento.sender.send('pdf-guardado', !resultado.canceled);
+  try {
+    fs.writeFileSync(filePath, buffer);
+    event.reply('pdf-guardado', true);
+  } catch {
+    event.reply('pdf-guardado', false); // <-- Elimina 'error' del catch
+  }
 });
 
 ipcMain.handle('precargar-ejs', async (event, rutaEJS, parametros) => {

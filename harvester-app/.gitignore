@@ -88,6 +88,12 @@ typings/
 # Vite
 .vite/
 
+# Certificados
+cert/
+*.pfx
+*.p12
+cert-base64.txt
+
 # Electron-Forge
 out/
 
