@@ -24,7 +24,8 @@ const createWindow = async () => {
     height: 1080,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false, // Desactivar el aislamiento de contexto para permitir el uso de Node.js en el frontend
+      contextIsolation: false,
+      devTools: false
     },
   });
 
@@ -97,7 +98,16 @@ async function verificarEstadoUsuarioAutenticado() {
     try {
         const verificacion = await verificarEstado(token, dispositivoId);
         if (!verificacion.estado) {
-            deshabilitarAplicacion('Aplicación deshabilitada por seguridad');
+            // Manejar diferentes tipos de error
+            let mensaje = 'Aplicación deshabilitada por seguridad';
+            
+            if (verificacion.codigo === 'DISPOSITIVO_AJENO') {
+                mensaje = 'Este dispositivo pertenece a otro usuario';
+            } else if (verificacion.codigo === 'MULTIPLES_DISPOSITIVOS') {
+                mensaje = 'Múltiples dispositivos detectados en tu cuenta';
+            }
+            
+            deshabilitarAplicacion(mensaje);
         }
     } catch {
         return ('Error de conexión al verificar estado');
