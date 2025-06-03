@@ -5,6 +5,7 @@ const {precargarEJS} = require('./framework/utils/scripts/middleware/precargarEJ
 const { verificarEstado } = require('./backend/servicios/verificarEstado');
 const { obtenerID } = require('./backend/servicios/generadorID');
 const { PERMISOS } = require('./framework/utils/scripts/middleware/auth');
+const { mostrarAlerta } = require('./framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal');
 
 const INTERVALOTIEMPO = 120000; // 2 minutos en milisegundos
 
@@ -151,7 +152,7 @@ async function limpiarDatosSensibles() {
                 localStorage.clear();
             `);
         } catch (error) {
-
+            mostrarAlerta('Error', `No se pudo limpiar el localStorage. ${error}`, 'error');
         }
     }
 }
@@ -163,7 +164,7 @@ async function obtenerTokenAlmacenado() {
     if (mainWindow && mainWindow.webContents && !mainWindow.isDestroyed()) {
         try {
             return await mainWindow.webContents.executeJavaScript('localStorage.getItem("token")');
-        } catch (error) {
+        } catch {
             return null;
         }
     }
@@ -178,7 +179,7 @@ async function obtenerPermisosAlmacenados() {
         try {
             const permisos = await mainWindow.webContents.executeJavaScript('localStorage.getItem("permisos")');
             return permisos ? JSON.parse(permisos) : [];
-        } catch (error) {
+        } catch {
             return [];
         }
     }

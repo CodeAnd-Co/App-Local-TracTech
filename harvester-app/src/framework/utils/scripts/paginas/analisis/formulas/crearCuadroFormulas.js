@@ -34,7 +34,7 @@ async function crearCuadroFormulas(columnas, graficaId, datosGrafica, formulasDi
 
   // Obtener las columnas de la hoja seleccionada
   const datos = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
-  let columnasActualizadas = obtenerParametrosTractor(datos, tractorSeleccionado);
+  const columnasActualizadas = obtenerParametrosTractor(datos, tractorSeleccionado);
 
 cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
