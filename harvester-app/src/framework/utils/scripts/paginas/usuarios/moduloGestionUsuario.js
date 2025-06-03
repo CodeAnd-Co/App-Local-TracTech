@@ -114,13 +114,14 @@ async function inicializarModuloGestionUsuarios() {
       const emailInput = document.getElementById('email');
         if (emailInput) {
             // Evita escribir espacios con el teclado
-            emailInput.addEventListener('keydown', function(e) {
-            if (e.key === ' ') {
-                e.preventDefault();
+            emailInput.addEventListener('keydown', (entrada) => {
+            if (entrada.key === ' ') {
+                entrada.preventDefault();
             }
             });
             // Elimina espacios al pegar
-            emailInput.addEventListener('input', function(e) {
+            // eslint-disable-next-line no-unused-vars
+            emailInput.addEventListener('input', function(entrada) {
             this.value = this.value.replace(/\s/g, '');
             });
         }
