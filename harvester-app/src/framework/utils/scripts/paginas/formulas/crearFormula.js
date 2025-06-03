@@ -56,6 +56,11 @@ async function inicializarCrearFormula() {
             mostrarAlerta('Error', 'No se ha podido generar la fórmula.', 'error');
         }
     });
+    const nombreFormula = document.getElementById('nombreFormula')
+    nombreFormula.setAttribute('maxlength', LONGITUD_MAXIMA_NOMBRE_FORMULA);
+    nombreFormula.addEventListener('input', () => {
+        actualizarCaracteres(nombreFormula);
+    })
 
     if (nombreArchivo === null || nombreArchivo === undefined) {
         mostrarAlerta('Error', 'No hay un archivo cargado.', 'error');
@@ -64,6 +69,27 @@ async function inicializarCrearFormula() {
         return;
     }
 }       
+
+/**
+ * Actualiza el contador de caracteres restantes.
+ *
+ * @param {HTMLTextAreaElement} areaEscritura - Área de texto a validar.
+ * @returns {void}
+ */
+function actualizarCaracteres(areaEscritura) {
+  const contador = areaEscritura.parentElement?.querySelector('.contador-caracteres');
+
+  if (!contador) {
+    return;
+  }
+
+  const caracteresUsados = areaEscritura.value.length;
+  const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
+
+  const caracteresRestantes = limite - caracteresUsados;
+  contador.textContent = `${caracteresUsados}/${limite} caracteres`;
+  contador.style.color = caracteresRestantes < 5 ? '#e74c3c' : '#7f8c8d';
+}
 
 
 /**
@@ -217,8 +243,16 @@ function agregarArgumento(etiqueta, nombreClase, contenedor, permitirAnidado = f
         </div>
         <div class='argumentoContenido'>
             <div class='argumentosEntradas'>
-                <input type='text' class='${nombreClase}' placeholder='${etiqueta}'>
+                <input type='text' class='${nombreClase}' placeholder='${etiqueta}' maxlength='50' oninput="actualizarCaracteres(this)">
+                
+                <div class="info-error-contador">
+                    <small id="mensajeErrorNombre" class="mensajeError"></small>
+                    <div class="contador-caracteres"></div>
+                </div>
+
                 ${permitirAnidado ? '<button class="botonFuncionAnidada" onclick="agregarFuncionAnidada(this)">Anidar Función</button>' : ''}
+
+
             </div>
             <div class='contenedor-funciones-anidadas'></div>
         </div>
@@ -278,6 +312,9 @@ function agregarFuncionAnidada(boton) {
     
     const argumentoContenido = boton.closest('.argumentoContenido');
     const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
+
+    const contador = argumentoContenido.parentElement?.querySelector('.contador-caracteres');
+    contador.textContent = ``;
     
     // Deshabilitar el input de texto del argumento padre y agregar carácter invisible
     const inputPadre = argumentoContenido.querySelector('input[type="text"]');
@@ -638,7 +675,7 @@ function popularDropdown(elementoSeleccionado) {
         return;
     }
 
-    let columnas = [];
+    let columnas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));
     
     // Intentar obtener columnas del nuevo formato con hojas
     const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
@@ -662,7 +699,7 @@ function popularDropdown(elementoSeleccionado) {
     
     // Fallback: intentar usar el formato anterior
     if (columnas.length === 0) {
-        const columnasGuardadas = localStorage.getItem('columnas');
+        const columnasGuardadas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));;
         if (columnasGuardadas) {
             try {
                 columnas = JSON.parse(columnasGuardadas);

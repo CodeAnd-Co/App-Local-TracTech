@@ -93,7 +93,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
 
     // Verificar que hay datos disponibles
     const datosExcel = localStorage.getItem('datosFiltradosExcel');
-    const hojaSeleccionada = localStorage.getItem('hojaSeleccionada'); // Obtener la hoja seleccionada
     if (!datosExcel) {
       mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
       return;
@@ -149,8 +148,8 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
 
     try {
       let resultadoFormula;
-      if (hojaSeleccionada.length != 0) {
-        resultadoFormula = aplicarFormula(nombreFormula, datosFormula, hojaSeleccionada);
+      if (tractorSeleccionado.length != 0) {
+        resultadoFormula = aplicarFormula(nombreFormula, datosFormula, tractorSeleccionado);
       } else {
         resultadoFormula = aplicarFormula(nombreFormula, datosFormula);
       }
