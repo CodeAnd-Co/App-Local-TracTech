@@ -692,7 +692,8 @@ function popularDropdown(elementoSeleccionado) {
                 }
             }
         } catch (error) {
-            console.error('Error al parsear datos de Excel:', error);
+            mostrarAlerta('Error', `No se pudieron cargar las columnas del archivo. Verifica el formato del archivo: ${error}`, 'error');
+            columnas = [];
         }
     }
     

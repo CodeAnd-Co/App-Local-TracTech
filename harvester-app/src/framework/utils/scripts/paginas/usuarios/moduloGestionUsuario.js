@@ -610,7 +610,7 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
 
     // Validar que haya cambiado mínimo un campo
     if (!(cambioNombre || cambioCorreo || cambioContrasenia || cambioRol)) {
-        return { error: 'Debes modificar al menos un campo del usuario.', datos: null };
+        return { error: 'Para modificar un usuario, al menos uno de sus datos (nombre, correo o rol) debe ser diferente al valor actual.', datos: null };
     }
 
     const datos = { idUsuario: usuarioAEditar.id };
