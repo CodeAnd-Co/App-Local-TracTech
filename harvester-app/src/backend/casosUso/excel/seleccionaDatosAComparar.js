@@ -1,6 +1,6 @@
 // RF14: Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
 
-const { mostrarAlerta } = require("../../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal");
+const { mostrarAlerta } = require('../../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal');
 const { extraerNumero } = require('../../servicios/extraerNumero.js');
 const { obtenerParametrosSeleccionados, obtenerTractoresSeleccionados } = require('./obtenerDatosSeleccionados.js');
 
