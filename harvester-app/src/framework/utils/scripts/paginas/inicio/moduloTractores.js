@@ -1,11 +1,11 @@
-// RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
-// RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
+// RF4 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/RF4
+// RF26 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/RF26
 
 const tractoresSeleccionados = {};
 const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
 const { seleccionaDatosAComparar } = require(`${rutaBase}/src/backend/casosUso/excel/seleccionaDatosAComparar.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-
+const { validarNombreColumna } = require(`${rutaBase}/src/backend/casosUso/reportes/validarNombreColumna.js`)
 
 /* eslint-disable no-undef*/
 
@@ -214,7 +214,8 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
             seleccionado: false, columnas: [] 
         };
     }
-    columnas.forEach(nombreColumna => {
+    const columnasValidas = columnas.filter(columna => validarNombreColumna(columna));
+    columnasValidas.forEach(nombreColumna => {
         const columnaDiv = crearElementoColumna(nombreTractor, nombreColumna);
         columnasContenedor.appendChild(columnaDiv);
     });
@@ -352,6 +353,55 @@ async function botonReporte(datosExcel) {
     botonAnalisis.addEventListener('click', async () => {
         const rutaTractores = `${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`;
         try {
+            // Validar si hay tractores con columnas seleccionadas pero no marcados como seleccionados
+             
+            for( tractor of Object.entries(tractoresSeleccionados)){
+                console.log('tractor', tractor);
+            }
+            // eslint-disable-next-line no-unused-vars
+            const tractoresParametrosDiferentes = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
+                return datos.seleccionado && datos.columnas.length === 0;
+            });
+            // eslint-disable-next-line no-unused-vars
+            const tractoresConProblema = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
+                return datos.columnas.length > 0 && !datos.seleccionado;
+            });
+            // eslint-disable-next-line no-unused-vars
+            const tractoresValidos = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
+                return datos.columnas.length > 0 && datos.seleccionado;
+            });
+
+            if (tractoresParametrosDiferentes.length > 0 && tractoresConProblema.length > 0) {
+                mostrarAlerta('No hay columnas seleccionadas para los tractores seleccionados', 'Por favor, selecciona al menos una columna de cada tractor para generar el reporte.', 'warning');
+                return; 
+            }
+            if (tractoresConProblema.length > 0 && tractoresValidos.length === 0) {
+                mostrarAlerta('No hay tractores seleccionados', 'Por favor, selecciona al menos un tractor y una columna de ese tractor para generar el reporte.', 'warning');
+                return; 
+            }
+            if (tractoresConProblema.length > 0 && tractoresValidos.length > 0) {
+                mostrarAlerta('Hay un tractor que no está seleccionado pero tiene columnas seleccionadas', 'Por favor revisa que los tractores no seleccionados no tengan columnas seleccionadas, o selecciona los tractores que falten.', 'warning');
+                return; 
+            }
+            // Validar si hay tractores seleccionados pero sin ninguna columna seleccionada
+            // eslint-disable-next-line no-unused-vars
+            const tractoresSinColumnas = Object.entries(tractoresSeleccionados).filter(([nombreTractor, datos]) => {
+                return datos.seleccionado && datos.columnas.length === 0;
+            });
+            if (tractoresSinColumnas.length > 0) {
+                mostrarAlerta('No hay columnas seleccionadas', 'Por favor, selecciona al menos una columna de cada tractor seleccionado para generar el reporte.', 'warning');
+                return;
+            }
+            // Validar si no hay ninguna selección válida
+            const seleccionValida = Object.values(tractoresSeleccionados).some(datos => datos.seleccionado && datos.columnas.length > 0);
+            if (!seleccionValida) {
+                mostrarAlerta('No se ha seleccionado ningún tractor ni columnas', 'Por favor, realiza una selección antes de continuar.', 'warning');
+                return;
+            }
+
+
+
+            // Continuar con la operación si no hay problemas
             seleccionaDatosAComparar(datosExcel, tractoresSeleccionados);
             var vista = await ipcRenderer.invoke('precargar-ejs', rutaTractores, { Seccion: 'Análisis', Icono : 'GraficaBarras', permisos});
             window.location.href = vista;
@@ -360,7 +410,7 @@ async function botonReporte(datosExcel) {
         } catch {
             mostrarAlerta('Ocurrió un problema', 'No se pudo cargar el módulo de análisis.', 'error');
         }
-    })
+    });
 }
 
 /**

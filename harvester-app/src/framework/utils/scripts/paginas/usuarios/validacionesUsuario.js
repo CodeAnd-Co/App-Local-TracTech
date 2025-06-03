@@ -15,13 +15,19 @@ const tamanioMaximoContrasenia = 512;
  */
 function validarNombreCampo(nombre) {
     const valor = nombre.trim();
+
     if (valor.length < tamanioMinimoNombre || valor.length > tamanioMaximoNombre) {
         return `El nombre debe tener entre ${tamanioMinimoNombre} y ${tamanioMaximoNombre} caracteres.`;
     }
-    // Primer carácter debe ser letra, luego letras, espacios o puntos
+    if (valor === '') {
+        return 'El nombre no puede estar compuesto solo por espacios.';
+    }
+    if (nombre[0] === ' ') {
+        return 'El nombre no puede comenzar con un espacio.';
+    }
     const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
     if (!regex.test(valor)) {
-        return 'El nombre solo puede contener letras, espacios y puntos, y no puede empezar con punto.';
+        return 'El nombre solo puede contener letras, espacios y puntos.';
     }
     return '';
 }

@@ -157,8 +157,19 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   grafico.update();
 
   const entradaTexto = tarjetaGrafica.querySelector('.titulo-grafica');
-  entradaTexto.addEventListener('input', () =>
-    modificarTitulo(graficaDiv, entradaTexto, tarjetaGrafica));
+  // CAMBIO: Prevenir espacios al inicio sin mover el cursor
+  entradaTexto.addEventListener('input', (evento) => {
+    // Prevenir que el título comience con espacios sin mover el cursor
+    if (evento.target.value.startsWith(' ')) {
+      const posicionCursor = evento.target.selectionStart;
+      evento.target.value = evento.target.value.replace(/^ +/, ''); // Eliminar solo espacios del inicio
+      // Restaurar posición del cursor (ajustada por los espacios eliminados)
+      const nuevaPosicion = Math.max(0, posicionCursor - 1);
+      evento.target.setSelectionRange(nuevaPosicion, nuevaPosicion);
+    }
+    
+    modificarTitulo(graficaDiv, entradaTexto, tarjetaGrafica);
+  });
 
   const selectorTipo = tarjetaGrafica.querySelector('.tipo-grafica');
   selectorTipo.value = grafico.config.type;
