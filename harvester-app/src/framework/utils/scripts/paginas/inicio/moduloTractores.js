@@ -1,5 +1,5 @@
-// RF13 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF13
-// RF14 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF14
+// RF4 Usuario consulta datos disponibles - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/RF4
+// RF26 Usuario selecciona datos a comparar - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/RF26
 
 const tractoresSeleccionados = {};
 const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
