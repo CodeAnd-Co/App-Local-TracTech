@@ -101,7 +101,6 @@ function configurarBusquedaFormulas() {
  * @returns {void}
  */
 function filtrarFormulas(termino) {
-    console.log('Filtrando fórmulas con término:', termino);
     const formulasElementos = document.querySelectorAll('.frame-f-rmulas');
     const terminoOriginal = termino.toLowerCase(); // <= ahora sí
     const hayTerminoEscrito = termino.length > 0;
@@ -133,7 +132,6 @@ function filtrarFormulas(termino) {
         if (sonSoloEspacios) {
             mensajeSinResultados.textContent = 'No se puede buscar solo con espacios en blanco';
         } else {
-            console.log('No término:', termino);
             mensajeSinResultados.textContent = `No se encontraron fórmulas que coincidan con la busqueda`;
         }
 
