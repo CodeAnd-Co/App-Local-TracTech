@@ -50,7 +50,6 @@ function iniciarDistribuidores(datosExcel) {
     const hojaExcel = datosExcel.hojas.Distribuidor;
 
     if (!Array.isArray(hojaExcel) || hojaExcel.length === 0) {
-        mostrarAlerta('Ocurrió un problema', 'No se encontraron distribuidores.', 'warning');
         return;
     }
 
