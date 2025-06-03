@@ -29,7 +29,6 @@ function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDi
   contenedor.innerHTML = '';
 
   // Verificar si son solo espacios
-  const hayTerminoEscrito = terminoBusqueda.length > 0;
   const sonSoloEspacios = terminoBusqueda.length > 0 && terminoBusqueda.trim() === '';
 
   // Si no hay término de búsqueda, mostrar mensaje inicial
