@@ -193,8 +193,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
   // Configurar evento de búsqueda (filtrado local)
   campoBusqueda.addEventListener('input', (evento) => {
     const terminoBusqueda = evento.target.value.trim();
-    console.log('Término de búsqueda:', terminoBusqueda);
-    console.log('Formulas disponibles:', formulasDisponibles);
     filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda, formulasDisponibles);
   });
 

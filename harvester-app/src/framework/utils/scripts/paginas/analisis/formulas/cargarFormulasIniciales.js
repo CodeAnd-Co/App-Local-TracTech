@@ -7,19 +7,14 @@ const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/com
  */
 async function cargarFormulasIniciales(formulasDisponibles) {
   try {
-    console.log('Cargando fórmulas iniciales (Solo imprime lo qeue ya tiene', formulasDisponibles);
     if (formulasDisponibles.length > 0) {
       return; 
     }
-
     const respuesta = await consultaFormulasCasoUso();
-    console.log('Respuesta de consultaFormulasCasoUso:', respuesta);
     
     if (!respuesta.ok || !respuesta.datos) {
       throw new Error('Error al consultar fórmulas');
     }
-
-    localStorage.setItem('formulasDisponibles', JSON.stringify(respuesta.datos));
     // eslint-disable-next-line no-unused-vars
   } catch (error) {
     formulasDisponibles = [];    

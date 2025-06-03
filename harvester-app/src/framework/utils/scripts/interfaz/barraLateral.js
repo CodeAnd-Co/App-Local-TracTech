@@ -42,7 +42,6 @@ function configurarBotonesLaterales(){
   botonesBarraLateral.forEach(boton => {
     boton.addEventListener('click', async() => {
       const seccion = localStorage.getItem('seccion-activa');
-      console.log(boton.classList.contains('sidebar-logo'))
 
       if(seccion == 'analisis' && boton.classList.contains('sidebar-logo') == false){
         const resultadoConfirmado = await mostrarAlertaConfirmacion('¿Estás seguro de salir?', 'Se perdera el reporte si sales de este', 'warning', 'Sí, salir', 'Cancelar');
