@@ -51,6 +51,112 @@ async function eliminarFormula(id) {
     }
 }
 
+/**
+ * Actualiza el contador de caracteres restantes para el buscador de fórmulas.
+ * @param {HTMLInputElement} campoEntrada - Campo de entrada a validar.
+ * @returns {void}
+ */
+function actualizarCaracteresBuscador(campoEntrada) {
+    const caracteresUsados = campoEntrada.value.length;
+    const limite = parseInt(campoEntrada.getAttribute('maxlength'), 10);
+
+    // Verificación cuando se alcanza el maxlength
+    if (caracteresUsados >= limite) {
+        // Usar setTimeout para evitar conflictos con el evento input
+        setTimeout(() => {
+            mostrarAlerta('Límite alcanzado', `Has alcanzado el límite máximo de caracteres para la búsqueda de fórmulas (${limite} caracteres).`, 'warning');
+        }, 100);
+    }
+}
+
+/**
+ * Configura el campo de búsqueda para filtrar las fórmulas por nombre
+ * @returns {void}
+ */
+function configurarBusquedaFormulas() {
+    const campoBusqueda = document.getElementById('busqueda-formulas');
+    
+    if (!campoBusqueda) {
+        return;
+    }
+    
+    campoBusqueda.addEventListener('input', () => {
+        actualizarCaracteresBuscador(campoBusqueda);
+        // Aquí puedes agregar la lógica de filtrado de fórmulas si la necesitas
+        filtrarFormulas(campoBusqueda.value);
+    });
+    
+    // Agregar también un listener para cuando se presiona Enter
+    campoBusqueda.addEventListener('keypress', (evento) => {
+        if (evento.key === 'Enter') {
+            evento.preventDefault();
+            filtrarFormulas(campoBusqueda.value);
+        }
+    });
+}
+
+/**
+ * Filtra las fórmulas mostradas según el término de búsqueda
+ * @param {string} termino - Término de búsqueda
+ * @returns {void}
+ */
+function filtrarFormulas(termino) {
+    const formulasElementos = document.querySelectorAll('.frame-f-rmulas');
+    const terminoLowerCase = termino.toLowerCase().trim();
+    const terminoOriginal = termino.trim();
+    
+    // Verificar si son solo espacios
+    const hayTerminoEscrito = termino.length > 0;
+    const sonSoloEspacios = termino.length > 0 && termino.trim() === '';
+    
+    // SIEMPRE procesar todas las fórmulas, independientemente del estado anterior
+    formulasElementos.forEach(formulaElemento => {
+        const nombreFormula = formulaElemento.querySelector('.texto-usuario')?.textContent?.toLowerCase() || '';
+        
+        if (sonSoloEspacios) {
+            // Si son solo espacios, ocultar todas
+            formulaElemento.style.display = 'none';
+        } else if (terminoLowerCase === '' || nombreFormula.includes(terminoLowerCase)) {
+            // Si no hay término o el nombre coincide, mostrar
+            formulaElemento.style.display = 'flex';
+        } else {
+            // Si hay término pero no coincide, ocultar
+            formulaElemento.style.display = 'none';
+        }
+    });
+    
+    // Mostrar mensaje si no hay resultados
+    const formulasVisibles = Array.from(formulasElementos).filter(el => el.style.display !== 'none');
+    const contenedor = document.getElementById('frame-formulas');
+    
+    // Remover mensaje anterior si existe
+    const mensajeAnterior = contenedor.querySelector('.mensaje-sin-resultados');
+    if (mensajeAnterior) {
+        mensajeAnterior.remove();
+    }
+    
+    // Mostrar mensaje cuando:
+    // 1. Son solo espacios (siempre mostrar este mensaje)
+    // 2. O cuando no hay fórmulas visibles Y hay algo escrito Y hay fórmulas en el DOM
+    if (sonSoloEspacios || (formulasVisibles.length === 0 && hayTerminoEscrito && formulasElementos.length > 0 && !sonSoloEspacios)) {
+        const mensajeSinResultados = document.createElement('div');
+        mensajeSinResultados.className = 'mensaje-sin-resultados';
+        
+        if (sonSoloEspacios) {
+            mensajeSinResultados.textContent = 'No se puede buscar solo con espacios en blanco';
+        } else {
+            mensajeSinResultados.textContent = `No se encontraron fórmulas que coincidan con "${terminoOriginal}"`;
+        }
+        
+        // Insertar el mensaje después de la tabla de columnas si existe
+        const tablaColumnas = contenedor.querySelector('.tabla-columnas');
+        if (tablaColumnas) {
+            tablaColumnas.insertAdjacentElement('afterend', mensajeSinResultados);
+        } else {
+            contenedor.appendChild(mensajeSinResultados);
+        }
+    }
+}
 
 async function renderizarFormulas() {
     try {
@@ -178,10 +284,14 @@ async function renderizarFormulas() {
         // Marcar que ya se agregó el listener para evitar duplicados
         btnCrearFormula.setAttribute('data-listener-added', 'true');
     }
+    
+    // Configurar la búsqueda después de renderizar las fórmulas
+    configurarBusquedaFormulas();
 }
 
 
 module.exports = {
     renderizarFormulas,
+    configurarBusquedaFormulas, // Exportar la función por si se necesita en otro lugar
 };
 

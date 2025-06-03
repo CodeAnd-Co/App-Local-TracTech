@@ -26,6 +26,22 @@
   margin-left: 0;
   flex-direction: column;
 }
+.mensaje-sin-resultados {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    margin: 10px 0;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    top: 0;
+    left: 0;
+    clear: both;
+    display: block;
+}
 .botonEliminar { 
   background-color: #f44336;
     color: white; 
