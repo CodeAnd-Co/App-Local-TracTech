@@ -1,5 +1,6 @@
 // RF68 Modificar fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF68 
 const { modificarFormula } = require(`${rutaBase}src/backend/domain/formulasAPI/formulaAPI.js`);
+const { mostrarAlertaConfirmacion } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 
 const { LONGITUD_MAXIMA_NOMBRE_FORMULA,
     LONGITUD_MAXIMA_FORMULA} = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
@@ -36,6 +37,7 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
         mostrarAlerta('Error', 'La fórmula debe comenzar con un signo igual ( = ).', 'error');
         return;
     }
+
     
     
     let formulasGuardadas = localStorage.getItem('nombresFormulas');
