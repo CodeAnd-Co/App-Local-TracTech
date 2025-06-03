@@ -2,7 +2,7 @@
 const { cargarFormulasIniciales } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/cargarFormulasIniciales.js`);
 /* eslint-disable no-unused-vars */
 const { jsPDF } = require(`${rutaBase}/node_modules/jspdf/dist/jspdf.umd.min.js`);
-const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
+const { mostrarAlerta, mostrarAlertaSinBoton } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 if (typeof ipcRenderer === 'undefined') {
   const { ipcRenderer } = require('electron');
@@ -41,9 +41,19 @@ async function inicializarModuloAnalisis() {
     contenedorTexto.textContent = 'Descargando...';
     pantallaBloqueo.classList.remove('oculto');
 
+    // Mostrar alerta de descarga en progreso
+    mostrarAlertaSinBoton(
+      'Descargando reporte',
+      'Seleccione la ubicación para guardar el reporte.',
+      'info'
+    );
+
     descargarPDF()
 
     ipcRenderer.once('pdf-guardado', (event, exito) => {
+      // Cerrar la alerta de descarga
+      if (window.Swal) Swal.close();
+
       botonPDF.disabled = false;
       contenedorTexto.textContent = anterior;
       pantallaBloqueo.classList.add('oculto');
