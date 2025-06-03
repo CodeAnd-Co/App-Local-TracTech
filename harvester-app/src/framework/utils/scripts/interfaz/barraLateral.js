@@ -93,7 +93,7 @@ function cerrarBarraLateral() {
  * @returns {void}
  */
 function aplicarActivoDesdeAlmacenamiento() {
-  const seccion             = localStorage.getItem('seccion-activa');
+  let seccion             = localStorage.getItem('seccion-activa');
   const botonesSidebarTodos = document.querySelectorAll('.boton-sidebar');
 
   botonesSidebarTodos.forEach(botonItem => botonItem.classList.remove('activo'));
