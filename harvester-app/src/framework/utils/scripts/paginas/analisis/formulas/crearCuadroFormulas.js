@@ -131,9 +131,9 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
     try {
       let resultadoFormula;
       if (tractorSeleccionado.length != 0) {
-        resultadoFormula = aplicarFormula(nombreFormula, datosFormula, tractorSeleccionado);
+        resultadoFormula = aplicarFormula(nombreFormula, datosFormula, tractorSeleccionado, JSON.parse(datosExcel));
       } else {
-        resultadoFormula = aplicarFormula(nombreFormula, datosFormula);
+        resultadoFormula = aplicarFormula(nombreFormula, datosFormula, null, JSON.parse(datosExcel));
       }
       let contadorErrores = 0;
       const resultados = resultadoFormula.resultados;//[0].value;
