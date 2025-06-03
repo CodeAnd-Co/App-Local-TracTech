@@ -63,9 +63,15 @@ async function inicializarCrearFormula() {
     })
 
     if (nombreArchivo === null || nombreArchivo === undefined) {
-        mostrarAlerta('Error', 'No hay un archivo cargado.', 'error');
-        document.getElementById('btnGuardar').disabled = true;
-        document.getElementById('btnGenerar').disabled = true;
+
+        const selectorAnidado = document.getElementById('main-function');
+        const listaOpcionesEliminar = ['IF', 'IFERROR', 'VLOOKUP']
+        listaOpcionesEliminar.forEach(elemento => {
+            const elemntoEliminar = selectorAnidado.querySelector(`option[value='${elemento}']`)
+            selectorAnidado.removeChild(elemntoEliminar)
+        });
+
+        mostrarAlerta('No hay un archivo cargado.', 'No se podran crear fórmulas (SI, SI.ERROR y BUSCAV).', 'warning');
         return;
     }
 
@@ -121,10 +127,10 @@ async function procesarFormula() {
     const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
     const nombreFormula = nombreFormulaSinProcesar.trim();
     const formulasGuardadas = localStorage.getItem('nombresFormulas'); 
-    if (nombreFormula === '' || nombreFormula.length >= LONGITUD_MAXIMA_NOMBRE_FORMULA) {
+    if (nombreFormula === '' || nombreFormula.length > LONGITUD_MAXIMA_NOMBRE_FORMULA) {
         mostrarAlerta(
             'Error',
-            `Verifica que la fórmula tenga un nombre válido y menor de ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
+            `Verifica que la fórmula tenga un nombre válido y no exceda los ${LONGITUD_MAXIMA_NOMBRE_FORMULA} caracteres.`,
             'error'
         );
         return;
@@ -161,7 +167,7 @@ async function procesarFormula() {
         return;
 
     }
-    if (cuadroTextoGenerado.length >= LONGITUD_MAXIMA_FORMULA) {
+    if (cuadroTextoGenerado.length > LONGITUD_MAXIMA_FORMULA) {
         mostrarAlerta('Error', `La fórmula excede los ${LONGITUD_MAXIMA_FORMULA} caracteres, no puede ser guardada.`, 'error');
         btnGuardar.innerHTML = contenidoOriginal;
         btnGuardar.disabled = false;

@@ -100,3 +100,6 @@ out/
 # Constantes
 /src/framework/utils/scripts/constantes.js
 /src/framework/utils/js/constantes.js
+
+# Dist
+/dist
