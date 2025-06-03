@@ -163,6 +163,7 @@ async function obtenerTokenAlmacenado() {
     if (mainWindow && mainWindow.webContents && !mainWindow.isDestroyed()) {
         try {
             return await mainWindow.webContents.executeJavaScript('localStorage.getItem("token")');
+            // eslint-disable-next-line no-unused-vars
         } catch (error) {
             return null;
         }

@@ -16,7 +16,7 @@ const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scri
 /* eslint-disable no-unused-vars */
  
 // Variable global para almacenar las fórmulas consultadas
-let formulasDisponibles = JSON.parse(localStorage.getItem('formulasDisponibles')) || [];
+const formulasDisponibles = JSON.parse(localStorage.getItem('formulasDisponibles')) || [];
 
 // Variable global para almacenar los datos originales de fórmulas por gráfica
 const datosOriginalesFormulas = new Map();
@@ -143,8 +143,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   // Actualizar la llamada en el event listener del botón de fórmulas
   tarjetaGrafica.querySelector('.boton-formulas').addEventListener('click', async () =>
-    await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
-  );
+    await crearCuadroFormulas(columnas, nuevaId, window.datosGrafica, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado));
 
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';

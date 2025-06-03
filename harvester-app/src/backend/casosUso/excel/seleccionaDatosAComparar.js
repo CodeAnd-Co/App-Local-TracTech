@@ -54,7 +54,7 @@ function seleccionaDatosAComparar(datosExcel, seleccion) {
 
         const tractoresSeleccionados = obtenerTractoresSeleccionados(nuevoJSON);
         localStorage.setItem('tractoresSeleccionados', JSON.stringify(tractoresSeleccionados));
-
+    // eslint-disable-next-line no-unused-vars
     } catch(error) {
         mostrarAlerta('Error al procesar los datos', 'Ocurrió un error al filtrar los datos del Excel.', 'error');
     }

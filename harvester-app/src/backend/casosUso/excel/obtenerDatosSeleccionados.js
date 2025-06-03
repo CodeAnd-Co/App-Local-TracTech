@@ -6,6 +6,7 @@
  */
 function obtenerParametrosSeleccionados(JSONfiltrado) {
     const parametrosSeleccionados = [];
+    // eslint-disable-next-line no-unused-vars
     for(const [nombreHoja, datosHoja] of Object.entries(JSONfiltrado.hojas)) {
         const encabezados = datosHoja[0];
         for(const encabezado of encabezados) {
