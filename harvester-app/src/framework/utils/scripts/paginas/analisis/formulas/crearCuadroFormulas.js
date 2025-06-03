@@ -1,7 +1,7 @@
 const { eliminarCuadroFormulas } = require('./eliminarCuadroFormulas');
 const { cargarFormulasIniciales } = require('./cargarFormulasIniciales');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-const { filtrarYRenderizarFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/filtrarYRenderizarFormulas.js`);
+const { filtrarYRenderizarFormulas, actualizarCaracteresBuscador } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/filtrarYRenderizarFormulas.js`);
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
 const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
@@ -53,7 +53,7 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
                       <p>Aplicar Fórmula</p>
                   </div>
                   <div class='opciones-carta'>
-                      <input class='search-section' placeholder='Encuentra una fórmula' />
+                      <input class='search-section' placeholder='Encuentra una fórmula'  maxlength='50'/>
                       <div class='contenedor-busqueda'>
                           <div class="mensaje-inicial">Escribe para buscar fórmulas...</div>
                       </div>
@@ -214,8 +214,21 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
 
   // Configurar evento de búsqueda (filtrado local)
   campoBusqueda.addEventListener('input', (evento) => {
-    const terminoBusqueda = evento.target.value.trim();
+    // Validar caracteres primero
+    actualizarCaracteresBuscador(campoBusqueda);
+    
+    // Luego filtrar
+    const terminoBusqueda = evento.target.value;
     filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda, formulasDisponibles);
+  });
+
+  // Agregar también un listener para cuando se presiona Enter
+  campoBusqueda.addEventListener('keypress', (evento) => {
+    if (evento.key === 'Enter') {
+      evento.preventDefault();
+      const terminoBusqueda = campoBusqueda.value;
+      filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda, formulasDisponibles);
+    }
   });
 
 
