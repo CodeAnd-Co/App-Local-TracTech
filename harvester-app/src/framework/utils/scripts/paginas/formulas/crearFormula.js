@@ -24,7 +24,7 @@ function eliminarElemento(boton) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function cancelarVista(){
+function cancelarVista() {
     window.cargarModulo('formulas');
 }
 
@@ -78,16 +78,9 @@ async function inicializarCrearFormula() {
     const selectorHojas = document.querySelector('.selector-hoja');
     selectorHojas.addEventListener('change', (evento) => {
         const hojaSeleccionada = evento.target.value;
-        if (hojaSeleccionada) {
-            const selectoresVariables = document.querySelectorAll('.variable-selector');
-            selectoresVariables.forEach(selector => { 
-                popularDropdown(selector);
-            })
-        } else {
-            mostrarAlerta('Error', 'Por favor, selecciona una hoja válida.', 'error');
-        }
+        actualizarSelectorVariables(hojaSeleccionada);
     });
-}       
+}
 
 /**
  * Actualiza el contador de caracteres restantes.
@@ -96,18 +89,18 @@ async function inicializarCrearFormula() {
  * @returns {void}
  */
 function actualizarCaracteres(areaEscritura) {
-  const contador = areaEscritura.parentElement?.querySelector('.contador-caracteres');
+    const contador = areaEscritura.parentElement?.querySelector('.contador-caracteres');
 
-  if (!contador) {
-    return;
-  }
+    if (!contador) {
+        return;
+    }
 
-  const caracteresUsados = areaEscritura.value.length;
-  const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
+    const caracteresUsados = areaEscritura.value.length;
+    const limite = parseInt(areaEscritura.getAttribute('maxlength'), 10);
 
-  const caracteresRestantes = limite - caracteresUsados;
-  contador.textContent = `${caracteresUsados}/${limite} caracteres`;
-  contador.style.color = caracteresRestantes < 5 ? '#e74c3c' : '#7f8c8d';
+    const caracteresRestantes = limite - caracteresUsados;
+    contador.textContent = `${caracteresUsados}/${limite} caracteres`;
+    contador.style.color = caracteresRestantes < 5 ? '#e74c3c' : '#7f8c8d';
 }
 
 
@@ -126,7 +119,7 @@ async function procesarFormula() {
     generarFormulaCompleja();
     const nombreFormulaSinProcesar = document.getElementById('nombreFormula').value;
     const nombreFormula = nombreFormulaSinProcesar.trim();
-    const formulasGuardadas = localStorage.getItem('nombresFormulas'); 
+    const formulasGuardadas = localStorage.getItem('nombresFormulas');
     if (nombreFormula === '' || nombreFormula.length > LONGITUD_MAXIMA_NOMBRE_FORMULA) {
         mostrarAlerta(
             'Error',
@@ -142,9 +135,9 @@ async function procesarFormula() {
             return;
         }
     }
-// Obtener referencia al botón de guardar
-    const btnGuardar = document.getElementById('btnGuardar');    
-// Deshabilitar el botón para evitar múltiples clics
+    // Obtener referencia al botón de guardar
+    const btnGuardar = document.getElementById('btnGuardar');
+    // Deshabilitar el botón para evitar múltiples clics
     btnGuardar.disabled = true;
 
     // Almacenar el contenido original del botón
@@ -179,10 +172,10 @@ async function procesarFormula() {
         const respuesta = await guardarFormula(nombreFormula, formula);
         if (respuesta.ok) {
 
-            try{
+            try {
                 await mostrarAlerta('Fórmula guardada', 'La fórmula ha sido guardada exitosamente.', 'success');
-                window.cargarModulo('formulas'); 
-            }catch (error) {
+                window.cargarModulo('formulas');
+            } catch (error) {
                 mostrarAlerta('Error', `Se pudo guardar la fórmula. Pero sucedio un error inesperado: ${error}`, 'error');
                 return;
             }
@@ -328,13 +321,13 @@ function agregarFuncionAnidada(boton) {
     // Deshabilitar el botón inmediatamente para evitar múltiples clics
     boton.disabled = true;
     boton.textContent = 'Función añadida';
-    
+
     const argumentoContenido = boton.closest('.argumentoContenido');
     const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
 
     const contador = argumentoContenido.parentElement?.querySelector('.contador-caracteres');
     contador.textContent = ``;
-    
+
     // Deshabilitar el input de texto del argumento padre y agregar carácter invisible
     const inputPadre = argumentoContenido.querySelector('input[type="text"]');
     if (inputPadre) {
@@ -342,10 +335,10 @@ function agregarFuncionAnidada(boton) {
         inputPadre.disabled = true;
         inputPadre.style.backgroundColor = '#f0f0f0';
     }
-    
+
     const filaAnidada = document.createElement('div');
     filaAnidada.classList.add('fila-anidada');
-    
+
     const seleccionarFuncion = document.createElement('select');
     seleccionarFuncion.classList.add('selectorFuncionAnidada');
     seleccionarFuncion.innerHTML = `
@@ -355,7 +348,7 @@ function agregarFuncionAnidada(boton) {
         <option value='VLOOKUP'>BUSCARV</option>
         <option value='ARITHMETIC'>Operación Aritmética</option>
     `;
-    
+
     filaAnidada.appendChild(seleccionarFuncion);
     contenedorAnidado.appendChild(filaAnidada);
 
@@ -379,7 +372,7 @@ function agregarFuncionAnidada(boton) {
         };
         filaAnidada.appendChild(eliminarBotonAnidado);
     }
-    
+
     seleccionarFuncion.onchange = (evento) => {
         const valorSeleccionado = evento.target.value;
         if (valorSeleccionado) {
@@ -387,11 +380,11 @@ function agregarFuncionAnidada(boton) {
             if (divAnidadoExistente) {
                 divAnidadoExistente.remove();
             }
-            
+
             const divAnidado = document.createElement('div');
             divAnidado.classList.add('funciones-anidadas');
             filaAnidada.appendChild(divAnidado);
-            
+
             definirEstructura(evento.target, divAnidado);
         }
     };
@@ -479,7 +472,7 @@ function validarCamposFormula(contenedor) {
 
     elementosArgumentos.forEach(argumento => {
         if (!camposValidos) return; // Si ya encontramos un error, no seguimos validando
-        
+
         // Validar selectores de variables
         const variableSelector = argumento.querySelector('.variable-selector');
         if (variableSelector && !variableSelector.value) {
@@ -487,7 +480,7 @@ function validarCamposFormula(contenedor) {
             mensajeError = 'Hay campos de variable sin seleccionar';
             return;
         }
-        
+
         // Validar inputs de texto
         const inputTexto = argumento.querySelector('input[type="text"]');
         if (inputTexto && !inputTexto.value.trim()) {
@@ -495,7 +488,7 @@ function validarCamposFormula(contenedor) {
             mensajeError = 'Hay campos de texto vacíos';
             return;
         }
-        
+
         // Validar funciones anidadas
         const selectorAnidado = argumento.querySelector('.selectorFuncionAnidada');
         if (selectorAnidado && selectorAnidado.value) {
@@ -507,7 +500,7 @@ function validarCamposFormula(contenedor) {
             }
         }
     });
-    
+
     if (!camposValidos) {
         mostrarAlerta('Error', mensajeError, 'error');
     }
@@ -695,14 +688,14 @@ function popularDropdown(elementoSeleccionado) {
     }
 
     let columnas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));
-    
+
     // Intentar obtener columnas del nuevo formato con hojas
     console.log(document.querySelector('.selector-hoja'))
     console.log(document.querySelector('.selector-hoja').value)
     const hojaSeleccionada = document.querySelector('.selector-hoja').value;
 
     const datos = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
-    
+
     if (datos && hojaSeleccionada) {
         try {
             console.log(`hojas: ${hojaSeleccionada}`);
@@ -715,34 +708,30 @@ function popularDropdown(elementoSeleccionado) {
                     columnas = datosHoja[0];
                 }
             }
-        } catch (error) {
-            mostrarAlerta('Error', `No se pudieron cargar las columnas del archivo. Verifica el formato del archivo: ${error}`, 'error');
+        } catch {
             columnas = [];
         }
     }
-    
-    console.log(`columnas: ${columnas}`);
+
     // Fallback: intentar usar el formato anterior
     if (columnas.length === 0) {
         const columnasGuardadas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));;
         if (columnasGuardadas) {
             try {
                 columnas = JSON.parse(columnasGuardadas);
-            } catch (error) {
-
-                mostrarAlerta('Error', `No se pudieron cargar las columnas guardadas. Verifica el formato del archivo: ${error}`, 'error');
+            } catch {
                 columnas = [];
             }
         }
     }
-    
+
     // Verificar si tenemos columnas válidas
     if (!Array.isArray(columnas) || columnas.length === 0) {
         elementoSeleccionado.innerHTML = '<option value="">No hay columnas disponibles</option>';
-        mostrarAlerta('Error', 'El archivo seleccionado no tiene parámetros.', 'error');
+        mostrarAlerta('Error', 'El archivo seleccionado no tiene columnas.', 'error');
         return;
     }
-    
+
     // Poblar el dropdown
     elementoSeleccionado.innerHTML = '<option value="">Seleccionar</option>';
     columnas.forEach(columna => {
@@ -753,4 +742,19 @@ function popularDropdown(elementoSeleccionado) {
             elementoSeleccionado.appendChild(opcion);
         }
     });
+}
+
+function actualizarSelectorVariables(hojaSeleccionada) {
+    const tractores = JSON.parse(localStorage.getItem('tractoresSeleccionados'))
+    console.log(`hojaSeleccionada: ${hojaSeleccionada}`);
+    console.log(`tractores: ${tractores}`);
+    console.log(`true? ${tractores.includes(hojaSeleccionada)}`);
+    if (hojaSeleccionada && tractores && tractores.includes(hojaSeleccionada)) {
+        const selectoresVariables = document.querySelectorAll('.variable-selector');
+        selectoresVariables.forEach(selector => {
+            popularDropdown(selector);
+        })
+    } else {
+        mostrarAlerta('Error', 'Por favor, selecciona una hoja válida.', 'error');
+    }
 }
