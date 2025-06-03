@@ -75,6 +75,9 @@ function botonCargar() {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const botonBorrar = document.getElementById('boton-borrar');
 
+        const elemtnoBotonCargar = document.querySelector('.texto-cargar');
+
+
         if (!entradaArchivos || !elementoNombreArchivo) {
             return ('No se encontraron los elementos necesarios');
         }
@@ -82,6 +85,7 @@ function botonCargar() {
         if (localStorage.getItem('nombreArchivoExcel')) {
             // Si ya hay un archivo seleccionado, lo mostramos
             elementoNombreArchivo.textContent = localStorage.getItem('nombreArchivoExcel');
+            elemtnoBotonCargar.textContent = "Cambiar Archivo"
             // Habilitar el botón de borrar
             botonBorrar.style.display = 'block';
             // Habilitar el botón de análisis
@@ -99,18 +103,21 @@ function botonCargar() {
 
         // Texto mientras se procesa
         elementoNombreArchivo.textContent = 'Verificando archivo...';
+        elemtnoBotonCargar.textContent = "Cargando Archivo"
 
         try {
             const resultado = await leerExcel(archivo);
 
             if (resultado.exito) {
                 elementoNombreArchivo.textContent = archivo.name;
+                elemtnoBotonCargar.textContent = "Cambiar Archivo"
                 botonAnalisis.removeAttribute('disabled');
                 botonBorrar.style.display = 'block';
                 localStorage.setItem('nombreArchivoExcel', archivo.name);
                 entradaArchivos.forEach(input => input.value = '');
             } else {
                 elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+                elemtnoBotonCargar.textContent = "Cargar Archivo"
                 botonBorrar.style.display = 'none';
                 botonAnalisis.setAttribute('disabled', 'true');
                 localStorage.removeItem('nombreArchivoExcel');
@@ -120,6 +127,7 @@ function botonCargar() {
             }
         } catch (error) {
             elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+            elemtnoBotonCargar.textContent = "Cargar Archivo"
             botonAnalisis.setAttribute('disabled', 'true');
             localStorage.removeItem('nombreArchivoExcel');
             localStorage.removeItem('datosExcel');
