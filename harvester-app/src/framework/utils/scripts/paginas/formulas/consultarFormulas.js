@@ -101,41 +101,31 @@ function configurarBusquedaFormulas() {
  * @returns {void}
  */
 function filtrarFormulas(termino) {
+    console.log('Filtrando fórmulas con término:', termino);
     const formulasElementos = document.querySelectorAll('.frame-f-rmulas');
-    const terminoOriginal = termino;
-    
-    // Verificar si son solo espacios
+    const terminoOriginal = termino.toLowerCase(); // <= ahora sí
     const hayTerminoEscrito = termino.length > 0;
     const sonSoloEspacios = termino.length > 0 && termino.trim() === '';
 
-    // SIEMPRE procesar todas las fórmulas, independientemente del estado anterior
     formulasElementos.forEach(formulaElemento => {
         const nombreFormula = formulaElemento.querySelector('.texto-usuario')?.textContent?.toLowerCase() || '';
+        
         if (sonSoloEspacios) {
-            // Si son solo espacios, ocultar todas
             formulaElemento.style.display = 'none';
         } else if (nombreFormula.includes(terminoOriginal)) {
-            // Si no hay término o el nombre coincide, mostrar
             formulaElemento.style.display = 'flex';
         } else {
-            // Si hay término pero no coincide, ocultar
             formulaElemento.style.display = 'none';
         }
     });
-    
-    // Mostrar mensaje si no hay resultados
+
     const formulasVisibles = Array.from(formulasElementos).filter(el => el.style.display !== 'none');
     const contenedor = document.getElementById('frame-formulas');
-    
-    // Remover mensaje anterior si existe
     const mensajeAnterior = contenedor.querySelector('.mensaje-sin-resultados');
     if (mensajeAnterior) {
         mensajeAnterior.remove();
     }
-    
-    // Mostrar mensaje cuando:
-    // 1. Son solo espacios (siempre mostrar este mensaje)
-    // 2. O cuando no hay fórmulas visibles Y hay algo escrito Y hay fórmulas en el DOM
+
     if (sonSoloEspacios || (formulasVisibles.length === 0 && hayTerminoEscrito && formulasElementos.length > 0 && !sonSoloEspacios)) {
         const mensajeSinResultados = document.createElement('div');
         mensajeSinResultados.className = 'mensaje-sin-resultados';
@@ -143,10 +133,10 @@ function filtrarFormulas(termino) {
         if (sonSoloEspacios) {
             mensajeSinResultados.textContent = 'No se puede buscar solo con espacios en blanco';
         } else {
-            mensajeSinResultados.textContent = `No se encontraron fórmulas que coincidan con "${terminoOriginal}"`;
+            console.log('No término:', termino);
+            mensajeSinResultados.textContent = `No se encontraron fórmulas que coincidan con la busqueda`;
         }
-        
-        // Insertar el mensaje después de la tabla de columnas si existe
+
         const tablaColumnas = contenedor.querySelector('.tabla-columnas');
         if (tablaColumnas) {
             tablaColumnas.insertAdjacentElement('afterend', mensajeSinResultados);
@@ -155,6 +145,7 @@ function filtrarFormulas(termino) {
         }
     }
 }
+
 
 async function renderizarFormulas() {
     try {
