@@ -678,15 +678,19 @@ function popularDropdown(elementoSeleccionado) {
     let columnas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));
     
     // Intentar obtener columnas del nuevo formato con hojas
-    const hojaSeleccionada = localStorage.getItem('hojaSeleccionada');
-    const datos = localStorage.getItem('datosExcel');
-    console.log(datos)
+    console.log(document.querySelector('.selector-hoja'))
+    console.log(document.querySelector('.selector-hoja').value)
+    const hojaSeleccionada = document.querySelector('.selector-hoja').value;
+
+    const datos = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
     
     if (datos && hojaSeleccionada) {
         try {
-            const datosParseados = JSON.parse(datos);
-            if (datosParseados.hojas && datosParseados.hojas[hojaSeleccionada]) {
-                const datosHoja = datosParseados.hojas[hojaSeleccionada];
+            console.log(`hojas: ${hojaSeleccionada}`);
+            console.log(`datosParseados: `, datos);
+
+            if (datos.hojas && datos.hojas[hojaSeleccionada]) {
+                const datosHoja = datos.hojas[hojaSeleccionada];
                 if (datosHoja.length > 0) {
                     // Obtener encabezados de la primera fila
                     columnas = datosHoja[0];
@@ -698,6 +702,7 @@ function popularDropdown(elementoSeleccionado) {
         }
     }
     
+    console.log(`columnas: ${columnas}`);
     // Fallback: intentar usar el formato anterior
     if (columnas.length === 0) {
         const columnasGuardadas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));;
