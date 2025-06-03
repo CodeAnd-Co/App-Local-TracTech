@@ -14,7 +14,7 @@ function validarNombreColumna(nombreColumna) {
     const nombreStr = String(nombreColumna).trim();
 
     // Verificar si está vacío después del trim
-    if (nombreStr === '') {
+    if (nombreStr === '' || nombreStr === 'undefined' || nombreStr === 'null') {
         return false;
     }
 
