@@ -12,7 +12,7 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         name: 'Harvester',
-        authors: 'TracTech',
+        authors: 'Code&Co - TracTech',
         exe: 'Harvester.exe',
         certificateFile: './cert/certificado.pfx',
         certificatePassword: 'Harvester123',
