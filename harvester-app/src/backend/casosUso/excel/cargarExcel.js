@@ -51,6 +51,38 @@ async function verificarArchivoSeguro(archivo) {
             };
         }
         
+        // Verificar que al menos una hoja tenga datos
+        let tieneContenido = false;
+        
+        for (const nombreHoja of libro.SheetNames) {
+            const hoja = libro.Sheets[nombreHoja];
+            // Convertir hoja a JSON para verificar contenido
+            const datosHoja = XLSX.utils.sheet_to_json(hoja, { header: 1 });
+            
+            // Verificar si hay al menos una fila con datos
+            if (datosHoja.length > 0) {
+                // Verificar si hay al menos una celda con datos en alguna fila
+                const hayDatosEnFilas = datosHoja.some(fila => 
+                    Array.isArray(fila) 
+                    && fila.length > 0 
+                    && fila.some(celda => celda !== undefined 
+                    && celda !== null
+                    && celda !== ''));
+                
+                if (hayDatosEnFilas) {
+                    tieneContenido = true;
+                    break;  // Si encontramos datos, no necesitamos seguir verificando
+                }
+            }
+        }
+        
+        if (!tieneContenido) {
+            return {
+                esSeguro: false,
+                mensaje: 'El archivo Excel está vacío. Por favor, sube un archivo que contenga datos.'
+            };
+        }
+        
         // Si pasó todas las verificaciones
         return { esSeguro: true, mensaje: 'Archivo verificado correctamente' };
         
