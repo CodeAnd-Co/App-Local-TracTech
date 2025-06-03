@@ -417,7 +417,8 @@ async function botonReporte(datosExcel) {
  * Configura el campo de búsqueda para filtrar los tractores por nombre
  * 
  * Al escribir, se compara el texto ingresado con el contenido de cada distribuidor,
- * ocultando aquellos que no coincidan.
+ * ocultando aquellos que no coincidan. Limita la entrada a 60 caracteres máximo
+ * y previene que se inicie con espacios. Muestra un contador de caracteres.
  * 
  * @function busquedaTractores
  * @returns {void}
@@ -430,7 +431,92 @@ function busquedaTractores() {
     if (!entradaBusqueda || !contenedorTractores) {
         return;
     }
-    entradaBusqueda.addEventListener('input', aplicarFiltrosCombinados);
+
+    // Establecer el atributo maxlength para limitar caracteres
+    entradaBusqueda.setAttribute('maxlength', '60');
+
+    // Crear el contador de caracteres si no existe
+    let contadorCaracteres = document.getElementById('contadorCaracteresTractor');
+    if (!contadorCaracteres) {
+        contadorCaracteres = document.createElement('div');
+        contadorCaracteres.id = 'contadorCaracteresTractor';
+        contadorCaracteres.className = 'contador-caracteres';
+        contadorCaracteres.style.cssText = `
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+            margin-top: 4px;
+        `;
+        contadorCaracteres.textContent = '0/60 caracteres';
+        
+        // Insertar el contador después del campo de búsqueda
+        entradaBusqueda.parentNode.insertBefore(contadorCaracteres, entradaBusqueda.nextSibling);
+    }
+
+    /**
+     * Actualiza el contador de caracteres
+     * @param {string} texto - El texto a evaluar
+     */
+    function actualizarContador(texto) {
+        const caracteresActuales = texto.length;
+        contadorCaracteres.textContent = `${caracteresActuales}/60 caracteres`;
+        
+        // Cambiar color del contador según proximidad al límite
+        if (caracteresActuales >= 55) {
+            contadorCaracteres.style.color = '#d32f2f'; // Rojo
+        } else if (caracteresActuales >= 45) {
+            contadorCaracteres.style.color = '#f57c00'; // Naranja
+        } else {
+            contadorCaracteres.style.color = '#666'; // Gris normal
+        }
+    }
+
+    // Evento para filtrar y validar longitud
+    entradaBusqueda.addEventListener('input', (event) => {
+        let texto = event.target.value;
+        
+        // Limitar a 60 caracteres
+        if (texto.length > 60) {
+            event.target.value = texto.substring(0, 60);
+            texto = event.target.value;
+        }
+        
+        actualizarContador(texto);
+        aplicarFiltrosCombinados();
+    });
+
+    // Evento para prevenir pegar texto que inicie con espacios o exceda el límite
+    entradaBusqueda.addEventListener('paste', (event) => {
+        setTimeout(() => {
+            let texto = event.target.value;
+            
+            // Remover espacios al inicio del texto pegado
+            if (texto.startsWith(' ')) {
+                texto = texto.trimStart();
+                event.target.value = texto;
+            }
+            
+            // Limitar a 60 caracteres
+            if (texto.length > 60) {
+                event.target.value = texto.substring(0, 60);
+                texto = event.target.value;
+            }
+            
+            actualizarContador(texto);
+            aplicarFiltrosCombinados();
+        }, 0);
+    });
+
+    // Evento para prevenir que se escriban espacios al inicio o cuando el cursor está al inicio
+    entradaBusqueda.addEventListener('keydown', (event) => {
+        // Si se presiona espacio y el cursor está al inicio (posición 0), prevenir la acción
+        if (event.key === ' ' && event.target.selectionStart === 0) {
+            event.preventDefault();
+        }
+    });
+
+    // Inicializar el contador con el valor actual del campo
+    actualizarContador(entradaBusqueda.value || '');
 }
 
 /**
