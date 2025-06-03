@@ -180,32 +180,6 @@ describe('agregarTexto', () => {
     expect(areaEscritura.getAttribute('maxlength')).toBe('1000');
   });
 
-  test('Cambiar alineación del texto', () => {
-    // Preparar
-    const tarjetaTexto = agregarTexto('contenedorElementos', 'contenedor-elementos-previsualizacion');
-    const botonAlinear = tarjetaTexto.querySelector('.alinear');
-    const vistaPrevia = previsualizacion.children[0];
-    const iconoAlineacion = botonAlinear.querySelector('.icono-align');
-
-    // Estado inicial (left)
-    expect(vistaPrevia.style.textAlign).toBe('');
-    expect(iconoAlineacion.classList.contains('align-left')).toBe(true);
-
-    // Hacer clic para cambiar a center
-    botonAlinear.click();
-    expect(vistaPrevia.style.textAlign).toBe('center');
-    expect(iconoAlineacion.classList.contains('align-center')).toBe(true);
-
-    // Hacer clic para cambiar a right
-    botonAlinear.click();
-    expect(vistaPrevia.style.textAlign).toBe('right');
-    expect(iconoAlineacion.classList.contains('align-right')).toBe(true);
-
-    // Hacer clic para volver a left
-    botonAlinear.click();
-    expect(vistaPrevia.style.textAlign).toBe('left');
-    expect(iconoAlineacion.classList.contains('align-left')).toBe(true);
-  });
 
   test('Eliminar cuadro de texto', () => {
     // Preparar

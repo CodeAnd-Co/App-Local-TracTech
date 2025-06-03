@@ -14,15 +14,15 @@
  * @see https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
  * 
  * @module pruebas/usuarios/obtenerUsuarios.test
- * @see módulo {@link ../../backend/casosUso/usuarios/consultarUsuarios}
+* @see módulo {@link ../../backend/casosUso/usuarios/consultarUsuarios}
  * @see clase {@link ../../backend/data/usuariosModelos/usuarios~Usuario}
  * @see clase {@link ../../backend/data/usuariosModelos/usuarios~ListaUsuarios}
  */
 
 
 
-/*  1. ───── Importaciones ──────────────────────────────────────────────── */
-const {
+ /*  1. ───── Importaciones ──────────────────────────────────────────────── */
+ const {
   obtenerUsuarios: obtenerUsuariosAPIPrueba
 } = require('../../backend/domain/usuariosAPI/usuariosAPI');
 
@@ -60,8 +60,8 @@ describe('obtenerUsuarios (caso de uso)', () => {
     const respuestaPrueba = {
       ok: true,
       usuarios: [
-        { idUsuario: 1, Nombre: 'Juan', Correo: 'juan@example.com' },
-        { idUsuario: 2, Nombre: 'Ana',  Correo: 'ana@example.com' }
+        { idUsuario: 1, Nombre: 'Juan', Correo: 'juan@example.com', TieneDispositivo: false, DispositivoId: null, DispositivoActivo: false },
+        { idUsuario: 2, Nombre: 'Ana',  Correo: 'ana@example.com',  TieneDispositivo: true, DispositivoId: 5, DispositivoActivo: true }
       ]
     };
     obtenerUsuariosAPIPrueba.mockResolvedValue(respuestaPrueba);
@@ -72,11 +72,25 @@ describe('obtenerUsuarios (caso de uso)', () => {
 
     const usuarios = lista.obtenerUsuarios();
     expect(usuarios.length).toBe(2);
+
     expect(usuarios[0]).toBeInstanceOf(Usuario);
     expect(usuarios[0]).toMatchObject({
       id: 1,
       nombre: 'Juan',
-      correo: 'juan@example.com'
+      correo: 'juan@example.com',
+      tieneDispositivo: false,
+      dispositivoId: null,
+      dispositivoActivo: false
+    });
+
+    expect(usuarios[1]).toBeInstanceOf(Usuario);
+    expect(usuarios[1]).toMatchObject({
+      id: 2,
+      nombre: 'Ana',
+      correo: 'ana@example.com',
+      tieneDispositivo: true,
+      dispositivoId: 5,
+      dispositivoActivo: true
     });
   });
 
@@ -95,23 +109,33 @@ describe('obtenerUsuarios (caso de uso)', () => {
 
   /**
    * Error controlado: respuesta con ok: false. 
-   * El caso de uso debe lanzar una excepción con mensaje descriptivo.
+   * El caso de uso debe lanzar una excepción con mensaje descrito en la respuesta.
    */
   it('lanza error cuando la API responde ok = false', async () => {
+    // Si no se envía `mensaje`, el código arroja 'Error al obtener la lista de usuarios del servidor'
     obtenerUsuariosAPIPrueba.mockResolvedValue({ ok: false });
 
     await expect(obtenerUsuarios())
-      .rejects.toThrow('No se pudo obtener la lista de usuarios');
+      .rejects.toThrow('Error al obtener la lista de usuarios del servidor');
+  });
+
+  it('lanza error con el mensaje recibido si la API responde ok = false y trae mensaje', async () => {
+    const msgError = 'Error interno del servidor';
+    obtenerUsuariosAPIPrueba.mockResolvedValue({ ok: false, mensaje: msgError });
+
+    await expect(obtenerUsuarios())
+      .rejects.toThrow(msgError);
   });
 
   /**
    * Error técnico: la API rechaza la promesa (por ejemplo, fallo de red).
-   * El caso de uso debe capturar el error y lanzar una excepción clara.
+   * El caso de uso debe capturar el error y lanzar la misma excepción (Network error).
    */
   it('lanza error cuando la API rechaza la promesa', async () => {
-    obtenerUsuariosAPIPrueba.mockRejectedValue(new Error('Network error'));
+    const errorRed = new Error('Network error');
+    obtenerUsuariosAPIPrueba.mockRejectedValue(errorRed);
 
     await expect(obtenerUsuarios())
-      .rejects.toThrow('No se pudo obtener la lista de usuarios');
+      .rejects.toThrow('Network error');
   });
 });

@@ -25,9 +25,10 @@
       "oneClick": true,
       "installerIcon": "src/framework/utils/imagenes/HarvesterAppIcon.ico",
       "uninstallerIcon": "src/framework/utils/imagenes/HarvesterAppIcon.ico",
-      "uninstallDisplayName": "Desinstalador Harvester App",
+      "uninstallDisplayName": "Harvester App",
       "license": "LICENSE",
-      "allowToChangeInstallationDirectory": false
+      "allowToChangeInstallationDirectory": false,
+      "deleteAppDataOnUninstall": true
     }
   },
   "keywords": [],

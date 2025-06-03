@@ -14,12 +14,11 @@ async function obtenerUsuarios() {
         const respuesta = await obtenerUsuariosAPI();
 
         if (!respuesta.ok) {
-            throw new Error('Error al obtener la lista de usuarios del servidor');
+            throw new Error(respuesta.mensaje || 'Error al obtener la lista de usuarios del servidor');
         }
 
         const listaUsuarios = new ListaUsuarios();
-
-        const datosUsuarios = respuesta.usuarios || [];
+        const datosUsuarios = Array.isArray(respuesta.usuarios) ? respuesta.usuarios : [];
 
         datosUsuarios.forEach(usuarioInformacion => {
             const tieneDispositivo = Boolean(usuarioInformacion.TieneDispositivo);
@@ -40,7 +39,7 @@ async function obtenerUsuarios() {
 
         return listaUsuarios;
     } catch (error) {
-        throw new Error('No se pudo obtener la lista de usuarios:', error.message);
+        throw new Error(error.message || 'No se pudo obtener la lista de usuarios');
     }
 }
 
