@@ -16,7 +16,6 @@ module.exports = {
         exe: 'Harvester.exe',
         certificateFile: './cert/certificado.pfx',
         certificatePassword: 'Harvester123',
-        signWithParams: '/tr http://timestamp.digicert.com /td sha256 /fd sha256 /a'
       },
     },
     {
