@@ -5,7 +5,7 @@ const tractoresSeleccionados = {};
 const { cargarDatosExcel } = require(`${rutaBase}/src/backend/servicios/cargarDatosExcel.js`);
 const { seleccionaDatosAComparar } = require(`${rutaBase}/src/backend/casosUso/excel/seleccionaDatosAComparar.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-
+const { validarNombreColumna } = require(`${rutaBase}/src/backend/casosUso/reportes/validarNombreColumna.js`)
 
 /* eslint-disable no-undef*/
 
@@ -214,7 +214,8 @@ function mostrarColumnasTractor(nombreTractor, datosExcel) {
             seleccionado: false, columnas: [] 
         };
     }
-    columnas.forEach(nombreColumna => {
+    const columnasValidas = columnas.filter(columna => validarNombreColumna(columna));
+    columnasValidas.forEach(nombreColumna => {
         const columnaDiv = crearElementoColumna(nombreTractor, nombreColumna);
         columnasContenedor.appendChild(columnaDiv);
     });
