@@ -67,11 +67,11 @@ async function inicializarCrearFormula() {
         const selectorAnidado = document.getElementById('main-function');
         const listaOpcionesEliminar = ['IF', 'IFERROR', 'VLOOKUP']
         listaOpcionesEliminar.forEach(elemento => {
-            let elemntoEliminar = selectorAnidado.querySelector(`option[value='${elemento}']`)
+            const elemntoEliminar = selectorAnidado.querySelector(`option[value='${elemento}']`)
             selectorAnidado.removeChild(elemntoEliminar)
         });
 
-        mostrarAlerta('Aviso', 'No hay un archivo cargado.', 'warning');
+        mostrarAlerta('No hay un archivo cargado.', 'No se podran crear fórmulas (SI, SI.ERROR y BUSCAV).', 'warning');
         return;
     }
 }       
