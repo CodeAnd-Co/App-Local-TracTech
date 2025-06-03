@@ -128,8 +128,8 @@ function traducirFormulaEstructurada(formula, encabezados, filaActiva) {
             err.tipo = 'columnaNoEncontrada';
             mostrarAlerta(`Columna no encontrada: ${nombreColumna}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar esta fórmula.', 'error');
             throw err;
-            console.log(`Columna no encontrada: ${nombreColumna}`);
-            throw new Error(`Columna no encontrada: ${nombreColumna}`);
+            // console.log(`Columna no encontrada: ${nombreColumna}`);
+            // throw new Error(`Columna no encontrada: ${nombreColumna}`);
         }    
         const letraColumna = indiceALetraColumna(columna);
         const fila = filaActiva + 1; // Excel empieza en 1

@@ -399,9 +399,9 @@ function crearGrafica(contexto, tipo, color) {
         x: { 
           display: ['line', 'bar', 'radar'].includes(tipo),
           ticks: { 
-            callback: function(valor){
+            callback(valor){
               const etiqueta = this.getLabelForValue(valor);
-              return etiqueta.length > 10 ? etiqueta.substring(0, 10) + '...' : etiqueta; // Limitar longitud de etiquetas
+              return etiqueta.length > 10 ? `${etiqueta.substring(0, 10)}...` : etiqueta; // Limitar longitud de etiquetas
             },
             color: '#646464',
             maxRotation: 45,

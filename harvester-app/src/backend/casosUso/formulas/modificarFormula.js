@@ -51,7 +51,8 @@ async function modificarFormulaCasoUso(id, nombre, formula, nombreOriginal) {
     const respuesta = await mostrarAlertaConfirmacion(
         'Modificar fórmula', 
         `¿Estás seguro de que deseas modificar la fórmula "${nombreOriginal}"? Asegúrate de que sea una fórmula válida.`, 
-        'warning')
+        'warning'
+)
     
     
     
