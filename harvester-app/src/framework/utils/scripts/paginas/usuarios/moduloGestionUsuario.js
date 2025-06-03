@@ -774,7 +774,7 @@ function configurarValidacionesCampos() {
             // Si NO estamos en EDITAR (es decir, modo CREAR) y está vacío, mostramos el mensaje de "no puede estar vacío" y salimos.
             if (modoActual !== modoFormulario.EDITAR && valorTrim === '') {
                 campoEntrada.classList.add('inputError');
-                mensajeError.textContent = 'El campo no puede estar vacío';
+                mensajeError.textContent = 'El campo no puede estar vacío.';
                 return;
             }
         
@@ -825,7 +825,7 @@ function validarCoincidenciaContrasenas() {
         // Si el campo de confirmación está vacío, no mostrar error
         if (confirmPassword.trim() === '') {
             confirmPasswordInput.classList.add('inputError');
-            mensajeError.textContent = 'El campo no puede estar vacío';
+            mensajeError.textContent = 'El campo no puede estar vacío.';
             return;
         }
 
