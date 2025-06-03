@@ -191,7 +191,6 @@
 
 /* Arrastrar y Soltar */
 .zona-para-soltar {
-  border: 2px dashed #ccc;
   transition: background-color 0.2s;
 }
 .zona-para-soltar--resaltada {
