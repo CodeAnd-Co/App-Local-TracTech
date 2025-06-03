@@ -213,7 +213,7 @@ body,
 }
 
 .boton-formulas:hover{
-  background-color: #8c1429;
+  background-color: #7d1425;;
 }
 
 /* BOTONES EDITAR / ELIMINAR */
@@ -240,8 +240,24 @@ body,
   transition: background-color 0.3s ease;
 }
 
-.eliminar:hover{
-  background-color: rgba(0, 0, 0, 0.5);
+.eliminar{
+  background: #a61930;
+  border-radius: 8px;
+  border-style: solid;
+  border-width: 0px;
+  flex-shrink: 0;
+  width: 140px;
+  height: 55px;
+  position: relative;
+  color: #ffffff;
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .editar-icono,
@@ -533,6 +549,14 @@ body,
   background-color: rgba(255,255,255,0.1);
   transform: translateX(2px);
 }     
+
+.eliminar:hover {
+  background: #7d1425;
+  cursor: pointer;
+  transform: scale(1.04);
+  transition: background 0.2s, transform 0.2s;
+
+}
 
 .contenedor-formulas {
   background: #ededed;

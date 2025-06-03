@@ -23,6 +23,7 @@ function inicializarBotones() {
     botonCargar();
     botonBorrar();
     botonTractores();
+    configurarZonaParaSoltar();
 }
 
 /**
@@ -75,6 +76,9 @@ function botonCargar() {
         const botonAnalisis = document.querySelector('.avanzar-analisis');
         const botonBorrar = document.getElementById('boton-borrar');
 
+        const elementoBotonCargar = document.querySelector('.texto-cargar');
+
+
         if (!entradaArchivos || !elementoNombreArchivo) {
             return ('No se encontraron los elementos necesarios');
         }
@@ -82,6 +86,7 @@ function botonCargar() {
         if (localStorage.getItem('nombreArchivoExcel')) {
             // Si ya hay un archivo seleccionado, lo mostramos
             elementoNombreArchivo.textContent = localStorage.getItem('nombreArchivoExcel');
+            elementoBotonCargar.textContent = "Cambiar Archivo"
             // Habilitar el botón de borrar
             botonBorrar.style.display = 'block';
             // Habilitar el botón de análisis
@@ -99,18 +104,21 @@ function botonCargar() {
 
         // Texto mientras se procesa
         elementoNombreArchivo.textContent = 'Verificando archivo...';
+        elementoBotonCargar.textContent = "Cargando Archivo"
 
         try {
             const resultado = await leerExcel(archivo);
 
             if (resultado.exito) {
                 elementoNombreArchivo.textContent = archivo.name;
+                elementoBotonCargar.textContent = "Cambiar Archivo"
                 botonAnalisis.removeAttribute('disabled');
                 botonBorrar.style.display = 'block';
                 localStorage.setItem('nombreArchivoExcel', archivo.name);
                 entradaArchivos.forEach(input => input.value = '');
             } else {
                 elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+                elementoBotonCargar.textContent = "Cargar Archivo"
                 botonBorrar.style.display = 'none';
                 botonAnalisis.setAttribute('disabled', 'true');
                 localStorage.removeItem('nombreArchivoExcel');
@@ -120,6 +128,7 @@ function botonCargar() {
             }
         } catch (error) {
             elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+            elementoBotonCargar.textContent = "Cargar Archivo"
             botonAnalisis.setAttribute('disabled', 'true');
             localStorage.removeItem('nombreArchivoExcel');
             localStorage.removeItem('datosExcel');
@@ -151,4 +160,90 @@ function botonTractores() {
             return ('Error al cargar vista:', err);
         }
     })
+}
+
+/**
+ * Configura la zona para arrastrar y soltar archivos Excel.
+ *
+ * Busca el contenedor con la clase 'zona-para-soltar' y, si existe:
+ *  - Previene el comportamiento predeterminado de arrastrar y soltar.
+ *  - Agrega o quita un estilo visual cuando se arrastra un archivo sobre la zona.
+ *  - Procesa el archivo .xlsx soltado: lo valida con leerExcel(), actualiza la interfaz
+ *    (muestra nombre, habilita botones, guarda en localStorage) o muestra alertas de error.
+ *
+ * @returns {void}
+ */
+function configurarZonaParaSoltar() {
+    // Seleccionamos el elemento que actuará como zona de soltado
+    const zonaParaSoltar = document.querySelector('.zona-para-soltar');
+    const elementoNombreArchivo = document.querySelector('.texto-archivo');
+    const botonAnalisis = document.querySelector('.avanzar-analisis');
+    const botonBorrar = document.getElementById('boton-borrar');
+
+    if (!zonaParaSoltar) return;
+
+    // Prevenimos el comportamiento por defecto para drag & drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(tipoDeEvento => {
+        zonaParaSoltar.addEventListener(tipoDeEvento, evento => evento.preventDefault());
+        zonaParaSoltar.addEventListener(tipoDeEvento, evento => evento.stopPropagation());
+    });
+
+    // Aplicar un efecto visual a la zona
+    zonaParaSoltar.addEventListener('dragover', () => {
+        zonaParaSoltar.classList.add('zona-para-soltar--resaltada');
+    });
+
+    // Quitar el efecto si el usuario sale de la zona
+    zonaParaSoltar.addEventListener('dragleave', () => {
+        zonaParaSoltar.classList.remove('zona-para-soltar--resaltada');
+    });
+
+    // Procesar el archivo
+    zonaParaSoltar.addEventListener('drop', async evento => {
+        zonaParaSoltar.classList.remove('zona-para-soltar--resaltada');
+        const archivos = evento.dataTransfer.files;
+        if (!archivos || archivos.length === 0) return;
+
+        // Prevenir que se procesen múltiples archivos
+        if (archivos.length > 1) {
+            mostrarAlerta('Solo se permite un archivo', 'Por favor, suelta un solo archivo Excel a la vez.', 'error');
+            return;
+        }
+
+        // Escoger el primer archivo .xlsx
+        const archivo = Array.from(archivos).find(archivo => archivo.name.endsWith('.xlsx'));
+        if (!archivo) {
+            mostrarAlerta('Formato no válido', 'Solo se aceptan archivos .xlsx', 'error');
+            return;
+        }
+
+        // Retroalimentación visual del procesamiento
+        elementoNombreArchivo.textContent = 'Verificando archivo...';
+
+        try {
+            const resultado = await leerExcel(archivo);
+
+            if (resultado.exito) {
+                elementoNombreArchivo.textContent = archivo.name;
+                botonAnalisis.removeAttribute('disabled');
+                botonBorrar.style.display = 'block';
+                localStorage.setItem('nombreArchivoExcel', archivo.name);
+                // Limpiar cualquier otra entrada
+                document.querySelectorAll('.cargar-excel').forEach(input => input.value = '');
+            } else {
+                elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+                botonBorrar.style.display = 'none';
+                botonAnalisis.setAttribute('disabled', 'true');
+                localStorage.removeItem('nombreArchivoExcel');
+                localStorage.removeItem('datosExcel');
+                mostrarAlerta('Archivo no válido', resultado.mensaje, 'error', 'Entendido');
+            }
+        } catch (error) {
+            elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+            botonAnalisis.setAttribute('disabled', 'true');
+            localStorage.removeItem('nombreArchivoExcel');
+            localStorage.removeItem('datosExcel');
+            mostrarAlerta('Error al procesar archivo', error.mensaje || 'Ha ocurrido un error al procesar el archivo.', 'error');
+        }
+    });
 }

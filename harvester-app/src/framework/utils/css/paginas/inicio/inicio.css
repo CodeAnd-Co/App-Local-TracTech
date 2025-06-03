@@ -188,3 +188,12 @@
   transform: rotate(180deg);
   filter: brightness(0) invert(1);
 }
+
+/* Arrastrar y Soltar */
+.zona-para-soltar {
+  transition: background-color 0.2s;
+}
+.zona-para-soltar--resaltada {
+  background-color: #f0f0f0;
+  border-color: #a61930;
+}
