@@ -63,7 +63,7 @@ function aplicarFormula(nombreFormula, formulaEstructurada, tractorSeleccionado,
             const formulaTraducida = traducirFormulaEstructurada(formulaEstructurada, encabezados, fila);
             // Si hay un error en la traducción y no se encontró alguna columna, mostrar alerta y lanzar error
             if (formulaTraducida.error) {
-                columnasFaltantes = formulaTraducida.columnasNoEncontradas.join(', ');
+                const columnasFaltantes = formulaTraducida.columnasNoEncontradas.join(', ');
                 const err = new Error(`Columna no encontrada: ${columnasFaltantes}`);
                 err.tipo = 'columnaNoEncontrada';
                 mostrarAlerta(`Columnas no encontradas: ${columnasFaltantes}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar esta fórmula.', 'error');
