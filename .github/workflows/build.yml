@@ -1,0 +1,48 @@
+name: Build and Sign Windows App
+
+on:
+  push:
+    branches: [ develop ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+    
+    - name: Install dependencies
+        run: cd harvester-app && npm install
+    
+    - name: Decodificar certificado
+      env:
+        CERTIFICATE_BASE64: ${{ secrets.WINDOWS_CERT_BASE64 }}
+      run: |
+        echo "$env:CERTIFICATE_BASE64" | base64 -d > certificate.pfx
+      shell: bash
+    
+    - name: Construir y firmar app
+      env:
+        WINDOWS_CERT_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD }}
+        CI: true
+      run: cd harvester-app && npm run make
+    
+    - name: Subir instalador
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-installer
+        path: |
+          out/make/squirrel.windows/**/*.exe
+          out/make/squirrel.windows/**/*.nupkg
+          out/make/squirrel.windows/**/RELEASES
