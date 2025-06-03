@@ -48,11 +48,23 @@ async function mostrarAlertaBorrado(texto=null, textoBotonConfirmar=null, textoB
     }
 }
 
+async function mostrarAlertaSinBoton(titulo, texto, icono) {
+  return await Swal.fire({
+    title: titulo,
+    text: texto,
+    icon: icono,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+  });
+}
+
 
 
 
 module.exports = {
     mostrarAlerta,
     mostrarAlertaConfirmacion,
-    mostrarAlertaBorrado
+    mostrarAlertaBorrado,
+    mostrarAlertaSinBoton
 }
