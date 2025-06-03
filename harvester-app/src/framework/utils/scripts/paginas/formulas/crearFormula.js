@@ -690,17 +690,12 @@ function popularDropdown(elementoSeleccionado) {
     let columnas = JSON.parse(localStorage.getItem('parametrosSeleccionados'));
 
     // Intentar obtener columnas del nuevo formato con hojas
-    console.log(document.querySelector('.selector-hoja'))
-    console.log(document.querySelector('.selector-hoja').value)
     const hojaSeleccionada = document.querySelector('.selector-hoja').value;
 
     const datos = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
 
     if (datos && hojaSeleccionada) {
         try {
-            console.log(`hojas: ${hojaSeleccionada}`);
-            console.log(`datosParseados: `, datos);
-
             if (datos.hojas && datos.hojas[hojaSeleccionada]) {
                 const datosHoja = datos.hojas[hojaSeleccionada];
                 if (datosHoja.length > 0) {
@@ -746,9 +741,6 @@ function popularDropdown(elementoSeleccionado) {
 
 function actualizarSelectorVariables(hojaSeleccionada) {
     const tractores = JSON.parse(localStorage.getItem('tractoresSeleccionados'))
-    console.log(`hojaSeleccionada: ${hojaSeleccionada}`);
-    console.log(`tractores: ${tractores}`);
-    console.log(`true? ${tractores.includes(hojaSeleccionada)}`);
     if (hojaSeleccionada && tractores && tractores.includes(hojaSeleccionada)) {
         const selectoresVariables = document.querySelectorAll('.variable-selector');
         selectoresVariables.forEach(selector => {

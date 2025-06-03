@@ -53,8 +53,6 @@ async function eliminarFormula(id) {
 
 
 async function renderizarFormulas() {
-    const tractores = JSON.parse(localStorage.getItem('tractoresSeleccionados'))
-    console.log('Tractores seleccionados:', tractores, typeof tractores);
     try {
         const respuesta = await consultarFormulas();
         // Verificar que la respuesta tenga la estructura correcta
