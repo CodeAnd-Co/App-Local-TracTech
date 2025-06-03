@@ -37,7 +37,7 @@ function agregarTexto(
   const tarjetasGraficaExistentes = contenedor.querySelectorAll('.tarjeta-grafica').length;
   const totalTarjetas = tarjetasTextoExistentes + tarjetasGraficaExistentes;
   if (totalTarjetas >= 30) {
-    mostrarAlerta('Advertencia', 'No puedes agregar más de 30 tarjetas en total.', 'info');
+    mostrarAlerta('Advertencia', 'Llegaste al límite de tarjetas, el reporte no puede tener más de 30 tarjetas en total.', 'info');
     return null;
   }
 
