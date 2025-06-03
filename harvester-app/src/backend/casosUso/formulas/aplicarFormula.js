@@ -144,7 +144,7 @@ function traducirFormulaEstructurada(formula, encabezados, filaActiva) {
     if (columnasNoEncontradas.length > 0) {
         return { error: true, columnasNoEncontradas };
     }
-    return { error: false, formula: formulaTraducida };
+    return  formulaTraducida;
 }
 
 /**
