@@ -22,9 +22,12 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
+    minWidth: 400,
+    minHeight: 600,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      devTools: false, // Deshabilitar herramientas de desarrollo
     },
   });
 
