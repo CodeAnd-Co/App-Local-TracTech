@@ -22,8 +22,8 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
-    minWidth: 1280,
-    minHeight: 720,
+    minWidth: 400,
+    minHeight: 600,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -32,11 +32,6 @@ const createWindow = async () => {
   });
 
   mainWindow.setMenuBarVisibility(false);
-
-    // Deshabilitar las herramientas de desarrollo
-  mainWindow.webContents.on('devtools-opened', () => {
-    mainWindow.webContents.closeDevTools();
-  });
 
   // Cargar el archivo ejs de pantalla de carga
   // mainWindow.loadFile(path.join(__dirname, './framework/vistas/pantallaCarga.html'));
