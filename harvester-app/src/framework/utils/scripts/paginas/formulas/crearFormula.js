@@ -199,6 +199,8 @@ function definirEstructura(elementoElegido, contenedor) {
     contenedor.innerHTML = '';
     // Aquí se define la estructura de la función
     switch (funcionElegida) {
+        case 'Funcion':
+            break;
         case 'IF':
             agregarCriterio('Condición', 'if-condition', contenedor);
             agregarArgumento('Si Verdadero', 'if-true', contenedor, true);

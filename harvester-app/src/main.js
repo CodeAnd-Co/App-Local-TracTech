@@ -27,7 +27,6 @@ const createWindow = async () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      devTools: false, // Deshabilitar herramientas de desarrollo
     },
   });
 

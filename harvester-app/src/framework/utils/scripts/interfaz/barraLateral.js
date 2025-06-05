@@ -7,7 +7,7 @@ const informacionModulos = {
   tractores:       [`${rutaBase}src/framework/vistas/paginas/analisis/seleccionarTractor.ejs`, 'Tractores', 'Casa'],
   analisis:        [`${rutaBase}src/framework/vistas/paginas/analisis/generarReporte.ejs`, 'Análisis', 'GraficaBarras'],
   plantillas:      [`${rutaBase}src/framework/vistas/paginas/plantillas/listaPlantillas.ejs`, 'Plantillas', 'Portapapeles'],
-  formulas:        [`${rutaBase}src/framework/vistas/paginas/formulas/listaFormulas.ejs`, 'Formulas', 'Funcion'],
+  formulas:        [`${rutaBase}src/framework/vistas/paginas/formulas/listaFormulas.ejs`, 'Fórmulas', 'Funcion'],
   perfil:          [`${rutaBase}src/framework/vistas/paginas/usuarios/consultarPerfil.ejs`, 'Perfil', 'Usuario'],
   usuarios:        [`${rutaBase}src/framework/vistas/paginas/usuarios/listaUsuarios.ejs`, 'Usuarios', 'Usuario'],
 };
@@ -44,7 +44,7 @@ function configurarBotonesLaterales(){
       const seccion = localStorage.getItem('seccion-activa');
 
       if(seccion == 'analisis' && boton.classList.contains('sidebar-logo') == false){
-        const resultadoConfirmado = await mostrarAlertaConfirmacion('¿Estás seguro de salir?', 'Se perdera el reporte si sales de este', 'warning', 'Sí, salir', 'Cancelar');
+        const resultadoConfirmado = await mostrarAlertaConfirmacion('¿Estás seguro de salir?', 'Se perderá el reporte si sales de este', 'warning', 'Sí, salir', 'Cancelar');
         if(resultadoConfirmado) {
 
           const modulo = boton.getAttribute('data-seccion');
