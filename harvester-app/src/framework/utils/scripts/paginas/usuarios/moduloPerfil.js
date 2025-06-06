@@ -32,12 +32,27 @@ function inicializarModuloUsuario() {
     botonCerrarSesion.addEventListener('click', async () => {
       botonCerrarSesion.disabled = true;
 
+      const confirmacion = await mostrarAlertaConfirmacion(
+        '¿Estás seguro de que quieres cerrar sesión?',
+        'Se cerrará tu sesión actual.',
+        'warning',
+        'Cerrar sesión',
+        'Cancelar'
+    );
+    if (!confirmacion) {
+        // Si el usuario cancela, restaurar el contenido original del botón y habilitarlo
+        botonCerrarSesion.disabled = false;
+        return;
+    }
+
       const contenidoOriginal = botonCerrarSesion.innerHTML;
       botonCerrarSesion.innerHTML = '<div class="cerrar-sesi-n">Cerrando sesión...</div>';
+      
 
       const timeoutPromise = new Promise((reject) => {
         setTimeout(() => reject(new Error('Tiempo de espera agotado')), 5000);
       });
+
 
       try {
         const respuesta = await Promise.race([cerrarSesion(), timeoutPromise]);

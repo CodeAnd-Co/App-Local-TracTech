@@ -1,5 +1,4 @@
 // RF3 Usuario cierra sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF3
-
 const { cerrarSesion: cerrarSesionAPI } = require('../../domain/sesionAPI/sesionAPI'); // Importa la función cerrarSesionAPI
 
 /**
@@ -14,7 +13,6 @@ async function cerrarSesion() {
         if (!token) {
             return;
         }
-
         // Llamar a la API para cerrar sesión enviando el token
         const respuesta = await cerrarSesionAPI(token);
         return respuesta;
