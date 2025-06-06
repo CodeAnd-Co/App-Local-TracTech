@@ -12,6 +12,7 @@ const { eliminarCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scri
 const { crearCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/crearCuadroFormulas.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
 
+
 /* eslint-disable no-unused-vars */
  
 // Variable global para almacenar las fórmulas consultadas
@@ -161,6 +162,8 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const grafico = crearGrafica(contexto, 'line');
   grafico.options.plugins.title.text = '';
   grafico.update();
+  verificarExcesoEtiquetas(grafico);
+
 
   const entradaTexto = tarjetaGrafica.querySelector('.titulo-grafica');
   // CAMBIO: Prevenir espacios al inicio sin mover el cursor
@@ -286,6 +289,7 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
   // Actualizar
   nuevaGrafica.update();
   
+  verificarExcesoEtiquetas(nuevaGrafica);
   return nuevaGrafica;
 }
 
@@ -335,6 +339,7 @@ function crearGrafica(contexto, tipo, color) {
       }]
     },
     options: {
+      devicePixelRatio: 1.5,
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
@@ -460,6 +465,7 @@ function crearGrafica(contexto, tipo, color) {
     },
   });
 
+  verificarExcesoEtiquetas(grafico);
   return grafico;
 }
 
@@ -601,8 +607,26 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
   }
 }
 
+function verificarExcesoEtiquetas(grafica) {
+  const tipo = grafica.config.type;
+  const etiquetas = grafica.data.labels || [];
+
+  if (
+    ['bar', 'radar', 'pie', 'doughnut', 'polarArea'].includes(tipo) 
+    && etiquetas.length > 20
+  ) {
+    mostrarAlerta(
+      'AVISO.',
+      'La gráfica cuenta con más de 20 etiquetas, por lo que puede afectar su visualización e interpretación.',
+      'warning'
+    );
+  }
+}
+
+
 
 module.exports = { 
   agregarGrafica,
-  crearGrafica
+  crearGrafica,
+
  };
