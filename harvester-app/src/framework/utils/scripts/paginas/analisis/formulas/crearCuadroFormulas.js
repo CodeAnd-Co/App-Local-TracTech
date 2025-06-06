@@ -33,10 +33,10 @@ async function crearCuadroFormulas( graficaId, formulasDisponibles, datosOrigina
   // Obtener las columnas de la hoja seleccionada
   const datos = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
   const columnasActualizadas = obtenerParametrosTractor(datos, tractorSeleccionado);
-  let mensajeInicial = 'No hay fórmulas disponibles.';
-  if (formulasDisponibles.length > 0) {
-    mensajeInicial = 'Escribe para buscar fórmulas...';
-  } 
+  let mensajeInicial = '';
+  if (formulasDisponibles.length === 0) {
+    mensajeInicial = 'No hay fórmulas disponibles.';
+  }
 
 cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
@@ -55,7 +55,7 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
                   <div class='opciones-carta'>
                       <input class='search-section' placeholder='Encuentra una fórmula'  maxlength='50'/>
                       <div class='contenedor-busqueda'>
-                          <div class="mensaje-inicial">${mensajeInicial}</div>
+                          ${mensajeInicial ? `<div class="mensaje-inicial">${mensajeInicial}</div>` : ''}
                       </div>
                       <div style='display: flex; justify-content: space-between; gap: 1rem;'>
                         <div class='boton-agregar'id = 'btnAplicarFormula'>
@@ -79,6 +79,11 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
   const contenedorBusqueda = cuadroFormulas.querySelector('.contenedor-busqueda');
   const botonAplicarFormula = cuadroFormulas.querySelector('#btnAplicarFormula');
   const botonRetirarDatos = cuadroFormulas.querySelector('#btnRetirarDatos');
+
+  // Mostrar todas las fórmulas al cargar inicialmente
+  if (formulasDisponibles.length > 0) {
+    filtrarYRenderizarFormulas(contenedorBusqueda, '', formulasDisponibles);
+  }
 
   botonRetirarDatos.addEventListener('click', () => {
     retirarDatos(graficaId, datosOriginalesFormulas);

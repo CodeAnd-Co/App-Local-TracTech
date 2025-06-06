@@ -136,7 +136,7 @@ async function leerExcel(archivo) {
                         if (verificacionExcel.hayPeligro) {
                             reject({
                                 exito: false,
-                                mensaje: `El archivo subido contiene el siguiente carácter inválido: ${verificacionExcel.lugarDetectado} Caracter: ${verificacionExcel.caracterDetectado}`
+                                mensaje: `El archivo subido contiene el siguiente caracter inválido: ${verificacionExcel.lugarDetectado} Caracter: ${verificacionExcel.caracterDetectado}`
                             });
                         }
                         // Almacenamos los datos usando el nombre de la hoja como clave
