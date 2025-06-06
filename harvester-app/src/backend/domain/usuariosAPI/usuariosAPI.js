@@ -168,6 +168,12 @@ async function consultarRoles() {
  * @returns {Promise<{ok: boolean, mensaje?: string}>} Objeto con el estado de la operación y un posible mensaje del servidor.
  */
 async function deshabilitarDispositivo(idUsuario) {
+    if (!token) {
+        return {
+            ok: false,
+            mensaje: 'Token de autenticación no encontrado',
+        };
+    }
     try {
         const respuesta = await fetch(`${URL_BASE}/dispositivo/deshabilitar`, {
             method: 'POST',
