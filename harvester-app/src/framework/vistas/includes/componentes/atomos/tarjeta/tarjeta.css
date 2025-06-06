@@ -1,0 +1,29 @@
+.tarjeta{
+    padding: 15px;
+    display: flex;
+    border: 1px solid #000;      
+    border-radius: 10px;       
+}
+
+.tarjeta-gap-0 { gap: 0px; }
+.tarjeta-gap-28 { gap: 28px; }
+
+.tarjeta-padding-24 {
+    padding: 24px;
+}
+.tarjeta-padding-0 {
+    padding: 0;
+}
+
+.tarjeta-blanco { background-color: #fafafa; }
+.tarjeta-gris { background-color: #ededed; }
+.tarjeta-azul { background-color: #262b40; }
+
+.derecha { justify-content: flex-end; }
+.centro{ justify-content: center; }
+.izquierda{ justify-content: flex-start; }
+
+.fila { flex-direction: row; }
+
+.columna { flex-direction: column; }
+

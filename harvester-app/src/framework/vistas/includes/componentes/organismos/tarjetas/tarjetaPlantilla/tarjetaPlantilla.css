@@ -1,0 +1,107 @@
+.frame-plantillas,
+.frame-plantillas * {
+  box-sizing: border-box;
+}
+
+.frame-plantillas {
+  display: flex;
+  flex-direction: row;
+  gap: 125px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.plantilla {
+  background: var(--box-light, #ffffff);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-width: 4px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 369px;
+  height: 517px;
+  position: relative;
+}
+
+scroll-container {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
+
+.nombre-de-plantilla {
+  color: var(--texto-light, #000000);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 24px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  width: 235px;
+  max-width: 235px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.menu-opciones,
+.menu-opciones * {
+  box-sizing: border-box;
+}
+
+.menu-opciones {
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  max-height: 127px;
+  position: relative;
+}
+
+.divisorPlantilla {
+  align-self: stretch;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.error-sin-plantillas,
+.error-sin-plantillas * {
+  box-sizing: border-box;
+}
+
+.error-sin-plantillas {
+  color: #000000;
+  text-align: center;
+  font-family: var(--hero-font-family, "SegoeUi-Regular", sans-serif);
+  font-size: var(--hero-font-size, 52px);
+  line-height: var(--hero-line-height, 120%);
+  letter-spacing: var(--hero-letter-spacing, -0.02em);
+  font-weight: var(--hero-font-weight, 400);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

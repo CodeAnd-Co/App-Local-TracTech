@@ -1,0 +1,47 @@
+/* Contenedor del cuadro */
+.cuadro-texto {
+  display: flex;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  position: relative;
+  width: 100%;
+}
+
+/* Tamaños de texto */
+.texto-xs { font-size: 12px; }
+.texto-sm { font-size: 14px; }
+.texto-md { font-size: 18px; }
+.texto-lg { font-size: 24px; }
+.texto-xl { font-size: 32px; }
+.texto-xxl{ font-size: 40px; }
+
+/* Colores */
+.texto-rojo { color: #A5182F; }
+.texto-gris { color: #B4B4B4; }
+.texto-negro { color: #000000; }
+.texto-blanco { color: #FFFFFF; }
+.texto-azul { color: #0057D9; }
+
+/* Tipografías */
+.fuente-regular { font-family: "SegoeUi-Regular", sans-serif; font-weight: 400; }
+.fuente-bold { font-family: "SegoeUi-Bold", sans-serif; font-weight: 700; }
+.fuente-light { font-family: "SegoeUi-Light", sans-serif; font-weight: 300; }
+
+.texto-izquierda { justify-content: flex-start; }
+.texto-centro { justify-content:  center; }
+.texto-derecha { justify-content: flex-end; }
+.texto-justificado { justify-content: space-between; }
+
+.mb-0   { margin-bottom: 0; }
+.mb-8   { margin-bottom: 8px; }
+.mb-14  { margin-bottom: 14px; }
+.mb-16  { margin-bottom: 16px; }
+.mb-24  { margin-bottom: 24px; }
+.mb-32  { margin-bottom: 32px; }
+
+.mt-0   { margin-top: 0; }
+.mt-8   { margin-top: 8px; }
+.mt-14  { margin-top: 14px; }
+.mt-16  { margin-top: 16px; }
+.mt-24  { margin-top: 24px; }
+.mt-32  { margin-top: 32px; }

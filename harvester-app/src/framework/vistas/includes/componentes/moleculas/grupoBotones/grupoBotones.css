@@ -1,0 +1,25 @@
+.grupo-botones {
+    display: flex;
+    gap: 12px;
+}
+  
+.grupo-horizontal {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.grupo-vertical {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.grupo-botones-pegados {
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.grupo-botones-separados {
+    justify-content: space-between;
+    gap: 0;
+}

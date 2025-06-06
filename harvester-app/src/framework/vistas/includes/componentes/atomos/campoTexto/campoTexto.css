@@ -1,0 +1,28 @@
+/* === Campo de texto modular === */
+.campoTexto {
+  box-sizing: border-box;
+  background: #e8e8e8;
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgba(0, 3, 16, 0.1);
+  border-width: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  color: var(--negro, #000000);
+  text-align: center;
+  font-family: "SegoeUi-Regular", sans-serif;
+  font-size: 18px;
+  line-height: 112%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  text-align: left;
+}

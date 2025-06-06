@@ -1,0 +1,32 @@
+name: ESLint with reviewdog
+
+on:
+  pull_request:
+
+jobs:
+  eslint:
+    name: Run ESLint and comment on PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x 
+
+      - name: Install dependencies
+        run: cd harvester-app && npm install
+
+      - name: Run ESLint (Comentario en checks)
+        uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-check
+          workdir: harvester-app
+          eslint_flags: './src'
+          fail_on_error: true
+          filter_mode: nofilter
+        if: always()

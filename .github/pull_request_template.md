@@ -50,3 +50,4 @@ Historial de cambios en la plantilla
 | 1.3 | Añadir sección para registrar defectos a la plantilla | 16/05/2025 | Rommel Toledo C. |
  -->
  
+
