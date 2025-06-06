@@ -112,8 +112,8 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     const etiquetas = graficaExistente.data.labels || [];
 
     if (
-      ['bar', 'radar', 'pie', 'doughnut', 'polarArea'].includes(tipo) &&
-      etiquetas.length > 20
+      ['bar', 'radar', 'pie', 'doughnut', 'polarArea'].includes(tipo)
+      && etiquetas.length > 20
     ) {
       mostrarAlerta(
         'AVISO.',

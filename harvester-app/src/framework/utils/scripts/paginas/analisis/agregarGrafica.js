@@ -612,8 +612,8 @@ function verificarExcesoEtiquetas(grafica) {
   const etiquetas = grafica.data.labels || [];
 
   if (
-    ['bar', 'radar', 'pie', 'doughnut', 'polarArea'].includes(tipo) &&
-    etiquetas.length > 20
+    ['bar', 'radar', 'pie', 'doughnut', 'polarArea'].includes(tipo) 
+    && etiquetas.length > 20
   ) {
     mostrarAlerta(
       'AVISO.',
