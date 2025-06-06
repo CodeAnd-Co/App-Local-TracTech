@@ -108,6 +108,20 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     
     graficaExistente.update();
 
+    const tipo = graficaExistente.config.type;
+    const etiquetas = graficaExistente.data.labels || [];
+
+    if (
+      ['bar', 'radar', 'pie', 'doughnut', 'polarArea'].includes(tipo) &&
+      etiquetas.length > 20
+    ) {
+      mostrarAlerta(
+        'AVISO.',
+        'La gráfica cuenta con más de 20 etiquetas, por lo que puede afectar su visualización e interpretación.',
+        'warning'
+      );
+    }
+
   } catch {
     mostrarAlerta('Error', 'Error al procesar los datos de la columna seleccionada.', 'error');
   }
