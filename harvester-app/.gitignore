@@ -88,5 +88,18 @@ typings/
 # Vite
 .vite/
 
+# Certificados
+cert/
+*.pfx
+*.p12
+cert-base64.txt
+
 # Electron-Forge
 out/
+
+# Constantes
+/src/framework/utils/scripts/constantes.js
+/src/framework/utils/js/constantes.js
+
+# Dist
+/dist

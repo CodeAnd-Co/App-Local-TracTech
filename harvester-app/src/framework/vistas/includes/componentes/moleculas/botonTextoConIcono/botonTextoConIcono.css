@@ -1,0 +1,20 @@
+.boton{
+    padding: 5px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+    position: relative;
+}
+
+.boton-blanco{ background: #ffffff; }
+.boton-rojo{ background-color: #a61930; }
+
+.boton-blanco:hover {
+    background: #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.boton-rojo:hover { background-color: #8c1429; }
