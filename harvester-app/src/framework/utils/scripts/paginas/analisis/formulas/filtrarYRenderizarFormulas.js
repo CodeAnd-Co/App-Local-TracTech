@@ -22,24 +22,12 @@ function actualizarCaracteresBuscador(campoEntrada) {
  * Filtra y renderiza las fórmulas según el término de búsqueda.
  * @param {HTMLDivElement} contenedor - Contenedor donde se mostrarán las fórmulas.
  * @param {string} terminoBusqueda - Término de búsqueda para filtrar fórmulas.
+ * @param {Array} formulasDisponibles - Array de fórmulas disponibles.
  * @returns {void}
  */
 function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDisponibles = []) {
   // Limpiar contenedor
   contenedor.innerHTML = '';
-
-  // Verificar si son solo espacios
-  const sonSoloEspacios = terminoBusqueda.length > 0 && terminoBusqueda.trim() === '';
-
-  // Si no hay término de búsqueda, mostrar mensaje inicial
-  if (!terminoBusqueda || terminoBusqueda.trim() === '') {
-    if (sonSoloEspacios) {
-      contenedor.innerHTML = '<div class="mensaje-sin-resultados">No se puede buscar solo con espacios en blanco</div>';
-    } else {
-      contenedor.innerHTML = '<div class="mensaje-inicial">Escribe para buscar fórmulas...</div>';
-    }
-    return;
-  }
 
   // Si no hay fórmulas cargadas, mostrar mensaje específico
   if (formulasDisponibles.length === 0) {
@@ -47,18 +35,30 @@ function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDi
     return;
   }
 
-  // Filtrar fórmulas por término de búsqueda SOLO en el nombre
-  const terminoLowerCase = terminoBusqueda.toLowerCase().trim();
-  const formulasFiltradas = formulasDisponibles.filter(formula => {
-    return formula.Nombre.toLowerCase().includes(terminoLowerCase);
-  });
+  let formulasFiltradas = formulasDisponibles;
 
-  // Renderizar fórmulas filtradas
-  if (formulasFiltradas.length === 0) {
-    contenedor.innerHTML = `<div class="mensaje-sin-resultados">No hay fórmulas que coincidan con la busqueda</div>`;
-    return;
+  // Solo filtrar si hay un término de búsqueda válido
+  if (terminoBusqueda && terminoBusqueda.trim() !== '') {
+    // Verificar si son solo espacios en blanco
+    if (terminoBusqueda.length > 0 && terminoBusqueda.trim() === '') {
+      contenedor.innerHTML = '<div class="mensaje-sin-resultados">No se puede buscar solo con espacios en blanco</div>';
+      return;
+    }
+
+    // Filtrar fórmulas por término de búsqueda SOLO en el nombre
+    const terminoLowerCase = terminoBusqueda.toLowerCase().trim();
+    formulasFiltradas = formulasDisponibles.filter(formula => {
+      return formula.Nombre.toLowerCase().includes(terminoLowerCase);
+    });
+
+    // Si no hay resultados después del filtrado
+    if (formulasFiltradas.length === 0) {
+      contenedor.innerHTML = `<div class="mensaje-sin-resultados">No hay fórmulas que coincidan con la búsqueda</div>`;
+      return;
+    }
   }
 
+  // Renderizar fórmulas (todas o filtradas)
   // eslint-disable-next-line no-unused-vars
   formulasFiltradas.forEach((formula, indice) => {
     const elementoFormula = document.createElement('div');
