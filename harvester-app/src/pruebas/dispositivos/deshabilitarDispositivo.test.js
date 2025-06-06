@@ -62,6 +62,23 @@ describe('deshabilitarDispositivo (caso de uso)', () => {
         const resultado = await deshabilitarDispositivo(idUsuario);
 
         expect(deshabilitarDispositivoAPIMock).toHaveBeenCalledTimes(1);
+        expect(deshabilitarDispositivoAPIMock).toHaveBeenCalledWith(idUsuario);
+        expect(resultado).toEqual({
+            ok: false,
+            mensaje: 'Error al deshabilitar el dispositivo',
+        });
+    });
+
+    it('ID menor a 10 caracteres', async () => {
+        const idUsuario = 'abdff1234';
+        const respuestaMock = {
+            ok: false,
+            mensaje: 'Error al deshabilitar el dispositivo',
+        };
+        const resultado = await deshabilitarDispositivo(idUsuario);
+
+        expect(deshabilitarDispositivoAPIMock).toHaveBeenCalledTimes(1);
+        expect(deshabilitarDispositivoAPIMock).toHaveBeenCalledWith(idUsuario);
         expect(resultado).toEqual({
             ok: false,
             mensaje: 'Error al deshabilitar el dispositivo',
