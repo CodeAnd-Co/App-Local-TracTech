@@ -79,9 +79,6 @@ describe('deshabilitarDispositivo (caso de uso)', () => {
 
         expect(deshabilitarDispositivoAPIMock).toHaveBeenCalledTimes(1);
         expect(deshabilitarDispositivoAPIMock).toHaveBeenCalledWith(idUsuario);
-        expect(resultado).toEqual({
-            ok: false,
-            mensaje: 'Error al deshabilitar el dispositivo',
-        });
+        expect(resultado).toEqual(respuestaMock);
     });
 });
