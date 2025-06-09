@@ -60,7 +60,7 @@ function retirarDatos(graficaId, datosOriginalesFormulas) {
       // Configurar etiquetas: ocultar según el tipo de gráfica
       const tipoActual = graficaExistente.config.type;
       graficaExistente.options.plugins.datalabels.display = tipoActual !== 'line';
-      graficaExistente.options.plugins.title.display = false;
+      graficaExistente.options.plugins.title.display = true;
   
       // Actualizar la gráfica
       graficaExistente.update();
