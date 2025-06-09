@@ -144,7 +144,6 @@ async function inicializarModuloGestionUsuarios() {
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
         actualizarTodosContadores();
-        limpiarMensajesError();
         if (modoActual === modoFormulario.CREAR) {
             // Deshabilitar el botón para evitar múltiples envíos
             nuevoBotonGuardar.disabled = true;
