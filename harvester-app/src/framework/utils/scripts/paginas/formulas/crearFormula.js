@@ -1,5 +1,5 @@
-// RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
-// RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
+// RF24 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF24 
+// RF22 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF22
 const { LONGITUD_MAXIMA_FORMULA,
     LONGITUD_MAXIMA_NOMBRE_FORMULA } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 
@@ -160,7 +160,7 @@ async function procesarFormula() {
         btnGuardar.disabled = false;
         return;
     }
-    const formula = cuadroTextoGenerado.split(':')[1].trim();
+    const formula = cuadroTextoGenerado.split('°')[2].trim();
 
     try {
         const respuesta = await guardarFormula(nombreFormula, formula);
@@ -526,7 +526,7 @@ function generarFormulaCompleja() {
     }
 
     const formula = construirFormulaDesdeContenedor(contenedor, seleccionFuncionPrincipal.value);
-    document.getElementById('resultado').innerText = `Fórmula generada (en inglés para HyperFormula):\n=${formula}`;
+    document.getElementById('resultado').innerText = `°Fórmula generada (en inglés para HyperFormula)°\n=${formula}`;
 }
 
 /**
