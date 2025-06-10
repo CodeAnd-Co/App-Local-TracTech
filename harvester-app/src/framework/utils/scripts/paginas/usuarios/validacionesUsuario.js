@@ -1,4 +1,5 @@
 const validator = require('validator');
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 const numeroMinimoID = 1;
 const tamanioMinimoNombre = 1;
@@ -7,8 +8,75 @@ const tamanioMinimoCorreo = 5;
 const tamanioMaximoCorreo = 50;
 const tamanioMinimoContrasenia = 8;
 const tamanioMaximoContrasenia = 512;
+const regexNombre = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
 
 /**
+ * 
+ */
+function validacionInicial(nombre, correo, contrasenia, confirmContrasenia, idRolFK, listaCorreos) {
+    const nombreTrim = nombre.trim();
+    const correoTrim = correo.trim();
+    const contraseniaTrim = contrasenia.trim();
+    const confirmContraseniaTrim = confirmContrasenia.trim();
+    const idRolFKTrim = parseInt(idRolFK, 10);
+
+    // Verificar campos obligatorios
+    if (!nombreTrim || !correoTrim || !contraseniaTrim || !confirmContraseniaTrim || isNaN(idRolFKTrim)) {
+        mostrarAlerta('Datos incompletos', 'Por favor, completa todos los campos.', 'warning');
+        return false;
+    }
+
+    // Verificar si las contraseñas coinciden (si existe el campo de confirmación)
+    if (contraseniaTrim !== confirmContraseniaTrim) {
+        mostrarAlerta('Las contraseñas no coinciden', 'Por favor, asegúrate de que la contraseña y su confirmación sean iguales.', 'warning');
+        return false;
+    }
+
+    if (nombreTrim.length > 45) {
+        mostrarAlerta(`Nombre demasiado largo', 'El nombre no puede tener más de ${tamanioMinimoNombre} caracteres.', 'error`);
+        return false;
+    } else if (nombre.length > 0 && nombre[0] === ' ') {
+        mostrarAlerta('Correo inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        return false;
+    } else if (!regexNombre.test(nombreTrim)) {
+        mostrarAlerta('Nombre inválido', 'El nombre solo puede contener letras, espacios y puntos.', 'error');
+        return false;
+    }
+
+    if (correoTrim.length > tamanioMaximoCorreo || correoTrim.length < tamanioMinimoCorreo) {
+        mostrarAlerta('Correo demasiado largo', `El correo debe tener entre ${tamanioMinimoCorreo} y ${tamanioMaximoCorreo} caracteres.`, 'error');
+        return false;
+    } else if (!validator.isEmail(correoTrim)) {
+        mostrarAlerta('Correo inválido', 'El correo debe tener un formato válido.', 'error');
+        return false;
+    } else if (correo.length > 0 && correo[0] === ' ') {
+        mostrarAlerta('Correo inválido', 'El correo no puede comenzar con un espacio.', 'error');
+        return false;
+    } else if (listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correoTrim.toLowerCase())) {
+        mostrarAlerta('Correo ya registrado', 'El correo ingresado ya existe. Por favor, usa otro correo.', 'error');;
+        return false;
+    }
+
+    if (contraseniaTrim.length < tamanioMinimoContrasenia || contraseniaTrim.length > tamanioMaximoContrasenia) {
+        mostrarAlerta('Contraseña demasiado corta', `La contraseña debe tener entre ${tamanioMinimoContrasenia} y ${tamanioMaximoContrasenia} caracteres.`, 'error');
+        return false;
+    } else if (contrasenia.length > 0 && contrasenia[0] === ' ') {
+        mostrarAlerta('Contraseña inválida', 'La contraseña no puede comenzar con un espacio.', 'error');
+        return false;
+    } else if (confirmContrasenia.length > 0 && confirmContrasenia[0] === ' ') {
+        mostrarAlerta('Confirmación inválida', 'La confirmación de contraseña no puede comenzar con un espacio.', 'error');
+        return false;
+    }
+
+    if (!Number.isInteger(idRolFK) || idRolFK <= numeroMinimoID) {
+        mostrarAlerta('Rol inválido', 'Ingresa un rol válido.', 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+/** 
  * Valida el nombre de usuario.
  * @param {string} nombre
  * @returns {string} - Mensaje de error o cadena vacía si es válido.
@@ -17,17 +85,16 @@ function validarNombreCampo(nombre) {
     const valor = nombre.trim();
 
     if (valor.length < tamanioMinimoNombre || valor.length > tamanioMaximoNombre) {
-        return `El nombre debe tener entre ${tamanioMinimoNombre} y ${tamanioMaximoNombre} caracteres.`;
-    }
-    if (valor === '') {
-        return 'El nombre no puede estar compuesto solo por espacios.';
+        return `El nombre no puede tener más de ${tamanioMinimoNombre} caracteres.`;
     }
     if (nombre[0] === ' ') {
         return 'El nombre no puede comenzar con un espacio.';
     }
-    const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
-    if (!regex.test(valor)) {
+    if (!regexNombre.test(valor)) {
         return 'El nombre solo puede contener letras, espacios y puntos.';
+    }
+    if (valor === '') {
+        return 'El nombre no puede estar vacío.';
     }
     return '';
 }
@@ -67,13 +134,14 @@ function validarContraseniaCampo(contrasenia) {
  * @returns {string}
  */
 function validarRolCampo(idRol) {
-  if (!Number.isInteger(idRol) || idRol < numeroMinimoID) {
-    return 'El rol debe ser un número entero mayor o igual a 1.';
+  if (!Number.isInteger(idRol) || idRol <= numeroMinimoID) {
+    return 'Ingresa un rol válido.';
   }
   return '';
 }
 
 module.exports = {
+    validacionInicial,
     validarNombreCampo,
     validarCorreoCampo,
     validarContraseniaCampo,

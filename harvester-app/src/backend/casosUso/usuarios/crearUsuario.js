@@ -51,8 +51,10 @@ function validarCorreo(correo) {
  * @returns {Promise<{ok: boolean, mensaje: string, id?: number}>} Resultado de la operación.
  */
 async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
+    console.log("hola")
     if (!nombre || !correo || !contrasenia || !idRolFK) {
-        return { ok: false, mensaje: 'Todos los campos son obligatorios' };
+        //return { ok: false, mensaje: 'Todos los campos son obligatorios' };
+        return { ok: false, mensaje: `correo: "${correo}", contrasenia: "${contrasenia}", idRolFK: "${idRolFK}", nombre: "${nombre}"` };
     }
 
     if (!validarCorreo(correo)) {

@@ -10,7 +10,7 @@ const { obtenerUsuarios } = require(`${rutaBase}src/backend/casosUso/usuarios/co
 const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/eliminarUsuario`);
 const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarRoles.js`);
 const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dispositivos/deshabilitarDispositivo.js`);
-const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
+const { validacionInicial, validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
 const { mostrarAlerta, mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
@@ -144,6 +144,7 @@ async function inicializarModuloGestionUsuarios() {
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
         actualizarTodosContadores();
+        limpiarMensajesError();
         if (modoActual === modoFormulario.CREAR) {
             // Deshabilitar el botón para evitar múltiples envíos
             nuevoBotonGuardar.disabled = true;
@@ -672,7 +673,6 @@ async function editarUsuario() {
  * @returns {{ error: string|null, datos: Object|null }}
  */
 function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
-
     const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
 
     // Flags de “campo modificado”
@@ -789,6 +789,7 @@ function configurarValidacionesCampos() {
         // Configurar el evento para validación en tiempo real
         campoEntrada.addEventListener(evento, () => {
             const valor = campoEntrada.value;
+            const valorTrim = valor.trim();
 
             // Si el campo empieza con espacio, mostrar error y salir
             if (valor.length > 0 && valor[0] === ' ') {
@@ -796,8 +797,16 @@ function configurarValidacionesCampos() {
                 mensajeError.textContent = 'El campo no puede comenzar con un espacio.';
                 return;
             }
-
-            const valorTrim = valor.trim();
+        
+            // Si llegamos hasta aquí, validamos con la función correspondiente.
+            const mensaje = validador(valor);
+            if (mensaje) {
+                campoEntrada.classList.add('inputError');
+                mensajeError.textContent = mensaje;
+            } else {
+                campoEntrada.classList.remove('inputError');
+                mensajeError.textContent = '';
+            }
 
             // Si estamos en modo EDITAR y el campo está vacío, quitamos clases/mensajes y retornamos sin más validación.
             if (modoActual === modoFormulario.EDITAR && valorTrim === '') {
@@ -811,16 +820,6 @@ function configurarValidacionesCampos() {
                 campoEntrada.classList.add('inputError');
                 mensajeError.textContent = 'El campo no puede estar vacío.';
                 return;
-            }
-        
-            // Si llegamos hasta aquí, validamos con la función correspondiente.
-            const mensaje = validador(valorTrim);
-            if (mensaje) {
-                campoEntrada.classList.add('inputError');
-                mensajeError.textContent = mensaje;
-            } else {
-                campoEntrada.classList.remove('inputError');
-                mensajeError.textContent = '';
             }
         });
         
@@ -852,38 +851,50 @@ function validarCoincidenciaContrasenas() {
         confirmPasswordInput.parentNode.insertBefore(mensajeError, confirmPasswordInput.nextSibling);
     }
 
-    // Función para validar la coincidencia
-    const validarCoincidencia = () => {
-        const password = passwordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
-
-        // Si el campo de confirmación está vacío, no mostrar error
-        if (confirmPassword.trim() === '') {
-            confirmPasswordInput.classList.add('inputError');
-            mensajeError.textContent = 'El campo no puede estar vacío.';
-            return;
-        }
-
-        // Validar coincidencia
-        if (password !== confirmPassword) {
-            confirmPasswordInput.classList.add('inputError');
-            mensajeError.textContent = 'Las contraseñas no coinciden';
-        } else {
-            confirmPasswordInput.classList.remove('inputError');
-            mensajeError.textContent = '';
-        }
-    };
-
     // Configurar eventos para validación en tiempo real
-    confirmPasswordInput.addEventListener('input', validarCoincidencia);
+    confirmPasswordInput.addEventListener('input', () => {
+        validarCoincidencia(passwordInput, confirmPasswordInput, mensajeError);
+    });
 
     // También validar cuando cambie la contraseña principal
     passwordInput.addEventListener('input', () => {
         if (confirmPasswordInput.value.trim() !== '') {
-            validarCoincidencia();
+            validarCoincidencia(passwordInput, confirmPasswordInput, mensajeError);
         }
     });
 }
+
+/**
+* Valida que la confirmación de contrasea coincida con la contraseña principal y maneja los mensajes de error del campo de entrada.
+*
+* @returns {void}
+*/
+function validarCoincidencia(passwordInput, confirmPasswordInput, mensajeError) {
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+
+    if (confirmPassword.length > 0 && confirmPassword[0] === ' ') {
+        confirmPasswordInput.classList.add('inputError');
+        mensajeError.textContent = 'El campo no puede comenzar con un espacio.';
+        return;
+    }
+
+    // Si el campo de confirmación está vacío, no mostrar error
+    if (confirmPassword.trim() === '') {
+        confirmPasswordInput.classList.add('inputError');
+        mensajeError.textContent = 'El campo no puede estar vacío.';
+        return;
+    }
+
+    // Validar coincidencia
+    if (password !== confirmPassword) {
+        confirmPasswordInput.classList.add('inputError');
+        mensajeError.textContent = 'Las contraseñas no coinciden';
+    } else {
+        confirmPasswordInput.classList.remove('inputError');
+        mensajeError.textContent = '';
+    }
+};
 
 /**
  * Crea un nuevo usuario en el sistema.
@@ -907,34 +918,14 @@ async function crearUsuario() {
     const confirmContraseniaSinTrim = confirmPasswordInput ? confirmPasswordInput.value : '';
     const rolSinTrim = rolInput.value;
 
-    // VALIDAR ESPACIO INICIAL EN TODOS LOS CAMPOS DE TEXTO
-    if (nombreSinTrim.length > 0 && nombreSinTrim[0] === ' ') {
-        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (correoSinTrim.length > 0 && correoSinTrim[0] === ' ') {
-        mostrarAlerta('Correo inválido', 'El correo no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (contraseniaSinTrim.length > 0 && contraseniaSinTrim[0] === ' ') {
-        mostrarAlerta('Contraseña inválida', 'La contraseña no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (confirmContraseniaSinTrim.length > 0 && confirmContraseniaSinTrim[0] === ' ') {
-        mostrarAlerta('Confirmación inválida', 'La confirmación de contraseña no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (rolSinTrim.length > 0 && rolSinTrim[0] === ' ') {
-        mostrarAlerta('Rol inválido', 'El rol no puede comenzar con un espacio.', 'error');
-        return;
-    }
+    let nombre
+    let correo
+    let contrasenia
+    let confirmContrasenia
+    let idRolFK;
 
     // AHORA SÍ HAZ EL TRIM PARA EL RESTO DE VALIDACIONES
-    const nombre = nombreSinTrim.trim();
-    const correo = correoSinTrim.trim();
-    const contrasenia = contraseniaSinTrim.trim();
-    const confirmContrasenia = confirmContraseniaSinTrim.trim();
-    const idRolFK = parseInt(rolSinTrim, 10);
+    
 
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
@@ -951,54 +942,17 @@ async function crearUsuario() {
         return;
     }
 
-    // Verificar si las contraseñas coinciden (si existe el campo de confirmación)
-    if (confirmPasswordInput && contrasenia !== confirmContrasenia) {
-        mostrarAlerta('Las contraseñas no coinciden', 'Por favor, asegúrate de que la contraseña y su confirmación sean iguales.', 'warning');
+    
+
+    if (validacionInicial(nombreSinTrim, correoSinTrim, contraseniaSinTrim, confirmContraseniaSinTrim, rolSinTrim, listaCorreos)) {
+        nombre = nombreSinTrim.trim();
+        correo = correoSinTrim.trim();
+        contrasenia = contraseniaSinTrim.trim();
+        confirmContrasenia = confirmContraseniaSinTrim.trim();
+        idRolFK = parseInt(rolSinTrim, 10);
+    } else {
         return;
     }
-
-    // Verificar campos obligatorios
-    if (!nombre || !correo || !contrasenia || !confirmContrasenia || isNaN(idRolFK)) {
-        mostrarAlerta('Datos incompletos', 'Por favor, completa todos los campos.', 'warning');
-        return;
-    }
-
-
-    if (listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correo.toLowerCase())) {
-        mostrarAlerta('Correo ya registrado', 'El correo ingresado ya existe. Por favor, usa otro correo.', 'error');;
-        return;
-    }
-
-    if (nombre.length > 45) {
-        mostrarAlerta('Nombre demasiado largo', 'El nombre no puede tener más de 45 caracteres.', 'error');
-        return;
-    }
-
-    if (nombre[0] === ' ') {
-        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (nombre.trim().length <= 0) {
-        mostrarAlerta('Nombre vacío', 'El nombre no puede estar vacío.', 'error');
-        return;
-    }
-
-    if (correo.length > 50) {
-        mostrarAlerta('Correo demasiado largo', 'El correo no puede tener más de 50 caracteres.', 'error');
-        return
-    }
-
-
-    if (contrasenia.length < 8) {
-        mostrarAlerta('Contraseña demasiado corta', 'La contraseña debe de tener más de 8 caracteres.', 'error');
-        return
-    }
-
-    if (contrasenia.length > 512) {
-        mostrarAlerta('Contraseña demasiado larga', 'La contraseña no puede tener más de 512 caracteres.', 'error');
-        return
-    }
-
 
     try {
         const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
