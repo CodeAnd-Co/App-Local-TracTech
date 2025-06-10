@@ -6,7 +6,7 @@
 
 const { modificarUsuario } = require(`${rutaBase}src/backend/casosUso/usuarios/modificarUsuario.js`);
 const { crearUsuario: crearUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/crearUsuario`);
-const { obtenerUsuarios } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarUsuarios.js`);
+const { obtenerUsuarios: obtenerUsuariosCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarUsuarios.js`);
 const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/eliminarUsuario`);
 const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarRoles.js`);
 const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dispositivos/deshabilitarDispositivo.js`);
@@ -41,7 +41,9 @@ let listaCorreos = [];
 async function inicializarModuloGestionUsuarios() {
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
-    renderizarUsuarios()
+    obtenerUsuarios()
+    configurarValidacionesCampos();
+    configurarContadoresCampos();
     configurarBotones()
     configurarCampoCorreo();
     configurarCampoBusqueda();
@@ -55,29 +57,27 @@ async function inicializarModuloGestionUsuarios() {
  * @async
  * @function renderizarUsuarios
  */
-async function renderizarUsuarios() {
+async function obtenerUsuarios() {
     try {
         listaUsuarios = [];
         usuariosFiltrados = [];
         document.getElementById('buscar-usuario').value = '';
 
-        const usuarios = await obtenerUsuarios();
+        const usuarios = await obtenerUsuariosCU();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
 
         if (listaUsuarios.length === 0) {
             mostrarAlerta('No existen usuarios registrados en el sistema', '', 'warning');
             document.getElementById('lista-usuarios').innerHTML
                 = '<div class="error-carga">No existen usuarios registrados en el sistema.</div>';
+        } else {
+            const usuarioActual = localStorage.getItem('nombreUsuario');
+            listaUsuarios = listaUsuarios.filter(usuario => usuario.nombre !== usuarioActual.trim());
+    
+            usuariosFiltrados = [...listaUsuarios];
+            cargarPagina(1);
         }
 
-        const usuarioActual = localStorage.getItem('nombreUsuario');
-        listaUsuarios = listaUsuarios.filter(usuario => usuario.nombre !== usuarioActual.trim());
-
-        usuariosFiltrados = [...listaUsuarios];
-        cargarPagina(1);
-
-        configurarValidacionesCampos();
-        configurarContadoresCampos();
     } catch (error) {
         mostrarAlerta('Error al cargar usuarios', error.message || 'Verifica tu conexión e inténtalo de nuevo.', 'error');
         document.getElementById('lista-usuarios').innerHTML
@@ -201,14 +201,6 @@ function configurarCampoBusqueda() {
         terminoBusqueda = evento.target.value.toLowerCase().trim();
         filtrarUsuarios();
     });
-
-    inputBusqueda.addEventListener('keypress', evento => {
-        if (evento.key === 'Enter') {
-            evento.preventDefault(); // Evitar que se envíe un formulario si está dentro de uno
-            terminoBusqueda = inputBusqueda.value.toLowerCase().trim();
-            filtrarUsuarios();
-        }
-    });
 }
 
 /**
@@ -250,6 +242,11 @@ function configurarContadoresCampos() {
     });
 }
 
+/**
+ * Configura la checkbox de "Ver contraseña" para mostrar u ocultar la contraseña ingresada.
+ * 
+ * @function configurarVerContrasenia
+ */
 function configurarVerContrasenia() {
     const botonVerContrasenia = document.querySelector('#verContrasenia');
     const inputContrasenia = document.querySelector('#password');
@@ -272,7 +269,11 @@ function configurarVerContrasenia() {
     }
 }
 
-
+/** 
+ * Filtra la lista de usuarios según el término de búsqueda ingresado.
+ * 
+ * @function filtrarUsuarios
+*/
 function filtrarUsuarios() {
     if (terminoBusqueda === '') {
         usuariosFiltrados = [...listaUsuarios];
@@ -319,79 +320,19 @@ async function eliminarUsuario(id) {
 function cargarPagina(pagina) {
     paginaActual = pagina;
     const paginasTotales = Math.ceil(usuariosFiltrados.length / usuariosPorPagina);
-
     const inicio = (pagina - 1) * usuariosPorPagina;
     const fin = inicio + usuariosPorPagina;
     const usuariosPagina = usuariosFiltrados.slice(inicio, fin);
-
-    mostrarUsuarios(usuariosPagina);
-
-    const paginacion = document.querySelector('.paginacion');
-    paginacion.innerHTML = '';
 
     if (usuariosFiltrados.length === 0) {
         const listaUsuariosElemento = document.getElementById('lista-usuarios');
         listaUsuariosElemento.innerHTML = '<div class="sin-resultados">No hay usuarios que coincidan con la búsqueda.</div>';
         return;
+    } else {
+        mostrarUsuarios(usuariosPagina);
     }
 
-    // Solo mostrar paginación si hay más de una página
-    if (paginasTotales <= 1) {
-        return;
-    }
-
-    const previo = document.createElement('button');
-    previo.textContent = '<';
-    previo.classList.add('boton-pagina-previa');
-    previo.disabled = paginaActual === 1;
-    previo.onclick = evento => {
-        evento.preventDefault();
-        if (paginaActual > 1) {
-            cargarPagina(paginaActual - 1);
-        }
-    };
-    paginacion.appendChild(previo);
-
-    for (let numeroPagina = 1; numeroPagina <= paginasTotales; numeroPagina += 1) {
-        if (
-            numeroPagina === 1
-            || numeroPagina === paginasTotales
-            || (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
-        ) {
-            const botonPagina = document.createElement('button');
-            botonPagina.textContent = numeroPagina;
-            botonPagina.classList.add('boton-pagina');
-            if (numeroPagina === paginaActual) {
-                botonPagina.classList.add('pagina-actual');
-            }
-            botonPagina.onclick = evento => {
-                evento.preventDefault();
-                cargarPagina(numeroPagina);
-            };
-            paginacion.appendChild(botonPagina);
-        } else if (
-            (numeroPagina === paginaActual - 2 && numeroPagina > 1)
-            || (numeroPagina === paginaActual + 2 && numeroPagina < paginasTotales)
-        ) {
-            // Evitamos duplicar los puntos
-            const puntos = document.createElement('span');
-            puntos.textContent = '...';
-            puntos.classList.add('puntos-paginacion');
-            paginacion.appendChild(puntos);
-        }
-    }
-
-    const siguiente = document.createElement('button');
-    siguiente.textContent = '>';
-    siguiente.classList.add('boton-pagina-siguiente');
-    siguiente.disabled = paginaActual === paginasTotales;
-    siguiente.onclick = evento => {
-        evento.preventDefault();
-        if (paginaActual < paginasTotales) {
-            cargarPagina(paginaActual + 1);
-        }
-    };
-    paginacion.appendChild(siguiente);
+    configurarPaginacion(paginasTotales)
 }
 
 /**
@@ -507,6 +448,71 @@ function mostrarUsuarios(usuarios) {
             });
         });
     });
+}
+
+function configurarPaginacion(paginasTotales) {
+    const paginacion = document.querySelector('.paginacion');
+    paginacion.innerHTML = '';
+    if (paginasTotales <= 1) {
+        return;
+    }
+
+    const previo = document.createElement('button');
+    previo.textContent = '<';
+    previo.classList.add('boton-pagina-previa');
+    previo.disabled = paginaActual === 1;
+    previo.onclick = evento => {
+        evento.preventDefault();
+        if (paginaActual > 1) {
+            cargarPagina(paginaActual - 1);
+        }
+    };
+    paginacion.appendChild(previo);
+
+    crearBotonNumeros(paginasTotales, paginacion);
+
+    const siguiente = document.createElement('button');
+    siguiente.textContent = '>';
+    siguiente.classList.add('boton-pagina-siguiente');
+    siguiente.disabled = paginaActual === paginasTotales;
+    siguiente.onclick = evento => {
+        evento.preventDefault();
+        if (paginaActual < paginasTotales) {
+            cargarPagina(paginaActual + 1);
+        }
+    };
+    paginacion.appendChild(siguiente);
+}
+
+function crearBotonNumeros(paginasTotales, paginacion) {
+    for (let numeroPagina = 1; numeroPagina <= paginasTotales; numeroPagina += 1) {
+        if (
+            numeroPagina === 1
+            || numeroPagina === paginasTotales
+            || (numeroPagina >= paginaActual - 1 && numeroPagina <= paginaActual + 1)
+        ) {
+            const botonPagina = document.createElement('button');
+            botonPagina.textContent = numeroPagina;
+            botonPagina.classList.add('boton-pagina');
+            if (numeroPagina === paginaActual) {
+                botonPagina.classList.add('pagina-actual');
+            }
+            botonPagina.onclick = evento => {
+                evento.preventDefault();
+                cargarPagina(numeroPagina);
+            };
+            paginacion.appendChild(botonPagina);
+        } else if (
+            (numeroPagina === paginaActual - 2 && numeroPagina > 1)
+            || (numeroPagina === paginaActual + 2 && numeroPagina < paginasTotales)
+        ) {
+            // Evitamos duplicar los puntos
+            const puntos = document.createElement('span');
+            puntos.textContent = '...';
+            puntos.classList.add('puntos-paginacion');
+            paginacion.appendChild(puntos);
+        }
+    }
 }
 
 /**
