@@ -97,67 +97,77 @@ function botonCargar() {
         localStorage.removeItem('seccion-activa');
 
         entradaArchivos.forEach(entradaArchivo => {
+            let archivoSeleccionado = false; // Bandera para detectar si se seleccionó realmente un archivo
+
             // Cambia el texto al hacer click en el input file
             entradaArchivo.addEventListener('click', () => {
+                archivoSeleccionado = false; // Reiniciamos al abrir el explorador
                 elementoBotonCargar.textContent = "Cargando Archivo";
-                
+
                 // Detectar cuando la ventana recupera el foco (el diálogo se cerró)
                 const manejarFoco = () => {
                     // Dar un pequeño delay para asegurar que el evento change se procese primero
                     setTimeout(() => {
-                        // Si el texto sigue siendo "Cargando Archivo", significa que no se seleccionó nada
-                        if (elementoBotonCargar.textContent === "Cargando Archivo") {
+                        // Si no se seleccionó ningún archivo, mostrar alerta
+                        if (!archivoSeleccionado) {
                             elementoBotonCargar.textContent = localStorage.getItem('nombreArchivoExcel') ? "Cambiar Archivo" : "Cargar Archivo";
+                            mostrarAlerta('Selección Cancelada', 'No se cargó ningún archivo', 'warning');
                         }
                     }, 100);
                     // Remover el listener después de usarlo
                     window.removeEventListener('focus', manejarFoco);
                 };
-                
+
                 window.addEventListener('focus', manejarFoco);
             });
 
             entradaArchivo.addEventListener('change', async () => {
-            if (entradaArchivo.files && entradaArchivo.files[0]) {
-                const archivo = entradaArchivo.files[0];
+                if (entradaArchivo.files && entradaArchivo.files[0]) {
+                    archivoSeleccionado = true; //Se marca como seleccionado incluso si es inválido
 
-                // Texto mientras se procesa
-                elementoNombreArchivo.textContent = 'Verificando archivo...';
+                    const archivo = entradaArchivo.files[0];
 
-                try {
-                    const resultado = await leerExcel(archivo);
+                    // Texto mientras se procesa
+                    elementoNombreArchivo.textContent = 'Verificando archivo...';
 
-                    if (resultado.exito) {
-                        elementoNombreArchivo.textContent = archivo.name;
-                        elementoBotonCargar.textContent = "Cambiar Archivo"
-                        botonAnalisis.removeAttribute('disabled');
-                        botonBorrar.style.display = 'block';
-                        localStorage.setItem('nombreArchivoExcel', archivo.name);
-                        entradaArchivos.forEach(input => input.value = '');
-                    } else {
+                    try {
+                        const resultado = await leerExcel(archivo);
+
+                        if (resultado.exito) {
+                            elementoNombreArchivo.textContent = archivo.name;
+                            elementoBotonCargar.textContent = "Cambiar Archivo";
+                            botonAnalisis.removeAttribute('disabled');
+                            botonBorrar.style.display = 'block';
+                            localStorage.setItem('nombreArchivoExcel', archivo.name);
+                            entradaArchivos.forEach(input => input.value = '');
+                        } else {
+                            //El archivo fue seleccionado pero no es válido → no se muestra la alerta de cancelación
+                            elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
+                            elementoBotonCargar.textContent = "Cargar Archivo";
+                            botonBorrar.style.display = 'none';
+                            botonAnalisis.setAttribute('disabled', 'true');
+                            localStorage.removeItem('nombreArchivoExcel');
+                            localStorage.removeItem('datosExcel');
+                            mostrarAlerta('Archivo no válido', resultado.mensaje, 'error', 'Entendido');
+                            entradaArchivo.value = '';
+                        }
+                    } catch (error) {
                         elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
-                        elementoBotonCargar.textContent = "Cargar Archivo"
-                        botonBorrar.style.display = 'none';
+                        elementoBotonCargar.textContent = "Cargar Archivo";
                         botonAnalisis.setAttribute('disabled', 'true');
                         localStorage.removeItem('nombreArchivoExcel');
                         localStorage.removeItem('datosExcel');
-                        mostrarAlerta('Archivo no válido', resultado.mensaje, 'error', 'Entendido');
+                        mostrarAlerta('Error al procesar archivo', error.mensaje || 'Ha ocurrido un error al procesar el archivo.', 'error');
                         entradaArchivo.value = '';
                     }
-                } catch (error) {
-                    elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
-                    elementoBotonCargar.textContent = "Cargar Archivo"
-                    botonAnalisis.setAttribute('disabled', 'true');
-                    localStorage.removeItem('nombreArchivoExcel');
-                    localStorage.removeItem('datosExcel');
-                    mostrarAlerta('Error al procesar archivo', error.mensaje || 'Ha ocurrido un error al procesar el archivo.', 'error');
-                    entradaArchivo.value = '';
                 }
-            }
-        });
+            });
+
         });
     }, 100);
 }
+
+
 
 /**
  * Inicializa la funcionalidad del botón de tractores.
