@@ -41,17 +41,26 @@ let listaCorreos = [];
 async function inicializarModuloGestionUsuarios() {
     localStorage.setItem('seccion-activa', 'gestionUsuarios');
 
-    const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
+    renderizarUsuarios()
+    configurarBotones()
+    configurarCampoCorreo();
+    configurarCampoBusqueda();
+    configurarVerContrasenia();
+    validarCoincidenciaContrasenas();
+}
 
+/** 
+ * Obtiene la lista de usuarios del backend y los renderiza en la interfaz.
+ * 
+ * @async
+ * @function renderizarUsuarios
+ */
+async function renderizarUsuarios() { 
     try {
-        // Limpiar la lista de usuarios y los filtros
         listaUsuarios = [];
         usuariosFiltrados = [];
-
-        // Limpiar el campo de búsqueda
         document.getElementById('buscar-usuario').value = '';
 
-        // Cargar usuarios
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
 
@@ -61,83 +70,45 @@ async function inicializarModuloGestionUsuarios() {
                 = '<div class="error-carga">No existen usuarios registrados en el sistema.</div>';
         }
 
-        // No mostrar el usuario que consulta la lista
         const usuarioActual = localStorage.getItem('nombreUsuario');
         listaUsuarios = listaUsuarios.filter(usuario => usuario.nombre !== usuarioActual.trim());
 
-        // Cargar usuarios filtrados
         usuariosFiltrados = [...listaUsuarios];
         cargarPagina(1);
 
         configurarValidacionesCampos();
         configurarContadoresCampos();
-        
     } catch (error) {
         mostrarAlerta('Error al cargar usuarios', error.message || 'Verifica tu conexión e inténtalo de nuevo.', 'error');
         document.getElementById('lista-usuarios').innerHTML
             = '<div class="error-carga">Error al cargar los usuarios. Intente de nuevo más tarde.</div>';
     }
 
+    listaCorreos = listaUsuarios.map(usuario => usuario.correo);
+}
+
+/**
+ * Configura los botones de la interfaz para crear, cancelar y guardar usuarios.
+ * 
+ * @function configurarBotones
+ */
+function configurarBotones() {
     const botonAgregar = document.querySelector('.primario');
-    // Eliminar event listeners anteriores y agregar uno nuevo
     const nuevoBotonAgregar = botonAgregar.cloneNode(true);
     botonAgregar.parentNode.replaceChild(nuevoBotonAgregar, botonAgregar);
     nuevoBotonAgregar.addEventListener('click', evento => {
         evento.preventDefault();
-
-        // Actualizar estados globales
-        modoActual = modoFormulario.CREAR;
-        usuarioAEditar = null;
-
-        // Cambiar texto del formulario
-        document.querySelector('.crear-modificar-usuario').textContent = 'Crear usuario';
-        document.querySelector('.btn-guardar').textContent = 'Guardar';
-
-        // Limpiar los campos del formulario
-        document.getElementById('username').value = '';
-        document.getElementById('username').placeholder = 'Nombre del nuevo usuario'
-        document.getElementById('email').value = '';
-        document.getElementById('email').placeholder = 'Correo del nuevo usuario';
-        document.getElementById('password').value = '';
-        document.getElementById('passwordConfirmar').value = '';
-        document.getElementById('rol').value = '';
-
-        
-        actualizarTodosContadores();
-        limpiarMensajesError();
-
-        columnaCrear.style.display = 'block';
-        cargarRoles(); // Cargar roles al abrir el formulario
-        listaCorreos = listaUsuarios.map(usuario => usuario.correo);  // Guardar todos los correos en la variable global
+        mostrarVistaCrear();
     });
 
-      const emailInput = document.getElementById('email');
-        if (emailInput) {
-            // Evita escribir espacios con el teclado
-            emailInput.addEventListener('keydown', (entrada) => {
-            if (entrada.key === ' ') {
-                entrada.preventDefault();
-            }
-            });
-            // Elimina espacios al pegar
-            // eslint-disable-next-line no-unused-vars
-            emailInput.addEventListener('input', function(entrada) {
-            this.value = this.value.replace(/\s/g, '');
-            });
-        }
-
     const botonCancelar = document.querySelector('.btn-cancelar');
-    // Eliminar event listeners anteriores y agregar uno nuevo
     const nuevoBotonCancelar = botonCancelar.cloneNode(true);
     botonCancelar.parentNode.replaceChild(nuevoBotonCancelar, botonCancelar);
     nuevoBotonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
-        actualizarTodosContadores();
-        limpiarMensajesError();
-        columnaCrear.style.display = 'none';
+        ocultarVistaCrear();
     });
 
-    // Eliminar event listeners anteriores y agregar uno nuevo al botón guardar
     const botonGuardar = document.querySelector('.btn-guardar');
     const nuevoBotonGuardar = botonGuardar.cloneNode(true);
     botonGuardar.parentNode.replaceChild(nuevoBotonGuardar, botonGuardar);
@@ -146,17 +117,84 @@ async function inicializarModuloGestionUsuarios() {
         actualizarTodosContadores();
         limpiarMensajesError();
         if (modoActual === modoFormulario.CREAR) {
-            // Deshabilitar el botón para evitar múltiples envíos
             nuevoBotonGuardar.disabled = true;
             await crearUsuario();
-            // Volver a habilitar el botón después de que termine el proceso
             nuevoBotonGuardar.disabled = false;
         } else if (modoActual === modoFormulario.EDITAR) {
             await editarUsuario();
         }
     });
+}
 
-    // Configurar el campo de búsqueda
+/**
+ * Muestra la vista de creación de usuario.
+ * Reinicia el formulario, actualiza el título y los campos.
+ * @function mostrarVistaCrear
+ */
+function mostrarVistaCrear() {
+    const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
+
+    modoActual = modoFormulario.CREAR;
+    usuarioAEditar = null;
+
+    document.querySelector('.crear-modificar-usuario').textContent = 'Crear usuario';
+    document.querySelector('.btn-guardar').textContent = 'Guardar';
+
+    document.getElementById('username').value = '';
+    document.getElementById('username').placeholder = 'Nombre del nuevo usuario'
+    document.getElementById('email').value = '';
+    document.getElementById('email').placeholder = 'Correo del nuevo usuario';
+    document.getElementById('password').value = '';
+    document.getElementById('passwordConfirmar').value = '';
+    document.getElementById('rol').value = '';
+
+    actualizarTodosContadores();
+    limpiarMensajesError();
+
+    columnaCrear.style.display = 'block';
+    cargarRoles();
+}
+
+/**
+ * Oculta la vista de creación de usuario.
+ * 
+ * @function ocultarVistaCrear
+ */
+function ocultarVistaCrear() { 
+    const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
+    actualizarTodosContadores();
+    limpiarMensajesError();
+    columnaCrear.style.display = 'none';
+}
+
+/**
+ * Configura ek campo de correo electrónico para evitar espacios.
+ * 
+ * @function configurarCampoCorreo
+ */
+function configurarCampoCorreo() { 
+    const entradaCorreo = document.getElementById('email');
+    if (entradaCorreo) {
+            // Evita escribir espacios con el teclado
+            entradaCorreo.addEventListener('keydown', (entrada) => {
+            if (entrada.key === ' ') {
+                entrada.preventDefault();
+            }
+            });
+            // Elimina espacios al pegar
+            // eslint-disable-next-line no-unused-vars
+            entradaCorreo.addEventListener('input', function(entrada) {
+            this.value = this.value.replace(/\s/g, '');
+            });
+        }
+}
+
+/**
+ * Configura el campo de búsqueda de usuarios.
+ * 
+ * @function configurarCampoBusqueda
+ */
+function configurarCampoBusqueda() { 
     const inputBusqueda = document.getElementById('buscar-usuario');
     inputBusqueda.addEventListener('input', evento => {
         actualizarCaracteresBuscador(inputBusqueda);
@@ -164,7 +202,6 @@ async function inicializarModuloGestionUsuarios() {
         filtrarUsuarios();
     });
 
-    // Agregar también un listener para cuando se presiona Enter
     inputBusqueda.addEventListener('keypress', evento => {
         if (evento.key === 'Enter') {
             evento.preventDefault(); // Evitar que se envíe un formulario si está dentro de uno
@@ -172,10 +209,6 @@ async function inicializarModuloGestionUsuarios() {
             filtrarUsuarios();
         }
     });
-
-    // Configurar el botón de ver contraseña
-    verContrasenia();
-    validarCoincidenciaContrasenas();
 }
 
 /**
@@ -217,15 +250,13 @@ document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
 });
 } 
 
-function verContrasenia() {
+function configurarVerContrasenia() {
     const botonVerContrasenia = document.querySelector('#verContrasenia');
     const inputContrasenia = document.querySelector('#password');
     const inputConfirmarContrasenia = document.querySelector('#passwordConfirmar');
 
-    // Función para alternar entre mostrar/ocultar contraseña
     if (botonVerContrasenia && inputContrasenia) {
         botonVerContrasenia.addEventListener('change', () => {
-            // Cambia el tipo de los inputs según el estado del checkbox
             if (botonVerContrasenia.checked) {
                 inputContrasenia.type = 'text';
                 if (inputConfirmarContrasenia) {
