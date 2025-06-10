@@ -115,7 +115,6 @@ function configurarBotones() {
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
         actualizarTodosContadores();
-        limpiarMensajesError();
         if (modoActual === modoFormulario.CREAR) {
             nuevoBotonGuardar.disabled = true;
             await crearUsuario();
@@ -182,8 +181,7 @@ function configurarCampoCorreo() {
             }
         });
         // Elimina espacios al pegar
-        // eslint-disable-next-line no-unused-vars
-        entradaCorreo.addEventListener('input', function (entrada) {
+        entradaCorreo.addEventListener('input',  () => {
             this.value = this.value.replace(/\s/g, '');
         });
     }

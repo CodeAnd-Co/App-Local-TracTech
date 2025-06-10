@@ -68,11 +68,11 @@ function validacionInicial(nombre, correo, contrasenia, confirmContrasenia, idRo
         return false;
     }
 
-    if (!Number.isInteger(idRolFK) || idRolFK <= numeroMinimoID) {
+    if (!Number.isInteger(idRolFKTrim) || idRolFKTrim <= numeroMinimoID) {
         mostrarAlerta('Rol inválido', 'Ingresa un rol válido.', 'error');
         return false;
     }
-    
+
     return true;
 }
 
@@ -134,10 +134,10 @@ function validarContraseniaCampo(contrasenia) {
  * @returns {string}
  */
 function validarRolCampo(idRol) {
-  if (!Number.isInteger(idRol) || idRol <= numeroMinimoID) {
-    return 'Ingresa un rol válido.';
-  }
-  return '';
+    if (!Number.isInteger(idRol) || idRol <= numeroMinimoID) {
+        return 'Ingresa un rol válido.';
+    }
+    return '';
 }
 
 module.exports = {
