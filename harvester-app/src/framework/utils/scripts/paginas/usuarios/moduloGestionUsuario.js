@@ -55,7 +55,7 @@ async function inicializarModuloGestionUsuarios() {
  * @async
  * @function renderizarUsuarios
  */
-async function renderizarUsuarios() { 
+async function renderizarUsuarios() {
     try {
         listaUsuarios = [];
         usuariosFiltrados = [];
@@ -64,7 +64,7 @@ async function renderizarUsuarios() {
         const usuarios = await obtenerUsuarios();
         listaUsuarios = usuarios?.obtenerUsuarios() ?? [];
 
-        if(listaUsuarios.length === 0) {
+        if (listaUsuarios.length === 0) {
             mostrarAlerta('No existen usuarios registrados en el sistema', '', 'warning');
             document.getElementById('lista-usuarios').innerHTML
                 = '<div class="error-carga">No existen usuarios registrados en el sistema.</div>';
@@ -160,7 +160,7 @@ function mostrarVistaCrear() {
  * 
  * @function ocultarVistaCrear
  */
-function ocultarVistaCrear() { 
+function ocultarVistaCrear() {
     const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
     actualizarTodosContadores();
     limpiarMensajesError();
@@ -172,21 +172,21 @@ function ocultarVistaCrear() {
  * 
  * @function configurarCampoCorreo
  */
-function configurarCampoCorreo() { 
+function configurarCampoCorreo() {
     const entradaCorreo = document.getElementById('email');
     if (entradaCorreo) {
-            // Evita escribir espacios con el teclado
-            entradaCorreo.addEventListener('keydown', (entrada) => {
+        // Evita escribir espacios con el teclado
+        entradaCorreo.addEventListener('keydown', (entrada) => {
             if (entrada.key === ' ') {
                 entrada.preventDefault();
             }
-            });
-            // Elimina espacios al pegar
-            // eslint-disable-next-line no-unused-vars
-            entradaCorreo.addEventListener('input', function(entrada) {
+        });
+        // Elimina espacios al pegar
+        // eslint-disable-next-line no-unused-vars
+        entradaCorreo.addEventListener('input', function (entrada) {
             this.value = this.value.replace(/\s/g, '');
-            });
-        }
+        });
+    }
 }
 
 /**
@@ -194,7 +194,7 @@ function configurarCampoCorreo() {
  * 
  * @function configurarCampoBusqueda
  */
-function configurarCampoBusqueda() { 
+function configurarCampoBusqueda() {
     const inputBusqueda = document.getElementById('buscar-usuario');
     inputBusqueda.addEventListener('input', evento => {
         actualizarCaracteresBuscador(inputBusqueda);
@@ -234,21 +234,21 @@ function actualizarCaracteresBuscador(campoEntrada) {
  * No inserta nada, solo los inicializa y los mantiene al día.
  */
 function configurarContadoresCampos() {
-document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
-    const maximoCaracteres = input.getAttribute('maxlength');
-    const contador = input.parentNode.querySelector('.contador-caracteres');
-    if (!contador) return;
+    document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
+        const maximoCaracteres = input.getAttribute('maxlength');
+        const contador = input.parentNode.querySelector('.contador-caracteres');
+        if (!contador) return;
 
 
-    // Inicializa una sola llamada a la función extraída
-    actualizarContador(input, contador, maximoCaracteres);
+        // Inicializa una sola llamada a la función extraída
+        actualizarContador(input, contador, maximoCaracteres);
 
-    // Y vuelve a usar la misma función como callback
-    input.addEventListener('input', () => {
-    actualizarContador(input, contador, maximoCaracteres);
+        // Y vuelve a usar la misma función como callback
+        input.addEventListener('input', () => {
+            actualizarContador(input, contador, maximoCaracteres);
+        });
     });
-});
-} 
+}
 
 function configurarVerContrasenia() {
     const botonVerContrasenia = document.querySelector('#verContrasenia');
@@ -422,21 +422,21 @@ function mostrarUsuarios(usuarios) {
         const { id, nombre, tieneDispositivo, dispositivoActivo } = usuario;
         const div = document.createElement('div');
         div.className = 'frame-usuario';
-        
+
         // Determinar si el botón debe estar habilitado o deshabilitado
         const dispositivoHabilitado = tieneDispositivo && dispositivoActivo;
-        const claseBotonDeshabilitar = dispositivoHabilitado 
-            ? 'boton-deshabilitar' 
+        const claseBotonDeshabilitar = dispositivoHabilitado
+            ? 'boton-deshabilitar'
             : 'boton-deshabilitar boton-deshabilitado';
-        const tituloBoton = dispositivoHabilitado 
-            ? 'Deshabilitar dispositivo vinculado' 
+        const tituloBoton = dispositivoHabilitado
+            ? 'Deshabilitar dispositivo vinculado'
             : 'Sin dispositivo vinculado';
-        
+
         const botonDeshabilitar = `
             <button class='${claseBotonDeshabilitar}' data-id='${id}' title='${tituloBoton}'>
               <img src='${rutaBase}src/framework/utils/iconos/Deshabilitar.svg' alt='Deshabilitar Dispositivo'/>
             </button>`;
-        
+
         div.innerHTML = `
             <div class='nombre-usuario'>
                 <div class='texto-usuario'>${nombre}</div>
@@ -479,12 +479,12 @@ function mostrarUsuarios(usuarios) {
     botonesDeshabilitarDispositivo.forEach(boton => {
         boton.addEventListener('click', async evento => {
             evento.preventDefault();
-            
+
             // Si el botón está deshabilitado, no hacer nada
             if (boton.classList.contains('boton-deshabilitado')) {
                 return;
             }
-            
+
             const idUsuario = boton.getAttribute('data-id');
             const usuario = usuarios.find(usuario => usuario.id == idUsuario);
 
@@ -515,13 +515,13 @@ function mostrarUsuarios(usuarios) {
 function limpiarMensajesError() {
     // Borra el texto de todos los <small class="mensajeError">…
     document.querySelectorAll('.mensajeError').forEach(el => {
-      el.textContent = '';
+        el.textContent = '';
     });
     // Quita la clase .inputError de cualquier input que la tuviera
     document.querySelectorAll('.inputError').forEach(input => {
-      input.classList.remove('inputError');
+        input.classList.remove('inputError');
     });
-  } 
+}
 
 /**
  * Esta función busca todos los elementos con la clase `.boton-editar` en la lista
@@ -618,7 +618,7 @@ async function editarUsuario() {
         return;
     }
 
-    
+
     const nombreIngresado = nombreSinTrim.trim();
     const correoIngresado = correoSinTrim.trim();
     const contraseniaIngresada = contraseniaSinTrim.trim();
@@ -828,7 +828,7 @@ function configurarValidacionesCampos() {
                 mensajeError.textContent = 'El campo no puede comenzar con un espacio.';
                 return;
             }
-        
+
             // Si llegamos hasta aquí, validamos con la función correspondiente.
             const mensaje = validador(valor);
             if (mensaje) {
@@ -845,7 +845,7 @@ function configurarValidacionesCampos() {
                 mensajeError.textContent = '';
                 return;
             }
-        
+
             // Si NO estamos en EDITAR (es decir, modo CREAR) y está vacío, mostramos el mensaje de "no puede estar vacío" y salimos.
             if (modoActual !== modoFormulario.EDITAR && valorTrim === '') {
                 campoEntrada.classList.add('inputError');
@@ -853,7 +853,7 @@ function configurarValidacionesCampos() {
                 return;
             }
         });
-        
+
     });
 }
 
@@ -956,7 +956,7 @@ async function crearUsuario() {
     let idRolFK;
 
     // AHORA SÍ HAZ EL TRIM PARA EL RESTO DE VALIDACIONES
-    
+
 
     // Verificar si hay mensajes de error visibles en el formulario
     const mensajesError = document.querySelectorAll('.mensajeError');
@@ -973,7 +973,7 @@ async function crearUsuario() {
         return;
     }
 
-    
+
 
     if (validacionInicial(nombreSinTrim, correoSinTrim, contraseniaSinTrim, confirmContraseniaSinTrim, rolSinTrim, listaCorreos)) {
         nombre = nombreSinTrim.trim();
@@ -1101,10 +1101,10 @@ function actualizarContador(input, contador, maximoCaracteres) {
  */
 function actualizarTodosContadores() {
     document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
-      const maximoCaracteres = input.getAttribute('maxlength');
-      const contador = input.parentNode.querySelector('.contador-caracteres');
-      if (!contador) return;
-      actualizarContador(input, contador, maximoCaracteres);
+        const maximoCaracteres = input.getAttribute('maxlength');
+        const contador = input.parentNode.querySelector('.contador-caracteres');
+        if (!contador) return;
+        actualizarContador(input, contador, maximoCaracteres);
     });
 }
 
@@ -1128,7 +1128,7 @@ async function deshabilitarDispositivoUsuario(idUsuario) {
     } catch {
         mostrarAlerta('Error de conexión', 'Verifica tu conexión e inténtalo de nuevo.', 'error');
     }
-} 
+}
 
 // Expone la función de inicialización al objeto window
 inicializarModuloGestionUsuarios()
