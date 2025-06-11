@@ -20,6 +20,20 @@ function validacionInicial(nombre, correo, contrasenia, confirmContrasenia, idRo
     const confirmContraseniaTrim = confirmContrasenia.trim();
     const idRolFKTrim = parseInt(idRolFK, 10);
 
+    const mensajesError = document.querySelectorAll('.mensajeError');
+    let hayErroresVisibles = false;
+
+    mensajesError.forEach(mensaje => {
+        if (mensaje.textContent.trim() !== '') {
+            hayErroresVisibles = true;
+        }
+    });
+
+    if (hayErroresVisibles) {
+        mostrarAlerta('Formulario con errores', 'Por favor, corrige los errores señalados en el formulario antes de continuar.', 'warning');
+        return false;
+    }
+
     // Verificar campos obligatorios
     if (!nombreTrim || !correoTrim || !contraseniaTrim || !confirmContraseniaTrim || isNaN(idRolFKTrim)) {
         mostrarAlerta('Datos incompletos', 'Por favor, completa todos los campos.', 'warning');
@@ -33,10 +47,10 @@ function validacionInicial(nombre, correo, contrasenia, confirmContrasenia, idRo
     }
 
     if (nombreTrim.length > 45) {
-        mostrarAlerta(`Nombre demasiado largo', 'El nombre no puede tener más de ${tamanioMinimoNombre} caracteres.', 'error`);
+        mostrarAlerta('Nombre demasiado largo', `El nombre no puede tener más de ${tamanioMaximoNombre} caracteres.`, 'error');
         return false;
     } else if (nombre.length > 0 && nombre[0] === ' ') {
-        mostrarAlerta('Correo inválido', 'El nombre no puede comenzar con un espacio.', 'error');
+        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
         return false;
     } else if (!regexNombre.test(nombreTrim)) {
         mostrarAlerta('Nombre inválido', 'El nombre solo puede contener letras, espacios y puntos.', 'error');
@@ -85,7 +99,7 @@ function validarNombreCampo(nombre) {
     const valor = nombre.trim();
 
     if (valor.length < tamanioMinimoNombre || valor.length > tamanioMaximoNombre) {
-        return `El nombre no puede tener más de ${tamanioMinimoNombre} caracteres.`;
+        return `El nombre no puede tener más de ${tamanioMaximoContrasenia} caracteres.`;
     }
     if (nombre[0] === ' ') {
         return 'El nombre no puede comenzar con un espacio.';
@@ -140,10 +154,91 @@ function validarRolCampo(idRol) {
     return '';
 }
 
+/**
+ * Valida y sanea los datos para la edición de un usuario en el front-end.
+ * Reproduce las mismas validaciones que el back-end y devuelve los valores listos para enviar.
+ *
+ * @param {Object} params - Parámetros de validación.
+ * @param {string} params.nombre - Nuevo nombre ingresado por el usuario.
+ * @param {string} params.correo - Nuevo correo ingresado por el usuario.
+ * @param {string} params.contrasenia - Nueva contraseña ingresada por el usuario.
+ * @param {number|null} params.idRol - Nuevo ID de rol ingresado, o null si no se modificó.
+ * @returns {{ error: string|null, datos: Object|null }}
+ */
+function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }, usuarioAEditar, roles, listaUsuarios) {
+    const idRolUsuarioAEditar = roles.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
+
+    // Flags de “campo modificado”
+    const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
+    const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
+    const cambioContrasenia = contrasenia !== '';
+    const cambioRol = idRol !== null && idRol !== idRolUsuarioAEditar
+
+    // Validar que haya cambiado mínimo un campo
+    if (!(cambioNombre || cambioCorreo || cambioContrasenia || cambioRol)) {
+        return { error: 'Para modificar un usuario, al menos uno de sus datos (nombre, correo o rol) debe ser diferente al valor actual.', datos: null };
+    }
+
+    const datos = { idUsuario: usuarioAEditar.id };
+
+    // Validar nombre
+    if (cambioNombre) {
+        const error = validarNombreCampo(nombre);
+        if (error) {
+            return { error, datos: null };
+        }
+        datos.nombre = validator.escape(nombre.trim());
+    } else {
+        datos.nombre = usuarioAEditar.nombre;
+    }
+
+    // Validar correo
+    if (cambioCorreo) {
+        const error = validarCorreoCampo(correo);
+        if (error) {
+            return { error, datos: null };
+        }
+        const correoNormalizado = validator.normalizeEmail(correo.trim())
+        const correoYaExiste = listaUsuarios.some(usuario =>
+            usuario.correo === correoNormalizado && usuario.id !== usuarioAEditar.id);
+        if (correoYaExiste) {
+            return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
+        }
+        datos.correo = correoNormalizado;
+    } else {
+        datos.correo = usuarioAEditar.correo;
+    }
+
+    // Validar contraseña
+    if (cambioContrasenia) {
+        const error = validarContraseniaCampo(contrasenia);
+        if (error) {
+            return { error, datos: null };
+        }
+        datos.contrasenia = contrasenia.trim();
+    } else {
+        datos.contrasenia = contrasenia;
+    }
+
+    // Validar rol
+    if (cambioRol) {
+        const error = validarRolCampo(idRol);
+        if (error) {
+            return { error, datos: null };
+        }
+        datos.idRol = idRol;
+    } else {
+        datos.idRol = idRolUsuarioAEditar;
+    }
+
+    return { error: null, datos };
+}
+
 module.exports = {
     validacionInicial,
     validarNombreCampo,
     validarCorreoCampo,
     validarContraseniaCampo,
     validarRolCampo,
+    validarYLimpiarUsuario
 };

@@ -4,18 +4,16 @@
 // RF41 Administrador consulta usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41 
 // RF39 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF39
 
-const { modificarUsuario } = require(`${rutaBase}src/backend/casosUso/usuarios/modificarUsuario.js`);
 const { crearUsuario: crearUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/crearUsuario`);
 const { obtenerUsuarios: obtenerUsuariosCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarUsuarios.js`);
 const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/eliminarUsuario`);
 const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarRoles.js`);
 const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dispositivos/deshabilitarDispositivo.js`);
-const { validacionInicial, validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarRolCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
+const { modificarUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/modificarUsuario.js`);
+const { validacionInicial, validarNombreCampo, validarCorreoCampo, validarContraseniaCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
 const { mostrarAlerta, mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
-
-const validator = require(`${rutaBase}/node_modules/validator/validator.min.js`);
 
 const usuariosPorPagina = 6;
 const modoFormulario = Object.freeze({
@@ -98,7 +96,7 @@ function configurarBotones() {
     botonAgregar.parentNode.replaceChild(nuevoBotonAgregar, botonAgregar);
     nuevoBotonAgregar.addEventListener('click', evento => {
         evento.preventDefault();
-        mostrarVistaCrear();
+        mostrarFormularioUsuario(modoFormulario.CREAR);
     });
 
     const botonCancelar = document.querySelector('.btn-cancelar');
@@ -106,7 +104,7 @@ function configurarBotones() {
     botonCancelar.parentNode.replaceChild(nuevoBotonCancelar, botonCancelar);
     nuevoBotonCancelar.addEventListener('click', evento => {
         evento.preventDefault();
-        ocultarVistaCrear();
+        ocultarFormularioUsuario();
     });
 
     const botonGuardar = document.querySelector('.btn-guardar');
@@ -115,12 +113,20 @@ function configurarBotones() {
     nuevoBotonGuardar.addEventListener('click', async evento => {
         evento.preventDefault();
         actualizarTodosContadores();
+
+        let resultado;
         if (modoActual === modoFormulario.CREAR) {
             nuevoBotonGuardar.disabled = true;
-            await crearUsuario();
+            resultado = await crearUsuario();
             nuevoBotonGuardar.disabled = false;
         } else if (modoActual === modoFormulario.EDITAR) {
-            await editarUsuario();
+            resultado = await modificarUsuario(usuarioAEditar, rolesCache, listaCorreos);
+        }
+        if (resultado) {
+            setTimeout(() => {
+                inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
+            }, 500);
+            //ocultarFormularioUsuario();
         }
     });
 }
@@ -130,36 +136,60 @@ function configurarBotones() {
  * Reinicia el formulario, actualiza el título y los campos.
  * @function mostrarVistaCrear
  */
-function mostrarVistaCrear() {
+function mostrarFormularioUsuario(modo, idUsuario = null) {
     const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
-
-    modoActual = modoFormulario.CREAR;
+    
+    modoActual = modo
     usuarioAEditar = null;
 
-    document.querySelector('.crear-modificar-usuario').textContent = 'Crear usuario';
-    document.querySelector('.btn-guardar').textContent = 'Guardar';
+    let textoTitulo = 'Crear usuario';
+    let textoBotonGuardar = 'Guardar';
+    let nombreUsuario = ''
+    let textoNombreUsuario = 'Nombre del nuevo usuario'
+    let correo = '';
+    let textoCorreo = 'Correo del nuevo usuario';
+    let rol = '';
 
-    document.getElementById('username').value = '';
-    document.getElementById('username').placeholder = 'Nombre del nuevo usuario'
-    document.getElementById('email').value = '';
-    document.getElementById('email').placeholder = 'Correo del nuevo usuario';
+    if (idUsuario) {
+        const usuario = listaUsuarios.find(usuario => usuario.id === Number(idUsuario));
+        if (!usuario) {
+            mostrarAlerta('Error', 'Usuario no encontrado.', 'error');
+            return;
+        } else {
+            usuarioAEditar = usuario;
+            
+            textoTitulo = 'Modificar usuario';
+            textoBotonGuardar = 'Modificar';
+            nombreUsuario = usuario.nombre;
+            textoNombreUsuario = usuario.nombre;
+            correo = usuario.correo;
+            textoCorreo = usuario.correo;
+            rol = usuario.rol;
+        }
+    }
+
+    document.querySelector('.crear-modificar-usuario').textContent = textoTitulo;
+    document.querySelector('.btn-guardar').textContent = textoBotonGuardar;
+    document.getElementById('username').value = nombreUsuario;
+    document.getElementById('username').placeholder = textoNombreUsuario;
+    document.getElementById('email').value = correo;
+    document.getElementById('email').placeholder = textoCorreo;
     document.getElementById('password').value = '';
     document.getElementById('passwordConfirmar').value = '';
-    document.getElementById('rol').value = '';
+    document.getElementById('rol').value = rol;
+    columnaCrear.style.display = 'block';
 
+    cargarRoles();
     actualizarTodosContadores();
     limpiarMensajesError();
-
-    columnaCrear.style.display = 'block';
-    cargarRoles();
 }
 
 /**
  * Oculta la vista de creación de usuario.
  * 
- * @function ocultarVistaCrear
+ * @function ocultarFormularioUsuario
  */
-function ocultarVistaCrear() {
+function ocultarFormularioUsuario() {
     const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
     columnaCrear.style.display = 'none';
 }
@@ -512,10 +542,7 @@ function configurarBotonEditar(listaDeUsuarios) {
     listaDeUsuarios.querySelectorAll('.boton-editar').forEach(boton => {
         boton.addEventListener('click', evento => {
             evento.preventDefault();
-            modoEditar(boton.dataset.id);
-            cargarRoles();
-            actualizarTodosContadores();
-            limpiarMensajesError();
+            mostrarFormularioUsuario(modoFormulario.EDITAR, boton.dataset.id);
         });
     });
 }
@@ -537,7 +564,7 @@ function configurarBotonEliminar(listaDeUsuarios) {
             if (respuesta) {
                 await eliminarUsuario(id);
                 setTimeout(() => {
-                    ocultarVistaCrear();
+                    ocultarFormularioUsuario();
                     inicializarModuloGestionUsuarios();
                 }, 500);
             }
@@ -587,233 +614,9 @@ function configurarBotonDeshabilitar(listaDeUsuarios, usuarios) {
     });
 }
 
-/**
- * Cambia el modo del formulario a "Editar" y precarga los datos del usuario seleccionado.
- *
- * @function modoEditar
- * @param {number} idUsuario - El identificador único del usuario que se desea editar.
- * @throws {Error} Si el usuario con el ID proporcionado no se encuentra en la lista de usuarios.
- */
-function modoEditar(idUsuario) {
-
-    // Precargar los datos del usuario
-    const usuario = listaUsuarios.find(usuario => usuario.id === Number(idUsuario));
-    if (!usuario) {
-        return;
-    }
-
-    // Actualizar estados globales
-    modoActual = modoFormulario.EDITAR;
-    usuarioAEditar = usuario;
-
-    // Cambiar texto del formulario
-    document.querySelector('.crear-modificar-usuario').textContent = 'Modificar usuario';
-    document.querySelector('.btn-guardar').textContent = 'Modificar';
-    document.getElementById('columna-crear-modificar-usuario').style.display = 'block';
 
 
-    document.getElementById('username').value = usuario.nombre;
-    document.getElementById('username').placeholder = usuario.nombre;
-    document.getElementById('email').value = usuario.correo;
-    document.getElementById('email').placeholder = usuario.correo;
-    document.getElementById('password').value = ''; // Por seguridad, no se muestra
-    document.getElementById('passwordConfirmar').value = '';
-    document.getElementById('rol').value = usuario.rol;
 
-}
-
-/**
- * Envía los datos modificados del usuario al backend y actualiza la vista.
- * Al finalizar—tanto si tuvo éxito como si no—resetea el formulario y el estado
- * de edición para volver al modo de creación de usuario.
- *
- * @async
- * @function editarUsuario
- * @returns {Promise<void>}
- */
-async function editarUsuario() {
-    // Obtener los valores SIN trim
-    const nombreSinTrim = document.getElementById('username').value;
-    const correoSinTrim = document.getElementById('email').value;
-    const contraseniaSinTrim = document.getElementById('password').value;
-    const confirmContraseniaSinTrim = document.getElementById('passwordConfirmar').value;
-    const rolSinTrim = document.getElementById('rol').value;
-
-    // Validar espacio inicial en todos los campos de texto
-    if (nombreSinTrim.length > 0 && nombreSinTrim[0] === ' ') {
-        mostrarAlerta('Nombre inválido', 'El nombre no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (correoSinTrim.length > 0 && correoSinTrim[0] === ' ') {
-        mostrarAlerta('Correo inválido', 'El correo no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (contraseniaSinTrim.length > 0 && contraseniaSinTrim[0] === ' ') {
-        mostrarAlerta('Contraseña inválida', 'La contraseña no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (confirmContraseniaSinTrim.length > 0 && confirmContraseniaSinTrim[0] === ' ') {
-        mostrarAlerta('Confirmación inválida', 'La confirmación de contraseña no puede comenzar con un espacio.', 'error');
-        return;
-    }
-    if (rolSinTrim.length > 0 && rolSinTrim[0] === ' ') {
-        mostrarAlerta('Rol inválido', 'El rol no puede comenzar con un espacio.', 'error');
-        return;
-    }
-
-
-    const nombreIngresado = nombreSinTrim.trim();
-    const correoIngresado = correoSinTrim.trim();
-    const contraseniaIngresada = contraseniaSinTrim.trim();
-    const contraseniaConfirmada = confirmContraseniaSinTrim.trim();
-    const rolIngresado = rolSinTrim.trim();
-
-    // Verificar si hay mensajes de error visibles en el formulario
-    const mensajesError = document.querySelectorAll('.mensajeError');
-    let hayErroresVisibles = false;
-
-    mensajesError.forEach(mensaje => {
-        if (mensaje.textContent.trim() !== '') {
-            hayErroresVisibles = true;
-        }
-    });
-
-    if (hayErroresVisibles) {
-        mostrarAlerta('Formulario con errores', 'Por favor, corrige los errores señalados en el formulario antes de continuar.', 'warning');
-        return;
-    }
-
-    // Verificar que las contraseñas coincidan si se está cambiando la contraseña
-    if (contraseniaIngresada !== '') {
-        if (contraseniaIngresada !== contraseniaConfirmada) {
-            mostrarAlerta('Las contraseñas no coinciden', 'Por favor, asegúrate de que la contraseña y su confirmación sean iguales.', 'warning');
-            return;
-        }
-    }
-
-    // Llamar a la función de validación
-    const { error, datos } = validarYLimpiarUsuario({
-        nombre: nombreIngresado,
-        correo: correoIngresado,
-        contrasenia: contraseniaIngresada,
-        idRol: Number(rolIngresado),
-    });
-
-    if (error) {
-        mostrarAlerta('Error', error, 'warning');
-        return;
-    }
-
-    const { idUsuario, nombre, correo, contrasenia, idRol } = datos;
-
-    try {
-        const resultado = await modificarUsuario(idUsuario, nombre, correo, contrasenia, idRol);
-        if (resultado.ok) {
-            mostrarAlerta('Usuario modificado', resultado.mensaje || 'El usuario fue modificado correctamente.', 'success');
-
-            // Limpiar los campos del formulario
-            document.getElementById('username').value = '';
-            document.getElementById('username').placeholder = 'Nombre del nuevo usuario';
-            document.getElementById('email').value = '';
-            document.getElementById('email').placeholder = 'Correo del nuevo contacto';
-            document.getElementById('password').value = '';
-            document.getElementById('passwordConfirmar').value = '';
-            document.getElementById('rol').value = '';
-
-            // Recargar la lista de usuarios
-            setTimeout(() => {
-                inicializarModuloGestionUsuarios();
-            }, 500);
-
-            // Ocultar el formulario tras una modificación exitosa
-            document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
-        } else {
-            mostrarAlerta('Error al modificar usuario', resultado.mensaje || 'No se pudo modificar el usuario.', 'error');
-        }
-    } catch (error) {
-        mostrarAlerta('Error de conexión', error.message || 'Hubo un problema al conectar con el servidor.', 'error');
-    }
-}
-
-/**
- * Valida y sanea los datos para la edición de un usuario en el front-end.
- * Reproduce las mismas validaciones que el back-end y devuelve los valores listos para enviar.
- *
- * @param {Object} params - Parámetros de validación.
- * @param {string} params.nombre - Nuevo nombre ingresado por el usuario.
- * @param {string} params.correo - Nuevo correo ingresado por el usuario.
- * @param {string} params.contrasenia - Nueva contraseña ingresada por el usuario.
- * @param {number|null} params.idRol - Nuevo ID de rol ingresado, o null si no se modificó.
- * @returns {{ error: string|null, datos: Object|null }}
- */
-function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }) {
-    const idRolUsuarioAEditar = rolesCache.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
-
-    // Flags de “campo modificado”
-    const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
-    const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
-    const cambioContrasenia = contrasenia !== '';
-    const cambioRol = idRol !== null && idRol !== idRolUsuarioAEditar
-
-    // Validar que haya cambiado mínimo un campo
-    if (!(cambioNombre || cambioCorreo || cambioContrasenia || cambioRol)) {
-        return { error: 'Para modificar un usuario, al menos uno de sus datos (nombre, correo o rol) debe ser diferente al valor actual.', datos: null };
-    }
-
-    const datos = { idUsuario: usuarioAEditar.id };
-
-    // Validar nombre
-    if (cambioNombre) {
-        const error = validarNombreCampo(nombre);
-        if (error) {
-            return { error, datos: null };
-        }
-        datos.nombre = validator.escape(nombre.trim());
-    } else {
-        datos.nombre = usuarioAEditar.nombre;
-    }
-
-    // Validar correo
-    if (cambioCorreo) {
-        const error = validarCorreoCampo(correo);
-        if (error) {
-            return { error, datos: null };
-        }
-        const correoNormalizado = validator.normalizeEmail(correo.trim())
-        const correoYaExiste = listaUsuarios.some(usuario =>
-            usuario.correo === correoNormalizado && usuario.id !== usuarioAEditar.id);
-        if (correoYaExiste) {
-            return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
-        }
-        datos.correo = correoNormalizado;
-    } else {
-        datos.correo = usuarioAEditar.correo;
-    }
-
-    // Validar contraseña
-    if (cambioContrasenia) {
-        const error = validarContraseniaCampo(contrasenia);
-        if (error) {
-            return { error, datos: null };
-        }
-        datos.contrasenia = contrasenia.trim();
-    } else {
-        datos.contrasenia = contrasenia;
-    }
-
-    // Validar rol
-    if (cambioRol) {
-        const error = validarRolCampo(idRol);
-        if (error) {
-            return { error, datos: null };
-        }
-        datos.idRol = idRol;
-    } else {
-        datos.idRol = idRolUsuarioAEditar;
-    }
-
-    return { error: null, datos };
-}
 
 /**
  * Configura validaciones en tiempo real para los campos del formulario de usuarios.
@@ -998,26 +801,6 @@ async function crearUsuario() {
     let confirmContrasenia
     let idRolFK;
 
-    // AHORA SÍ HAZ EL TRIM PARA EL RESTO DE VALIDACIONES
-
-
-    // Verificar si hay mensajes de error visibles en el formulario
-    const mensajesError = document.querySelectorAll('.mensajeError');
-    let hayErroresVisibles = false;
-
-    mensajesError.forEach(mensaje => {
-        if (mensaje.textContent.trim() !== '') {
-            hayErroresVisibles = true;
-        }
-    });
-
-    if (hayErroresVisibles) {
-        mostrarAlerta('Formulario con errores', 'Por favor, corrige los errores señalados en el formulario antes de continuar.', 'warning');
-        return;
-    }
-
-
-
     if (validacionInicial(nombreSinTrim, correoSinTrim, contraseniaSinTrim, confirmContraseniaSinTrim, rolSinTrim, listaCorreos)) {
         nombre = nombreSinTrim.trim();
         correo = correoSinTrim.trim();
@@ -1173,5 +956,8 @@ async function deshabilitarDispositivoUsuario(idUsuario) {
     }
 }
 
-// Expone la función de inicialización al objeto window
 inicializarModuloGestionUsuarios()
+
+module.exports = {
+    inicializarModuloGestionUsuarios,
+};
