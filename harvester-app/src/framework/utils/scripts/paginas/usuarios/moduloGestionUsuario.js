@@ -676,7 +676,7 @@ function configurarValidacionesCampos() {
             }
 
             // Si llegamos hasta aquí, validamos con la función correspondiente.
-            const mensaje = validador(valor);
+            const { mensaje } = validador(valor);
             if (mensaje) {
                 campoEntrada.classList.add('inputError');
                 mensajeError.textContent = mensaje;
