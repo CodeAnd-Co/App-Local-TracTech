@@ -534,22 +534,34 @@ function botonesFiltrosTractores() {
     });
 }
 
-function seleccionarSoloUno(elementoFiltroCheck, segundoElementoFiltroCheck){
-
+/**
+ * Cambia la selección de un filtro de checkbox asegurando que solo uno esté marcado a la vez.
+ *
+ * Esta función se utiliza cuando hay dos elementos que actúan como filtros con íconos de checkbox,
+ * y se quiere permitir que únicamente uno de ellos esté seleccionado a la vez. Si el segundo filtro
+ * está marcado, se desmarcan ambos. Si no está marcado, solo se desmarca el primero.
+ *
+ * @param {HTMLElement} elementoFiltroCheck - Primer elemento del filtro que contiene un ícono de checkbox.
+ * @param {HTMLElement} segundoElementoFiltroCheck - Segundo elemento del filtro con ícono de checkbox.
+ */
+function seleccionarSoloUno(elementoFiltroCheck, segundoElementoFiltroCheck) {
+    // Obtiene el elemento <img> (ícono) dentro de cada filtro
     primerIcono = elementoFiltroCheck.querySelector('img');
     segundoIcono = segundoElementoFiltroCheck.querySelector('img');
 
-
-    
-    if(segundoIcono.src.includes('check_box.svg')){
-        cambiarIconoMarcadoADesmarcado(primerIcono)
-        cambiarIconoMarcadoADesmarcado(segundoIcono)
-        return
+    // Si el segundo ícono está marcado (tiene el ícono de checkbox activo), se desmarcan ambos
+    if (segundoIcono.src.includes('check_box.svg')) {
+        cambiarIconoMarcadoADesmarcado(primerIcono);
+        cambiarIconoMarcadoADesmarcado(segundoIcono);
+        return;
     }
 
-    cambiarIconoMarcadoADesmarcado(primerIcono)
-    return
+    // Si el segundo no está marcado, solo se desmarca el primero
+    cambiarIconoMarcadoADesmarcado(primerIcono);
+    return;
 }
+
+
 /**
  * 
  * Aplica filtros combinados de búsqueda por nombre y estado del GPS a los distribuidores mostrados en el DOM.
