@@ -21,13 +21,6 @@ const regexNombre = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
  * @returns {boolean} - Si la validación es exitosa
  */
 function validacionInicial(nombre, correo, contrasenia, confirmarContrasenia, idRolFK, listaCorreos) {
-    const erroresVisibles = validarMensajesError()
-
-    if (erroresVisibles) { 
-        mostrarAlerta(erroresVisibles.titulo, erroresVisibles.mensaje, erroresVisibles.tipo);
-        return false;
-    }
-
     const nombreTrim = nombre.trim();
     const correoTrim = correo.trim();
     const contraseniaTrim = contrasenia.trim();
@@ -51,35 +44,16 @@ function validacionInicial(nombre, correo, contrasenia, confirmarContrasenia, id
         { fn: validarRolCampo, args: [idRolNum] }
     ];
 
+    let verificación = true;
     campos.forEach(({ fn, args }) => {
         const respuesta = fn(...args);
         if (respuesta) {
             mostrarAlerta(respuesta.titulo, respuesta.mensaje, respuesta.tipo);
-            return false;
+            verificación = false;
         }
     })
 
-    return true;
-}
-
-function validarMensajesError() {
-    const mensajesError = document.querySelectorAll('.mensajeError');
-    let hayErroresVisibles = false;
-
-    mensajesError.forEach(mensaje => {
-        if (mensaje.textContent.trim() !== '') {
-            hayErroresVisibles = true;
-        }
-    });
-
-    if (hayErroresVisibles) {
-        return {
-            titulo: 'Formulario con errores',
-            mensaje: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
-            tipo: 'warning'
-        }        
-    }
-    return null
+    return verificación;
 }
 
 /** 
@@ -315,9 +289,9 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, confirmarContrase
     const datos = { idUsuario: usuarioAEditar.id };
 
     if (cambioNombre) {
-        const {mensaje} = validarNombreCampo(nombre);
-        if (mensaje) {
-            return { error: mensaje, datos: null };
+        const error = validarNombreCampo(nombre);
+        if (error) {
+            return { error, datos: null };
         }
         datos.nombre = validator.escape(nombre.trim());
     } else {
@@ -325,9 +299,9 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, confirmarContrase
     }
 
     if (cambioCorreo) {
-        const {mensaje} = validarCorreoCampo(correo);
-        if (mensaje) {
-            return { error: mensaje, datos: null };
+        const error = validarCorreoCampo(correo);
+        if (error) {
+            return { error, datos: null };
         }
         const correoNormalizado = validator.normalizeEmail(correo.trim())
         const correoYaExiste = listaUsuarios.some(usuario =>

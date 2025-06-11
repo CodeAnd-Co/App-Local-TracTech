@@ -37,7 +37,7 @@ async function modificarUsuario(usuarioAEditar, roles, listaCorreos, listaUsuari
         listaUsuarios)
 
     if (error) {
-        mostrarAlerta('Error', error, 'warning');
+        mostrarAlerta(error.titulo, error.mensaje, error.tipo);
         return false;
     }
 
