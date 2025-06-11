@@ -518,29 +518,45 @@ function busquedaTractores() {
  */
 function botonesFiltrosTractores() {
     const filtroConCheck = document.getElementById('botonFiltroCon');
+    const filtroSinCheck = document.getElementById('botonFiltroSin');
+
     // Evento para mostrar sólo los tractores con telemetría
     filtroConCheck.addEventListener('click', () => {
-        const caja = filtroConCheck.querySelector('img');
-        cambiarIconoMarcadoADesmarcado(caja)
+        seleccionarSoloUno(filtroConCheck, filtroSinCheck)
         aplicarFiltrosCombinados()
     });
     
-    const filtroSinCheck = document.getElementById('botonFiltroSin');
+    
     // Evento para mostrar sólo los tractores sin telemetría
     filtroSinCheck.addEventListener('click', () => {
-        const caja = filtroSinCheck.querySelector('img');
-        cambiarIconoMarcadoADesmarcado(caja)
+        seleccionarSoloUno(filtroSinCheck, filtroConCheck)
         aplicarFiltrosCombinados()
     });
 }
 
+function seleccionarSoloUno(elementoFiltroCheck, segundoElementoFiltroCheck){
+
+    primerIcono = elementoFiltroCheck.querySelector('img');
+    segundoIcono = segundoElementoFiltroCheck.querySelector('img');
+
+
+    
+    if(segundoIcono.src.includes('check_box.svg')){
+        cambiarIconoMarcadoADesmarcado(primerIcono)
+        cambiarIconoMarcadoADesmarcado(segundoIcono)
+        return
+    }
+
+    cambiarIconoMarcadoADesmarcado(primerIcono)
+    return
+}
 /**
  * 
  * Aplica filtros combinados de búsqueda por nombre y estado del GPS a los distribuidores mostrados en el DOM.
  * 
  * Esta función obtiene los datos de un archivo de Excel, filtra los distribuidores en pantalla según:
  * - El texto ingresado en el campo de búsqueda (por nombre del distribuidor).
- * - Los filtros visuales activados para distribuidores "con GPS" o "sin GPS".
+ * - Los filtros visuales activados para distribuidores 'con GPS' o 'sin GPS'.
  * 
  * Para determinar si un distribuidor tiene GPS, se revisan las primeras filas de sus datos en Excel.
  * Se muestra u oculta cada distribuidor en la interfaz según si cumple con los filtros.
@@ -576,7 +592,7 @@ function aplicarFiltrosCombinados() {
         // Revisar si hay datos y más de una fila
         if (datosDistribuidor && datosDistribuidor.length > 1) {
             const headers = datosDistribuidor[0];
-            const indiceGPS = headers.indexOf("GPS");
+            const indiceGPS = headers.indexOf('GPS');
 
             // Se evaula si existe la columna GPS
             if (indiceGPS !== -1) {
