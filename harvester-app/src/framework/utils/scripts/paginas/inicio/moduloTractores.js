@@ -442,25 +442,6 @@ function busquedaTractores() {
         entradaBusqueda.parentNode.insertBefore(contadorCaracteres, entradaBusqueda.nextSibling);
     }
 
-    /**
-     * Actualiza el contador de caracteres
-     * @param {string} texto - El texto a evaluar
-     */
-    function actualizarContador(texto) {
-        const caracteresActuales = texto.length;
-        contadorCaracteres.textContent = `${caracteresActuales}/60 caracteres`;
-        
-        // Remover clases anteriores
-        contadorCaracteres.classList.remove('warning', 'danger');
-        
-        // Agregar clase según proximidad al límite
-        if (caracteresActuales >= 55) {
-            contadorCaracteres.classList.add('danger');
-        } else if (caracteresActuales >= 45) {
-            contadorCaracteres.classList.add('warning');
-        }
-    }
-
     // Evento para filtrar y validar longitud
     entradaBusqueda.addEventListener('input', (event) => {
         let texto = event.target.value;
@@ -471,9 +452,11 @@ function busquedaTractores() {
             texto = event.target.value;
         }
         
-        actualizarContador(texto);
+        actualizarContador(texto, contadorCaracteres);
         aplicarFiltrosCombinados();
+
     });
+
 
     // Evento para prevenir pegar texto que inicie con espacios o exceda el límite
     entradaBusqueda.addEventListener('paste', (event) => {
@@ -492,7 +475,7 @@ function busquedaTractores() {
                 texto = event.target.value;
             }
             
-            actualizarContador(texto);
+            actualizarContador(texto, contadorCaracteres);
             aplicarFiltrosCombinados();
         }, 0);
     });
@@ -506,7 +489,7 @@ function busquedaTractores() {
     });
 
     // Inicializar el contador con el valor actual del campo
-    actualizarContador(entradaBusqueda.value || '');
+    actualizarContador(entradaBusqueda.value || '', contadorCaracteres);
 }
 
 /**
@@ -532,6 +515,25 @@ function botonesFiltrosTractores() {
         seleccionarSoloUno(filtroSinCheck, filtroConCheck)
         aplicarFiltrosCombinados()
     });
+}
+
+/**
+ * Actualiza el contador de caracteres
+ * @param {string} texto - El texto a evaluar
+ */
+function actualizarContador(texto, contadorCaracteres) {
+    const caracteresActuales = texto.length;
+    contadorCaracteres.textContent = `${caracteresActuales}/60 caracteres`;
+    
+    // Remover clases anteriores
+    contadorCaracteres.classList.remove('warning', 'danger');
+    
+    // Agregar clase según proximidad al límite
+    if (caracteresActuales >= 55) {
+        contadorCaracteres.classList.add('danger');
+    } else if (caracteresActuales >= 45) {
+        contadorCaracteres.classList.add('warning');
+    }
 }
 
 /**
@@ -592,6 +594,8 @@ function aplicarFiltrosCombinados() {
     // Obtener todos los elementos HTML que representan distribuidores
     const distribuidores = contenedor.querySelectorAll('.rancho');
 
+    const nombresConsultados = []
+
     distribuidores.forEach(distribuidorDiv => {
         // Obtener el nombre del distribuidor desde su texto
         const nombreDistribuidor = distribuidorDiv.querySelector('.rancho-texto')?.textContent || '';
@@ -625,7 +629,32 @@ function aplicarFiltrosCombinados() {
 
         // Muestra u oculta el distribuidor dependiendo de si pasa ambos filtros
         distribuidorDiv.style.display = coincideBusqueda && cumpleFiltro ? '' : 'none';
-    });
+        
+        
+        
+        if(coincideBusqueda && cumpleFiltro){
+            nombresConsultados.push(distribuidorDiv.querySelector('.rancho-texto')?.textContent)
+        }
+
+        /*
+
+        */
+    })
+
+    const contenedorColumnas = document.getElementById('contenedorColumnas');
+
+
+    if(!nombresConsultados.includes(contenedorColumnas.dataset.tractorActual)){
+        contenedorColumnas.style.display = 'none';
+        contenedorColumnas.dataset.tractorActual = '';
+
+        tractorDiv = document.getElementsByClassName('seleccionado')
+
+        if(tractorDiv){
+            tractorDiv = document.getElementsByClassName('rancho seleccionado');
+            cambiarSeleccionVisualUnica(contenedor)
+        }
+    }
 }
 
 
