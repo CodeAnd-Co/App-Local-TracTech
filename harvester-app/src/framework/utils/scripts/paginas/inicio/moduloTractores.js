@@ -594,7 +594,7 @@ function aplicarFiltrosCombinados() {
     // Obtener todos los elementos HTML que representan distribuidores
     const distribuidores = contenedor.querySelectorAll('.rancho');
 
-    let nombresConsultados = []
+    const nombresConsultados = []
 
     distribuidores.forEach(distribuidorDiv => {
         // Obtener el nombre del distribuidor desde su texto
