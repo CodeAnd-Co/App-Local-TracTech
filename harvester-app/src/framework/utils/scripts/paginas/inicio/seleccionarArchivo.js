@@ -86,7 +86,7 @@ function botonCargar() {
         if (localStorage.getItem('nombreArchivoExcel')) {
             // Si ya hay un archivo seleccionado, lo mostramos
             elementoNombreArchivo.textContent = localStorage.getItem('nombreArchivoExcel');
-            elementoBotonCargar.textContent = "Cambiar Archivo"
+            elementoBotonCargar.textContent = 'Cambiar Archivo'
             // Habilitar el botón de borrar
             botonBorrar.style.display = 'block';
             // Habilitar el botón de análisis
@@ -102,7 +102,7 @@ function botonCargar() {
             // Cambia el texto al hacer click en el input file
             entradaArchivo.addEventListener('click', () => {
                 archivoSeleccionado = false; // Reiniciamos al abrir el explorador
-                elementoBotonCargar.textContent = "Cargando Archivo";
+                elementoBotonCargar.textContent = 'Cargando Archivo';
 
                 // Detectar cuando la ventana recupera el foco (el diálogo se cerró)
                 const manejarFoco = () => {
@@ -110,7 +110,7 @@ function botonCargar() {
                     setTimeout(() => {
                         // Si no se seleccionó ningún archivo, mostrar alerta
                         if (!archivoSeleccionado) {
-                            elementoBotonCargar.textContent = localStorage.getItem('nombreArchivoExcel') ? "Cambiar Archivo" : "Cargar Archivo";
+                            elementoBotonCargar.textContent = localStorage.getItem('nombreArchivoExcel') ? 'Cambiar Archivo' : 'Cargar Archivo';
                             mostrarAlerta('Selección Cancelada', 'No se cargó ningún archivo', 'warning');
                         }
                     }, 100);
@@ -135,7 +135,7 @@ function botonCargar() {
 
                         if (resultado.exito) {
                             elementoNombreArchivo.textContent = archivo.name;
-                            elementoBotonCargar.textContent = "Cambiar Archivo";
+                            elementoBotonCargar.textContent = 'Cambiar Archivo';
                             botonAnalisis.removeAttribute('disabled');
                             botonBorrar.style.display = 'block';
                             localStorage.setItem('nombreArchivoExcel', archivo.name);
@@ -143,7 +143,7 @@ function botonCargar() {
                         } else {
                             //El archivo fue seleccionado pero no es válido → no se muestra la alerta de cancelación
                             elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
-                            elementoBotonCargar.textContent = "Cargar Archivo";
+                            elementoBotonCargar.textContent = 'Cargar Archivo';
                             botonBorrar.style.display = 'none';
                             botonAnalisis.setAttribute('disabled', 'true');
                             localStorage.removeItem('nombreArchivoExcel');
@@ -153,7 +153,7 @@ function botonCargar() {
                         }
                     } catch (error) {
                         elementoNombreArchivo.textContent = 'Sin archivo seleccionado';
-                        elementoBotonCargar.textContent = "Cargar Archivo";
+                        elementoBotonCargar.textContent = 'Cargar Archivo';
                         botonAnalisis.setAttribute('disabled', 'true');
                         localStorage.removeItem('nombreArchivoExcel');
                         localStorage.removeItem('datosExcel');
