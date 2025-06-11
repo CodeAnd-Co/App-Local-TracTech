@@ -10,35 +10,36 @@ const tamanioMaximoContrasenia = 512;
 const regexNombre = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
 
 /**
+ * Valida los campos del formulario de creación de usuario.
  * 
+ * @param {string} nombre - Nombre del usuario.
+ * @param {string} correo - Correo electrónico del usuario.
+ * @param {string} contrasenia - Contraseña del usuario.
+ * @param {string} confirmarContrasenia - Confirmación de la contraseña.
+ * @param {number} idRolFK - ID del rol del usuario.
+ * @param {Array} listaCorreos - Lista de correos electrónicos ya registrados.
+ * @returns {boolean} - Si la validación es exitosa
  */
-function validacionInicial(nombre, correo, contrasenia, confirmContrasenia, idRolFK, listaCorreos) {
-    // const mensajesError = document.querySelectorAll('.mensajeError');
-    // let hayErroresVisibles = false;
+function validacionInicial(nombre, correo, contrasenia, confirmarContrasenia, idRolFK, listaCorreos) {
+    const erroresVisibles = validarMensajesError()
 
-    // mensajesError.forEach(mensaje => {
-    //     if (mensaje.textContent.trim() !== '') {
-    //         hayErroresVisibles = true;
-    //     }
-    // });
-
-    // if (hayErroresVisibles) {
-    //     mostrarAlerta('Formulario con errores', 'Por favor, corrige los errores señalados en el formulario antes de continuar.', 'warning');
-    //     return false;
-    // }
+    if (erroresVisibles) { 
+        mostrarAlerta(erroresVisibles.titulo, erroresVisibles.mensaje, erroresVisibles.tipo);
+        return false;
+    }
 
     const nombreTrim = nombre.trim();
     const correoTrim = correo.trim();
     const contraseniaTrim = contrasenia.trim();
-    const confirmContraseniaTrim = confirmContrasenia.trim();
+    const confirmarContraseniaTrim = confirmarContrasenia.trim();
     const idRolNum = parseInt(idRolFK, 10);
 
-    if (!nombreTrim || !correoTrim || !contraseniaTrim || !confirmContraseniaTrim || isNaN(idRolNum)) {
+    if (!nombreTrim || !correoTrim || !contraseniaTrim || !confirmarContraseniaTrim || isNaN(idRolNum)) {
         mostrarAlerta('Datos incompletos', 'Por favor, completa todos los campos.', 'warning');
         return false;
     }
 
-    if (contraseniaTrim !== confirmContraseniaTrim) {
+    if (contraseniaTrim !== confirmarContraseniaTrim) {
         mostrarAlerta('Las contraseñas no coinciden', 'Por favor, asegúrate de que la contraseña y su confirmación sean iguales.', 'warning');
         return false;
     }
@@ -46,7 +47,7 @@ function validacionInicial(nombre, correo, contrasenia, confirmContrasenia, idRo
     const campos = [
         { fn: validarNombreCampo, args: [nombre] },
         { fn: validarCorreoCampo, args: [correo, listaCorreos] },
-        { fn: validarContraseniaCampo, args: [contrasenia] },
+        { fn: validarContraseniaCampo, args: [contrasenia, confirmarContrasenia] },
         { fn: validarRolCampo, args: [idRolNum] }
     ];
 
@@ -61,10 +62,30 @@ function validacionInicial(nombre, correo, contrasenia, confirmContrasenia, idRo
     return true;
 }
 
+function validarMensajesError() {
+    const mensajesError = document.querySelectorAll('.mensajeError');
+    let hayErroresVisibles = false;
+
+    mensajesError.forEach(mensaje => {
+        if (mensaje.textContent.trim() !== '') {
+            hayErroresVisibles = true;
+        }
+    });
+
+    if (hayErroresVisibles) {
+        return {
+            titulo: 'Formulario con errores',
+            mensaje: 'Por favor, corrige los errores señalados en el formulario antes de continuar.',
+            tipo: 'warning'
+        }        
+    }
+    return null
+}
+
 /** 
  * Valida el nombre de usuario.
  * @param {string} nombre
- * @returns {boolean} - Mensaje de error o cadena vacía si es válido.
+ * @returns {object|null} - Mensaje de error o null si es válido.
  */
 function validarNombreCampo(nombre) {
     const nombreTrim = nombre.trim();
@@ -75,16 +96,25 @@ function validarNombreCampo(nombre) {
             mensaje: `El nombre no puede tener más de ${tamanioMaximoNombre} caracteres.`,
             tipo: 'error'
         };
-    } else if (nombre.length > 0 && nombre[0] === ' ') {
+    }
+    if (nombre.length > 0 && nombre[0] === ' ') {
         return {
             titulo: 'Nombre inválido',
             mensaje: 'El nombre no puede comenzar con un espacio.',
             tipo: 'error'
         };
-    } else if (!regexNombre.test(nombreTrim)) {
+    }
+    if (!regexNombre.test(nombreTrim)) {
         return {
             titulo: 'Nombre inválido',
             mensaje: 'El nombre solo puede contener letras, espacios y puntos.',
+            tipo: 'error'
+        };
+    }
+    if (nombreTrim == '') {
+        return {
+            titulo: 'Nombre faltante',
+            mensaje: 'El nombre no puede estar vacío.',
             tipo: 'error'
         };
     } else {
@@ -94,12 +124,14 @@ function validarNombreCampo(nombre) {
 
 /**
  * Valida el correo electrónico.
- * @param {string} correo
- * @returns {object|null}
+ * @param {string} correo - Correo electrónico a validar.
+ * @param {Array} listaCorreos - Lista de correos electrónicos ya registrados.
+ * @returns {object|null} - Mensaje de error o null si es válido.
  */
-function validarCorreoCampo(correo, listaCorreos) {
+function validarCorreoCampo(correo, listaCorreos = null) {
     const correoTrim = correo.trim();
-
+    console.log(correoTrim, correo)
+    console.log(validator.isEmail(correoTrim))
     if (correoTrim.length > tamanioMaximoCorreo || correoTrim.length < tamanioMinimoCorreo) {
         return {
             titulo: 'Correo inválido',
@@ -128,18 +160,25 @@ function validarCorreoCampo(correo, listaCorreos) {
             tipo: 'error'
         };
     }
+    if (correoTrim === '') {
+        return {
+            titulo: 'Correo faltante',
+            mensaje: 'El correo no puede estar vacío.',
+            tipo: 'error'
+        };
+    }
     return null;
 }
 
 /**
  * Valida la contraseña.
- * @param {string} contrasenia
- * @param {string} confirmContrasenia
- * @returns {object|null}
+ * @param {string} contrasenia - Contraseña a validar.
+ * @param {string} [confirmarContrasenia=''] - Confirmación de la contraseña (opcional).
+ * @returns {object|null} - Mensaje de error o null si es válida.
  */
-function validarContraseniaCampo(contrasenia, confirmContrasenia = '') {
+function validarContraseniaCampo(contrasenia, confirmarContrasenia = '') {
     const contraseniaTrim = contrasenia.trim();
-
+    
     if (contraseniaTrim.length < tamanioMinimoContrasenia || contraseniaTrim.length > tamanioMaximoContrasenia) {
         return {
             titulo: 'Contraseña inválida',
@@ -154,10 +193,77 @@ function validarContraseniaCampo(contrasenia, confirmContrasenia = '') {
             tipo: 'error'
         };
     }
-    if (confirmContrasenia.length > 0 && confirmContrasenia[0] === ' ') {
+    if (contraseniaTrim === '') {
         return {
-            titulo: 'Confirmación inválida',
-            mensaje: 'La confirmación de contraseña no puede comenzar con un espacio.',
+            titulo: 'Contraseña faltante',
+            mensaje: 'La contraseña no puede estar vacía.',
+            tipo: 'error'
+        };
+    }
+    if (contraseniaTrim.length < tamanioMinimoContrasenia) {
+        return {
+            titulo: 'Contraseña demasiado corta',
+            mensaje: `La contraseña debe tener al menos ${tamanioMinimoContrasenia} caracteres.`,
+            tipo: 'error'
+        };
+    }
+    if (confirmarContrasenia && contraseniaTrim !== confirmarContrasenia.trim()) {
+        return {
+            titulo: 'Contraseña no coincide',
+            mensaje: 'La contraseña y su confirmación deben ser iguales.',
+            tipo: 'error'
+        };
+    }
+    if (confirmarContrasenia !== '') {
+        const errorConfirmarContrasenia = validarConfirmarContrasenia(confirmarContrasenia, contrasenia);
+        if (errorConfirmarContrasenia) {
+            return errorConfirmarContrasenia;
+        }
+    }
+    return null;
+}
+
+/**
+ * Valida la confirmación de la contraseña.
+ * @param {string} confirmarContrasenia - Confirmación de la contraseña a validar.
+ * @param {string} contrasenia - Contraseña original para comparar.
+ * @returns {object|null} - Mensaje de error o null si es válida.
+ */
+function validarConfirmarContrasenia(confirmarContrasenia, contrasenia) {
+    const confirmarContraseniaTrim = confirmarContrasenia.trim();
+
+    if (confirmarContraseniaTrim.length < tamanioMinimoContrasenia || confirmarContraseniaTrim.length > tamanioMaximoContrasenia) {
+        return {
+            titulo: 'Contraseña inválida',
+            mensaje: `La contraseña debe tener entre ${tamanioMinimoContrasenia} y ${tamanioMaximoContrasenia} caracteres.`,
+            tipo: 'error'
+        };
+    }
+    if (confirmarContrasenia.length > 0 && confirmarContrasenia[0] === ' ') {
+        return {
+            titulo: 'Contraseña inválida',
+            mensaje: 'La contraseña no puede comenzar con un espacio.',
+            tipo: 'error'
+        };
+    }
+    if (confirmarContraseniaTrim === '') {
+        return {
+            titulo: 'Contraseña faltante',
+            mensaje: 'La contraseña no puede estar vacía.',
+            tipo: 'error'
+        };
+    }
+    if (confirmarContraseniaTrim.length < tamanioMinimoContrasenia) {
+        return {
+            titulo: 'Contraseña demasiado corta',
+            mensaje: `La contraseña debe tener al menos ${tamanioMinimoContrasenia} caracteres.`,
+            tipo: 'error'
+        };
+    }
+    if (confirmarContrasenia && contrasenia.trim() !== confirmarContrasenia.trim()) {
+        return {
+            titulo: 'Contraseña no coincide',
+            mensaje: 'La contraseña y su confirmación deben ser iguales.',
             tipo: 'error'
         };
     }
@@ -166,7 +272,7 @@ function validarContraseniaCampo(contrasenia, confirmContrasenia = '') {
 
 /** 
  * Valida el ID del rol.
- * @param {number|string} idRol
+ * @param {number|string} idRol - ID del rol a validar.
  * @returns {object|null} - Mensaje de error o null si es válido.
 */
 function validarRolCampo(idRol) {
@@ -194,38 +300,34 @@ function validarRolCampo(idRol) {
  * @param {number|null} params.idRol - Nuevo ID de rol ingresado, o null si no se modificó.
  * @returns {{ error: string|null, datos: Object|null }}
  */
-function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }, usuarioAEditar, roles, listaUsuarios) {
+function validarYLimpiarUsuario({ nombre, correo, contrasenia, confirmarContrasenia, idRol }, usuarioAEditar, roles, listaUsuarios) {
     const idRolUsuarioAEditar = roles.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
-
-    // Flags de “campo modificado”
     const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
     const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
     const cambioContrasenia = contrasenia !== '';
+    const cambioConfirmarContrasenia = confirmarContrasenia !== '';
     const cambioRol = idRol !== null && idRol !== idRolUsuarioAEditar
 
-    // Validar que haya cambiado mínimo un campo
     if (!(cambioNombre || cambioCorreo || cambioContrasenia || cambioRol)) {
         return { error: 'Para modificar un usuario, al menos uno de sus datos (nombre, correo o rol) debe ser diferente al valor actual.', datos: null };
     }
 
     const datos = { idUsuario: usuarioAEditar.id };
 
-    // Validar nombre
     if (cambioNombre) {
-        const error = validarNombreCampo(nombre);
-        if (error) {
-            return { error, datos: null };
+        const {mensaje} = validarNombreCampo(nombre);
+        if (mensaje) {
+            return { error: mensaje, datos: null };
         }
         datos.nombre = validator.escape(nombre.trim());
     } else {
         datos.nombre = usuarioAEditar.nombre;
     }
 
-    // Validar correo
     if (cambioCorreo) {
-        const error = validarCorreoCampo(correo);
-        if (error) {
-            return { error, datos: null };
+        const {mensaje} = validarCorreoCampo(correo);
+        if (mensaje) {
+            return { error: mensaje, datos: null };
         }
         const correoNormalizado = validator.normalizeEmail(correo.trim())
         const correoYaExiste = listaUsuarios.some(usuario =>
@@ -238,9 +340,8 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }, usuarioA
         datos.correo = usuarioAEditar.correo;
     }
 
-    // Validar contraseña
-    if (cambioContrasenia) {
-        const error = validarContraseniaCampo(contrasenia);
+    if (cambioContrasenia || cambioConfirmarContrasenia) {
+        const error = validarContraseniaCampo(contrasenia, confirmarContrasenia);
         if (error) {
             return { error, datos: null };
         }
@@ -249,7 +350,6 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, idRol }, usuarioA
         datos.contrasenia = contrasenia;
     }
 
-    // Validar rol
     if (cambioRol) {
         const error = validarRolCampo(idRol);
         if (error) {

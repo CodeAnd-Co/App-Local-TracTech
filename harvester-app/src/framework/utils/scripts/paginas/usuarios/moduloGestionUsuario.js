@@ -209,8 +209,8 @@ function configurarCampoCorreo() {
             }
         });
         // Elimina espacios al pegar
-        entradaCorreo.addEventListener('input',  () => {
-            this.value = this.value.replace(/\s/g, '');
+        entradaCorreo.addEventListener('input',  (evento) => {
+            evento.target.value = evento.target.value.replace(/\s/g, '');
         });
     }
 }
@@ -676,8 +676,9 @@ function configurarValidacionesCampos() {
             }
 
             // Si llegamos hasta aquí, validamos con la función correspondiente.
-            const { mensaje } = validador(valor);
-            if (mensaje) {
+            const respuesta = validador(valor);
+            if (respuesta) {
+                const mensaje = respuesta.mensaje
                 campoEntrada.classList.add('inputError');
                 mensajeError.textContent = mensaje;
             } else {

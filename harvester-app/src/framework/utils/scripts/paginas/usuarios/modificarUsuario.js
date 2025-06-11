@@ -1,6 +1,6 @@
 const { modificarUsuario: modificarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/modificarUsuario.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-const { validacionInicialModificar, validarYLimpiarUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
+const { validarYLimpiarUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 //const { inicializarModuloGestionUsuarios } = require(`${rutaBase}/src/framework/utils/scripts/paginas/usuarios/inicializarModuloGestionUsuarios.js`);
 
 /**
@@ -22,25 +22,19 @@ async function modificarUsuario(usuarioAEditar, roles, listaCorreos, listaUsuari
     const nombreSinTrim = nombreInput.value;
     const correoSinTrim = correoInput.value;
     const contraseniaSinTrim = contraseniaInput.value;
-    const confirmContraseniaSinTrim = confirmPasswordInput ? confirmPasswordInput.value : '';
-    const rolSinTrim = rolInput.value;
+    const confirmarContraseniaSinTrim = confirmPasswordInput.value;
+    const rol = rolInput.value;
 
-    let error;
-    let datos;
-
-    if (validacionInicialModificar(nombreSinTrim, correoSinTrim, contraseniaSinTrim, confirmContraseniaSinTrim, rolSinTrim, listaCorreos)) {
-        ({ error, datos } = validarYLimpiarUsuario({
-                nombre: nombreSinTrim.trim(),
-                correo: correoSinTrim.trim(),
-                contrasenia: contraseniaSinTrim.trim(),
-                idRol: parseInt(rolSinTrim, 10)
-            },
-            usuarioAEditar,
-            roles,
-            listaUsuarios))
-    } else {
-        return false;
-    }
+    const { error, datos } = validarYLimpiarUsuario({
+        nombre: nombreSinTrim,
+        correo: correoSinTrim,
+        contrasenia: contraseniaSinTrim,
+        confirmarContrasenia: confirmarContraseniaSinTrim,
+        idRol: rol
+    },
+        usuarioAEditar,
+        roles,
+        listaUsuarios)
 
     if (error) {
         mostrarAlerta('Error', error, 'warning');
