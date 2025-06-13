@@ -10,7 +10,7 @@ const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/c
 const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarRoles.js`);
 const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dispositivos/deshabilitarDispositivo.js`);
 const { modificarUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/modificarUsuario.js`);
-const { validacionInicial, validarNombreCampo, validarCorreoCampo, validarContraseniaCampo } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
+const { validacionInicial, validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarConfirmarContrasenia } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
 const { mostrarAlerta, mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
@@ -46,7 +46,6 @@ async function inicializarModuloGestionUsuarios() {
     configurarCampoCorreo();
     configurarCampoBusqueda();
     configurarVerContrasenia();
-    validarCoincidenciaContrasenas();
 }
 
 /** 
@@ -625,57 +624,39 @@ function configurarBotonDeshabilitar(listaDeUsuarios, usuarios) {
  * @returns {void}
  */
 function configurarValidacionesCampos() {
-    // Mapeo de campos a validar:
-    const campos = [
-        {
+    const campos = [{
             idInput: 'username',
             idError: 'mensajeErrorNombre',
             validador: validarNombreCampo
-        },
-        {
+        }, {
             idInput: 'email',
             idError: 'mensajeErrorCorreo',
             validador: validarCorreoCampo
-        },
-        {
+        }, {
             idInput: 'password',
             idError: 'mensajeErrorContrasenia',
             validador: validarContraseniaCampo
-        }
-    ];
+        }];
 
-    campos.forEach(({ idInput, idError, validador, evento = 'input' }) => {
+    campos.forEach(({ idInput, idError, validador }) => {
         const campoEntrada = document.getElementById(idInput);
 
-        // Verificar si el campo existe
         if (!campoEntrada) {
             return;
         }
 
-        // Buscar elemento de error o crear uno si no existe
         let mensajeError = document.getElementById(idError);
         if (!mensajeError) {
-            // Crear elemento para mostrar errores si no existe
             mensajeError = document.createElement('div');
             mensajeError.id = idError;
             mensajeError.className = 'mensajeError';
-            // Insertar después del campo
             campoEntrada.parentNode.insertBefore(mensajeError, campoEntrada.nextSibling);
         }
 
-        // Configurar el evento para validación en tiempo real
-        campoEntrada.addEventListener(evento, () => {
+        campoEntrada.addEventListener('input', () => {
             const valor = campoEntrada.value;
             const valorTrim = valor.trim();
 
-            // Si el campo empieza con espacio, mostrar error y salir
-            if (valor.length > 0 && valor[0] === ' ') {
-                campoEntrada.classList.add('inputError');
-                mensajeError.textContent = 'El campo no puede comenzar con un espacio.';
-                return;
-            }
-
-            // Si llegamos hasta aquí, validamos con la función correspondiente.
             const respuesta = validador(valor);
             if (respuesta) {
                 const mensaje = respuesta.mensaje
@@ -683,25 +664,16 @@ function configurarValidacionesCampos() {
                 mensajeError.textContent = mensaje;
             } else {
                 campoEntrada.classList.remove('inputError');
-                mensajeError.textContent = '';
             }
 
-            // Si estamos en modo EDITAR y el campo está vacío, quitamos clases/mensajes y retornamos sin más validación.
             if (modoActual === modoFormulario.EDITAR && valorTrim === '') {
                 campoEntrada.classList.remove('inputError');
-                mensajeError.textContent = '';
-                return;
-            }
-
-            // Si NO estamos en EDITAR (es decir, modo CREAR) y está vacío, mostramos el mensaje de "no puede estar vacío" y salimos.
-            if (modoActual !== modoFormulario.EDITAR && valorTrim === '') {
-                campoEntrada.classList.add('inputError');
-                mensajeError.textContent = 'El campo no puede estar vacío.';
                 return;
             }
         });
 
     });
+    validarCoincidenciaContrasenas
 }
 
 /**
@@ -711,11 +683,11 @@ function configurarValidacionesCampos() {
  * @returns {void}
  */
 function validarCoincidenciaContrasenas() {
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('passwordConfirmar');
+    const entradaContrasenia = document.getElementById('password');
+    const entradaConfirmarContrasenia = document.getElementById('passwordConfirmar');
 
     // Verificar si ambos campos existen
-    if (!passwordInput || !confirmPasswordInput) {
+    if (!entradaContrasenia || !entradaConfirmarContrasenia) {
         return;
     }
 
@@ -726,18 +698,18 @@ function validarCoincidenciaContrasenas() {
         mensajeError = document.createElement('div');
         mensajeError.id = idError;
         mensajeError.className = 'mensajeError';
-        confirmPasswordInput.parentNode.insertBefore(mensajeError, confirmPasswordInput.nextSibling);
+        entradaConfirmarContrasenia.parentNode.insertBefore(mensajeError, entradaConfirmarContrasenia.nextSibling);
     }
 
     // Configurar eventos para validación en tiempo real
-    confirmPasswordInput.addEventListener('input', () => {
-        validarCoincidencia(passwordInput, confirmPasswordInput, mensajeError);
+    entradaConfirmarContrasenia.addEventListener('input', () => {
+        validarCoincidencia(entradaContrasenia, entradaConfirmarContrasenia, mensajeError)
     });
 
     // También validar cuando cambie la contraseña principal
-    passwordInput.addEventListener('input', () => {
-        if (confirmPasswordInput.value.trim() !== '') {
-            validarCoincidencia(passwordInput, confirmPasswordInput, mensajeError);
+    entradaContrasenia.addEventListener('input', () => {
+        if (entradaConfirmarContrasenia.value.trim() !== '') {
+            validarCoincidencia(entradaContrasenia, entradaConfirmarContrasenia, mensajeError)
         }
     });
 }
@@ -747,30 +719,19 @@ function validarCoincidenciaContrasenas() {
 *
 * @returns {void}
 */
-function validarCoincidencia(passwordInput, confirmPasswordInput, mensajeError) {
-    const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-
-    if (confirmPassword.length > 0 && confirmPassword[0] === ' ') {
-        confirmPasswordInput.classList.add('inputError');
-        mensajeError.textContent = 'El campo no puede comenzar con un espacio.';
-        return;
-    }
-
-    // Si el campo de confirmación está vacío, no mostrar error
-    if (confirmPassword.trim() === '') {
-        confirmPasswordInput.classList.add('inputError');
-        mensajeError.textContent = 'El campo no puede estar vacío.';
-        return;
-    }
-
-    // Validar coincidencia
-    if (password !== confirmPassword) {
-        confirmPasswordInput.classList.add('inputError');
-        mensajeError.textContent = 'Las contraseñas no coinciden';
+function validarCoincidencia(entradaContrasenia, entradaConfirmarContrasenia, mensajeError) {
+    const contrasenia = entradaContrasenia.value
+    const confirmarContrasenia = entradaConfirmarContrasenia.value
+    const respuesta = validarConfirmarContrasenia(confirmarContrasenia, contrasenia)
+    if (respuesta) {
+        if (modoActual === modoFormulario.EDITAR && confirmarContrasenia === '') {
+            entradaConfirmarContrasenia.classList.remove('inputError');
+        } else {
+            entradaConfirmarContrasenia.classList.add('inputError');
+            mensajeError.textContent = respuesta.mensaje
+        }
     } else {
-        confirmPasswordInput.classList.remove('inputError');
-        mensajeError.textContent = '';
+        entradaConfirmarContrasenia.classList.remove('inputError');
     }
 };
 

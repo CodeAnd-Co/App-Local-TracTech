@@ -64,13 +64,6 @@ function validacionInicial(nombre, correo, contrasenia, confirmarContrasenia, id
 function validarNombreCampo(nombre) {
     const nombreTrim = nombre.trim();
 
-    if (nombreTrim.length > tamanioMaximoNombre) {
-        return {
-            titulo: 'Nombre demasiado largo',
-            mensaje: `El nombre no puede tener más de ${tamanioMaximoNombre} caracteres.`,
-            tipo: 'error'
-        };
-    }
     if (nombre.length > 0 && nombre[0] === ' ') {
         return {
             titulo: 'Nombre inválido',
@@ -78,17 +71,24 @@ function validarNombreCampo(nombre) {
             tipo: 'error'
         };
     }
-    if (!regexNombre.test(nombreTrim)) {
-        return {
-            titulo: 'Nombre inválido',
-            mensaje: 'El nombre solo puede contener letras, espacios y puntos.',
-            tipo: 'error'
-        };
-    }
     if (nombreTrim == '') {
         return {
             titulo: 'Nombre faltante',
             mensaje: 'El nombre no puede estar vacío.',
+            tipo: 'error'
+        };
+    }
+    if (nombreTrim.length > tamanioMaximoNombre) {
+        return {
+            titulo: 'Nombre demasiado largo',
+            mensaje: `El nombre no puede tener más de ${tamanioMaximoNombre} caracteres.`,
+            tipo: 'error'
+        };
+    }
+    if (!regexNombre.test(nombreTrim)) {
+        return {
+            titulo: 'Nombre inválido',
+            mensaje: 'El nombre solo puede contener letras, espacios y puntos.',
             tipo: 'error'
         };
     } else {
@@ -103,9 +103,21 @@ function validarNombreCampo(nombre) {
  * @returns {object|null} - Mensaje de error o null si es válido.
  */
 function validarCorreoCampo(correo, listaCorreos = null) {
+    if (correo.length > 0 && correo[0] === ' ') {
+        return {
+            titulo: 'Correo inválido',
+            mensaje: 'El correo no puede comenzar con un espacio.',
+            tipo: 'error'
+        };
+    }
     const correoTrim = correo.trim();
-    console.log(correoTrim, correo)
-    console.log(validator.isEmail(correoTrim))
+    if (correoTrim === '') {
+        return {
+            titulo: 'Correo faltante',
+            mensaje: 'El correo no puede estar vacío.',
+            tipo: 'error'
+        };
+    }
     if (correoTrim.length > tamanioMaximoCorreo || correoTrim.length < tamanioMinimoCorreo) {
         return {
             titulo: 'Correo inválido',
@@ -120,24 +132,10 @@ function validarCorreoCampo(correo, listaCorreos = null) {
             tipo: 'error'
         };
     }
-    if (correo.length > 0 && correo[0] === ' ') {
-        return {
-            titulo: 'Correo inválido',
-            mensaje: 'El correo no puede comenzar con un espacio.',
-            tipo: 'error'
-        };
-    }
     if (listaCorreos && listaCorreos.some(correoExistente => correoExistente && correoExistente.toLowerCase() === correoTrim.toLowerCase())) {
         return {
             titulo: 'Correo ya registrado',
             mensaje: 'El correo ingresado ya existe. Por favor, usa otro correo.',
-            tipo: 'error'
-        };
-    }
-    if (correoTrim === '') {
-        return {
-            titulo: 'Correo faltante',
-            mensaje: 'El correo no puede estar vacío.',
             tipo: 'error'
         };
     }
@@ -153,13 +151,6 @@ function validarCorreoCampo(correo, listaCorreos = null) {
 function validarContraseniaCampo(contrasenia, confirmarContrasenia = '') {
     const contraseniaTrim = contrasenia.trim();
     
-    if (contraseniaTrim.length < tamanioMinimoContrasenia || contraseniaTrim.length > tamanioMaximoContrasenia) {
-        return {
-            titulo: 'Contraseña inválida',
-            mensaje: `La contraseña debe tener entre ${tamanioMinimoContrasenia} y ${tamanioMaximoContrasenia} caracteres.`,
-            tipo: 'error'
-        };
-    }
     if (contrasenia.length > 0 && contrasenia[0] === ' ') {
         return {
             titulo: 'Contraseña inválida',
@@ -174,17 +165,10 @@ function validarContraseniaCampo(contrasenia, confirmarContrasenia = '') {
             tipo: 'error'
         };
     }
-    if (contraseniaTrim.length < tamanioMinimoContrasenia) {
+    if (contraseniaTrim.length < tamanioMinimoContrasenia || contraseniaTrim.length > tamanioMaximoContrasenia) {
         return {
-            titulo: 'Contraseña demasiado corta',
-            mensaje: `La contraseña debe tener al menos ${tamanioMinimoContrasenia} caracteres.`,
-            tipo: 'error'
-        };
-    }
-    if (confirmarContrasenia && contraseniaTrim !== confirmarContrasenia.trim()) {
-        return {
-            titulo: 'Contraseña no coincide',
-            mensaje: 'La contraseña y su confirmación deben ser iguales.',
+            titulo: 'Contraseña inválida',
+            mensaje: `La contraseña debe tener entre ${tamanioMinimoContrasenia} y ${tamanioMaximoContrasenia} caracteres.`,
             tipo: 'error'
         };
     }
@@ -205,39 +189,25 @@ function validarContraseniaCampo(contrasenia, confirmarContrasenia = '') {
  */
 function validarConfirmarContrasenia(confirmarContrasenia, contrasenia) {
     const confirmarContraseniaTrim = confirmarContrasenia.trim();
-
-    if (confirmarContraseniaTrim.length < tamanioMinimoContrasenia || confirmarContraseniaTrim.length > tamanioMaximoContrasenia) {
-        return {
-            titulo: 'Contraseña inválida',
-            mensaje: `La contraseña debe tener entre ${tamanioMinimoContrasenia} y ${tamanioMaximoContrasenia} caracteres.`,
-            tipo: 'error'
-        };
-    }
+    
     if (confirmarContrasenia.length > 0 && confirmarContrasenia[0] === ' ') {
         return {
             titulo: 'Contraseña inválida',
-            mensaje: 'La contraseña no puede comenzar con un espacio.',
+            mensaje: 'La confirmación no puede comenzar con un espacio.',
             tipo: 'error'
         };
     }
     if (confirmarContraseniaTrim === '') {
         return {
             titulo: 'Contraseña faltante',
-            mensaje: 'La contraseña no puede estar vacía.',
+            mensaje: 'La confirmación no puede estar vacía.',
             tipo: 'error'
         };
     }
-    if (confirmarContraseniaTrim.length < tamanioMinimoContrasenia) {
-        return {
-            titulo: 'Contraseña demasiado corta',
-            mensaje: `La contraseña debe tener al menos ${tamanioMinimoContrasenia} caracteres.`,
-            tipo: 'error'
-        };
-    }
-    if (confirmarContrasenia && contrasenia.trim() !== confirmarContrasenia.trim()) {
+    if (contrasenia.trim() !== confirmarContraseniaTrim) {
         return {
             titulo: 'Contraseña no coincide',
-            mensaje: 'La contraseña y su confirmación deben ser iguales.',
+            mensaje: 'Las contraseñas no coinciden.',
             tipo: 'error'
         };
     }
@@ -342,6 +312,7 @@ module.exports = {
     validarNombreCampo,
     validarCorreoCampo,
     validarContraseniaCampo,
+    validarConfirmarContrasenia,
     validarRolCampo,
     validarYLimpiarUsuario
 };
