@@ -9,17 +9,17 @@
   var gap = typeof gap !== 'undefined' ? gap : 'gap-md';
 %>
 
-<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/contenedorSeleccion/contenedorSeleccion.css' rel='stylesheet' />
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/cuadroSeleccion/cuadroSeleccion.css' rel='stylesheet' />
 
 <div 
   id="<%= id %>" 
-  class="contenedor-seleccion <%= fondo %> <%= sombra %> <%= alinearContenido %> <%= gap %> mb-<%= paddingInferior %> mt-<%= paddingSuperior %> <%= clasesExtra %>">
+  class="cuadro-seleccion <%= fondo %> <%= sombra %> <%= alinearContenido %> <%= gap %> mb-<%= paddingInferior %> mt-<%= paddingSuperior %> <%= clasesExtra %>">
   <%- contenido %>
 </div>
 
 <% /*
   Parámetros opcionales:
-  - id: 'contenedor-distribuidores'
+  - id: 'cuadro-distribuidor'
   - contenido: bloque HTML interno o includes
   - paddingSuperior: '16'
   - paddingInferior: '16'
