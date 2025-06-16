@@ -1,0 +1,22 @@
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/moleculas/elementoSeleccion/elementoSeleccion.css' rel='stylesheet' />
+
+<div class="elemento-seleccion <%= clasesExtra || '' %>">
+  <!-- Usar el átomo cuadroTexto para el texto -->
+  <%- include('../../atomos/cuadroTexto/cuadroTexto.ejs', { 
+    id: textoId || '', 
+    textoInterior: texto, 
+    tamanio: 'texto-md', 
+    color: 'texto-negro', 
+    fuente: 'fuente-regular', 
+    alinear: 'izquierda' 
+  }) %>
+  <img class="icono-seleccion" src="<%= icono %>" alt="Icono" />
+</div>
+
+<% /*
+  Parámetros esperados:
+  - texto: Texto que se mostrará en el elemento.
+  - icono: Ruta del ícono que se mostrará.
+  - textoId: ID opcional para el cuadroTexto.
+  - clasesExtra: Clases CSS adicionales para personalización.
+*/ %>
