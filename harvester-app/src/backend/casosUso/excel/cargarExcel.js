@@ -136,7 +136,7 @@ async function leerExcel(archivo) {
                         if (verificacionExcel.hayPeligro) {
                             reject({
                                 exito: false,
-                                mensaje: `El archivo subido contiene el siguiente caracter inválido: ${verificacionExcel.lugarDetectado} Caracter: ${verificacionExcel.caracterDetectado}`
+                                mensaje: `El archivo subido contiene el siguiente problema: ${verificacionExcel.caracterDetectado}. ${verificacionExcel.lugarDetectado}`
                             });
                         }
                         // Almacenamos los datos usando el nombre de la hoja como clave
@@ -195,6 +195,7 @@ function verificarExcel(hojaJSON) {
     const patron = /[<>&"'`#]/g 
     let contadorFilas = 0;
     let contadorCeldas = 0;
+    let longitudMaxima = 50;
     
     for (const fila of hojaJSON) {
         contadorFilas = contadorFilas + 1;
@@ -208,7 +209,7 @@ function verificarExcel(hojaJSON) {
                 if (match) {
                     return {
                         hayPeligro: true,
-                        caracterDetectado: match[0],
+                        caracterDetectado: `Caracter inválido: ${match[0]}`,
                         lugarDetectado: `Fila: ${contadorFilas} Celda: ${contadorCeldas}`
                     }
                 }
@@ -217,7 +218,15 @@ function verificarExcel(hojaJSON) {
                 if (celda.startsWith('=') || celda.startsWith('+') || celda.startsWith('-')) {
                     return {
                         hayPeligro: true,
-                        caracterDetectado: celda[0],
+                        caracterDetectado: `Caracter inválido: ${celda[0]}`,
+                        lugarDetectado: `Fila: ${contadorFilas}, Celda: ${contadorCeldas}`
+                    }
+                }
+
+                if (celda.length > longitudMaxima) {
+                    return {
+                        hayPeligro: true,
+                        caracterDetectado: `Longitud mayor a ${longitudMaxima} caracteres`,
                         lugarDetectado: `Fila: ${contadorFilas}, Celda: ${contadorCeldas}`
                     }
                 }
