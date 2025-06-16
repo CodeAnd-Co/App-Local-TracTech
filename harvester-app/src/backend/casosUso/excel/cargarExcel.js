@@ -193,9 +193,9 @@ function verificarExcel(hojaJSON) {
     }
 
     const patron = /[<>&"'`#]/g 
+    const longitudMaxima = 100;
     let contadorFilas = 0;
     let contadorCeldas = 0;
-    let longitudMaxima = 50;
     
     for (const fila of hojaJSON) {
         contadorFilas = contadorFilas + 1;
@@ -215,7 +215,7 @@ function verificarExcel(hojaJSON) {
                 }
 
                 // 2. Verificar si comienza con = + -
-                if (celda.startsWith('=') || celda.startsWith('+') || celda.startsWith('-')) {
+                if (esInicioPeligroso(celda)) {
                     return {
                         hayPeligro: true,
                         caracterDetectado: `Caracter inválido: ${celda[0]}`,
@@ -237,6 +237,27 @@ function verificarExcel(hojaJSON) {
     return { hayPeligro: false }
 }
 
+
+
+/**
+ * Verifica si una celda contiene un inicio potencialmente peligroso
+ * Permite '+' o '-' si parece un número telefónico
+ * @param {string} texto - Texto de la celda a verificar
+ * @returns {boolean} - Verdadero si la celda comienza con un carácter peligroso
+ */
+function esInicioPeligroso(texto) {
+    const patrinInicioPeligroso = /^[=+\-]/;
+
+    if (patrinInicioPeligroso.test(texto)) {
+        // Permitir si es numero telefónico
+        if (/^[+-]\d[\d\s\-()]*$/.test(texto)) {
+            return false;
+        }
+        return true;
+    }
+
+    return false;
+}
 
 module.exports = {
     leerExcel,
