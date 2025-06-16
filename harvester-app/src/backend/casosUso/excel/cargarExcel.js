@@ -246,11 +246,12 @@ function verificarExcel(hojaJSON) {
  * @returns {boolean} - Verdadero si la celda comienza con un carácter peligroso
  */
 function esInicioPeligroso(texto) {
-    const patrinInicioPeligroso = /^[=+\-]/;
+    const patronInicioPeligroso = /^[=+\-]/;
+    const patronNumeroTelefono = /^[+-]?\d[\d\s\-()]*$/;
 
-    if (patrinInicioPeligroso.test(texto)) {
+    if (patronInicioPeligroso.test(texto)) {
         // Permitir si es numero telefónico
-        if (/^[+-]\d[\d\s\-()]*$/.test(texto)) {
+        if (patronNumeroTelefono.test(texto)) {
             return false;
         }
         return true;
