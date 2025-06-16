@@ -299,7 +299,7 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, confirmarContrase
         if (error) {
             return { error, datos: null };
         }
-        datos.idRol = idRol;
+        datos.idRol = parseInt(idRol, 10);
     } else {
         datos.idRol = idRolUsuarioAEditar;
     }
