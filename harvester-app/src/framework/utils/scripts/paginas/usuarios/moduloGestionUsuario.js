@@ -27,6 +27,7 @@ let listaUsuarios = [];
 let usuariosFiltrados = [];
 let terminoBusqueda = '';
 let listaCorreos = [];
+let rolesCache = [];
 
 /**
  * Inicializa el módulo de gestión de usuarios.
@@ -53,6 +54,7 @@ async function inicializarModuloGestionUsuarios() {
  * 
  * @async
  * @function renderizarUsuarios
+ * @returns {void}
  */
 async function obtenerUsuarios() {
     try {
@@ -88,6 +90,7 @@ async function obtenerUsuarios() {
  * Configura los botones de la interfaz para crear, cancelar y guardar usuarios.
  * 
  * @function configurarBotones
+ * @returns {void}
  */
 function configurarBotones() {
     const botonAgregar = document.querySelector('.primario');
@@ -136,6 +139,7 @@ function configurarBotones() {
  * Muestra la vista de creación de usuario.
  * Reinicia el formulario, actualiza el título y los campos.
  * @function mostrarVistaCrear
+ * @returns {void}
  */
 function mostrarFormularioUsuario(modo, idUsuario = null) {
     const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
@@ -189,6 +193,7 @@ function mostrarFormularioUsuario(modo, idUsuario = null) {
  * Oculta la vista de creación de usuario.
  * 
  * @function ocultarFormularioUsuario
+ * @returns {void}
  */
 function ocultarFormularioUsuario() {
     const columnaCrear = document.getElementById('columna-crear-modificar-usuario');
@@ -199,6 +204,7 @@ function ocultarFormularioUsuario() {
  * Configura ek campo de correo electrónico para evitar espacios.
  * 
  * @function configurarCampoCorreo
+ * @returns {void}
  */
 function configurarCampoCorreo() {
     const entradaCorreo = document.getElementById('email');
@@ -220,6 +226,7 @@ function configurarCampoCorreo() {
  * Configura el campo de búsqueda de usuarios.
  * 
  * @function configurarCampoBusqueda
+ * @returns {void}
  */
 function configurarCampoBusqueda() {
     const inputBusqueda = document.getElementById('buscar-usuario');
@@ -232,6 +239,8 @@ function configurarCampoBusqueda() {
 
 /**
  * Actualiza el contador de caracteres restantes para el buscador de usuarios.
+ * 
+ * @function actualizarCaracteresBuscador
  * @param {HTMLInputElement} campoEntrada - Campo de entrada a validar.
  * @returns {void}
  */
@@ -251,20 +260,19 @@ function actualizarCaracteresBuscador(campoEntrada) {
 /**
  * Actualiza los contadores de caracteres que ya existen en el HTML.
  * No inserta nada, solo los inicializa y los mantiene al día.
+ * 
+ * @function configurarContadoresCampos
+ * @returns {void}
  */
 function configurarContadoresCampos() {
     document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
         const maximoCaracteres = input.getAttribute('maxlength');
         const contador = input.parentNode.querySelector('.contador-caracteres');
         if (!contador) return;
+        contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
 
-
-        // Inicializa una sola llamada a la función extraída
-        actualizarContador(input, contador, maximoCaracteres);
-
-        // Y vuelve a usar la misma función como callback
         input.addEventListener('input', () => {
-            actualizarContador(input, contador, maximoCaracteres);
+            contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
         });
     });
 }
@@ -273,6 +281,7 @@ function configurarContadoresCampos() {
  * Configura la checkbox de "Ver contraseña" para mostrar u ocultar la contraseña ingresada.
  * 
  * @function configurarVerContrasenia
+ * @returns {void}
  */
 function configurarVerContrasenia() {
     const botonVerContrasenia = document.querySelector('#verContrasenia');
@@ -491,7 +500,7 @@ function limpiarMensajesError() {
  * 
  * @function crearListaUsuarios
  * @param {Array<Object>} usuarios - Lista de usuarios a renderizar.
- *  @returns {DocumentFragment} Un fragmento de documento con los usuarios renderizados.
+ * @returns {DocumentFragment} Un fragmento de documento con los usuarios renderizados.
  */
 function crearListaUsuarios(usuarios) {
     const fragmento = document.createDocumentFragment();
@@ -615,10 +624,6 @@ function configurarBotonDeshabilitar(listaDeUsuarios, usuarios) {
     });
 }
 
-
-
-
-
 /**
  * Configura validaciones en tiempo real para los campos del formulario de usuarios.
  *
@@ -719,6 +724,7 @@ function validarCoincidenciaContrasenas() {
 /**
 * Valida que la confirmación de contrasea coincida con la contraseña principal y maneja los mensajes de error del campo de entrada.
 *
+* @function validarCoincidencia
 * @returns {void}
 */
 function validarCoincidencia(entradaContrasenia, entradaConfirmarContrasenia, mensajeError) {
@@ -736,9 +742,6 @@ function validarCoincidencia(entradaContrasenia, entradaConfirmarContrasenia, me
         entradaConfirmarContrasenia.classList.remove('inputError');
     }
 };
-
-// Variable global para almacenar los roles
-let rolesCache = [];
 
 /**
  * Carga los roles desde el backend y los guarda en la variable global `rolesCache`.
@@ -811,24 +814,17 @@ function cargarRoles() {
 }
 
 /**
- * Actualiza el texto de un contador dado el input, su contenedor de contador y el maxlength.
- * @param {HTMLInputElement} input
- * @param {HTMLElement} contador
- * @param {number|string} maximoCaracteres
- */
-function actualizarContador(input, contador, maximoCaracteres) {
-    contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
-}
-
-/**
  * Recalcula TODOS los contadores a partir del valor actual de cada input.
+ * 
+ * @function actualizarTodosContadores
+ * @returns {void}
  */
 function actualizarTodosContadores() {
     document.querySelectorAll('.modificacion input[maxlength]').forEach(input => {
         const maximoCaracteres = input.getAttribute('maxlength');
         const contador = input.parentNode.querySelector('.contador-caracteres');
         if (!contador) return;
-        actualizarContador(input, contador, maximoCaracteres);
+        contador.textContent = `${input.value.length}/${maximoCaracteres} caracteres`;
     });
 }
 

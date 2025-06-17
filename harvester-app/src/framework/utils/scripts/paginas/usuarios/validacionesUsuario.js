@@ -12,20 +12,21 @@ const regexNombre = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
 /**
  * Valida los campos del formulario de creación de usuario.
  * 
- * @param {string} nombre - Nombre del usuario.
- * @param {string} correo - Correo electrónico del usuario.
- * @param {string} contrasenia - Contraseña del usuario.
- * @param {string} confirmarContrasenia - Confirmación de la contraseña.
- * @param {number} idRolFK - ID del rol del usuario.
- * @param {Array} listaCorreos - Lista de correos electrónicos ya registrados.
+ * @param {Object} datosUsuario - Datos del usuario
+ * @param {string} datosUsuario.nombre - Nombre del usuario.
+ * @param {string} datosUsuario.correo - Correo electrónico del usuario.
+ * @param {string} datosUsuario.contrasenia - Contraseña del usuario.
+ * @param {string} datosUsuario.confirmarContrasenia - Confirmación de la contraseña.
+ * @param {string} datosUsuario.idRol - ID del rol del usuario.
+ * @param {Array<String>} listaCorreos - Lista de correos electrónicos ya registrados.
  * @returns {boolean} - Si la validación es exitosa
  */
-function validarCrearUsuario(nombre, correo, contrasenia, confirmarContrasenia, idRolFK, listaCorreos) {
-    const nombreTrim = nombre.trim();
-    const correoTrim = correo.trim();
-    const contraseniaTrim = contrasenia.trim();
-    const confirmarContraseniaTrim = confirmarContrasenia.trim();
-    const idRolNum = parseInt(idRolFK, 10);
+function validarCrearUsuario(datosUsuario, listaCorreos) {
+    const nombreTrim = datosUsuario.nombre.trim();
+    const correoTrim = datosUsuario.correo.trim();
+    const contraseniaTrim = datosUsuario.contrasenia.trim();
+    const confirmarContraseniaTrim = datosUsuario.confirmarContrasenia.trim();
+    const idRolNum = parseInt(datosUsuario.idRol, 10);
 
     if (!nombreTrim || !correoTrim || !contraseniaTrim || !confirmarContraseniaTrim || isNaN(idRolNum)) {
         mostrarAlerta('Datos incompletos', 'Por favor, completa todos los campos.', 'warning');
@@ -38,9 +39,9 @@ function validarCrearUsuario(nombre, correo, contrasenia, confirmarContrasenia, 
     }
 
     const campos = [
-        { fn: validarNombreCampo, args: [nombre] },
-        { fn: validarCorreoCampo, args: [correo, listaCorreos] },
-        { fn: validarContraseniaCampo, args: [contrasenia, confirmarContrasenia] },
+        { fn: validarNombreCampo, args: [datosUsuario.nombre] },
+        { fn: validarCorreoCampo, args: [datosUsuario.correo, listaCorreos] },
+        { fn: validarContraseniaCampo, args: [datosUsuario.contrasenia, datosUsuario.confirmarContrasenia] },
         { fn: validarRolCampo, args: [idRolNum] }
     ];
 
@@ -99,7 +100,7 @@ function validarNombreCampo(nombre) {
 /**
  * Valida el correo electrónico.
  * @param {string} correo - Correo electrónico a validar.
- * @param {Array} listaCorreos - Lista de correos electrónicos ya registrados.
+ * @param {Array<string>|null} listaCorreos - Lista de correos electrónicos ya registrados.
  * @returns {object|null} - Mensaje de error o null si es válido.
  */
 function validarCorreoCampo(correo, listaCorreos = null) {
@@ -145,10 +146,10 @@ function validarCorreoCampo(correo, listaCorreos = null) {
 /**
  * Valida la contraseña.
  * @param {string} contrasenia - Contraseña a validar.
- * @param {string} [confirmarContrasenia=''] - Confirmación de la contraseña (opcional).
+ * @param {string|null} confirmarContrasenia - Confirmación de la contraseña (opcional).
  * @returns {object|null} - Mensaje de error o null si es válida.
  */
-function validarContraseniaCampo(contrasenia, confirmarContrasenia = '') {
+function validarContraseniaCampo(contrasenia, confirmarContrasenia = null) {
     const contraseniaTrim = contrasenia.trim();
     
     if (contrasenia.length > 0 && contrasenia[0] === ' ') {
@@ -172,7 +173,7 @@ function validarContraseniaCampo(contrasenia, confirmarContrasenia = '') {
             tipo: 'error'
         };
     }
-    if (confirmarContrasenia !== '') {
+    if (confirmarContrasenia && confirmarContrasenia !== '') {
         const errorConfirmarContrasenia = validarConfirmarContrasenia(confirmarContrasenia, contrasenia);
         if (errorConfirmarContrasenia) {
             return errorConfirmarContrasenia;
@@ -216,7 +217,7 @@ function validarConfirmarContrasenia(confirmarContrasenia, contrasenia) {
 
 /** 
  * Valida el ID del rol.
- * @param {number|string} idRol - ID del rol a validar.
+ * @param {string} idRol - ID del rol a validar.
  * @returns {object|null} - Mensaje de error o null si es válido.
 */
 function validarRolCampo(idRol) {
@@ -234,22 +235,25 @@ function validarRolCampo(idRol) {
 }
 
 /**
- * Valida y sanea los datos para la edición de un usuario en el front-end.
+ * Valida y limpia los datos para la edición de un usuario en el front-end.
  *
- * @param {Object} params - Parámetros de validación.
- * @param {string} params.nombre - Nuevo nombre ingresado por el usuario.
- * @param {string} params.correo - Nuevo correo ingresado por el usuario.
- * @param {string} params.contrasenia - Nueva contraseña ingresada por el usuario.
- * @param {number|null} params.idRol - Nuevo ID de rol ingresado, o null si no se modificó.
- * @returns {{ error: string|null, datos: Object|null }}
+ * @param {Object} datosUsuario - datos del usuario a validar
+ * @param {string} datosUsuario.nombre - Nuevo nombre ingresado por el usuario.
+ * @param {string} datosUsuario.correo - Nuevo correo ingresado por el usuario.
+ * @param {string} datosUsuario.contrasenia - Nueva contraseña ingresada por el usuario.
+ * @param {number|null} datosUsuario.idRol - Nuevo ID de rol ingresado, o null si no se modificó.
+ * @param {Object} usuarioAEditar - Datos originales del usuario
+ * @param {Array<Object>} roles - Roles disponibles
+ * @param {Array<String>} listaCorreos - Lista de correos electrónicos ya registrados.
+ * @returns {{ error: Object|null, datos: Object|null }}
  */
-function validarModificarUsuario({ nombre, correo, contrasenia, confirmarContrasenia, idRol }, usuarioAEditar, roles, listaUsuarios) {
+function validarModificarUsuario(datosUsuario, usuarioAEditar, roles, listaCorreos) {
     const idRolUsuarioAEditar = roles.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
-    const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
-    const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
-    const cambioContrasenia = contrasenia !== '';
-    const cambioConfirmarContrasenia = confirmarContrasenia !== '';
-    const cambioRol = idRol !== null && idRol !== idRolUsuarioAEditar
+    const cambioNombre = datosUsuario.nombre !== '' && datosUsuario.nombre !== usuarioAEditar.nombre;
+    const cambioCorreo = datosUsuario.correo !== '' && datosUsuario.correo !== usuarioAEditar.correo;
+    const cambioContrasenia = datosUsuario.contrasenia !== '';
+    const cambioConfirmarContrasenia = datosUsuario.confirmarContrasenia !== '';
+    const cambioRol = datosUsuario.idRol !== null && datosUsuario.idRol !== idRolUsuarioAEditar
 
     if (!(cambioNombre || cambioCorreo || cambioContrasenia || cambioRol)) {
         return { error: 'Para modificar un usuario, al menos uno de sus datos (nombre, correo o rol) debe ser diferente al valor actual.', datos: null };
@@ -258,47 +262,42 @@ function validarModificarUsuario({ nombre, correo, contrasenia, confirmarContras
     const datos = { idUsuario: usuarioAEditar.id };
 
     if (cambioNombre) {
-        const error = validarNombreCampo(nombre);
+        const error = validarNombreCampo(datosUsuario.nombre);
         if (error) {
             return { error, datos: null };
         }
-        datos.nombre = validator.escape(nombre.trim());
+        datos.nombre = validator.escape(datosUsuario.nombre.trim());
     } else {
         datos.nombre = usuarioAEditar.nombre;
     }
 
     if (cambioCorreo) {
-        const error = validarCorreoCampo(correo);
+        const error = validarCorreoCampo(datosUsuario.correo, listaCorreos);
         if (error) {
             return { error, datos: null };
         }
-        const correoNormalizado = validator.normalizeEmail(correo.trim())
-        const correoYaExiste = listaUsuarios.some(usuario =>
-            usuario.correo === correoNormalizado && usuario.id !== usuarioAEditar.id);
-        if (correoYaExiste) {
-            return { error: 'No se puede repetir el correo entre usuarios.', datos: null };
-        }
+        const correoNormalizado = validator.normalizeEmail(datosUsuario.correo.trim())
         datos.correo = correoNormalizado;
     } else {
         datos.correo = usuarioAEditar.correo;
     }
 
     if (cambioContrasenia || cambioConfirmarContrasenia) {
-        const error = validarContraseniaCampo(contrasenia, confirmarContrasenia);
+        const error = validarContraseniaCampo(datosUsuario.contrasenia, datosUsuario.confirmarContrasenia);
         if (error) {
             return { error, datos: null };
         }
-        datos.contrasenia = contrasenia.trim();
+        datos.contrasenia = datosUsuario.contrasenia.trim();
     } else {
-        datos.contrasenia = contrasenia;
+        datos.contrasenia = datosUsuario.contrasenia;
     }
 
     if (cambioRol) {
-        const error = validarRolCampo(idRol);
+        const error = validarRolCampo(datosUsuario.idRol);
         if (error) {
             return { error, datos: null };
         }
-        datos.idRol = parseInt(idRol, 10);
+        datos.idRol = parseInt(datosUsuario.idRol, 10);
     } else {
         datos.idRol = idRolUsuarioAEditar;
     }

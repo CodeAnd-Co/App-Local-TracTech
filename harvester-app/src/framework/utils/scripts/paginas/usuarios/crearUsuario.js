@@ -5,9 +5,10 @@ const { validarCrearUsuario } = require(`${rutaBase}src/framework/utils/scripts/
 /**
  * Crea un nuevo usuario en el sistema.
  * Captura los datos del formulario, valida los campos, 
- * realiza la petición al backend mediante crearUsuarioAPI y muestra retroalimentación.
+ * realiza la petición al backend mediante crearUsuarioCU y muestra retroalimentación.
  * @async
  * @function crearUsuario
+ * @param {Array<String>} listaCorreos 
  * @returns {Promise<void>}
  */
 async function crearUsuario(listaCorreos) {
@@ -28,7 +29,15 @@ async function crearUsuario(listaCorreos) {
     let contrasenia
     let confirmContrasenia
     let idRolFK;
-    if (validarCrearUsuario(nombreSinTrim, correoSinTrim, contraseniaSinTrim, confirmContraseniaSinTrim, rolSinTrim, listaCorreos)) {
+    
+    const datosUsuario = {
+        nombre: nombreSinTrim,
+        correo: correoSinTrim,
+        contrasenia: contraseniaSinTrim,
+        confirmarContrasenia: confirmContraseniaSinTrim,
+        idRol:rolSinTrim
+    }
+    if (validarCrearUsuario(datosUsuario, listaCorreos)) {
         nombre = nombreSinTrim.trim();
         correo = correoSinTrim.trim();
         contrasenia = contraseniaSinTrim.trim();

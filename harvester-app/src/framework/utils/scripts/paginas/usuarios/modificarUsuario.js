@@ -9,9 +9,12 @@ const { validarModificarUsuario } = require(`${rutaBase}src/framework/utils/scri
  *
  * @async
  * @function modificarUsuario
- * @returns {Promise<void>}
+ * @param {Object} usuarioAEditar - Datos originales del usuario
+ * @param {Array<Object>} roles - Roles disponibles
+ * @param {Array<String>} listaCorreos - Lista de correos electrónicos ya registrados.
+ * @returns {boolean}
  */
-async function modificarUsuario(usuarioAEditar, roles, listaCorreos, listaUsuarios) {
+async function modificarUsuario(usuarioAEditar, roles, listaCorreos) {
     const nombreSinTrim = document.getElementById('username').value;
     const correoSinTrim = document.getElementById('email').value;
     const contraseniaSinTrim = document.getElementById('password').value;
@@ -26,7 +29,7 @@ async function modificarUsuario(usuarioAEditar, roles, listaCorreos, listaUsuari
             idRol: rol },
         usuarioAEditar,
         roles,
-        listaUsuarios
+        listaCorreos
     )
 
     if (error) {
