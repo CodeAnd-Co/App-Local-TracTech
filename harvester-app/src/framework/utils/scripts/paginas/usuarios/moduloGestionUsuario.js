@@ -125,7 +125,7 @@ function configurarBotones() {
         }
         if (resultado) {
             setTimeout(() => {
-                inicializarModuloGestionUsuarios();
+                obtenerUsuarios();
                 ocultarFormularioUsuario();
             }, 500);
         }
@@ -565,8 +565,8 @@ function configurarBotonEliminar(listaDeUsuarios) {
             if (respuesta) {
                 await eliminarUsuario(id);
                 setTimeout(() => {
+                    obtenerUsuarios();
                     ocultarFormularioUsuario();
-                    inicializarModuloGestionUsuarios();
                 }, 500);
             }
         });
