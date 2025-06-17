@@ -442,25 +442,6 @@ function busquedaTractores() {
         entradaBusqueda.parentNode.insertBefore(contadorCaracteres, entradaBusqueda.nextSibling);
     }
 
-    /**
-     * Actualiza el contador de caracteres
-     * @param {string} texto - El texto a evaluar
-     */
-    function actualizarContador(texto) {
-        const caracteresActuales = texto.length;
-        contadorCaracteres.textContent = `${caracteresActuales}/60 caracteres`;
-        
-        // Remover clases anteriores
-        contadorCaracteres.classList.remove('warning', 'danger');
-        
-        // Agregar clase según proximidad al límite
-        if (caracteresActuales >= 55) {
-            contadorCaracteres.classList.add('danger');
-        } else if (caracteresActuales >= 45) {
-            contadorCaracteres.classList.add('warning');
-        }
-    }
-
     // Evento para filtrar y validar longitud
     entradaBusqueda.addEventListener('input', (event) => {
         let texto = event.target.value;
@@ -471,9 +452,11 @@ function busquedaTractores() {
             texto = event.target.value;
         }
         
-        actualizarContador(texto);
+        actualizarContador(texto, contadorCaracteres);
         aplicarFiltrosCombinados();
+
     });
+
 
     // Evento para prevenir pegar texto que inicie con espacios o exceda el límite
     entradaBusqueda.addEventListener('paste', (event) => {
@@ -492,7 +475,7 @@ function busquedaTractores() {
                 texto = event.target.value;
             }
             
-            actualizarContador(texto);
+            actualizarContador(texto, contadorCaracteres);
             aplicarFiltrosCombinados();
         }, 0);
     });
@@ -506,7 +489,7 @@ function busquedaTractores() {
     });
 
     // Inicializar el contador con el valor actual del campo
-    actualizarContador(entradaBusqueda.value || '');
+    actualizarContador(entradaBusqueda.value || '', contadorCaracteres);
 }
 
 /**
@@ -518,21 +501,68 @@ function busquedaTractores() {
  */
 function botonesFiltrosTractores() {
     const filtroConCheck = document.getElementById('botonFiltroCon');
+    const filtroSinCheck = document.getElementById('botonFiltroSin');
+
     // Evento para mostrar sólo los tractores con telemetría
     filtroConCheck.addEventListener('click', () => {
-        const caja = filtroConCheck.querySelector('img');
-        cambiarIconoMarcadoADesmarcado(caja)
+        seleccionarSoloUno(filtroConCheck, filtroSinCheck)
         aplicarFiltrosCombinados()
     });
     
-    const filtroSinCheck = document.getElementById('botonFiltroSin');
+    
     // Evento para mostrar sólo los tractores sin telemetría
     filtroSinCheck.addEventListener('click', () => {
-        const caja = filtroSinCheck.querySelector('img');
-        cambiarIconoMarcadoADesmarcado(caja)
+        seleccionarSoloUno(filtroSinCheck, filtroConCheck)
         aplicarFiltrosCombinados()
     });
 }
+
+/**
+ * Actualiza el contador de caracteres
+ * @param {string} texto - El texto a evaluar
+ */
+function actualizarContador(texto, contadorCaracteres) {
+    const caracteresActuales = texto.length;
+    contadorCaracteres.textContent = `${caracteresActuales}/60 caracteres`;
+    
+    // Remover clases anteriores
+    contadorCaracteres.classList.remove('warning', 'danger');
+    
+    // Agregar clase según proximidad al límite
+    if (caracteresActuales >= 55) {
+        contadorCaracteres.classList.add('danger');
+    } else if (caracteresActuales >= 45) {
+        contadorCaracteres.classList.add('warning');
+    }
+}
+
+/**
+ * Cambia la selección de un filtro de checkbox asegurando que solo uno esté marcado a la vez.
+ *
+ * Esta función se utiliza cuando hay dos elementos que actúan como filtros con íconos de checkbox,
+ * y se quiere permitir que únicamente uno de ellos esté seleccionado a la vez. Si el segundo filtro
+ * está marcado, se desmarcan ambos. Si no está marcado, solo se desmarca el primero.
+ *
+ * @param {HTMLElement} elementoFiltroCheck - Primer elemento del filtro que contiene un ícono de checkbox.
+ * @param {HTMLElement} segundoElementoFiltroCheck - Segundo elemento del filtro con ícono de checkbox.
+ */
+function seleccionarSoloUno(elementoFiltroCheck, segundoElementoFiltroCheck) {
+    // Obtiene el elemento <img> (ícono) dentro de cada filtro
+    primerIcono = elementoFiltroCheck.querySelector('img');
+    segundoIcono = segundoElementoFiltroCheck.querySelector('img');
+
+    // Si el segundo ícono está marcado (tiene el ícono de checkbox activo), se desmarcan ambos
+    if (segundoIcono.src.includes('check_box.svg')) {
+        cambiarIconoMarcadoADesmarcado(primerIcono);
+        cambiarIconoMarcadoADesmarcado(segundoIcono);
+        return;
+    }
+
+    // Si el segundo no está marcado, solo se desmarca el primero
+    cambiarIconoMarcadoADesmarcado(primerIcono);
+    return;
+}
+
 
 /**
  * 
@@ -540,7 +570,7 @@ function botonesFiltrosTractores() {
  * 
  * Esta función obtiene los datos de un archivo de Excel, filtra los distribuidores en pantalla según:
  * - El texto ingresado en el campo de búsqueda (por nombre del distribuidor).
- * - Los filtros visuales activados para distribuidores "con GPS" o "sin GPS".
+ * - Los filtros visuales activados para distribuidores 'con GPS' o 'sin GPS'.
  * 
  * Para determinar si un distribuidor tiene GPS, se revisan las primeras filas de sus datos en Excel.
  * Se muestra u oculta cada distribuidor en la interfaz según si cumple con los filtros.
@@ -564,6 +594,8 @@ function aplicarFiltrosCombinados() {
     // Obtener todos los elementos HTML que representan distribuidores
     const distribuidores = contenedor.querySelectorAll('.rancho');
 
+    const nombresConsultados = []
+
     distribuidores.forEach(distribuidorDiv => {
         // Obtener el nombre del distribuidor desde su texto
         const nombreDistribuidor = distribuidorDiv.querySelector('.rancho-texto')?.textContent || '';
@@ -576,7 +608,7 @@ function aplicarFiltrosCombinados() {
         // Revisar si hay datos y más de una fila
         if (datosDistribuidor && datosDistribuidor.length > 1) {
             const headers = datosDistribuidor[0];
-            const indiceGPS = headers.indexOf("GPS");
+            const indiceGPS = headers.indexOf('GPS');
 
             // Se evaula si existe la columna GPS
             if (indiceGPS !== -1) {
@@ -597,7 +629,32 @@ function aplicarFiltrosCombinados() {
 
         // Muestra u oculta el distribuidor dependiendo de si pasa ambos filtros
         distribuidorDiv.style.display = coincideBusqueda && cumpleFiltro ? '' : 'none';
-    });
+        
+        
+        
+        if(coincideBusqueda && cumpleFiltro){
+            nombresConsultados.push(distribuidorDiv.querySelector('.rancho-texto')?.textContent)
+        }
+
+        /*
+
+        */
+    })
+
+    const contenedorColumnas = document.getElementById('contenedorColumnas');
+
+
+    if(!nombresConsultados.includes(contenedorColumnas.dataset.tractorActual)){
+        contenedorColumnas.style.display = 'none';
+        contenedorColumnas.dataset.tractorActual = '';
+
+        tractorDiv = document.getElementsByClassName('seleccionado')
+
+        if(tractorDiv){
+            tractorDiv = document.getElementsByClassName('rancho seleccionado');
+            cambiarSeleccionVisualUnica(contenedor)
+        }
+    }
 }
 
 
