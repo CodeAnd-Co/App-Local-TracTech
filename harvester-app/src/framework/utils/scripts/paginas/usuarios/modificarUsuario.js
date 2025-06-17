@@ -1,7 +1,6 @@
 const { modificarUsuario: modificarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/modificarUsuario.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-const { validarYLimpiarUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
-//const { inicializarModuloGestionUsuarios } = require(`${rutaBase}/src/framework/utils/scripts/paginas/usuarios/inicializarModuloGestionUsuarios.js`);
+const { validarModificarUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
 /**
  * Envía los datos modificados del usuario al backend y actualiza la vista.
@@ -13,28 +12,22 @@ const { validarYLimpiarUsuario } = require(`${rutaBase}src/framework/utils/scrip
  * @returns {Promise<void>}
  */
 async function modificarUsuario(usuarioAEditar, roles, listaCorreos, listaUsuarios) {
-    const nombreInput = document.getElementById('username');
-    const correoInput = document.getElementById('email');
-    const contraseniaInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('passwordConfirmar');
-    const rolInput = document.getElementById('rol');
+    const nombreSinTrim = document.getElementById('username').value;
+    const correoSinTrim = document.getElementById('email').value;
+    const contraseniaSinTrim = document.getElementById('password').value;
+    const confirmarContraseniaSinTrim = document.getElementById('passwordConfirmar').value;
+    const rol = document.getElementById('rol').value;
 
-    const nombreSinTrim = nombreInput.value;
-    const correoSinTrim = correoInput.value;
-    const contraseniaSinTrim = contraseniaInput.value;
-    const confirmarContraseniaSinTrim = confirmPasswordInput.value;
-    const rol = rolInput.value;
-
-    const { error, datos } = validarYLimpiarUsuario({
-        nombre: nombreSinTrim,
-        correo: correoSinTrim,
-        contrasenia: contraseniaSinTrim,
-        confirmarContrasenia: confirmarContraseniaSinTrim,
-        idRol: rol
-    },
+    const { error, datos } = validarModificarUsuario(
+        { nombre: nombreSinTrim,
+            correo: correoSinTrim,
+            contrasenia: contraseniaSinTrim,
+            confirmarContrasenia: confirmarContraseniaSinTrim,
+            idRol: rol },
         usuarioAEditar,
         roles,
-        listaUsuarios)
+        listaUsuarios
+    )
 
     if (error) {
         mostrarAlerta(error.titulo, error.mensaje, error.tipo);
@@ -48,7 +41,6 @@ async function modificarUsuario(usuarioAEditar, roles, listaCorreos, listaUsuari
         if (resultado.ok) {
             mostrarAlerta('Usuario modificado', resultado.mensaje || 'El usuario fue modificado correctamente.', 'success');
 
-            // Limpiar los campos del formulario
             document.getElementById('username').value = '';
             document.getElementById('username').placeholder = 'Nombre del nuevo usuario';
             document.getElementById('email').value = '';

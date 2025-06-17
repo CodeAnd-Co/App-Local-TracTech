@@ -4,13 +4,13 @@
 // RF41 Administrador consulta usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41 
 // RF39 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF39
 
-const { crearUsuario: crearUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/crearUsuario`);
 const { obtenerUsuarios: obtenerUsuariosCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarUsuarios.js`);
 const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/eliminarUsuario`);
 const { consultarRoles: consultarRolesCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarRoles.js`);
 const { deshabilitarDispositivo } = require(`${rutaBase}src/backend/casosUso/dispositivos/deshabilitarDispositivo.js`);
 const { modificarUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/modificarUsuario.js`);
-const { validacionInicial, validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarConfirmarContrasenia } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
+const { crearUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/crearUsuario.js`);
+const { validarNombreCampo, validarCorreoCampo, validarContraseniaCampo, validarConfirmarContrasenia } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
 
 const { mostrarAlerta, mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const Swal = require(`${rutaBase}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`);
@@ -116,16 +116,18 @@ function configurarBotones() {
         let resultado;
         if (modoActual === modoFormulario.CREAR) {
             nuevoBotonGuardar.disabled = true;
-            resultado = await crearUsuario();
+            resultado = await crearUsuario(listaCorreos);
             nuevoBotonGuardar.disabled = false;
         } else if (modoActual === modoFormulario.EDITAR) {
+            nuevoBotonGuardar.disabled = true;
             resultado = await modificarUsuario(usuarioAEditar, rolesCache, listaCorreos);
+            nuevoBotonGuardar.disabled = false;
         }
         if (resultado) {
             setTimeout(() => {
-                inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
+                inicializarModuloGestionUsuarios();
+                ocultarFormularioUsuario();
             }, 500);
-            //ocultarFormularioUsuario();
         }
     });
 }
@@ -734,72 +736,6 @@ function validarCoincidencia(entradaContrasenia, entradaConfirmarContrasenia, me
         entradaConfirmarContrasenia.classList.remove('inputError');
     }
 };
-
-/**
- * Crea un nuevo usuario en el sistema.
- * Captura los datos del formulario, valida los campos, 
- * realiza la petición al backend mediante crearUsuarioAPI y muestra retroalimentación.
- * @async
- * @function crearUsuario
- * @returns {Promise<void>}
- */
-async function crearUsuario() {
-    const nombreInput = document.getElementById('username');
-    const correoInput = document.getElementById('email');
-    const contraseniaInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('passwordConfirmar');
-    const rolInput = document.getElementById('rol');
-
-    // OBTENER LOS VALORES SIN TRIM
-    const nombreSinTrim = nombreInput.value;
-    const correoSinTrim = correoInput.value;
-    const contraseniaSinTrim = contraseniaInput.value;
-    const confirmContraseniaSinTrim = confirmPasswordInput ? confirmPasswordInput.value : '';
-    const rolSinTrim = rolInput.value;
-
-    let nombre
-    let correo
-    let contrasenia
-    let confirmContrasenia
-    let idRolFK;
-
-    if (validacionInicial(nombreSinTrim, correoSinTrim, contraseniaSinTrim, confirmContraseniaSinTrim, rolSinTrim, listaCorreos)) {
-        nombre = nombreSinTrim.trim();
-        correo = correoSinTrim.trim();
-        contrasenia = contraseniaSinTrim.trim();
-        confirmContrasenia = confirmContraseniaSinTrim.trim();
-        idRolFK = parseInt(rolSinTrim, 10);
-    } else {
-        return;
-    }
-
-    try {
-        const resultado = await crearUsuarioCU({ nombre, correo, contrasenia, idRolFK });
-        if (resultado.ok) {
-            mostrarAlerta('Usuario creado', resultado.mensaje || 'El usuario fue registrado correctamente.', 'success');
-
-            // Limpiar los campos del formulario
-            nombreInput.value = '';
-            correoInput.value = '';
-            contraseniaInput.value = '';
-            confirmContrasenia.value = '';
-            rolInput.value = '';
-
-            document.getElementById('columna-crear-modificar-usuario').style.display = 'none';
-
-            // Actualizar la vista para mostrar el nuevo usuario en la lista
-            setTimeout(() => {
-                inicializarModuloGestionUsuarios(); // Recargar la lista de usuarios
-            }, 500);
-        } else {
-            mostrarAlerta('Error al crear usuario', resultado.mensaje || 'No se pudo registrar el usuario.', 'error');
-        }
-    } catch {
-        mostrarAlerta('Error de conexión', 'Hubo un problema al conectar con el servidor.', 'error');
-    }
-}
-
-
 
 // Variable global para almacenar los roles
 let rolesCache = [];

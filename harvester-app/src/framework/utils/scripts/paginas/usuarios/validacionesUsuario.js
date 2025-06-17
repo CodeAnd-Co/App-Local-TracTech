@@ -20,7 +20,7 @@ const regexNombre = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ. ]*$/;
  * @param {Array} listaCorreos - Lista de correos electrónicos ya registrados.
  * @returns {boolean} - Si la validación es exitosa
  */
-function validacionInicial(nombre, correo, contrasenia, confirmarContrasenia, idRolFK, listaCorreos) {
+function validarCrearUsuario(nombre, correo, contrasenia, confirmarContrasenia, idRolFK, listaCorreos) {
     const nombreTrim = nombre.trim();
     const correoTrim = correo.trim();
     const contraseniaTrim = contrasenia.trim();
@@ -235,7 +235,6 @@ function validarRolCampo(idRol) {
 
 /**
  * Valida y sanea los datos para la edición de un usuario en el front-end.
- * Reproduce las mismas validaciones que el back-end y devuelve los valores listos para enviar.
  *
  * @param {Object} params - Parámetros de validación.
  * @param {string} params.nombre - Nuevo nombre ingresado por el usuario.
@@ -244,7 +243,7 @@ function validarRolCampo(idRol) {
  * @param {number|null} params.idRol - Nuevo ID de rol ingresado, o null si no se modificó.
  * @returns {{ error: string|null, datos: Object|null }}
  */
-function validarYLimpiarUsuario({ nombre, correo, contrasenia, confirmarContrasenia, idRol }, usuarioAEditar, roles, listaUsuarios) {
+function validarModificarUsuario({ nombre, correo, contrasenia, confirmarContrasenia, idRol }, usuarioAEditar, roles, listaUsuarios) {
     const idRolUsuarioAEditar = roles.find(rol => rol.Nombre === usuarioAEditar.rol)?.idRol
     const cambioNombre = nombre !== '' && nombre !== usuarioAEditar.nombre;
     const cambioCorreo = correo !== '' && correo !== usuarioAEditar.correo;
@@ -308,11 +307,11 @@ function validarYLimpiarUsuario({ nombre, correo, contrasenia, confirmarContrase
 }
 
 module.exports = {
-    validacionInicial,
+    validarCrearUsuario,
     validarNombreCampo,
     validarCorreoCampo,
     validarContraseniaCampo,
     validarConfirmarContrasenia,
     validarRolCampo,
-    validarYLimpiarUsuario
+    validarModificarUsuario
 };
