@@ -52,7 +52,8 @@ function validarCorreo(correo) {
  */
 async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
     if (!nombre || !correo || !contrasenia || !idRolFK) {
-        return { ok: false, mensaje: 'Todos los campos son obligatorios' };
+        //return { ok: false, mensaje: 'Todos los campos son obligatorios' };
+        return { ok: false, mensaje: `Todos los campos son obligatorios` };
     }
 
     if (!validarCorreo(correo)) {
@@ -79,9 +80,8 @@ async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
             return { ok: false, mensaje: respuesta.mensaje || 'Error al crear el usuario' };
         }
         return { ok: true, mensaje: respuesta.mensaje, id: respuesta.id };
-    // eslint-disable-next-line no-unused-vars
-    } catch (error) {
-        return { ok: false, mensaje: 'Error al crear el usuario'};
+    } catch {
+        return { ok: false, mensaje: 'Error al crear el usuario' };
     }
 }
 
