@@ -93,4 +93,26 @@ describe('iniciarSesion', () => {
       mensaje: 'Correo inválido',
     });
   });
+
+  it('debería rechazar correos con espacios al inicio, al final o en medio', async () => {
+    const contrasenia = '12345678';
+
+    const correosConEspacios = [
+      ' correo@dominio.com', // Espacios al inicio
+      'correo@dominio.com ', // Espacios al final
+      'correo @dominio.com', // Espacios en medio
+      'correo@ dominio.com', // Espacios en medio
+      'correo@dominio .com', // Espacios en medio
+    ];
+
+    for (const correo of correosConEspacios) {
+      const resultado = await iniciarSesion(correo, contrasenia);
+
+      expect(iniciarSesionAPIMock).not.toHaveBeenCalled(); // No debería llamar a la API
+      expect(resultado).toEqual({
+        ok: false,
+        mensaje: 'Correo inválido',
+      });
+    }
+  });
 });
