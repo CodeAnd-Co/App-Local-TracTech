@@ -52,7 +52,6 @@ function validarCorreo(correo) {
  */
 async function crearUsuario({ nombre, correo, contrasenia, idRolFK }) {
     if (!nombre || !correo || !contrasenia || !idRolFK) {
-        //return { ok: false, mensaje: 'Todos los campos son obligatorios' };
         return { ok: false, mensaje: `Todos los campos son obligatorios` };
     }
 
