@@ -49,7 +49,7 @@ describe('iniciarSesion', () => {
     expect(iniciarSesionAPIMock).not.toHaveBeenCalled(); // No debería llamar a la API
     expect(resultado).toEqual({
       ok: false,
-      mensaje: 'Correo inválido',
+      mensaje: 'Correo o contraseña incorrectos',
     });
   });
 
@@ -90,7 +90,7 @@ describe('iniciarSesion', () => {
     expect(iniciarSesionAPIMock).not.toHaveBeenCalled(); // No debería llamar a la API
     expect(resultado).toEqual({
       ok: false,
-      mensaje: 'Correo inválido',
+      mensaje: 'Correo o contraseña incorrectos',
     });
   });
 
@@ -111,7 +111,7 @@ describe('iniciarSesion', () => {
       expect(iniciarSesionAPIMock).not.toHaveBeenCalled(); // No debería llamar a la API
       expect(resultado).toEqual({
         ok: false,
-        mensaje: 'Correo inválido',
+        mensaje: 'Correo o contraseña incorrectos',
       });
     }
   });

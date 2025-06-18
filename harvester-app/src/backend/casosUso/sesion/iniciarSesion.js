@@ -48,7 +48,7 @@ function sanitizarEntrada(correo, contrasenia) {
  */
 async function iniciarSesion(correo, contrasenia) {
   if (!validarCorreo(correo)) {
-    return { ok: false, mensaje: 'Correo inválido' };
+    return { ok: false, mensaje: 'Correo o contraseña incorrectos' };
   }
 
   if (!contrasenia || contrasenia.trim() === '') {
