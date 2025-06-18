@@ -18,12 +18,16 @@ const { PERMISOS } = require(`${rutaBase}/src/framework/utils/scripts/middleware
  */
 async function manejarInicioSesion() {
   // Obtener valores de los campos de entrada
-  const correo = entradaCorreo.value;
+  const correo = entradaCorreo.value.trim();
   const contrasenia = entradaContrasenia.value;
 
   // Validar que ambos campos estén completos
   if (!correo || !contrasenia) {
     mostrarAlerta('Campos incompletos', 'Por favor, completa todos los campos.', 'warning');
+    return;
+  }
+  if (/\s/.test(correo)) {
+    mostrarAlerta('Correo inválido', 'El correo no debe contener espacios.', 'warning');
     return;
   }
 
@@ -163,7 +167,10 @@ function actualizarCaracteres(campoEntrada) {
 document.addEventListener('DOMContentLoaded', () => {
   // Configurar eventos para validación en tiempo real
   if (entradaCorreo) {
-    entradaCorreo.addEventListener('input', () => actualizarCaracteres(entradaCorreo));
+    entradaCorreo.addEventListener('input', () => {
+      entradaCorreo.value = entradaCorreo.value.replace(/\s/g, '');
+      actualizarCaracteres(entradaCorreo)
+    });
     
     // Prevenir espacios en el campo de correo
     entradaCorreo.addEventListener('keydown', (evento) => {
