@@ -1,3 +1,6 @@
+// RF14 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf14/
+// RF16 Administrador modifica usuario - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf16/
+
 const validator = require('validator');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 

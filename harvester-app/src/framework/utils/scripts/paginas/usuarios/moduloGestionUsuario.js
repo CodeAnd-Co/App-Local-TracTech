@@ -1,8 +1,8 @@
-// RF40 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF40
-// RF41 Administrador modifica usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41
-// RF43 Administrador elimina usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF43
-// RF41 Administrador consulta usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF41 
-// RF39 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF39
+// RF13 Administrador Busca usuario - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf13/
+// RF14 Administrador crea usuario - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf14/
+// RF15 Administrador consulta usuarios - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf15/
+// RF16 Administrador modifica usuario - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf16/
+// RF17 Administrador elimina usuario - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf17/
 
 const { obtenerUsuarios: obtenerUsuariosCU } = require(`${rutaBase}src/backend/casosUso/usuarios/consultarUsuarios.js`);
 const { eliminarUsuario: eliminarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/eliminarUsuario`);

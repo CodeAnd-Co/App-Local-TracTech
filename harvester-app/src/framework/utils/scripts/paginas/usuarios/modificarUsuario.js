@@ -1,3 +1,5 @@
+// RF16 Administrador modifica usuario - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/rf16/
+
 const { modificarUsuario: modificarUsuarioCU } = require(`${rutaBase}src/backend/casosUso/usuarios/modificarUsuario.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const { validarModificarUsuario } = require(`${rutaBase}src/framework/utils/scripts/paginas/usuarios/validacionesUsuario.js`);
