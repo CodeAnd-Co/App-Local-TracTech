@@ -1,4 +1,4 @@
-// RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
+// RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/RF2
 
 // Seleccionar elementos del DOM necesarios
 const botonAbrirInfo = document.querySelector('#btn-abrir-info');
@@ -26,7 +26,7 @@ async function manejarInicioSesion() {
     mostrarAlerta('Campos incompletos', 'Por favor, completa todos los campos.', 'warning');
     return;
   }
-  
+
   try {
     // Obtener el ID del dispositivo antes del login para enviarlo al servidor
     const dispositivoID = obtenerID();

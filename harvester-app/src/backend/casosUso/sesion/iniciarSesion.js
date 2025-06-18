@@ -1,4 +1,4 @@
-// RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF2
+// RF2 Usuario registrado inicia sesión - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/RF2
 
 const validador = require('validator');
 const { iniciarSesion: iniciarSesionAPI } = require('../../domain/sesionAPI/sesionAPI');
@@ -10,17 +10,9 @@ const { iniciarSesion: iniciarSesionAPI } = require('../../domain/sesionAPI/sesi
  * @returns {boolean} `true` si el correo es válido, de lo contrario `false`.
  */
 function validarCorreo(correo) {
-  // Eliminar espacios al inicio y al final
-  const correoTrim = correo.trim();
-
-  // Rechazar si contiene espacios en cualquier parte
-  if (/\s/.test(correoTrim)) { 
-    return false;
-  }
-
   // Validar formato de correo electrónico
-  const regex = /^[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-  return regex.test(correoTrim);
+  const regex = /^(?!.*\s)[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+  return regex.test(correo);
 }
 
 /**
