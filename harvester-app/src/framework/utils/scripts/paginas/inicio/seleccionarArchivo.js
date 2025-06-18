@@ -113,7 +113,7 @@ function botonCargar() {
                             elementoBotonCargar.textContent = localStorage.getItem('nombreArchivoExcel') ? 'Cambiar Archivo' : 'Cargar Archivo';
                             mostrarAlerta('Selección Cancelada', 'No se cargó ningún archivo', 'warning');
                         }
-                    }, 100);
+                    }, 150);
                     // Remover el listener después de usarlo
                     window.removeEventListener('focus', manejarFoco);
                 };
