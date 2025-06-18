@@ -54,6 +54,10 @@ async function iniciarSesion(correo, contrasenia) {
     return { ok: false, mensaje: 'Correo inválido' };
   }
 
+  if (!contrasenia || contrasenia.trim() === '') {
+    return { ok: false, mensaje: 'La contraseña no puede estar vacía' };
+  }
+
   // Sanitizar la entrada del correo y la contraseña
   const { correoSanitizado, contraseniaSanitizada } = sanitizarEntrada(correo, contrasenia);
 
