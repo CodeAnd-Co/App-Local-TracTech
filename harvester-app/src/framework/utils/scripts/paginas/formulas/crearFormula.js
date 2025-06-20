@@ -750,22 +750,43 @@ function popularDropdown(elementoSeleccionado) {
     });
 }
 
-function tamanioAnidacion(){
-    let iterador = 0;
-    const anidaciones = document.querySelectorAll('.contenedor-funciones-anidadas');
+/**
+ * Calcula cuántos elementos con la clase
+ * `.contenedor-funciones-anidadas` contienen al menos un hijo con la
+ * clase `.fila-anidada`.
+ *
+ * @function tamanioAnidacion
+ * @returns {number} Número de contenedores que tienen al menos una fila anidada.
+ */
+function tamanioAnidacion() {
+  let iterador = 0;
+  const anidaciones = document.querySelectorAll('.contenedor-funciones-anidadas');
 
-    anidaciones.forEach(anidado => {
-        const filas = anidado.querySelectorAll('.fila-anidada');
-        if (filas.length > 0) {
-            iterador += 1;
-        }
-    });
+  anidaciones.forEach(anidado => {
+    const filas = anidado.querySelectorAll('.fila-anidada');
+    if (filas.length > 0) {
+      iterador += 1;
+    }
+  });
 
-    return iterador
+  return iterador;
 }
 
+/**
+ * Actualiza el contador visual de anidaciones en el elemento con
+ * `id="contadorAnidaciones"`.
+ *
+ * - Llama a {@link tamanioAnidacion} para obtener el número actual de anidaciones.
+ * - Lee el límite máximo desde el atributo `maxlength` del mismo elemento.
+ * - Muestra la relación `actual / límite`.
+ * - Cambia el color del texto a rojo cuando quedan menos de 3 unidades
+ *   para llegar al límite; en caso contrario, usa gris.
+ *
+ * @function contadorAnidacion
+ * @returns {void}
+ */
 function contadorAnidacion() {
-  const iterador = tamanioAnidacion()
+  const iterador = tamanioAnidacion();
 
   const elementoContadorAnidaciones = document.getElementById('contadorAnidaciones');
   const limite = parseInt(elementoContadorAnidaciones.getAttribute('maxlength'), 10);
@@ -774,3 +795,4 @@ function contadorAnidacion() {
   elementoContadorAnidaciones.textContent = `${iterador}/${limite} Anidaciones`;
   elementoContadorAnidaciones.style.color = caracteresRestantes < 3 ? '#e74c3c' : '#7f8c8d';
 }
+
