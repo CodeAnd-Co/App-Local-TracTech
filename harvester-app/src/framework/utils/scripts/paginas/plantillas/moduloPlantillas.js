@@ -8,11 +8,13 @@
  * Importa la función `plantillas` desde la capa de dominio para obtener las plantillas disponibles.
  * @module plantillasAPI
  */
-const { plantillas } = require('../../backend/domain/plantillasAPI/plantillasAPI.js');
-const { eliminarPlantillas } = require('../../backend/domain/plantillasAPI/eliminarPlantillasAPI.js');
-const { seleccionarPlantillas } = require('../../backend/domain/plantillasAPI/seleccionarPlantillaAPI.js');
-const { mostrarAlertaBorrado } = require('../../../../vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js');
+const { plantillas } = require(`${rutaBase}/src/backend/domain/plantillasAPI/plantillasAPI.js`);
+const { eliminarPlantillas } = require(`${rutaBase}/src/backend/domain/plantillasAPI/eliminarPlantillasAPI.js`);
+const { seleccionarPlantillas } = require(`${rutaBase}/src/backend/domain/plantillasAPI/seleccionarPlantillaAPI.js`);
+const { mostrarAlertaBorrado } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
+
+inicializarModuloPlantillas();
 
 /**
  * Inicializa el módulo de plantillas, encargándose de:
@@ -26,11 +28,17 @@ const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/com
  */
 async function inicializarModuloPlantillas() {
     try {
+
+        console.log(await plantillas())
+
+
         /** @type {HTMLElement|null} Contenedor de plantillas */
         const contenedor = document.getElementById('contenedorId');
 
         /** @type {Object} Respuesta del backend con las plantillas */
         const respuesta = await plantillas();
+
+        console.log(respuesta);
 
         if(respuesta?.plantillas){
             for (const res in respuesta.plantillas) {
