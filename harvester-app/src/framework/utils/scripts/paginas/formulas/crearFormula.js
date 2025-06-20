@@ -314,76 +314,88 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
  */
 // eslint-disable-next-line no-unused-vars
 function agregarFuncionAnidada(boton) {
-    // Deshabilitar el botón inmediatamente para evitar múltiples clics
-    boton.disabled = true;
-    boton.textContent = 'Función añadida';
-    
-    const argumentoContenido = boton.closest('.argumentoContenido');
-    const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
+    const elementoContadorAnidaciones = document.getElementById('contadorAnidaciones');
+    const limite = parseInt(elementoContadorAnidaciones.getAttribute('maxlength'), 10);
 
-    const contador = argumentoContenido.parentElement?.querySelector('.contador-caracteres');
-    contador.textContent = ``;
-    
-    // Deshabilitar el input de texto del argumento padre y agregar carácter invisible
-    const inputPadre = argumentoContenido.querySelector('input[type="text"]');
-    if (inputPadre) {
-        inputPadre.value = '\u200B'; // Zero-width space
-        inputPadre.disabled = true;
-        inputPadre.style.backgroundColor = '#f0f0f0';
-    }
-    
-    const filaAnidada = document.createElement('div');
-    filaAnidada.classList.add('fila-anidada');
-    
-    const seleccionarFuncion = document.createElement('select');
-    seleccionarFuncion.classList.add('selectorFuncionAnidada');
-    seleccionarFuncion.innerHTML = `
-        <option value=''>Seleccionar función anidada</option>
-        <option value='IF'>SI</option>
-        <option value='IFERROR'>SI.ERROR</option>
-        <option value='VLOOKUP'>BUSCARV</option>
-        <option value='ARITHMETIC'>Operación Aritmética</option>
-    `;
-    
-    filaAnidada.appendChild(seleccionarFuncion);
-    contenedorAnidado.appendChild(filaAnidada);
+    const iterador = tamanioAnidacion()
+    if(iterador < limite){
+        // Deshabilitar el botón inmediatamente para evitar múltiples clics
+        boton.disabled = true;
+        boton.textContent = 'Función añadida';
+        
+        const argumentoContenido = boton.closest('.argumentoContenido');
+        const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
 
-    let eliminarBotonAnidado = filaAnidada.querySelector('.botonEliminarAnidado');
-
-    if (!eliminarBotonAnidado) {
-        eliminarBotonAnidado = document.createElement('button');
-        eliminarBotonAnidado.textContent = 'Eliminar función';
-        eliminarBotonAnidado.classList.add('botonEliminarAnidado');
-        eliminarBotonAnidado.onclick = () => {
-            // Rehabilitar el input padre cuando se elimina la función anidada
-            if (inputPadre) {
-                inputPadre.value = '';
-                inputPadre.disabled = false;
-                inputPadre.style.backgroundColor = '';
-            }
-            // Rehabilitar el botón "Anidar Función" cuando se elimina la función anidada
-            boton.disabled = false;
-            boton.textContent = 'Anidar Función';
-            filaAnidada.remove();
-        };
-        filaAnidada.appendChild(eliminarBotonAnidado);
-    }
-    
-    seleccionarFuncion.onchange = (evento) => {
-        const valorSeleccionado = evento.target.value;
-        if (valorSeleccionado) {
-            const divAnidadoExistente = filaAnidada.querySelector('.funciones-anidadas');
-            if (divAnidadoExistente) {
-                divAnidadoExistente.remove();
-            }
-            
-            const divAnidado = document.createElement('div');
-            divAnidado.classList.add('funciones-anidadas');
-            filaAnidada.appendChild(divAnidado);
-            
-            definirEstructura(evento.target, divAnidado);
+        const contador = argumentoContenido.parentElement?.querySelector('.contador-caracteres');
+        contador.textContent = ``;
+        
+        // Deshabilitar el input de texto del argumento padre y agregar carácter invisible
+        const inputPadre = argumentoContenido.querySelector('input[type="text"]');
+        if (inputPadre) {
+            inputPadre.value = '\u200B'; // Zero-width space
+            inputPadre.disabled = true;
+            inputPadre.style.backgroundColor = '#f0f0f0';
         }
-    };
+        
+        const filaAnidada = document.createElement('div');
+        filaAnidada.classList.add('fila-anidada');
+        
+        const seleccionarFuncion = document.createElement('select');
+        seleccionarFuncion.classList.add('selectorFuncionAnidada');
+        seleccionarFuncion.innerHTML = `
+            <option value=''>Seleccionar función anidada</option>
+            <option value='IF'>SI</option>
+            <option value='IFERROR'>SI.ERROR</option>
+            <option value='VLOOKUP'>BUSCARV</option>
+            <option value='ARITHMETIC'>Operación Aritmética</option>
+        `;
+        
+        filaAnidada.appendChild(seleccionarFuncion);
+        contenedorAnidado.appendChild(filaAnidada);
+
+        let eliminarBotonAnidado = filaAnidada.querySelector('.botonEliminarAnidado');
+
+        if (!eliminarBotonAnidado) {
+            eliminarBotonAnidado = document.createElement('button');
+            eliminarBotonAnidado.textContent = 'Eliminar función';
+            eliminarBotonAnidado.classList.add('botonEliminarAnidado');
+            eliminarBotonAnidado.onclick = () => {
+                // Rehabilitar el input padre cuando se elimina la función anidada
+                if (inputPadre) {
+                    inputPadre.value = '';
+                    inputPadre.disabled = false;
+                    inputPadre.style.backgroundColor = '';
+                }
+                // Rehabilitar el botón "Anidar Función" cuando se elimina la función anidada
+                boton.disabled = false;
+                boton.textContent = 'Anidar Función';
+                filaAnidada.remove();
+                contadorAnidacion();
+            };
+            filaAnidada.appendChild(eliminarBotonAnidado);
+        }
+        
+        seleccionarFuncion.onchange = (evento) => {
+            const valorSeleccionado = evento.target.value;
+            if (valorSeleccionado) {
+                const divAnidadoExistente = filaAnidada.querySelector('.funciones-anidadas');
+                if (divAnidadoExistente) {
+                    divAnidadoExistente.remove();
+                }
+                
+                const divAnidado = document.createElement('div');
+                divAnidado.classList.add('funciones-anidadas');
+                filaAnidada.appendChild(divAnidado);
+                
+                definirEstructura(evento.target, divAnidado);
+            }
+        };
+
+        contadorAnidacion();
+        return
+    }
+    
+    mostrarAlerta('Error', `La fórmula alcanzó las ${iterador}/${limite} anidaciones, si quieres anidar otra formula porfavor borra alguna otra.`, 'error');
 }
 
 /**
@@ -737,3 +749,50 @@ function popularDropdown(elementoSeleccionado) {
         }
     });
 }
+
+/**
+ * Calcula cuántos elementos con la clase
+ * `.contenedor-funciones-anidadas` contienen al menos un hijo con la
+ * clase `.fila-anidada`.
+ *
+ * @function tamanioAnidacion
+ * @returns {number} Número de contenedores que tienen al menos una fila anidada.
+ */
+function tamanioAnidacion() {
+  let iterador = 0;
+  const anidaciones = document.querySelectorAll('.contenedor-funciones-anidadas');
+
+  anidaciones.forEach(anidado => {
+    const filas = anidado.querySelectorAll('.fila-anidada');
+    if (filas.length > 0) {
+      iterador += 1;
+    }
+  });
+
+  return iterador;
+}
+
+/**
+ * Actualiza el contador visual de anidaciones en el elemento con
+ * `id="contadorAnidaciones"`.
+ *
+ * - Llama a {@link tamanioAnidacion} para obtener el número actual de anidaciones.
+ * - Lee el límite máximo desde el atributo `maxlength` del mismo elemento.
+ * - Muestra la relación `actual / límite`.
+ * - Cambia el color del texto a rojo cuando quedan menos de 3 unidades
+ *   para llegar al límite; en caso contrario, usa gris.
+ *
+ * @function contadorAnidacion
+ * @returns {void}
+ */
+function contadorAnidacion() {
+  const iterador = tamanioAnidacion();
+
+  const elementoContadorAnidaciones = document.getElementById('contadorAnidaciones');
+  const limite = parseInt(elementoContadorAnidaciones.getAttribute('maxlength'), 10);
+
+  const caracteresRestantes = limite - iterador;
+  elementoContadorAnidaciones.textContent = `${iterador}/${limite} Anidaciones`;
+  elementoContadorAnidaciones.style.color = caracteresRestantes < 3 ? '#e74c3c' : '#7f8c8d';
+}
+
