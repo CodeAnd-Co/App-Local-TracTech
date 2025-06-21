@@ -3,14 +3,13 @@
 // RF11 - Usuario elimina gráfica en reporte - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF11/
 // RF30 - Usuario carga formula - https://codeandco-wiki.netlify.app/docs/next/proyectos/tractores/documentacion/requisitos/RF30
 const Chart = require('chart.js/auto');
-const ChartDataLabels = require('chartjs-plugin-datalabels');
-Chart.register(ChartDataLabels);
 const { limpiarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/limpiarGrafica.js`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal.js`);
 const { eliminarCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/eliminarCuadroFormulas.js`);
 const { crearCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/crearCuadroFormulas.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
+const { crearGrafica, verificarExcesoEtiquetas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`)
 
 
 /* eslint-disable no-unused-vars */
@@ -252,8 +251,11 @@ function formatearEtiquetaUniversal(value, context, tipo) {
  * @returns {Chart} - Nueva instancia de la gráfica
  */
 function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
-  const canvas = graficaExistente.canvas;
-  const contexto = canvas.getContext('2d');
+  const canvasAntiguo = graficaExistente.canvas;
+  const nuevoCanvas = document.createElement('canvas');
+  canvasAntiguo.parentNode.replaceChild(nuevoCanvas, canvasAntiguo);
+
+  const contexto = nuevoCanvas.getContext('2d');
   
   // Preservar información importante
   const tituloActual = graficaExistente.options.plugins.title.text;
@@ -266,6 +268,7 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
   
   // Crear nueva gráfica
   const nuevaGrafica = crearGrafica(contexto, nuevoTipo);
+  console.log(nuevaGrafica.options.plugins.datalabels.display)
   
   // Si hay datos originales, reprocesarlos para el nuevo tipo
   if (datosOriginales) {
@@ -278,222 +281,17 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
     nuevaGrafica.data.labels = datosRebuild.labels;
     nuevaGrafica.data.datasets[0].data = datosRebuild.valores;
     nuevaGrafica.data.datasets[0].label = datosOriginales.nombre;
+    nuevaGrafica.data.datasets[0].type = nuevoTipo; 
   }
   
   // Restaurar título
   nuevaGrafica.options.plugins.title.text = tituloActual;
-  
-  // CONFIGURAR ETIQUETAS SEGÚN EL NUEVO TIPO DE GRÁFICA
-  nuevaGrafica.options.plugins.datalabels.display = nuevoTipo !== 'line';
   
   // Actualizar
   nuevaGrafica.update();
   
   verificarExcesoEtiquetas(nuevaGrafica);
   return nuevaGrafica;
-}
-
-/**
- * Crea una gráfica utilizando Chart.js.
- * 
- * @param {CanvasRenderingContext2D} contexto - 2dcontext del canvas donde se dibujará la gráfica.
- * @param {String} tipo - String que representa el tipo de gráfica (ej. 'line', 'bar', 'pie', 'doughnut', 'radar', 'polarArea').
- * @param {Int[]} color - Arreglo de 3 enteros que representan el color RGB de la gráfica.
- * @returns {Chart} - Instancia de la gráfica creada.
- */
-function crearGrafica(contexto, tipo, color) {
-  if (!contexto) return;
-
-  if (!color) {
-    color = [166, 25, 48];
-  }
-
-  if (!tipo) {
-    tipo = 'line';
-  }
-
-  const colores = generarDegradadoHaciaBlanco(color, 7)
-  color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-
-  const grafico = new Chart(contexto, {
-    type: tipo,
-    data: {
-      labels: ['Sin datos'], // Etiqueta inicial más clara
-      datasets: [{
-        label: 'Datos',
-        backgroundColor: fondo => {
-          if (tipo == 'line' || tipo == 'radar') {
-            return color;
-          } else {
-            return colores[fondo.dataIndex % colores.length]; // Evitar errores de índice
-          }
-        },
-        borderColor: borde => {
-          if (tipo == 'line' || tipo == 'radar') {
-            return color;
-          } else {
-            return colores[borde.dataIndex % colores.length]; // Evitar errores de índice
-          }
-        },
-        data: [0] // Dato inicial más claro
-      }]
-    },
-    options: {
-      devicePixelRatio: 1.5,
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        title: { 
-          display: true,
-          text: 'Gráfica sin datos - Aplica una fórmula para ver resultados',
-          font: {
-            size: 14
-          }
-        },
-        tooltip: {
-          enabled: true, // Habilitar tooltips para mejor UX
-        },
-        legend: {
-          display: true,
-          position: 'top',
-          labels: {
-            generateLabels: chart => [
-              {
-                text: chart.data.datasets[0].label || 'Datos',
-                fillStyle: color,
-                strokeStyle: color,
-                fontColor: '#333'
-              }
-            ],
-          },
-        },
-        datalabels: {
-          // SOLO ocultar etiquetas en gráficas de línea, mostrar en todas las demás
-          display: (context) => {
-            const tipoGrafica = context.chart.config.type;
-            return tipoGrafica !== 'line'; // Ocultar SOLO en líneas
-          },
-          anchor: () => {
-            if (tipo == 'bar') {
-              return 'end';
-            } else {
-              return 'center';
-            }
-          },
-          align: () => {
-            if (tipo == 'bar') {
-              return 'top';
-            } else {
-              return 'center';
-            }
-          },
-          color: '#333',
-          font: {
-            size: 12, // Slightly smaller to fit more text
-            weight: 'bold'
-          },
-          backgroundColor: 'rgba(255, 255, 255, 0.9)', // More opaque background
-          borderColor: '#333',
-          borderRadius: 4,
-          borderWidth: 1,
-          padding: 6, // More padding for better readability
-          formatter: (value, context) => {
-            // Aplicar formato universal según el tipo de gráfica
-            return formatearEtiquetaUniversal(value, context, tipo);
-          },
-        }
-      },
-      scales: {
-         // eslint-disable-next-line id-length
-        x: { 
-          display: ['line', 'bar', 'radar'].includes(tipo),
-          ticks: { 
-            callback(valor){
-              const etiqueta = this.getLabelForValue(valor);
-              return etiqueta.length > 10 ? `${etiqueta.substring(0, 10)}...` : etiqueta; // Limitar longitud de etiquetas
-            },
-            color: '#646464',
-            maxRotation: 45,
-            minRotation: 0
-          }, 
-          // CONFIGURACIÓN MEJORADA DE GRID PARA EJE X - MÁS VISIBLE
-          grid: { 
-            display: ['line', 'bar'].includes(tipo), // Mostrar grid solo en líneas y barras
-            color: '#d0d0d0', // Color más oscuro para mejor visibilidad
-            lineWidth: 1,
-            drawBorder: true,
-            drawOnChartArea: true,
-            drawTicks: true,
-            // Añadir configuración adicional para mayor visibilidad
-            borderColor: '#999',
-            borderWidth: 2,
-            tickColor: '#d0d0d0'
-          },
-          title: {
-            display: true,
-            text: 'Categorías',
-            color: '#666'
-          }
-        },
-        // eslint-disable-next-line id-length
-        y: { 
-          display: ['line', 'bar', 'radar'].includes(tipo),
-          ticks: { 
-            color: '#646464',
-            beginAtZero: true
-          }, 
-          // CONFIGURACIÓN MEJORADA DE GRID PARA EJE Y - MÁS VISIBLE
-          grid: { 
-            display: ['line', 'bar'].includes(tipo), // Mostrar grid solo en líneas y barras
-            color: '#d0d0d0', // Color más oscuro para mejor visibilidad
-            lineWidth: 1,
-            drawBorder: true,
-            drawOnChartArea: true,
-            drawTicks: true,
-            // Añadir configuración adicional para mayor visibilidad
-            borderColor: '#999',
-            borderWidth: 2,
-            tickColor: '#d0d0d0'
-          },
-          title: {
-            display: true,
-            text: 'Valores',
-            color: '#666'
-          }
-        }
-      }
-    },
-  });
-
-  verificarExcesoEtiquetas(grafico);
-  return grafico;
-}
-
-/**
- * Crea un arreglo de colores en formato rgb que van desde el color dado hacia el blanco.
- * 
- * @param {Int[]} rgb - Arreglo de 3 enteros que representan el color RGB inicial.
- * @param {Int} pasos - Número de pasos para el degradado.
- * @returns {String[]} Arreglo de strings que representan los colores en formato rgb
- */
-function generarDegradadoHaciaBlanco(rgb, pasos) {
-  if (!rgb || rgb.length !== 3) {
-    return null;
-  }
-
-  if (pasos < 1) {
-    return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-  }
-  const [rojo, verde, azul] = rgb;
-
-  return Array.from({ length: pasos },
-    (__, indice) => {
-      const factorCambio = indice / (pasos);
-      const nuevoRojo = Math.round(rojo + (255 - rojo) * factorCambio);
-      const nuevoVerde = Math.round(verde + (255 - verde) * factorCambio);
-      const nuevoAzul = Math.round(azul + (255 - azul) * factorCambio);
-      return `rgb(${nuevoRojo}, ${nuevoVerde}, ${nuevoAzul})`;
-    });
 }
 
 /**
@@ -607,26 +405,6 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
   }
 }
 
-function verificarExcesoEtiquetas(grafica) {
-  const tipo = grafica.config.type;
-  const etiquetas = grafica.data.labels || [];
-
-  if (
-    ['bar', 'radar', 'pie', 'doughnut', 'polarArea'].includes(tipo) 
-    && etiquetas.length > 20
-  ) {
-    mostrarAlerta(
-      'AVISO.',
-      'La gráfica cuenta con más de 20 etiquetas, por lo que puede afectar su visualización e interpretación.',
-      'warning'
-    );
-  }
-}
-
-
-
 module.exports = { 
   agregarGrafica,
-  crearGrafica,
-
  };
