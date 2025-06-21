@@ -8,9 +8,6 @@ const {obtenerParametrosTractor } = require(`${rutaBase}/src/framework/utils/scr
 const { retirarDatos } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/retirarDatos.js`);
 const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`);
 const Chart = require('chart.js/auto');
-const ChartDataLabels = require('chartjs-plugin-datalabels');
-Chart.register(ChartDataLabels);
-
 
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
@@ -198,9 +195,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
             
             // CORRECCIÓN: Actualizar también la etiqueta del dataset
             graficaExistente.data.datasets[0].label = nombreFormula;
-    
-            // Configurar etiquetas: ocultar SOLO en gráficas de línea
-            graficaExistente.options.plugins.datalabels.display = tipoGrafica !== 'line';
     
             graficaExistente.update();
             
