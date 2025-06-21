@@ -13,7 +13,7 @@ const { crearGrafica, verificarExcesoEtiquetas } = require(`${rutaBase}/src/fram
 
 
 /* eslint-disable no-unused-vars */
- 
+
 // Variable global para almacenar las fórmulas consultadas
 const formulasDisponibles = JSON.parse(localStorage.getItem('formulasDisponibles')) || [];
 
@@ -51,7 +51,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   const idsTarjetasExistentes = Array.from(contenedor.querySelectorAll('.tarjeta-grafica'), (tarjeta) => {
     return parseInt(tarjeta.id, 10);
   });
-  
+
   let nuevaId;
 
   if (idsTarjetasExistentes.length > 0) {
@@ -68,7 +68,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   for (const tractor of tractores) {
     opcionesTractores += `<option value='${tractor}'>${tractor}</option>`;
   }
-  
+
   const limite = 30;
   tarjetaGrafica.id = nuevaId;
   tarjetaGrafica.innerHTML = `
@@ -112,19 +112,19 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   `;
 
   // Datos disponibles para fórmulas
-  const datos = localStorage.getItem('datosFiltradosExcel'); 
+  const datos = localStorage.getItem('datosFiltradosExcel');
   let columnas = [];
 
   // Cargar y parsear los datos del localStorage
   if (datos) {
     try {
       const datosParseados = JSON.parse(datos);
-      
+
       // Si es un objeto con hojas (estructura compleja)
       if (datosParseados && typeof datosParseados === 'object' && datosParseados.hojas) {
         window.datosExcelGlobal = datosParseados;
         window.datosGrafica = datosParseados.hojas[tractorSeleccionado];
-        
+
         // La primera fila contiene las columnas
         if (window.datosGrafica && window.datosGrafica.length > 0) {
           columnas = window.datosGrafica[0].slice(3); // Omitir las primeras 3 columnas
@@ -136,7 +136,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
             datosParseados
           }
         };
-        
+
         // La primera fila contiene las columnas
         if (datosParseados.length > 0) {
           columnas = datosParseados[0];
@@ -149,7 +149,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   // Actualizar la llamada en el event listener del botón de fórmulas
   tarjetaGrafica.querySelector('.boton-formulas').addEventListener('click', async () =>
-    await crearCuadroFormulas( nuevaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado));
+    await crearCuadroFormulas(nuevaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado));
 
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
@@ -175,7 +175,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
       const nuevaPosicion = Math.max(0, posicionCursor - 1);
       evento.target.setSelectionRange(nuevaPosicion, nuevaPosicion);
     }
-    
+
     modificarTitulo(graficaDiv, entradaTexto, tarjetaGrafica);
   });
 
@@ -193,7 +193,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     const botonAplicarFormula = document.querySelector('#btnAplicarFormula');
     tractorSeleccionado = selectorTractor.value;
 
-    if ( botonAplicarFormula ){
+    if (botonAplicarFormula) {
       await crearCuadroFormulas(nuevaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado)
     }
 
@@ -218,23 +218,23 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
  */
 function formatearEtiquetaUniversal(value, context, tipo) {
   const etiqueta = context.chart.data.labels[context.dataIndex];
-  
+
   // Para gráficas circulares Y DE BARRAS - SIEMPRE frecuencias con porcentajes/valores
   if (tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea') {
     const datos = context.chart.data.datasets[0].data;
     const valorTotal = datos.reduce((total, datapoint) => total + datapoint, 0);
-    
+
     if (valorTotal === 0) return '';
-    
+
     const porcentaje = ((value / valorTotal) * 100).toFixed(1);
     return `${etiqueta}\n${value} (${porcentaje}%)`;
   }
-  
+
   // Para gráficas de barras - solo mostrar categoría y frecuencia
   if (tipo === 'bar') {
     return `${etiqueta}: ${value}`;
   }
-  
+
   // Para gráficas lineales - Mostrar categoría y valor (aunque ya no se mostrarán las etiquetas)
   if (etiqueta === 'Resultado') {
     return `${etiqueta}\n${value}`;
@@ -256,40 +256,40 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
   canvasAntiguo.parentNode.replaceChild(nuevoCanvas, canvasAntiguo);
 
   const contexto = nuevoCanvas.getContext('2d');
-  
+
   // Preservar información importante
   const tituloActual = graficaExistente.options.plugins.title.text;
-  
+
   // Obtener datos originales si existen
   const datosOriginales = datosOriginalesFormulas.get(graficaId);
-  
+
   // Destruir gráfica actual
   graficaExistente.destroy();
-  
+
   // Crear nueva gráfica
   const nuevaGrafica = crearGrafica(contexto, nuevoTipo);
   console.log(nuevaGrafica.options.plugins.datalabels.display)
-  
+
   // Si hay datos originales, reprocesarlos para el nuevo tipo
   if (datosOriginales) {
     const datosRebuild = procesarDatosUniversal(
-      datosOriginales.datos, 
-      nuevoTipo, 
+      datosOriginales.datos,
+      nuevoTipo,
       datosOriginales.nombre
     );
-    
+
     nuevaGrafica.data.labels = datosRebuild.labels;
     nuevaGrafica.data.datasets[0].data = datosRebuild.valores;
     nuevaGrafica.data.datasets[0].label = datosOriginales.nombre;
-    nuevaGrafica.data.datasets[0].type = nuevoTipo; 
+    nuevaGrafica.data.datasets[0].type = nuevoTipo;
   }
-  
+
   // Restaurar título
   nuevaGrafica.options.plugins.title.text = tituloActual;
-  
+
   // Actualizar
   nuevaGrafica.update();
-  
+
   verificarExcesoEtiquetas(nuevaGrafica);
   return nuevaGrafica;
 }
@@ -305,11 +305,11 @@ function modificarTitulo(grafica, entradaTexto, tarjetaGrafica) {
   const caracteresUsados = entradaTexto.value.length;
   const limite = parseInt(entradaTexto.getAttribute('maxlength'), 10);
   const caracteresRestantes = limite - caracteresUsados;
-  
+
   const contadorCaracteres = tarjetaGrafica.querySelector('.contador-caracteres');
 
   contadorCaracteres.textContent = `${caracteresUsados}/${limite} caracteres`;
-  
+
   if (caracteresRestantes < 10) {
     contadorCaracteres.style.color = '#e74c3c';
   } else {
@@ -337,14 +337,14 @@ function modificarTipoGrafica(grafica, selectorTipo, tituloGrafica) {
   if (grafica) {
     const contexto = grafica.querySelector('canvas').getContext('2d');
     const graficaOriginal = Chart.getChart(contexto);
-    
+
     if (graficaOriginal) {
       // Obtener ID de la gráfica desde el contenedor
       const graficaId = parseInt(grafica.id.replace('previsualizacion-grafica-', ''));
-      
+
       // Usar la función universal de actualización
       const nuevaGrafica = actualizarGraficaConTipo(graficaId, selectorTipo.value, graficaOriginal);
-      
+
       // Aplicar el título
       nuevaGrafica.options.plugins.title.text = tituloGrafica;
       nuevaGrafica.update();
@@ -405,6 +405,6 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
   }
 }
 
-module.exports = { 
+module.exports = {
   agregarGrafica,
- };
+};

@@ -22,14 +22,14 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
 
   const contexto = canvas.getContext('2d');
   const graficaExistente = Chart.getChart(contexto);
-  
+
   if (!graficaExistente) {
     return;
   }
 
   // Obtener la hoja seleccionada del localStorage
   const datos = localStorage.getItem('datosFiltradosExcel');
-  
+
   if (!datos) {
     mostrarAlerta('Error', 'No hay datos cargados para mostrar en la gráfica.', 'error');
     return;
@@ -37,10 +37,10 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
 
   try {
     let datosHoja = null;
-    
+
     // Parsear los datos del localStorage
     const datosParseados = JSON.parse(datos);
-    
+
     // Determinar qué hoja usar
     if (tractorSeleccionado && tractorSeleccionado.trim() !== '') {
       // Usar la hoja seleccionada específica
@@ -71,7 +71,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     // Encontrar el índice de la columna
     const encabezados = datosHoja[0];
     const indiceColumna = encabezados.indexOf(nombreColumna);
-    
+
     if (indiceColumna === -1) {
       mostrarAlerta('Error', `No se encontró la columna "${nombreColumna}" en la hoja "${tractorSeleccionado || 'seleccionada'}".`, 'error');
       return;
@@ -79,7 +79,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
 
     // Extraer los datos de la columna (omitiendo el encabezado)
     const datosColumna = datosHoja.slice(1).map(fila => fila[indiceColumna]);
-    
+
     // GUARDAR DATOS ORIGINALES DE LA COLUMNA
     datosOriginalesFormulas.set(graficaId, {
       datos: datosColumna,
@@ -89,7 +89,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     });
 
     const tipoGraficaActual = graficaExistente.config.type;
-    
+
     // Usar el procesamiento universal
     const datosRebuild = procesarDatosUniversal(datosColumna, tipoGraficaActual, nombreColumna);
 
@@ -99,7 +99,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     graficaExistente.data.labels = datosRebuild.labels;
     graficaExistente.data.datasets[0].data = datosRebuild.valores;
     graficaExistente.data.datasets[0].label = nombreColumna;
-    
+
     graficaExistente.update();
 
     const tipo = graficaExistente.config.type;
@@ -122,5 +122,5 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
 }
 
 module.exports = {
-    actualizarGraficaConColumna
+  actualizarGraficaConColumna
 };
