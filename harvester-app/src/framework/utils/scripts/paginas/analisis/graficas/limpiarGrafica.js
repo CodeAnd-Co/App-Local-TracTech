@@ -50,9 +50,6 @@ function limpiarGrafica(graficaId, datosOriginalesFormulas) {
         graficaExistente.options.plugins.title.text = 'Gráfica sin datos - Aplica una fórmula para ver resultados';
       }
   
-      // Configurar etiquetas: ocultar según el tipo de gráfica
-      const tipoActual = graficaExistente.config.type;
-      graficaExistente.options.plugins.datalabels.display = tipoActual !== 'line';
       graficaExistente.options.plugins.title.display = false;
   
       // Actualizar la gráfica

@@ -1,8 +1,6 @@
 const Chart = require('chart.js/auto');
-const ChartDataLabels = require('chartjs-plugin-datalabels');
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-Chart.register(ChartDataLabels);
 
 /**
  * Actualiza la gráfica con los datos de una columna específica.
@@ -102,17 +100,13 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     graficaExistente.data.datasets[0].data = datosRebuild.valores;
     graficaExistente.data.datasets[0].label = nombreColumna;
     
-    // Configurar etiquetas: ocultar SOLO en gráficas de línea
-    const tipoActual = graficaExistente.config.type;
-    graficaExistente.options.plugins.datalabels.display = tipoActual !== 'line';
-    
     graficaExistente.update();
 
     const tipo = graficaExistente.config.type;
     const etiquetas = graficaExistente.data.labels || [];
 
     if (
-      ['bar', 'radar', 'pie', 'doughnut', 'polarArea'].includes(tipo)
+      ['bar', 'pie', 'doughnut', 'polarArea'].includes(tipo)
       && etiquetas.length > 20
     ) {
       mostrarAlerta(
