@@ -19,7 +19,7 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica) {
   }
 
   // Para gráficas circulares Y DE BARRAS: SIEMPRE usar frecuencias (agrupamiento por categoría)
-  if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut' || tipoGrafica === 'polarArea' || tipoGrafica === 'bar') {
+  if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut' || tipoGrafica === 'polarArea' || tipoGrafica === 'bar' || tipoGrafica === 'radar') {
     const frecuencias = {};
     datosLimpios.forEach(valor => {
       const clave = String(valor);
