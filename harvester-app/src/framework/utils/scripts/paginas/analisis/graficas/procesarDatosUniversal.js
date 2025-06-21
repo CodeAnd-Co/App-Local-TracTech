@@ -11,7 +11,7 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica) {
   }
 
   // Filtrar valores vacíos, null o undefined
-  const datosLimpios = datosOriginales.filter(valor => 
+  const datosLimpios = datosOriginales.filter(valor =>
     valor !== null && valor !== undefined && valor !== '');
 
   if (datosLimpios.length === 0) {
@@ -19,13 +19,13 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica) {
   }
 
   // Para gráficas circulares Y DE BARRAS: SIEMPRE usar frecuencias (agrupamiento por categoría)
-  if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut' || tipoGrafica === 'polarArea' || tipoGrafica === 'bar') {
+  if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut' || tipoGrafica === 'polarArea' || tipoGrafica === 'bar' || tipoGrafica === 'radar') {
     const frecuencias = {};
     datosLimpios.forEach(valor => {
       const clave = String(valor);
       frecuencias[clave] = (frecuencias[clave] || 0) + 1;
     });
-    
+
     return {
       labels: Object.keys(frecuencias),
       valores: Object.values(frecuencias)
@@ -33,13 +33,13 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica) {
   }
 
   // Para gráficas lineales y radar - usar filas numeradas SOLO si son números diferentes
-  const todosNumeros = datosLimpios.every(valor => 
+  const todosNumeros = datosLimpios.every(valor =>
     !isNaN(parseFloat(valor)) && isFinite(valor));
 
   if (todosNumeros) {
     // Si son números, verificar si todos son iguales
     const valoresUnicos = [...new Set(datosLimpios)];
-    
+
     if (valoresUnicos.length === 1) {
       // Si todos son iguales, mostrar el valor único
       return {
@@ -61,7 +61,7 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica) {
       const clave = String(valor);
       frecuencias[clave] = (frecuencias[clave] || 0) + 1;
     });
-    
+
     return {
       labels: Object.keys(frecuencias),
       valores: Object.values(frecuencias)
@@ -70,5 +70,5 @@ function procesarDatosUniversal(datosOriginales, tipoGrafica) {
 }
 
 module.exports = {
-    procesarDatosUniversal
+  procesarDatosUniversal
 };
