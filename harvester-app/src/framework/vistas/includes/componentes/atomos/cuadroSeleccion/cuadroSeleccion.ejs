@@ -1,0 +1,31 @@
+<%
+  var id = typeof id !== 'undefined' ? id : '';
+  var clasesExtra = typeof clasesExtra !== 'undefined' ? clasesExtra : '';
+  var paddingInferior = typeof paddingInferior !== 'undefined' ? paddingInferior : '';
+  var paddingSuperior = typeof paddingSuperior !== 'undefined' ? paddingSuperior : '';
+  var fondo = typeof fondo !== 'undefined' ? fondo : 'fondo-gris'; // default al fondo original
+  var sombra = typeof sombra !== 'undefined' ? sombra : '';
+  var alinearContenido = typeof alinearContenido !== 'undefined' ? alinearContenido : 'alinear-inicio';
+  var gap = typeof gap !== 'undefined' ? gap : 'gap-md';
+%>
+
+<link href='<%= rutaBase %>src/framework/vistas/includes/componentes/atomos/cuadroSeleccion/cuadroSeleccion.css' rel='stylesheet' />
+
+<div 
+  id="<%= id %>" 
+  class="cuadro-seleccion <%= fondo %> <%= sombra %> <%= alinearContenido %> <%= gap %> mb-<%= paddingInferior %> mt-<%= paddingSuperior %> <%= clasesExtra %>">
+  <%- contenido %>
+</div>
+
+<% /*
+  Parámetros opcionales:
+  - id: 'cuadro-distribuidor'
+  - contenido: bloque HTML interno o includes
+  - paddingSuperior: '16'
+  - paddingInferior: '16'
+  - fondo: 'fondo-gris', 'fondo-claro'
+  - sombra: 'sombra'
+  - alinearContenido: 'alinear-inicio', 'alinear-centro'
+  - gap: 'gap-sm', 'gap-md', 'gap-lg'
+  - clasesExtra: clases adicionales personalizadas
+*/ %>

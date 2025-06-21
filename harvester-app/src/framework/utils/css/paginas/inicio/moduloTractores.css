@@ -96,27 +96,13 @@ input:focus {
   border: none;
 }
 
-.distribuidores-contenido {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
-}
-.tractores-contenido {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  align-self: stretch;
-  flex-shrink: 0;
-  position: relative;
-}
+.distribuidores-contenido,
+.tractores-contenido,
 .columnas-contenido {
+  max-height: 300px; /* Ajusta según lo que necesites */
+  overflow-y: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #999 transparent; /* Firefox */
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -125,6 +111,20 @@ input:focus {
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+}
+
+/* Estilo para scroll en navegadores WebKit (Chrome, Safari) */
+.distribuidores-contenido::-webkit-scrollbar,
+.tractores-contenido::-webkit-scrollbar,
+.columnas-contenido::-webkit-scrollbar {
+  width: 6px;
+}
+
+.distribuidores-contenido::-webkit-scrollbar-thumb,
+.tractores-contenido::-webkit-scrollbar-thumb,
+.columnas-contenido::-webkit-scrollbar-thumb {
+  background-color: #999;
+  border-radius: 4px;
 }
 .columna-nombre {
   background: #ffffff;
