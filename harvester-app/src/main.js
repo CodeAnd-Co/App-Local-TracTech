@@ -7,7 +7,7 @@ const { obtenerID } = require('./backend/servicios/generadorID');
 const { PERMISOS } = require('./framework/utils/scripts/middleware/auth');
 const os = require('os');
 
-const INTERVALOTIEMPO = 120000; // 2 minutos en milisegundos
+const INTERVALOTIEMPO = 60000; // 1 minuto en milisegundos
 
 // Comprobar si la aplicación se está ejecutando en modo de instalación de Squirrel
 // y salir si es así. Esto es necesario para evitar que la aplicación se inicie
@@ -58,7 +58,7 @@ function iniciarVerificacionPeriodica() {
         clearInterval(app.verificacionIntervalo);
     }
     
-    // Verificar cada 2 minutos solo para usuarios autenticados
+    // Verificar solo para usuarios autenticados
     const verificacionIntervalo = setInterval(async () => {
         await verificarEstadoUsuarioAutenticado();
     }, INTERVALOTIEMPO);
