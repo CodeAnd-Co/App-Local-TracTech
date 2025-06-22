@@ -85,11 +85,15 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
       </select>
       <img class='type' src='${rutaBase}/src/framework/utils/iconos/GraficaBarras.svg' alt='Icono Gráfica' />
     </div>
-    <div class='titulo-texto'>
-      <select class='tipo-texto tractor-grafica'>
-        ${opcionesTractores}
-      </select>
-      <img class='type' src='${rutaBase}/src/framework/utils/iconos/GraficaBarras.svg' alt='Icono Gráfica' />
+    <div class='select-tractores'>
+      <div class='titulo-texto' id='tractor-grafica'>
+        <select class='tipo-texto tractor-grafica'>
+          ${opcionesTractores}
+        </select>
+      </div>
+      <div class='titulo-texto' id='color-grafica'>
+        <input type="color" id="color-grafica" name="color-grafica" value="#A61930" />
+      </div>
     </div>
     <div class='boton-formulas'>
       <div class='formulas'>Fórmulas</div>
@@ -100,15 +104,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>
-    <style>
-      .contador-caracteres {
-        font-size: 12px;
-        text-align: right;
-        color: #7f8c8d;
-        margin: 4px 0;
-        padding-right: 4px;
-      }
-    </style>
   `;
 
   // Datos disponibles para fórmulas

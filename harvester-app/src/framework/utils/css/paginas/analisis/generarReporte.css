@@ -144,8 +144,7 @@ body,
   position: relative;
   width: 362px;
 }
-.titulo-grafica,
-.titulo-texto {
+.titulo-grafica {
   background-color: #fafafa;
   padding: 10px;
   display: flex;
@@ -315,20 +314,28 @@ body,
   resize: vertical;
 }
 .titulo-texto {
-  position: relative;      
   background-color: #fafafa;
-  border-radius: 10px;
   padding: 10px;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background-image: none;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+  color: var(--negro, #000000);
+  text-align: left;
+  font-family: 'SegoeUi-Regular', sans-serif;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  border-radius: 10px;
 }
 .titulo-texto select.tipo-texto {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-color: transparent;
   border: none;
   padding: 8px 32px 8px 12px;
   font-family: 'SegoeUi-Regular', sans-serif;
@@ -339,46 +346,6 @@ body,
   box-sizing: border-box;
   cursor: pointer;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-.titulo-texto::after {
-  content: '';
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid #000;
-  pointer-events: none;
-}
-.titulo-texto select.tipo-texto:hover {
-  background-color: #f0f0f0;
-}
-.titulo-texto select.tipo-texto:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(166,25,48,0.5);
-}
-.tarjeta-texto .eliminar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-.tarjeta-texto .eliminar:hover {
-  background-color: rgba(255,255,255,0.1);
-}
-.titulo-texto::after {
-  content: none;
-}
-.titulo-texto select.tipo-texto {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  background-color: #fafafa;
   background-image:
     linear-gradient(45deg, transparent 50%, #000 50%),
     linear-gradient(135deg, #000 50%, transparent 50%);
@@ -387,16 +354,17 @@ body,
     calc(100% - 14px) calc(50% - 3px);
   background-size: 6px 6px;
   background-repeat: no-repeat;
-
-  padding: 8px 40px 8px 12px;
-
-  border: none;
-  border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box;
-
-  cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.titulo-texto::after {
+  content: none;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #000;
+  pointer-events: none;
 }
 .titulo-texto select.tipo-texto:hover {
   background-color: #f0f0f0;
@@ -414,6 +382,26 @@ body,
 .titulo-texto select.tipo-texto option:checked {
   background-color: #a61930;
   color: #fff;
+}
+.titulo-texto input[type="color"] {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  height: 100%;
+  cursor: pointer;
+}
+.tarjeta-texto .eliminar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.tarjeta-texto .eliminar:hover {
+  background-color: rgba(255,255,255,0.1);
 }
 .tarjeta-texto .eliminar:hover {
   transform: translateX(2px);
@@ -991,4 +979,18 @@ body,
   color: #7f8c8d;
   margin: 4px 0;
   padding-right: 4px;
+}
+
+.select-tractores{
+  display: flex;
+  width: 100%;
+  gap: 10px
+}
+
+#color-grafica{
+  flex: 0 10 1000px
+}
+
+#tractor-grafica{
+  flex: 0 1 1000px
 }
