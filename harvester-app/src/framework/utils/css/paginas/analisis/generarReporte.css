@@ -259,7 +259,7 @@ body,
   position: relative;
   color: #ffffff;
   text-align: center;
-  font-family: "SegoeUi-Regular", sans-serif;
+  font-family: 'SegoeUi-Regular', sans-serif;
   font-size: 24px;
   font-weight: 400;
   position: relative;
@@ -383,7 +383,7 @@ body,
   background-color: #a61930;
   color: #fff;
 }
-.titulo-texto input[type="color"] {
+.titulo-texto input[type='color'] {
   appearance: none;
   border: none;
   background: none;

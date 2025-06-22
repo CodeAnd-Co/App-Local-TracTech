@@ -92,7 +92,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         </select>
       </div>
       <div class='titulo-texto' id='color-grafica'>
-        <input type="color" id="color-entrada" name="color-grafica" value="#A61930" />
+        <input type='color' id='color-entrada' name='color-grafica' value='#A61930' />
       </div>
     </div>
     <div class='boton-formulas'>
@@ -234,7 +234,6 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
 
   // Crear nueva gráfica
   const nuevaGrafica = crearGrafica(contexto, nuevoTipo);
-  console.log(nuevaGrafica.options.plugins.datalabels.display)
 
   // Si hay datos originales, reprocesarlos para el nuevo tipo
   if (datosOriginales) {
