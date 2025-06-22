@@ -9,7 +9,7 @@ const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/com
 const { eliminarCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/eliminarCuadroFormulas.js`);
 const { crearCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/crearCuadroFormulas.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
-const { crearGrafica, verificarExcesoEtiquetas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`)
+const { crearGrafica, generarDegradadoHaciaBlanco, verificarExcesoEtiquetas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`)
 
 
 /* eslint-disable no-unused-vars */
@@ -92,7 +92,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         </select>
       </div>
       <div class='titulo-texto' id='color-grafica'>
-        <input type="color" id="color-grafica" name="color-grafica" value="#A61930" />
+        <input type="color" id="color-entrada" name="color-grafica" value="#A61930" />
       </div>
     </div>
     <div class='boton-formulas'>
@@ -181,6 +181,11 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica);
   })
 
+  const entradaColor = tarjetaGrafica.querySelector('#color-entrada')
+  entradaColor.addEventListener('change', () => {
+    modificarColor(entradaColor, grafico, 0)
+  })
+
   // Obtener el dato del tractor seleccionado para la gráfica
   const selectorTractor = tarjetaGrafica.querySelector('.tractor-grafica');
   selectorTractor.addEventListener('input', async () => {
@@ -202,40 +207,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion);
 
   return tarjetaGrafica;
-}
-
-/**
- * Formateador universal para etiquetas de datos según el tipo de gráfica
- * @param {*} value - Valor del dato
- * @param {*} context - Contexto de Chart.js
- * @param {string} tipo - Tipo de gráfica
- * @returns {string} - Etiqueta formateada
- */
-function formatearEtiquetaUniversal(value, context, tipo) {
-  const etiqueta = context.chart.data.labels[context.dataIndex];
-
-  // Para gráficas circulares Y DE BARRAS - SIEMPRE frecuencias con porcentajes/valores
-  if (tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea') {
-    const datos = context.chart.data.datasets[0].data;
-    const valorTotal = datos.reduce((total, datapoint) => total + datapoint, 0);
-
-    if (valorTotal === 0) return '';
-
-    const porcentaje = ((value / valorTotal) * 100).toFixed(1);
-    return `${etiqueta}\n${value} (${porcentaje}%)`;
-  }
-
-  // Para gráficas de barras - solo mostrar categoría y frecuencia
-  if (tipo === 'bar') {
-    return `${etiqueta}: ${value}`;
-  }
-
-  // Para gráficas lineales - Mostrar categoría y valor (aunque ya no se mostrarán las etiquetas)
-  if (etiqueta === 'Resultado') {
-    return `${etiqueta}\n${value}`;
-  } else {
-    return `${etiqueta}: ${value}`;
-  }
 }
 
 /**
@@ -398,6 +369,26 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
     contenedores.contenedorTarjeta.appendChild(elementoReporte.tarjeta);
     contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
   }
+}
+
+function modificarColor(entradaColor, grafica, dataset) {
+  const color = hexARGB(entradaColor.value);
+  const colores = generarDegradadoHaciaBlanco(color, 7);
+
+  grafica.config.data.datasets[dataset].miColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+  grafica.config.data.datasets[dataset].misColores = colores;
+
+  grafica.update()
+}
+
+function hexARGB(colorHex) {
+  colorHex = colorHex.replace(/^#/, '');
+
+  const rojo = parseInt(colorHex.substring(0, 2), 16);
+  const verde = parseInt(colorHex.substring(2, 4), 16);
+  const azul = parseInt(colorHex.substring(4, 6), 16);
+
+  return [rojo, verde, azul];
 }
 
 module.exports = {
