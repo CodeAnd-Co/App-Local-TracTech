@@ -4,13 +4,10 @@ const { filtrarYRenderizarFormulas, actualizarCaracteresBuscador } = require(`${
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
 const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
-const {obtenerParametrosTractor } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/obtenerParametrosTractor.js`);
+const { obtenerParametrosTractor } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/obtenerParametrosTractor.js`);
 const { retirarDatos } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/retirarDatos.js`);
 const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`);
 const Chart = require('chart.js/auto');
-const ChartDataLabels = require('chartjs-plugin-datalabels');
-Chart.register(ChartDataLabels);
-
 
 /**
  * Crea un cuadro de fórmulas asociado a una gráfica.
@@ -19,14 +16,14 @@ Chart.register(ChartDataLabels);
  * @param {Array} datosGrafica - Datos de la gráfica.
  * @param {Array} formulasDisponibles - Lista de fórmulas disponibles.
  * @returns {void}
- */  
-async function crearCuadroFormulas( graficaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado) {
+ */
+async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado) {
 
-  eliminarCuadroFormulas(); 
+  eliminarCuadroFormulas();
 
   const cuadroFormulas = document.createElement('div');
   cuadroFormulas.className = 'contenedor-formulas';
-  
+
   // Almacenar el ID de la gráfica en el dataset
   cuadroFormulas.dataset.graficaId = graficaId;
 
@@ -38,7 +35,7 @@ async function crearCuadroFormulas( graficaId, formulasDisponibles, datosOrigina
     mensajeInicial = 'No hay fórmulas disponibles.';
   }
 
-cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
+  cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
               <p class='texto'>Fórmulas</p>
           </div>
@@ -95,50 +92,48 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
     if (textoAplicar) {
       textoAplicar.textContent = 'Aplicando...';
       setTimeout(() => {
-    
+
         const formulaSeleccionada = contenedorBusqueda.querySelector('.formula-seleccionada');
         if (!formulaSeleccionada) {
           mostrarAlerta('Error', 'Debes buscar y seleccionar una fórmula antes de aplicar.', 'error');
           return;
         }
-    
+
         // Verificar que hay datos disponibles
         const datosExcel = localStorage.getItem('datosFiltradosExcel');
         if (!datosExcel) {
           mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
           return;
         }
-    
+
         // Buscar el input radio en el elemento padre (formula-objeto)
         const formulaObjeto = formulaSeleccionada.closest('.formula-objeto');
         const inputRadio = formulaObjeto.querySelector('input[type="radio"]');
-        
+
         if (!inputRadio) {
           mostrarAlerta('Error', 'Error al obtener los datos de la fórmula seleccionada.', 'error');
           return;
         }
-    
+
         // Obtener los datos directamente de las propiedades del elemento
         const nombreFormula = inputRadio.formulaNombre;
         const datosFormula = inputRadio.formulaDatos;
-    
+
         // Verificar que los datos están completos
         if (!datosFormula || datosFormula.trim() === '') {
           mostrarAlerta('Error', 'Los datos de la fórmula están vacíos o incompletos.', 'error');
           return;
         }
-    
-    
+
         // Obtener la gráfica asociada
         const graficaId = cuadroFormulas.dataset.graficaId;
         const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
-        
+
         if (!graficaDiv) {
           mostrarAlerta('Error', 'No se encontró la gráfica asociada.', 'error');
           return;
         }
-        
-    
+
         try {
           let resultadoFormula;
           if (tractorSeleccionado.length != 0) {
@@ -164,7 +159,7 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
             mostrarAlerta('Error', `Error al aplicar la fórmula: ${resultadoFormula.error}`, 'error');
             return;
           }
-    
+
           // GUARDAR DATOS ORIGINALES DE LA FÓRMULA
           if (resultadoFormula.resultados) {
             datosOriginalesFormulas.set(parseInt(graficaId), {
@@ -173,46 +168,43 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               tipo: 'formula'
             });
           }
-    
+
           // Obtener el canvas y la gráfica existente
           const canvas = graficaDiv.querySelector('canvas');
           if (!canvas) {
             mostrarAlerta('Error', 'No se encontró el canvas de la gráfica.', 'error');
             return;
           }
-    
+
           const contexto = canvas.getContext('2d');
           const graficaExistente = Chart.getChart(contexto);
-          
+
           if (graficaExistente && resultadoFormula.resultados) {
             const resultados = resultadoFormula.resultados;
             const tipoGrafica = graficaExistente.config.type;
-            
+
             // Usar el procesamiento universal
             const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, nombreFormula);
-            
+
             // Actualizar la gráfica
-            graficaExistente.options.plugins.title.text = nombreFormula; 
+            graficaExistente.options.plugins.title.text = nombreFormula;
             graficaExistente.data.labels = datosRebuild.labels;
             graficaExistente.data.datasets[0].data = datosRebuild.valores;
-            
+
             // CORRECCIÓN: Actualizar también la etiqueta del dataset
             graficaExistente.data.datasets[0].label = nombreFormula;
-    
-            // Configurar etiquetas: ocultar SOLO en gráficas de línea
-            graficaExistente.options.plugins.datalabels.display = tipoGrafica !== 'line';
-    
+
             graficaExistente.update();
-            
+
             mostrarAlerta('Éxito', `Fórmula "${nombreFormula}" aplicada correctamente a la gráfica.`, 'success');
-            
+
             // Cerrar el cuadro de fórmulas
             cuadroFormulas.remove();
-            
+
           } else {
             mostrarAlerta('Error', 'No se pudo encontrar la gráfica para actualizar o no hay resultados válidos.', 'error');
           }
-          
+
         } catch (error) {
           if (error.tipo == 'columnaNoEncontrada') {
             // Ya se mostró la alerta específica, no mostrar la genérica
@@ -224,16 +216,13 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
         }
       }, 100);
     }
-
-
-
   });
 
   // Configurar evento de búsqueda (filtrado local)
   campoBusqueda.addEventListener('input', (evento) => {
     // Validar caracteres primero
     actualizarCaracteresBuscador(campoBusqueda);
-    
+
     // Luego filtrar
     const terminoBusqueda = evento.target.value;
     filtrarYRenderizarFormulas(contenedorBusqueda, terminoBusqueda, formulasDisponibles);
@@ -248,8 +237,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
     }
   });
 
-
-
   const botonCerrarCuadroFormulas = cuadroFormulas.querySelector('.titulo-formulas');
   botonCerrarCuadroFormulas.addEventListener('click', () => {
     cuadroFormulas.remove();
@@ -263,9 +250,6 @@ cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
   }
   return datosOriginalesFormulas;
 }
-
-
-
 
 /**
  * Crea un menú desplegable para seleccionar columnas.
@@ -298,7 +282,7 @@ function crearMenuDesplegable(contenedor, letra, columnas, graficaId, datosOrigi
         const canvas = graficaDiv.querySelector('canvas');
         const contexto = canvas.getContext('2d');
         const graficaExistente = Chart.getChart(contexto);
-        
+
         if (graficaExistente) {
           graficaExistente.destroy();
           const nuevaGrafica = crearGrafica(contexto, 'line');
@@ -312,10 +296,6 @@ function crearMenuDesplegable(contenedor, letra, columnas, graficaId, datosOrigi
   nuevoMenu.appendChild(seleccionValores);
   contenedor.appendChild(nuevoMenu);
 }
-
-
-
-
 
 module.exports = {
   crearCuadroFormulas

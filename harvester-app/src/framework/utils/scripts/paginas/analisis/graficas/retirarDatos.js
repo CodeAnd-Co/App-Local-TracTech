@@ -10,25 +10,51 @@ const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/com
  * @returns {void}
  */
 function retirarDatos(graficaId, datosOriginalesFormulas) {
-    // Obtener la gráfica
-    const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
-    if (!graficaDiv) {
-      mostrarAlerta('Error', 'No se encontró la gráfica especificada.', 'error');
+  // Obtener la gráfica
+  const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
+  if (!graficaDiv) {
+    mostrarAlerta('Error', 'No se encontró la gráfica especificada.', 'error');
+    return;
+  }
+
+  const canvas = graficaDiv.querySelector('canvas');
+  if (!canvas) {
+    mostrarAlerta('Error', 'No se encontró el canvas de la gráfica.', 'error');
+    return;
+  }
+
+  const contexto = canvas.getContext('2d');
+  const graficaExistente = Chart.getChart(contexto);
+
+  if (!graficaExistente) {
+    mostrarAlerta('Error', 'No se encontró la instancia de Chart.js.', 'error');
+    return;
+  }
+
+  try {
+    // Verificar si hay datos originales para esta gráfica
+    const datosOriginales = datosOriginalesFormulas.get(graficaId);
+
+    if (!datosOriginales) {
+      mostrarAlerta('Información', 'Esta gráfica no tiene fórmula aplicada para retirar.', 'info');
       return;
     }
-  
-    const canvas = graficaDiv.querySelector('canvas');
-    if (!canvas) {
-      mostrarAlerta('Error', 'No se encontró el canvas de la gráfica.', 'error');
-      return;
-    }
-  
-    const contexto = canvas.getContext('2d');
-    const graficaExistente = Chart.getChart(contexto);
-    
-    if (!graficaExistente) {
-      mostrarAlerta('Error', 'No se encontró la instancia de Chart.js.', 'error');
-      return;
+
+    // Obtener el título actual del input de la tarjeta
+    const tarjetaGrafica = document.getElementById(graficaId.toString());
+    const tituloInput = tarjetaGrafica ? tarjetaGrafica.querySelector('.titulo-grafica') : null;
+    const tituloPersonalizado = tituloInput ? tituloInput.value : '';
+
+    // Restaurar gráfica a estado inicial
+    graficaExistente.data.labels = ['Sin datos'];
+    graficaExistente.data.datasets[0].data = [0];
+    graficaExistente.data.datasets[0].label = 'Datos';
+
+    // Restaurar título: usar el título personalizado del input o el mensaje por defecto
+    if (tituloPersonalizado && tituloPersonalizado.trim() !== '') {
+      graficaExistente.options.plugins.title.text = tituloPersonalizado;
+    } else {
+      graficaExistente.options.plugins.title.text = 'Gráfica sin datos - Aplica una fórmula para ver resultados';
     }
   
     try {
@@ -82,6 +108,12 @@ function retirarDatos(graficaId, datosOriginalesFormulas) {
     } catch (error) {
       mostrarAlerta('Error', `Error inesperado al retirar la fórmula: ${error.message}`, 'error');
     }
+
+    mostrarAlerta('Éxito', 'Los datos han sido retirados correctamente de la gráfica.', 'success');
+
+  } catch (error) {
+    mostrarAlerta('Error', `Error inesperado al retirar la fórmula: ${error.message}`, 'error');
+  }
 }
 
 module.exports = {
