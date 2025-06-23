@@ -183,7 +183,7 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 
   const entradaColor = tarjetaGrafica.querySelector('#color-entrada')
   entradaColor.addEventListener('change', () => {
-    modificarColor(entradaColor, grafico, 0)
+    modificarColor(entradaColor, graficaDiv, 0)
   })
 
   // Obtener el dato del tractor seleccionado para la gráfica
@@ -220,22 +220,17 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
   const canvasAntiguo = graficaExistente.canvas;
   const nuevoCanvas = document.createElement('canvas');
   canvasAntiguo.parentNode.replaceChild(nuevoCanvas, canvasAntiguo);
-
   const contexto = nuevoCanvas.getContext('2d');
 
-  // Preservar información importante
   const tituloActual = graficaExistente.options.plugins.title.text;
-
-  // Obtener datos originales si existen
+  const colorOriginal = graficaExistente.data.datasets[0].miColor
+  const arregloColor = colorOriginal.match(/\d+/g).map(Number);
   const datosOriginales = datosOriginalesFormulas.get(graficaId);
 
-  // Destruir gráfica actual
   graficaExistente.destroy();
 
-  // Crear nueva gráfica
-  const nuevaGrafica = crearGrafica(contexto, nuevoTipo);
+  const nuevaGrafica = crearGrafica(contexto, nuevoTipo, arregloColor);
 
-  // Si hay datos originales, reprocesarlos para el nuevo tipo
   if (datosOriginales) {
     const datosRebuild = procesarDatosUniversal(
       datosOriginales.datos,
@@ -249,10 +244,7 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
     nuevaGrafica.data.datasets[0].type = nuevoTipo;
   }
 
-  // Restaurar título
   nuevaGrafica.options.plugins.title.text = tituloActual;
-
-  // Actualizar
   nuevaGrafica.update();
 
   verificarExcesoEtiquetas(nuevaGrafica);
@@ -371,13 +363,15 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
 }
 
 function modificarColor(entradaColor, grafica, dataset) {
+  const contexto = grafica.querySelector('canvas').getContext('2d');
+  const graficaOriginal = Chart.getChart(contexto);
   const color = hexARGB(entradaColor.value);
   const colores = generarDegradadoHaciaBlanco(color, 7);
 
-  grafica.config.data.datasets[dataset].miColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-  grafica.config.data.datasets[dataset].misColores = colores;
+  graficaOriginal.config.data.datasets[dataset].miColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+  graficaOriginal.config.data.datasets[dataset].misColores = colores;
 
-  grafica.update()
+  graficaOriginal.update()
 }
 
 function hexARGB(colorHex) {
