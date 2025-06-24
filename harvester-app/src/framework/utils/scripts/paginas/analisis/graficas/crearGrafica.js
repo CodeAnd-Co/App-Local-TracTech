@@ -190,7 +190,13 @@ function crearGrafica(contexto, tipo, color) {
   return grafico;
 }
 
-
+/**
+ * Verifica si una gráfica de tipo bar, pie, doughnut o polarArea
+ * tiene más de 20 etiquetas. En caso afirmativo, muestra una alerta advirtiendo
+ * que esto puede afectar la visualización o interpretación de la gráfica.
+ *
+ * @param {Chart} grafica - Instancia de una gráfica de Chart.js que se desea verificar.
+ */
 function verificarExcesoEtiquetas(grafica) {
   const tipo = grafica.config.type;
   const etiquetas = grafica.data.labels || [];

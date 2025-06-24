@@ -362,6 +362,14 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
   }
 }
 
+/**
+ * Modifica el color de un dataset en una gráfica Chart.js, actualizando su color principal
+ * y generando un degradado hacia blanco.
+ *
+ * @param {HTMLInputElement} entradaColor - Elemento input de tipo color del cual se obtiene el valor hexadecimal.
+ * @param {HTMLDivElement} grafica - Elemento HTML que contiene el canvas de la gráfica Chart.js.
+ * @param {number} dataset - Índice del dataset dentro de la gráfica que se desea modificar.
+ */
 function modificarColor(entradaColor, grafica, dataset) {
   const contexto = grafica.querySelector('canvas').getContext('2d');
   const graficaOriginal = Chart.getChart(contexto);
@@ -374,6 +382,12 @@ function modificarColor(entradaColor, grafica, dataset) {
   graficaOriginal.update()
 }
 
+/**
+ * Convierte un valor hexadecimal de color en un arreglo con los valores RGB correspondientes.
+ *
+ * @param {string} colorHex - Color en formato hexadecimal (por ejemplo: "#FF5733" o "FF5733").
+ * @returns {number[]} Arreglo con tres números que representan los componentes R, G y B (en ese orden).
+ */
 function hexARGB(colorHex) {
   colorHex = colorHex.replace(/^#/, '');
 
