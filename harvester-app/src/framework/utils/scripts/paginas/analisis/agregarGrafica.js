@@ -9,7 +9,7 @@ const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/com
 const { eliminarCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/eliminarCuadroFormulas.js`);
 const { crearCuadroFormulas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/crearCuadroFormulas.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
-const { crearGrafica, verificarExcesoEtiquetas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`)
+const { crearGrafica, generarDegradadoHaciaBlanco, verificarExcesoEtiquetas } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`)
 
 
 /* eslint-disable no-unused-vars */
@@ -85,11 +85,15 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
       </select>
       <img class='type' src='${rutaBase}/src/framework/utils/iconos/GraficaBarras.svg' alt='Icono Gráfica' />
     </div>
-    <div class='titulo-texto'>
-      <select class='tipo-texto tractor-grafica'>
-        ${opcionesTractores}
-      </select>
-      <img class='type' src='${rutaBase}/src/framework/utils/iconos/GraficaBarras.svg' alt='Icono Gráfica' />
+    <div class='select-tractores'>
+      <div class='titulo-texto' id='tractor-grafica'>
+        <select class='tipo-texto tractor-grafica'>
+          ${opcionesTractores}
+        </select>
+      </div>
+      <div class='titulo-texto' id='color-grafica'>
+        <input type='color' id='color-entrada' name='color-grafica' value='#A61930' />
+      </div>
     </div>
     <div class='boton-formulas'>
       <div class='formulas'>Fórmulas</div>
@@ -100,15 +104,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
         <div class='texto-eliminar'>Eliminar</div>
       </div>
     </div>
-    <style>
-      .contador-caracteres {
-        font-size: 12px;
-        text-align: right;
-        color: #7f8c8d;
-        margin: 4px 0;
-        padding-right: 4px;
-      }
-    </style>
   `;
 
   // Datos disponibles para fórmulas
@@ -186,6 +181,11 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
     modificarTipoGrafica(graficaDiv, selectorTipo, tituloGrafica);
   })
 
+  const entradaColor = tarjetaGrafica.querySelector('#color-entrada')
+  entradaColor.addEventListener('change', () => {
+    modificarColor(entradaColor, graficaDiv, 0)
+  })
+
   // Obtener el dato del tractor seleccionado para la gráfica
   const selectorTractor = tarjetaGrafica.querySelector('.tractor-grafica');
   selectorTractor.addEventListener('input', async () => {
@@ -210,40 +210,6 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
 }
 
 /**
- * Formateador universal para etiquetas de datos según el tipo de gráfica
- * @param {*} value - Valor del dato
- * @param {*} context - Contexto de Chart.js
- * @param {string} tipo - Tipo de gráfica
- * @returns {string} - Etiqueta formateada
- */
-function formatearEtiquetaUniversal(value, context, tipo) {
-  const etiqueta = context.chart.data.labels[context.dataIndex];
-
-  // Para gráficas circulares Y DE BARRAS - SIEMPRE frecuencias con porcentajes/valores
-  if (tipo === 'pie' || tipo === 'doughnut' || tipo === 'polarArea') {
-    const datos = context.chart.data.datasets[0].data;
-    const valorTotal = datos.reduce((total, datapoint) => total + datapoint, 0);
-
-    if (valorTotal === 0) return '';
-
-    const porcentaje = ((value / valorTotal) * 100).toFixed(1);
-    return `${etiqueta}\n${value} (${porcentaje}%)`;
-  }
-
-  // Para gráficas de barras - solo mostrar categoría y frecuencia
-  if (tipo === 'bar') {
-    return `${etiqueta}: ${value}`;
-  }
-
-  // Para gráficas lineales - Mostrar categoría y valor (aunque ya no se mostrarán las etiquetas)
-  if (etiqueta === 'Resultado') {
-    return `${etiqueta}\n${value}`;
-  } else {
-    return `${etiqueta}: ${value}`;
-  }
-}
-
-/**
  * Actualiza una gráfica aplicando los datos originales según el nuevo tipo
  * @param {number} graficaId - ID de la gráfica
  * @param {string} nuevoTipo - Nuevo tipo de gráfica
@@ -254,22 +220,17 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
   const canvasAntiguo = graficaExistente.canvas;
   const nuevoCanvas = document.createElement('canvas');
   canvasAntiguo.parentNode.replaceChild(nuevoCanvas, canvasAntiguo);
-
   const contexto = nuevoCanvas.getContext('2d');
 
-  // Preservar información importante
   const tituloActual = graficaExistente.options.plugins.title.text;
-
-  // Obtener datos originales si existen
+  const colorOriginal = graficaExistente.data.datasets[0].miColor
+  const arregloColor = colorOriginal.match(/\d+/g).map(Number);
   const datosOriginales = datosOriginalesFormulas.get(graficaId);
 
-  // Destruir gráfica actual
   graficaExistente.destroy();
 
-  // Crear nueva gráfica
-  const nuevaGrafica = crearGrafica(contexto, nuevoTipo);
+  const nuevaGrafica = crearGrafica(contexto, nuevoTipo, arregloColor);
 
-  // Si hay datos originales, reprocesarlos para el nuevo tipo
   if (datosOriginales) {
     const datosRebuild = procesarDatosUniversal(
       datosOriginales.datos,
@@ -283,10 +244,7 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
     nuevaGrafica.data.datasets[0].type = nuevoTipo;
   }
 
-  // Restaurar título
   nuevaGrafica.options.plugins.title.text = tituloActual;
-
-  // Actualizar
   nuevaGrafica.update();
 
   verificarExcesoEtiquetas(nuevaGrafica);
@@ -402,6 +360,42 @@ function agregarEnPosicion(tarjetaRef, elementoReporte, contenedores, posicion) 
     contenedores.contenedorTarjeta.appendChild(elementoReporte.tarjeta);
     contenedores.contenedorPrevisualizacion.appendChild(elementoReporte.previsualizacion);
   }
+}
+
+/**
+ * Modifica el color de un dataset en una gráfica Chart.js, actualizando su color principal
+ * y generando un degradado hacia blanco.
+ *
+ * @param {HTMLInputElement} entradaColor - Elemento input de tipo color del cual se obtiene el valor hexadecimal.
+ * @param {HTMLDivElement} grafica - Elemento HTML que contiene el canvas de la gráfica Chart.js.
+ * @param {number} dataset - Índice del dataset dentro de la gráfica que se desea modificar.
+ */
+function modificarColor(entradaColor, grafica, dataset) {
+  const contexto = grafica.querySelector('canvas').getContext('2d');
+  const graficaOriginal = Chart.getChart(contexto);
+  const color = hexARGB(entradaColor.value);
+  const colores = generarDegradadoHaciaBlanco(color, 7);
+
+  graficaOriginal.config.data.datasets[dataset].miColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+  graficaOriginal.config.data.datasets[dataset].misColores = colores;
+
+  graficaOriginal.update()
+}
+
+/**
+ * Convierte un valor hexadecimal de color en un arreglo con los valores RGB correspondientes.
+ *
+ * @param {string} colorHex - Color en formato hexadecimal (por ejemplo: "#FF5733" o "FF5733").
+ * @returns {number[]} Arreglo con tres números que representan los componentes R, G y B (en ese orden).
+ */
+function hexARGB(colorHex) {
+  colorHex = colorHex.replace(/^#/, '');
+
+  const rojo = parseInt(colorHex.substring(0, 2), 16);
+  const verde = parseInt(colorHex.substring(2, 4), 16);
+  const azul = parseInt(colorHex.substring(4, 6), 16);
+
+  return [rojo, verde, azul];
 }
 
 module.exports = {
