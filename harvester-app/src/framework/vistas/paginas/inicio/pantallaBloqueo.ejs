@@ -6,21 +6,62 @@
 <body>
   <div class='pantalla-bloqueo'>
     <div class='contenido-bloqueo'>
-      <div class='icono-bloqueo'>🔒</div>
-      <h1>Aplicación Deshabilitada</h1>
+      <% 
+        // Determinar icono y clase CSS según el tipo de error
+        let icono = '🔒';
+        let claseError = 'error-dispositivo';
+        let mostrarReintentar = false;
+        
+        if (typeof tipoError !== 'undefined') {
+          switch(tipoError) {
+            case 'error_conexion':
+              icono = '🌐❌';
+              claseError = 'error-conexion';
+              mostrarReintentar = true;
+              break;
+            case 'error_servidor':
+              icono = '⚠️';
+              claseError = 'error-servidor';
+              mostrarReintentar = true;
+              break;
+            case 'dispositivo_ajeno':
+              icono = '👤❌';
+              claseError = 'error-dispositivo';
+              break;
+            case 'multiples_dispositivos':
+              icono = '📱📱';
+              claseError = 'error-dispositivo';
+              break;
+            default:
+              icono = '🔒';
+              claseError = 'error-dispositivo';
+          }
+        }
+      %>
+      
+      <div class='icono-bloqueo <%= claseError %>'><%= icono %></div>
+      <h1>
+        <% if (typeof tipoError !== 'undefined' && (tipoError === 'error_conexion' || tipoError === 'error_servidor')) { %>
+          Error de Conexión
+        <% } else { %>
+          Aplicación Deshabilitada
+        <% } %>
+      </h1>
       <p class='mensaje-bloqueo'><%= mensaje || 'Esta aplicación ha sido deshabilitada por motivos de seguridad.' %></p>
-      <p class='instrucciones'>
-        Para más información, contacte al administrador del sistema.
-      </p>
+        <p class='instrucciones'>
+          Para más información, contacte al administrador del sistema.
+        </p>
       
       <!-- Información del dispositivo para soporte -->
       <div class='info-dispositivo' style='margin-top: 20px; font-size: 12px; color: #666;'>
         <p><strong>ID del Dispositivo:</strong> <span id='dispositivo-id'>Cargando...</span></p>
         <p><strong>Fecha:</strong> <%= new Date().toLocaleString('es-ES') %></p>
+        <% if (typeof tipoError !== 'undefined') { %>
+          <p><strong>Código de Error:</strong> <%= tipoError %></p>
+        <% } %>
       </div>
     </div>
   </div>
-
   <script>
     // Obtener y mostrar el ID del dispositivo para soporte
     const { ipcRenderer } = require('electron');

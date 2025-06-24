@@ -268,7 +268,6 @@ function actualizarGraficaConTipo(graficaId, nuevoTipo, graficaExistente) {
 
   // Crear nueva gráfica
   const nuevaGrafica = crearGrafica(contexto, nuevoTipo);
-  console.log(nuevaGrafica.options.plugins.datalabels.display)
 
   // Si hay datos originales, reprocesarlos para el nuevo tipo
   if (datosOriginales) {

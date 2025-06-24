@@ -34,7 +34,6 @@ async function manejarInicioSesion() {
   try {
     // Obtener el ID del dispositivo antes del login para enviarlo al servidor
     const dispositivoID = obtenerID();
-    
     // Intentar iniciar sesión enviando también el ID del dispositivo para registro
     const respuesta = await iniciarSesion(correo, contrasenia, dispositivoID);
     

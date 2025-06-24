@@ -31,6 +31,10 @@
           <img src='<%= rutaBase %>src/framework/utils/iconos/GestionUsuarios.svg' alt='Gestión Usuarios' />
           <span>Gestión Usuarios</span>
         </button>
+        <button class='boton-sidebar' data-seccion='dispositivos'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/BaseDatos.svg' alt='Gestión Dispositivos' />
+          <span>Gestión Dispositivos</span>
+        </button>
         <% } %>
       </div>
     </div>
@@ -67,6 +71,9 @@
         <% if (permisos.includes('ADMIN')) { %>
         <button class='boton-sidebar' data-seccion='usuarios'>
           <img src='<%= rutaBase %>src/framework/utils/iconos/GestionUsuarios.svg' alt='Gestión Usuarios' />
+        </button>
+        <button class='boton-sidebar' data-seccion='dispositivos'>
+          <img src='<%= rutaBase %>src/framework/utils/iconos/BaseDatos.svg' alt='Gestión Dispositivos' />
         </button>
         <% } %>
       </div>

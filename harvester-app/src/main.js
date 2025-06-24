@@ -88,6 +88,7 @@ async function verificarEstadoUsuarioAutenticado() {
     
     const dispositivoId = obtenerID();
     
+    
     // Verificar si el usuario es superadministrador
     const permisos = await obtenerPermisosAlmacenados();
     const esSuperAdmin = permisos.includes(PERMISOS.SUPERADMIN);
@@ -95,42 +96,53 @@ async function verificarEstadoUsuarioAutenticado() {
     if (esSuperAdmin) {
         return;
     }
-    
-    try {
+      try {
         const verificacion = await verificarEstado(token, dispositivoId);
         if (!verificacion.estado) {
-            // Manejar diferentes tipos de error
+            // Manejar diferentes tipos de error con información del tipo de fallo
             let mensaje = 'Aplicación deshabilitada por seguridad';
+            let tipoError = 'dispositivo_deshabilitado';
             
             if (verificacion.codigo === 'DISPOSITIVO_AJENO') {
                 mensaje = 'Este dispositivo pertenece a otro usuario';
+                tipoError = 'dispositivo_ajeno';
             } else if (verificacion.codigo === 'MULTIPLES_DISPOSITIVOS') {
                 mensaje = 'Múltiples dispositivos detectados en tu cuenta';
-            }
-            
-            deshabilitarAplicacion(mensaje);
+                tipoError = 'multiples_dispositivos';
+            } else if (verificacion.mensaje && verificacion.mensaje.includes('Error de conexión')) {
+                mensaje = 'Error de conexión con el servidor. Verifique su conexión a internet e intente nuevamente.';
+                tipoError = 'error_conexion';
+            } else if (verificacion.mensaje && verificacion.mensaje.includes('Error del servidor')) {
+                mensaje = 'Error interno del servidor. Intente nuevamente más tarde.';
+                tipoError = 'error_servidor';
+            }            
+            deshabilitarAplicacion(mensaje, tipoError);
         }
     } catch {
-        return ('Error de conexión al verificar estado');
+        // Error de conexión o problema de red
+        const mensaje = 'Error de conexión con el servidor. Verifique su conexión a internet e intente nuevamente.';
+        deshabilitarAplicacion(mensaje, 'error_conexion');
+        return;
     }
 }
 
 
 /**
  * Deshabilita la aplicación mostrando una pantalla de bloqueo
+ * @param {string} mensaje - Mensaje a mostrar al usuario
+ * @param {string} tipoError - Tipo de error ('dispositivo_deshabilitado', 'dispositivo_ajeno', 'multiples_dispositivos', 'error_conexion', 'error_servidor')
  */
-async function deshabilitarAplicacion(mensaje) {
+async function deshabilitarAplicacion(mensaje, tipoError = 'dispositivo_deshabilitado') {
     if (mainWindow && !mainWindow.isDestroyed()) {
         try {
             // Limpiar el intervalo de verificación
             if (app.verificacionIntervalo) {
                 clearInterval(app.verificacionIntervalo);
             }
-            
-            // Cargar pantalla de bloqueo
+              // Cargar pantalla de bloqueo
             const pantallaBloqueoPath = path.join(__dirname, './framework/vistas/paginas/inicio/pantallaBloqueo.ejs');
             
-            const vista = await precargarEJS(pantallaBloqueoPath, { mensaje });
+            const vista = await precargarEJS(pantallaBloqueoPath, { mensaje, tipoError });
             await mainWindow.loadFile(vista);
             
             // Deshabilitar navegación
@@ -238,7 +250,6 @@ ipcMain.handle('precargar-ejs', async (event, rutaEJS, parametros) => {
 ipcMain.handle('verificar-estado-aplicacion', async () => {
     const token = await obtenerTokenAlmacenado();
     const dispositivoId = obtenerID();
-    
     if (!token) return { estado: false, mensaje: 'No hay token válido' };
     
     try {
