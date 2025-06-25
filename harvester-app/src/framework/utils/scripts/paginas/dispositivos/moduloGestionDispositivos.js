@@ -273,8 +273,8 @@ function crearListaDispositivos(dispositivos) {
         const elementoDispositivo = document.createElement('div');
         elementoDispositivo.className = 'usuario-item';
         
-        const estadoClase = dispositivo.estado ? 'activo' : 'inactivo';
-        const estadoTexto = dispositivo.estado ? 'Habilitado' : 'Deshabilitado';
+        const estadoClase = dispositivo.activo ? 'activo' : 'inactivo';
+        const estadoTexto = dispositivo.activo ? 'Habilitado' : 'Deshabilitado';
         
         elementoDispositivo.innerHTML = `
             <div class='usuario-info'>

@@ -61,19 +61,19 @@ async function manejarInicioSesion() {
             if (verificacion.codigo === 'DISPOSITIVO_AJENO') {
               mostrarAlerta(
                 'Dispositivo no autorizado', 
-                'Este dispositivo pertenece a otro usuario. Por favor, utiliza tu dispositivo asignado o contacta al administrador.', 
+                `Este dispositivo pertenece a otro usuario. Por favor, utiliza tu dispositivo asignado o contacta al administrador.\nDispositivo ID: ${dispositivoID}`, 
                 'error'
               );
             } else if (verificacion.codigo === 'MULTIPLES_DISPOSITIVOS') {
               mostrarAlerta(
                 'Múltiples dispositivos detectados', 
-                'Ya tienes un dispositivo vinculado a tu cuenta. Solo puedes usar un dispositivo por cuenta de usuario.', 
+                `Ya tienes un dispositivo vinculado a tu cuenta. Solo puedes usar un dispositivo por cuenta de usuario.\nDispositivo ID: ${dispositivoID}`, 
                 'warning'
               );
             } else {
               mostrarAlerta(
                 'Aplicación deshabilitada', 
-                'La aplicación ha sido deshabilitada por el administrador. Por favor, contacta al soporte técnico.', 
+                `La aplicación ha sido deshabilitada por el administrador. Por favor, contacta al soporte técnico.\nDispositivo ID: ${dispositivoID}`, 
                 'error'
               );
             }
@@ -81,7 +81,7 @@ async function manejarInicioSesion() {
             return;
           }
         } catch  {
-          mostrarAlerta('Error de verificación', 'No se pudo verificar el estado del dispositivo. Inténtalo de nuevo.', 'error');
+          mostrarAlerta('Error de verificación', `No se pudo verificar el estado del dispositivo. Inténtalo de nuevo.\nDispositivo ID: ${dispositivoID}`, 'error');
           localStorage.clear();
           return;
         }
