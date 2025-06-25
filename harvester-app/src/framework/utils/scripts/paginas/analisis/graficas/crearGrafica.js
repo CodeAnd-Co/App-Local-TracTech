@@ -30,20 +30,24 @@ function crearGrafica(contexto, tipo, color) {
     data: {
       labels: ['Sin datos'], // Etiqueta inicial más clara
       datasets: [{
+        miColor: color,
+        misColores: colores,
         type: tipo,
         label: 'Datos',
-        backgroundColor: fondo => {
+        backgroundColor: (contexto) => {
           if (tipo == 'line' || tipo == 'radar') {
-            return color;
+            return contexto.dataset.miColor;
           } else {
-            return colores[fondo.dataIndex % colores.length]; // Evitar errores de índice
+            const colores = contexto.dataset.misColores;
+            return colores[contexto.dataIndex % colores.length]; // Evitar errores de índice
           }
         },
-        borderColor: borde => {
+        borderColor: (contexto) => {
           if (tipo == 'line' || tipo == 'radar') {
-            return color;
+            return contexto.dataset.miColor;
           } else {
-            return colores[borde.dataIndex % colores.length]; // Evitar errores de índice
+            const colores = contexto.dataset.misColores;
+            return colores[contexto.dataIndex % colores.length]; // Evitar errores de índice
           }
         },
         data: [0] // Dato inicial más claro
@@ -68,14 +72,19 @@ function crearGrafica(contexto, tipo, color) {
           display: true,
           position: 'top',
           labels: {
-            generateLabels: chart => [
-              {
-                text: chart.data.datasets[0].label || 'Datos',
-                fillStyle: color,
-                strokeStyle: color,
-                fontColor: '#333'
-              }
-            ],
+            generateLabels: (chart) => {
+              const labels = []
+              const datasets = chart.data.datasets
+              datasets.forEach(dataset => {
+                labels.push({
+                  text: dataset.label || 'Datos',
+                  fillStyle: dataset.miColor,
+                  strokeStyle: dataset.miColor,
+                  fontColor: '#333'
+                })
+              })
+              return labels
+            },
           },
         },
         datalabels: {
@@ -181,7 +190,13 @@ function crearGrafica(contexto, tipo, color) {
   return grafico;
 }
 
-
+/**
+ * Verifica si una gráfica de tipo bar, pie, doughnut o polarArea
+ * tiene más de 20 etiquetas. En caso afirmativo, muestra una alerta advirtiendo
+ * que esto puede afectar la visualización o interpretación de la gráfica.
+ *
+ * @param {Chart} grafica - Instancia de una gráfica de Chart.js que se desea verificar.
+ */
 function verificarExcesoEtiquetas(grafica) {
   const tipo = grafica.config.type;
   const etiquetas = grafica.data.labels || [];
