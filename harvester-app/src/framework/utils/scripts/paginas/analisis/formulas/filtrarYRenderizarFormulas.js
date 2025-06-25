@@ -29,11 +29,21 @@ function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDi
   // Limpiar contenedor
   contenedor.innerHTML = '';
 
+  console.log('formulas disponibles:', formulasDisponibles);
+  
+  formulasDisponibles = formulasDisponibles.filter(formula => {
+    return !formula.Datos.toLowerCase().includes('vlookup');
+  });
+  
+  console.log('formulas disponibles2:', formulasDisponibles);
+
+
   // Si no hay fórmulas cargadas, mostrar mensaje específico
   if (formulasDisponibles.length === 0) {
     contenedor.innerHTML = '<div class="mensaje-sin-formulas">No hay fórmulas creadas. <br>Ve al módulo de fórmulas para crear una.</div>';
     return;
   }
+
 
   let formulasFiltradas = formulasDisponibles;
 
