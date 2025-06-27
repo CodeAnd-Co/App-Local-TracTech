@@ -1,4 +1,6 @@
 const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
+const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`);
+const Chart = require('chart.js/auto');
 
 /**
  * Crea un menú desplegable para seleccionar columnas.

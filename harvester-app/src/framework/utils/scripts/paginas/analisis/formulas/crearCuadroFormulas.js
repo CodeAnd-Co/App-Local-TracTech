@@ -2,11 +2,12 @@ const { eliminarCuadroFormulas } = require('./eliminarCuadroFormulas');
 const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const { filtrarYRenderizarFormulas, actualizarCaracteresBuscador } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/filtrarYRenderizarFormulas.js`);
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
+const { filtrarDatos } = require(`${rutaBase}/src/backend/casosUso/formulas/filtrarDatos.js`);
 const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
 const { obtenerParametrosTractor } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/obtenerParametrosTractor.js`);
 const { retirarDatos } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/retirarDatos.js`);
-const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`);
 const { crearMenuParametros } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/crearMenuParametros.js`);
+const { crearMenuFiltros } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/formulas/crearMenuFiltros.js`);
 const Chart = require('chart.js/auto');
 
 /**
@@ -35,6 +36,11 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
     mensajeInicial = 'No hay fórmulas disponibles.';
   }
 
+  const filtrosDisponibles = formulasDisponibles.filter(formula => {
+    return formula.Datos.toLowerCase().includes('vlookup');
+  });
+
+
   cuadroFormulas.innerHTML = `<div class='titulo-formulas'>
               <img class='flecha-atras' src='${rutaBase}/src/framework/utils/iconos/FlechaAtras.svg' />
               <p class='texto'>Fórmulas</p>
@@ -43,6 +49,11 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
               <div class='opciones-seccion'>
                   <p>Parámetros</p>
                   <div class='opciones-carta'>
+                  </div>
+              </div>
+              <div class='opciones-seccion'>
+                  <p>Filtros</p>
+                    <div class='opciones-carta'>
                   </div>
               </div>
               <div class='opciones-seccion'>
@@ -64,17 +75,14 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
                       </div>
                   </div>
               </div>
-              <div class='opciones-seccion'>
-                  <p>Filtros</p>
-                    <div class='opciones-carta'>
-                  </div>
-              </div>
+
           </div>`;
 
   const contenedoresSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
  crearMenuParametros(contenedoresSeleccion[0], columnasActualizadas, graficaId, datosOriginalesFormulas, tractorSeleccionado);
+ crearMenuFiltros(contenedoresSeleccion[1], filtrosDisponibles, graficaId, datosOriginalesFormulas, tractorSeleccionado);
 
   // Configurar búsqueda de fórmulas
   const campoBusqueda = cuadroFormulas.querySelector('.search-section');
@@ -93,6 +101,13 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
   botonAplicarFormula.addEventListener('click', () => {
 
+
+
+    filtroAplicado = filtrosDisponibles.filter(filtro => {
+      return contenedoresSeleccion[1].querySelector('.opcion-texto').value == filtro.Nombre;
+    });
+    console.log('filtroAplicado:', filtroAplicado);
+
     const textoAplicar = botonAplicarFormula.querySelector('div');
     if (textoAplicar) {
       textoAplicar.textContent = 'Aplicando...';
@@ -104,8 +119,18 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
           return;
         }
 
+
+
+        // if( filtroAplicado ) {
+        console.log('filtrando datos...')
+        const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')));
+        console.log('Datos filtrados!')
+
+        
+        // }
         // Verificar que hay datos disponibles
-        const datosExcel = localStorage.getItem('datosFiltradosExcel');
+        // const datosExcel = localStorage.getItem('datosFiltradosExcel');
+        const datosExcel = localStorage.getItem('datosFiltradosExcel'); //datosFiltrados || localStorage.getItem('datosFiltradosExcel');
         if (!datosExcel) {
           mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
           return;
