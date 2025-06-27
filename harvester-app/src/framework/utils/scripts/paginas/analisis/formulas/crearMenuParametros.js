@@ -1,5 +1,6 @@
 const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
 const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`);
+const { filtrarDatos } = require(`${rutaBase}/src/backend/casosUso/formulas/filtrarDatos.js`);
 const Chart = require('chart.js/auto');
 
 /**
@@ -9,7 +10,7 @@ const Chart = require('chart.js/auto');
  * @param {number} graficaId - ID de la gráfica asociada.
  * @returns {void}
  */
-function crearMenuParametros(contenedor, columnas, graficaId, datosOriginalesFormulas, tractorSeleccionado) {
+function crearMenuParametros(contenedor, columnas, graficaId, datosOriginalesFormulas, tractorSeleccionado, filtrosDisponibles, contenedorFiltros) {
   const nuevoMenu = document.createElement('div');
   nuevoMenu.className = 'opcion';
   const seleccionValores = document.createElement('select');
@@ -22,9 +23,16 @@ function crearMenuParametros(contenedor, columnas, graficaId, datosOriginalesFor
 
   // Agregar evento de cambio para actualizar la gráfica
   seleccionValores.addEventListener('change', (evento) => {
+
+    const filtroAplicado = filtrosDisponibles.filter(filtro => {
+      return contenedorFiltros.querySelector('.opcion-texto').value == filtro.Nombre;
+    });
+
+    const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+
     const columnaSeleccionada = evento.target.value;
     if (columnaSeleccionada && columnaSeleccionada !== '') {
-      actualizarGraficaConColumna(graficaId, columnaSeleccionada, datosOriginalesFormulas, tractorSeleccionado);
+      actualizarGraficaConColumna(graficaId, columnaSeleccionada, datosOriginalesFormulas, tractorSeleccionado, datosFiltrados.resultados);
     } else {
       // Si se deselecciona, resetear la gráfica a estado inicial
       const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);

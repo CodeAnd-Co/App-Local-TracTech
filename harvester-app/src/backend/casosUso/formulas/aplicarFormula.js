@@ -14,10 +14,8 @@ const opciones = {
  */
 function aplicarFormula(nombreFormula, formulaEstructurada, tractorSeleccionado, datosExcel) {
     try {
-        console.log('datosExcel:', datosExcel);
-        const hojas = datosExcel.hojas;
 
-        console.log('hojas:', hojas);
+        const hojas = datosExcel.hojas;
 
         // Si no se especifica hoja, usar la primera disponible
         let datos = [];

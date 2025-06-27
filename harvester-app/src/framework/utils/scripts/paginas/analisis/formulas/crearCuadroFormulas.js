@@ -81,8 +81,8 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
   const contenedoresSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
- crearMenuParametros(contenedoresSeleccion[0], columnasActualizadas, graficaId, datosOriginalesFormulas, tractorSeleccionado);
- crearMenuFiltros(contenedoresSeleccion[1], filtrosDisponibles, graficaId, datosOriginalesFormulas, tractorSeleccionado);
+ crearMenuParametros(contenedoresSeleccion[0], columnasActualizadas, graficaId, datosOriginalesFormulas, tractorSeleccionado, filtrosDisponibles, contenedoresSeleccion[1]);
+ crearMenuFiltros(contenedoresSeleccion[1], filtrosDisponibles, graficaId);
 
   // Configurar búsqueda de fórmulas
   const campoBusqueda = cuadroFormulas.querySelector('.search-section');
@@ -103,10 +103,9 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
 
 
-    filtroAplicado = filtrosDisponibles.filter(filtro => {
+    const filtroAplicado = filtrosDisponibles.filter(filtro => {
       return contenedoresSeleccion[1].querySelector('.opcion-texto').value == filtro.Nombre;
     });
-    console.log('filtroAplicado:', filtroAplicado);
 
     const textoAplicar = botonAplicarFormula.querySelector('div');
     if (textoAplicar) {
@@ -119,14 +118,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
           return;
         }
 
-
-
-        // if( filtroAplicado ) {
-        console.log('filtrando datos...')
         const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
-        console.log('Datos filtrados!')
-        console.log('datosFiltrados en crearcuadroformulas:', datosFiltrados);
-
         
         if (!datosFiltrados) {
           mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');

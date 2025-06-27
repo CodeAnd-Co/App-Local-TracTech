@@ -83,19 +83,16 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
             }
         }
 
-        console.log('tractor seleccionado: ', tractorSeleccionado);
         resultados = {hojas: {
             [tractorSeleccionado]: resultadosFiltrados
             }
         };
 
-        console.log('resultados empaquetados: ', resultados);
         
         return {
             resultados,
         };
-    } catch (error) {
-        console.error('Error al filtrar los datos:', error);
+    } catch {
         return {
             error: error.message,
             tractorSeleccionado: tractorSeleccionado || 'desconocida'

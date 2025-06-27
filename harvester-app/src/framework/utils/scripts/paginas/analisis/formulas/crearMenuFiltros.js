@@ -8,13 +8,12 @@ const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/pagina
  * @param {number} graficaId - ID de la gráfica asociada.
  * @returns {void}
  */
-function crearMenuFiltros(contenedor, filtros, graficaId, datosOriginalesFormulas, tractorSeleccionado) {
+function crearMenuFiltros(contenedor, filtros, graficaId) {
   const nuevoMenu = document.createElement('div');
   nuevoMenu.className = 'opcion';
   const seleccionValores = document.createElement('select');
   seleccionValores.className = 'opcion-texto';
   seleccionValores.innerHTML = '<option value="">-- Selecciona un filtro --</option>'
-  filtros.forEach((filtro) => {console.log('contenido filtros:', filtro)});
   filtros.forEach((filtro) => {
     seleccionValores.innerHTML = `${seleccionValores.innerHTML}
     <option value="${filtro.Nombre}"> ${filtro.Nombre} </option>`

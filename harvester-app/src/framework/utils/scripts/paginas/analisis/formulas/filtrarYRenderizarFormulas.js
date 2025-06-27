@@ -29,14 +29,11 @@ function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDi
   // Limpiar contenedor
   contenedor.innerHTML = '';
 
-  console.log('formulas disponibles:', formulasDisponibles);
   
   formulasDisponibles = formulasDisponibles.filter(formula => {
     return !formula.Datos.toLowerCase().includes('filter');
   });
   
-  console.log('formulas disponibles2:', formulasDisponibles);
-
 
   // Si no hay fórmulas cargadas, mostrar mensaje específico
   if (formulasDisponibles.length === 0) {
