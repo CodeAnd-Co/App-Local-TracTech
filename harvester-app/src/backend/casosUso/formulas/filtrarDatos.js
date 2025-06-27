@@ -103,6 +103,10 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
         const hyperFormulaInstance = HyperFormula.buildFromArray(datos, opciones);
         const sheetId = hyperFormulaInstance.getSheetId('Sheet1');
         
+        console.log('formula del filtro:', filtro[0].Datos);
+        const columnaCondicion = nombreColumnaAIndice(filtro[0].Datos, encabezados);
+
+        console.log('Columna de condición:', columnaCondicion);
 
         const filas = datos.length;
         console.log('Filas:', filas);
@@ -112,7 +116,7 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
             const columnaLetra = numeroAColumnaExcel(columna-indiceColumnaVacio+1);
             console.log('Columna:', columna-indiceColumnaVacio);
             console.log('numero columna Excel:', numeroAColumnaExcel(columna-indiceColumnaVacio+1));
-            hyperFormulaInstance.setCellContents({ row: 1, col: columna, sheet: 0 }, `=FILTER(${columnaLetra}2:${columnaLetra}${filas}, A2:A${filas}>1)`);
+            hyperFormulaInstance.setCellContents({ row: 1, col: columna, sheet: 0 }, `=FILTER(${columnaLetra}2:${columnaLetra}${filas}, ${columnaCondicion}2: ${columnaCondicion}${filas}>1)`);
         }
         
         // hyperFormulaInstance.setCellContents({ row: 0, col: 11, sheet: sheetId }, 'caca');
