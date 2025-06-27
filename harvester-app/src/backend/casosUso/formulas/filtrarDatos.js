@@ -111,12 +111,16 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
         const filas = datos.length;
         console.log('Filas:', filas);
 
+
+        const condicionFiltro = extraerCondicionFiltro(filtro[0].Datos);
+        console.log('Condición del filtro:', condicionFiltro);
+
         for(let columna = indiceColumnaVacio; columna < indiceColumnaVacio*2+1; columna++) {
             hyperFormulaInstance.setCellContents({ row: 0, col: columna, sheet: sheetId }, encabezados[columna-indiceColumnaVacio]);
             const columnaLetra = numeroAColumnaExcel(columna-indiceColumnaVacio+1);
             console.log('Columna:', columna-indiceColumnaVacio);
             console.log('numero columna Excel:', numeroAColumnaExcel(columna-indiceColumnaVacio+1));
-            hyperFormulaInstance.setCellContents({ row: 1, col: columna, sheet: 0 }, `=FILTER(${columnaLetra}2:${columnaLetra}${filas}, ${columnaCondicion}2: ${columnaCondicion}${filas}>1)`);
+            hyperFormulaInstance.setCellContents({ row: 1, col: columna, sheet: 0 }, `=FILTER(${columnaLetra}2:${columnaLetra}${filas}, ${columnaCondicion}2: ${columnaCondicion}${filas}${condicionFiltro})`);
         }
         
         // hyperFormulaInstance.setCellContents({ row: 0, col: 11, sheet: sheetId }, 'caca');
@@ -198,6 +202,20 @@ function nombreColumnaAIndice(filtro, encabezados) {
     }
     return numeroAColumnaExcel(columna + 1); // +1 porque A=1, B=2, etc.
 }
+
+
+/**
+ * Extrae la condición de una fórmula tipo =FILTER([@Columna]condición)
+ * @param {string} filtro - Fórmula tipo =FILTER([@Columna]condición)
+ * @returns {string|null} La condición (por ejemplo, '>1' o '="Muy rápido"'), o null si no se encuentra.
+ */
+function extraerCondicionFiltro(filtro) {
+    // Busca la referencia estructurada y lo que sigue después de ella, hasta el paréntesis de cierre
+    const match = filtro.match(/\[@[^\]]+\]([^)]+)/);
+    if (!match) return null;
+    return match[1].trim();
+}
+
 
 
 module.exports = {
