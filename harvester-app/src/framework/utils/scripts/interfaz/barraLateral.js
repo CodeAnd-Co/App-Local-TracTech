@@ -10,6 +10,7 @@ const informacionModulos = {
   formulas:        [`${rutaBase}src/framework/vistas/paginas/formulas/listaFormulas.ejs`, 'Fórmulas', 'Funcion'],
   perfil:          [`${rutaBase}src/framework/vistas/paginas/usuarios/consultarPerfil.ejs`, 'Perfil', 'Usuario'],
   usuarios:        [`${rutaBase}src/framework/vistas/paginas/usuarios/listaUsuarios.ejs`, 'Usuarios', 'Usuario'],
+  dispositivos:    [`${rutaBase}src/framework/vistas/paginas/dispositivos/listaDispositivos.ejs`, 'Gestión de Dispositivos', 'BaseDatos'],
 };
 
 async function cargarModulo(modulo){
@@ -43,7 +44,7 @@ function configurarBotonesLaterales(){
     boton.addEventListener('click', async() => {
       const seccion = localStorage.getItem('seccion-activa');
 
-      if(seccion == 'analisis' && boton.classList.contains('sidebar-logo') == false){
+ if(seccion == 'analisis' && boton.classList.contains('sidebar-logo') == false){
         const resultadoConfirmado = await mostrarAlertaConfirmacion('¿Estás seguro de salir?', 'Se perderá el reporte si sales de este', 'warning', 'Sí, salir', 'Cancelar');
         if(resultadoConfirmado) {
 
