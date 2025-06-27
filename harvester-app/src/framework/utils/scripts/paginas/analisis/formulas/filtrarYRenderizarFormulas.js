@@ -32,7 +32,7 @@ function filtrarYRenderizarFormulas(contenedor, terminoBusqueda = '', formulasDi
   console.log('formulas disponibles:', formulasDisponibles);
   
   formulasDisponibles = formulasDisponibles.filter(formula => {
-    return !formula.Datos.toLowerCase().includes('vlookup');
+    return !formula.Datos.toLowerCase().includes('filter');
   });
   
   console.log('formulas disponibles2:', formulasDisponibles);

@@ -37,7 +37,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
   }
 
   const filtrosDisponibles = formulasDisponibles.filter(formula => {
-    return formula.Datos.toLowerCase().includes('vlookup');
+    return formula.Datos.toLowerCase().includes('filter');
   });
 
 

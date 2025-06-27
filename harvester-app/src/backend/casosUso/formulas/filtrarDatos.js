@@ -52,59 +52,73 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
         const indiceColumnaVacio = encontrarColumnaVacia(datos);
         console.log('Índice de columna vacía:', indiceColumnaVacio);
 
-        // Pruebas filtros (BORRAR)
+        // // Pruebas filtros (BORRAR)
 
         
         
-        const datosPrueba = {
-            "velocidad" : [1,3,4,5,5,5,6,7,6,5,4,3,2,0],
-            "gasolina" : [10,10,10,9,9,9,8,8,7,7,7,7,6,6]
-        };
+        // const datosPrueba = {
+        //     "velocidad" : [1,3,4,5,5,5,6,7,6,5,4,3,2,0],
+        //     "gasolina" : [10,10,10,9,9,9,8,8,7,7,7,7,6,6]
+        // };
         
-        const hfInstance = HyperFormula.buildEmpty({
-            licenseKey: 'gpl-v3', // Usa tu clave de licencia si tienes una
-            useArrayArithmetic: true, // Habilita la aritmética de matrices
-        });
+        // const hfInstance = HyperFormula.buildEmpty({
+        //     licenseKey: 'gpl-v3', // Usa tu clave de licencia si tienes una
+        //     useArrayArithmetic: true, // Habilita la aritmética de matrices
+        // });
 
-        const sheetName = hfInstance.addSheet('Sheet1');
-        const sheetId = hfInstance.getSheetId(sheetName);
+        // const sheetName = hfInstance.addSheet('Sheet1');
+        // const sheetId = hfInstance.getSheetId(sheetName);
 
-        datosPrueba.velocidad.forEach((valor, index) => {
-            hfInstance.setCellContents({ sheet: sheetId, col: 0, row: index }, [[valor]]);
-        });
+        // datosPrueba.velocidad.forEach((valor, index) => {
+        //     hfInstance.setCellContents({ sheet: sheetId, col: 0, row: index }, [[valor]]);
+        // });
 
-        // Cargar "gasolina" en la columna B (columna 1)
-        datosPrueba.gasolina.forEach((valor, index) => {
-            hfInstance.setCellContents({ sheet: sheetId, col: 1, row: index }, [[valor]]);
-        });
+        // // Cargar "gasolina" en la columna B (columna 1)
+        // datosPrueba.gasolina.forEach((valor, index) => {
+        //     hfInstance.setCellContents({ sheet: sheetId, col: 1, row: index }, [[valor]]);
+        // });
 
 
-        console.log('Filtrando datos...')
-        // var formula = `=ARRAYFORMULA(FILTER(A1:B14, ${parametro}1:${parametro}14 ${operador} ${valor}))`;
-        const formula = '=FILTER(A1:B14, A1:A14=5)'
-        // formula = '=ARRAYFORMULA(FILTER(A1:B5), {1,0,1,1,0})'
-        console.log(formula)
+        // console.log('Filtrando datos...')
+        // // var formula = `=ARRAYFORMULA(FILTER(A1:B14, ${parametro}1:${parametro}14 ${operador} ${valor}))`;
+        // const formula = '=FILTER(A1:B14, A1:A14=5)'
+        // // formula = '=ARRAYFORMULA(FILTER(A1:B5), {1,0,1,1,0})'
+        // console.log(formula)
 
-        // Aplicar la fórmula
-        hfInstance.setCellContents({ sheet: sheetId, col: 2, row: 0 }, '=FILTER(A1:A14, A1:A14>5)');
-        hfInstance.setCellContents({ sheet: sheetId, col: 3, row: 0 }, '=FILTER(B1:B14, A1:A14>5)');
-        // hfInstance2.setCellContents({ sheet: sheetId2, col: 4, row: 0 }, "Hola");
+        // // Aplicar la fórmula
+        // hfInstance.setCellContents({ sheet: sheetId, col: 2, row: 0 }, '=FILTER(A1:A14, A1:A14>5)');
+        // hfInstance.setCellContents({ sheet: sheetId, col: 3, row: 0 }, '=FILTER(B1:B14, A1:A14>5)');
+        // // hfInstance2.setCellContents({ sheet: sheetId2, col: 4, row: 0 }, "Hola");
 
-        // Obtener los resultados filtrados
-        // const resultados = hfInstance2.getSheetValues(sheetId2).slice(2); // Ignorar las primeras dos filas (datos originales)
-        const resultados = hfInstance.getSheetValues(sheetId)
-        console.log('Resultados:', resultados);
+        // // Obtener los resultados filtrados
+        // // const resultados = hfInstance2.getSheetValues(sheetId2).slice(2); // Ignorar las primeras dos filas (datos originales)
+        // const resultados = hfInstance.getSheetValues(sheetId)
+        // console.log('Resultados:', resultados);
 
-        const resultadosFiltrados = hfInstance.getCellValue({ sheet: sheetId, col: 2, row: 0 });
-        console.log('Resultados filtrados:', resultadosFiltrados);
+        // const resultadosFiltrados = hfInstance.getCellValue({ sheet: sheetId, col: 2, row: 0 });
+        // console.log('Resultados filtrados:', resultadosFiltrados);
 
 
         
-        const hyperFormula = HyperFormula.buildFromArray(datos, opciones);
+        const hyperFormulaInstance = HyperFormula.buildFromArray(datos, opciones);
+        const sheetId = hyperFormulaInstance.getSheetId('Sheet1');
+        
 
-        for(let columna = 0; columna < indiceColumnaVacio; columna++) {
+        const filas = datos.length;
+        console.log('Filas:', filas);
 
+        for(let columna = indiceColumnaVacio; columna < indiceColumnaVacio*2+1; columna++) {
+            hyperFormulaInstance.setCellContents({ row: 0, col: columna, sheet: sheetId }, encabezados[columna-indiceColumnaVacio]);
+            const columnaLetra = numeroAColumnaExcel(columna-indiceColumnaVacio+1);
+            console.log('Columna:', columna-indiceColumnaVacio);
+            console.log('numero columna Excel:', numeroAColumnaExcel(columna-indiceColumnaVacio+1));
+            hyperFormulaInstance.setCellContents({ row: 1, col: columna, sheet: 0 }, `=FILTER(${columnaLetra}2:${columnaLetra}${filas}, A2:A${filas}>1)`);
         }
+        
+        // hyperFormulaInstance.setCellContents({ row: 0, col: 11, sheet: sheetId }, 'caca');
+        // hyperFormulaInstance.setCellContents({ row: 1, col: 11, sheet: 0 }, `=FILTER(B2:B200, B2:B200>13)`);
+        const resultados = hyperFormulaInstance.getSheetValues(sheetId)
+        console.log('Resultados:', resultados);
         
         // // Asignar nombre a la columna de resultados
         // hyperFormula.setCellContents({ row: 0, col: indiceColumnaVacio, sheet: 0 }, nombreColumnaResultado);
@@ -145,6 +159,42 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
     }
 
 }
+
+
+function numeroAColumnaExcel(num) {
+  let columna = '';
+  while (num > 0) {
+    let residuo = (num - 1) % 26;
+    columna = String.fromCharCode(65 + residuo) + columna;
+    num = Math.floor((num - 1) / 26);
+  }
+  return columna;
+}
+
+
+
+/**
+ * @function traducirFormulaEstructurada
+ * @param {string} formula - Fórmula estructurada a traducir.
+ * @param {Array} encabezados - Encabezados de la hoja de Excel.
+ * @param {number} filaActiva - Fila activa para la traducción.
+ * @returns {string} Fórmula traducida a formato clásico de Excel.
+ */
+
+function nombreColumnaAIndice(filtro, encabezados) {
+    // Buscar el primer match de [@NombreColumna]
+    const match = filtro.match(/\[@([^\]]+)\]/);
+    if (!match) {
+        return { error: true, columnasNoEncontradas: ['No se encontró ninguna columna en el filtro'] };
+    }
+    const nombreColumna = match[1];
+    const columna = encabezados.indexOf(nombreColumna);
+    if (columna === -1) {
+        return { error: true, columnasNoEncontradas: [nombreColumna] };
+    }
+    return numeroAColumnaExcel(columna + 1); // +1 porque A=1, B=2, etc.
+}
+
 
 module.exports = {
   filtrarDatos,
