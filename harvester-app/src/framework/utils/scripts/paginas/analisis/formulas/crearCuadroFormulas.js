@@ -123,15 +123,12 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
         // if( filtroAplicado ) {
         console.log('filtrando datos...')
-        const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')));
+        const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
         console.log('Datos filtrados!')
+        console.log('datosFiltrados en crearcuadroformulas:', datosFiltrados);
 
         
-        // }
-        // Verificar que hay datos disponibles
-        // const datosExcel = localStorage.getItem('datosFiltradosExcel');
-        const datosExcel = localStorage.getItem('datosFiltradosExcel'); //datosFiltrados || localStorage.getItem('datosFiltradosExcel');
-        if (!datosExcel) {
+        if (!datosFiltrados) {
           mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
           return;
         }
@@ -167,9 +164,9 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
         try {
           let resultadoFormula;
           if (tractorSeleccionado.length != 0) {
-            resultadoFormula = aplicarFormula(nombreFormula, datosFormula, tractorSeleccionado, JSON.parse(datosExcel));
+            resultadoFormula = aplicarFormula(nombreFormula, datosFormula, tractorSeleccionado, datosFiltrados.resultados);
           } else {
-            resultadoFormula = aplicarFormula(nombreFormula, datosFormula, null, JSON.parse(datosExcel));
+            resultadoFormula = aplicarFormula(nombreFormula, datosFormula, null, datosFiltrados.resultados);
           }
           let contadorErrores = 0;
           const resultados = resultadoFormula.resultados;
