@@ -1,5 +1,5 @@
-// RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
-// RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
+// RF24 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF24 
+// RF22 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF22
 const { LONGITUD_MAXIMA_FORMULA,
     LONGITUD_MAXIMA_NOMBRE_FORMULA } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 
@@ -65,13 +65,13 @@ async function inicializarCrearFormula() {
     if (nombreArchivo === null || nombreArchivo === undefined) {
 
         const selectorAnidado = document.getElementById('main-function');
-        const listaOpcionesEliminar = ['IF', 'IFERROR', 'VLOOKUP']
+        const listaOpcionesEliminar = ['IF', 'IFERROR']
         listaOpcionesEliminar.forEach(elemento => {
             const elemntoEliminar = selectorAnidado.querySelector(`option[value='${elemento}']`)
             selectorAnidado.removeChild(elemntoEliminar)
         });
 
-        mostrarAlerta('No hay un archivo cargado.', 'No se podran crear fórmulas (SI, SI.ERROR y BUSCAV).', 'warning');
+        mostrarAlerta('No hay un archivo cargado.', 'No se podran crear fórmulas (SI, SI.ERROR).', 'warning');
         return;
     }
 }       
@@ -160,7 +160,7 @@ async function procesarFormula() {
         btnGuardar.disabled = false;
         return;
     }
-    const formula = cuadroTextoGenerado.split(':')[1].trim();
+    const formula = cuadroTextoGenerado.split('°')[2].trim();
 
     try {
         const respuesta = await guardarFormula(nombreFormula, formula);
@@ -217,11 +217,8 @@ function definirEstructura(elementoElegido, contenedor) {
             agregarArgumento('Valor', 'iferror-value', contenedor, true);
             agregarArgumento('Valor si error', 'iferror-iferror', contenedor, true);
             break;
-        case 'VLOOKUP':
-            agregarArgumento('Valor buscado', 'vlookup-lookupvalue', contenedor, true);
-            agregarArgumento('Matriz tabla', 'vlookup-tablearray', contenedor);
-            agregarArgumento('Indicador de columnas', 'vlookup-colindexnum', contenedor);
-            agregarArgumento('Coincidencia (0=exacta, 1=aproximada)', 'vlookup-rangelookup', contenedor);
+        case 'FILTER':
+            agregarCriterio('Condición', 'if-condition', contenedor);
             break;
         case 'ARITHMETIC':
             agregarArgumento('Expresión', 'arithmetic-expression', contenedor);
@@ -346,7 +343,7 @@ function agregarFuncionAnidada(boton) {
             <option value=''>Seleccionar función anidada</option>
             <option value='IF'>SI</option>
             <option value='IFERROR'>SI.ERROR</option>
-            <option value='VLOOKUP'>BUSCARV</option>
+            <option value='FILTER'>FILTRO</option>
             <option value='ARITHMETIC'>Operación Aritmética</option>
         `;
         
@@ -538,7 +535,7 @@ function generarFormulaCompleja() {
     }
 
     const formula = construirFormulaDesdeContenedor(contenedor, seleccionFuncionPrincipal.value);
-    document.getElementById('resultado').innerText = `Fórmula generada (en inglés para HyperFormula):\n=${formula}`;
+    document.getElementById('resultado').innerText = `°Fórmula generada (en inglés para HyperFormula)°\n=${formula}`;
 }
 
 /**
@@ -576,11 +573,8 @@ function construirFormulaDesdeContenedor(contenedor, nombreFuncion) {
             argumentos.push(procesarArgumento(elementosArgumentos[0]));
             argumentos.push(procesarArgumento(elementosArgumentos[1]));
             break;
-        case 'VLOOKUP':
-            argumentos.push(procesarArgumento(elementosArgumentos[0]));
-            argumentos.push(obtenerValor(elementosArgumentos[1].querySelector('input')));
-            argumentos.push(obtenerValor(elementosArgumentos[2].querySelector('input')));
-            argumentos.push(obtenerValor(elementosArgumentos[3].querySelector('input')));
+        case 'FILTER':
+            argumentos.push(construirCondicion(elementosArgumentos[0], false));
             break;
         case 'ARITHMETIC':
             return obtenerValor(elementosArgumentos[0].querySelector('input'));
@@ -673,7 +667,7 @@ function traducirFuncion(nombre) {
         'CONTAR.SI': 'COUNTIF',
         'CONTAR.SI.CONJUNTO': 'COUNTIFS',
         'SI.ERROR': 'IFERROR',
-        'BUSCARV': 'VLOOKUP',
+        'FILTRO': 'FILTER',
         'ARITHMETIC': 'ARITHMETIC'
     };
     return map[nombre] || nombre;

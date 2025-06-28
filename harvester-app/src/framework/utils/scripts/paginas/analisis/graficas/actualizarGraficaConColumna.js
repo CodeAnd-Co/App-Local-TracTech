@@ -8,7 +8,7 @@ const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/com
  * @param {string} nombreColumna - Nombre de la columna seleccionada.
  * @returns {void}
  */
-function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFormulas, tractorSeleccionado) {
+function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFormulas, tractorSeleccionado, datosExcel) {
   // Obtener la gráfica
   const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
   if (!graficaDiv) {
@@ -28,7 +28,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
   }
 
   // Obtener la hoja seleccionada del localStorage
-  const datos = localStorage.getItem('datosFiltradosExcel');
+  const datos = datosExcel;//localStorage.getItem('datosFiltradosExcel');
 
   if (!datos) {
     mostrarAlerta('Error', 'No hay datos cargados para mostrar en la gráfica.', 'error');
@@ -39,7 +39,7 @@ function actualizarGraficaConColumna(graficaId, nombreColumna, datosOriginalesFo
     let datosHoja = null;
 
     // Parsear los datos del localStorage
-    const datosParseados = JSON.parse(datos);
+    const datosParseados = datos;
 
     // Determinar qué hoja usar
     if (tractorSeleccionado && tractorSeleccionado.trim() !== '') {

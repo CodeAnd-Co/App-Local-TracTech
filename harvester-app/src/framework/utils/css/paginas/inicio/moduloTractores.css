@@ -55,6 +55,7 @@ input:focus {
   flex-shrink: 0;
   position: relative;
   display: none;
+  height: 100%;
 }
 .secundario {
   background: #e8e8e8;
@@ -96,10 +97,26 @@ input:focus {
   border: none;
 }
 
+
+.tractores-contenido{
+  height: 100%; /* Ajusta según lo que necesites */
+  max-height: 34.5em;
+  overflow-y: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #999 transparent; /* Firefox */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
 .distribuidores-contenido,
-.tractores-contenido,
 .columnas-contenido {
-  max-height: 300px; /* Ajusta según lo que necesites */
+  height: 40em; /* Ajusta según lo que necesites */
   overflow-y: auto;
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: #999 transparent; /* Firefox */
