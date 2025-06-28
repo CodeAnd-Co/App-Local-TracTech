@@ -196,11 +196,95 @@ async function deshabilitarDispositivo(idUsuario) {
     }
 }
 
+/**
+ * Obtiene la lista completa de dispositivos con información de sus propietarios.
+ *
+ * Esta función realiza una petición al endpoint de consulta de dispositivos del servidor
+ * y devuelve la lista de todos los dispositivos registrados.
+ *
+ * @async
+ * @function obtenerDispositivos
+ * @returns {Promise<{ok: boolean, dispositivos?: Array, mensaje?: string}>} Objeto con el estado de la operación y la lista de dispositivos.
+ */
+async function obtenerDispositivos() {
+    if (!token) {
+        return {
+            ok: false,
+            mensaje: 'Token de autenticación no encontrado',
+        };
+    }
+    try {
+        const respuesta = await fetch(`${URL_BASE}/dispositivo/listar`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        
+        const datos = await respuesta.json();
+
+        if (respuesta.status === 404) {
+            return { ok: true, dispositivos: [] };
+        }
+
+        return { ok: respuesta.ok, ...datos };
+    } catch (error) {
+        if (error instanceof TypeError) {
+            return { ok: false, mensaje: 'Error de conexión con el servidor' };
+        } else {
+            return { ok: false, mensaje: error.message || 'Error desconocido' };
+        }
+    }
+}
+
+/**
+ * Habilita un dispositivo específico mediante una solicitud HTTP POST a la API.
+ *
+ * Esta función realiza una petición al endpoint de habilitación de dispositivos del servidor
+ * y devuelve el resultado indicando si la operación fue exitosa o no.
+ *
+ * @async
+ * @function habilitarDispositivo
+ * @param {string} idDispositivo - ID del dispositivo que se va a habilitar.
+ * @returns {Promise<{ok: boolean, mensaje?: string}>} Objeto con el estado de la operación y un posible mensaje del servidor.
+ */
+async function habilitarDispositivo(idDispositivo) {
+    if (!token) {
+        return {
+            ok: false,
+            mensaje: 'Token de autenticación no encontrado',
+        };
+    }
+    try {
+        const respuesta = await fetch(`${URL_BASE}/dispositivo/habilitar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ dispositivoId: idDispositivo }),
+        });
+        
+        const datos = await respuesta.json();
+
+        return { ok: respuesta.ok, ...datos };
+    } catch (error) {
+        if (error instanceof TypeError) {
+            return { ok: false, mensaje: 'Error de conexión con el servidor' };
+        } else {
+            return { ok: false, mensaje: error.message || 'Error desconocido' };
+        }
+    }
+}
+
 module.exports = {
     obtenerUsuarios,
     modificarUsuario,
     eliminarUsuario,
     crearUsuario,
     consultarRoles,
-    deshabilitarDispositivo
+    deshabilitarDispositivo,
+    obtenerDispositivos,
+    habilitarDispositivo
 };

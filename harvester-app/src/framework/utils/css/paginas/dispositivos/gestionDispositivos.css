@@ -1,0 +1,489 @@
+/* === Estilos específicos para gestión de dispositivos === */
+
+/* === Layout principal === */
+.contenedor-usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin: 1rem;
+}
+
+/* === Encabezado === */
+.encabezado-usuarios {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  background: #a61930;
+  color: white;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,.15);
+}
+
+.encabezado-usuarios h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.encabezado-usuarios p {
+  margin: 0;
+  font-size: 1.125rem;
+  opacity: 0.9;
+}
+
+/* === Contenedor de búsqueda === */
+.contenedor-buscar {
+  margin-bottom: 1rem;
+}
+
+.campo-buscar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: 1rem;
+  background: #e8e8e8;
+  border: 4px solid rgba(38,43,64,.1);
+  border-radius: .5rem;
+}
+
+.icono-buscar {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.campo-buscar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1.125rem;
+  color: rgba(0,0,0,.8);
+}
+
+.campo-buscar input::placeholder {
+  color: rgba(0,0,0,.33);
+  font-size: 1.125rem;
+}
+
+.contador-caracteres {
+  font-size: 12px;
+  color: #7f8c8d;
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+/* === Leyenda de estados === */
+.leyenda-estados {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.estado-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.estado-circulo {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.estado-circulo.activo {
+  background-color: #28a745;
+}
+
+.estado-circulo.inactivo {
+  background-color: #dc3545;
+}
+
+/* === Lista de dispositivos === */
+.lista-usuarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(850px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.usuario-item {
+  display: flex;
+  align-items: stretch;
+  gap: .75rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1.5px solid #000;
+  border-radius: .4rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.usuario-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.usuario-info > div {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.usuario-info strong {
+  color: #262b40;
+  font-weight: 600;
+  min-width: 150px;
+  font-size: 1rem;
+}
+
+.usuario-nombre {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  background: #f8f9fa;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.95rem;
+  border-left: 3px solid #a61930;
+  color: #262b40;
+  font-weight: 500;
+}
+
+.usuario-correo {
+  color: #555;
+  font-size: 1rem;
+}
+
+.usuario-fecha {
+  color: #777;
+  font-size: 0.95rem;
+}
+
+/* === Badges de estado === */
+.estado-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.estado-badge.activo {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.estado-badge.activo::before {
+  content: '●';
+  color: #28a745;
+}
+
+.estado-badge.inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.estado-badge.inactivo::before {
+  content: '●';
+  color: #dc3545;
+}
+
+/* === Botones de acción === */
+.usuario-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.boton-habilitar {
+  background: #28a745;
+  border: 2px solid rgba(255,255,255,.15);
+  border-radius: .5rem;
+  padding: .5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.boton-habilitar:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.boton-habilitar img {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  filter: brightness(0) invert(1);
+}
+
+/* Estilos para botón deshabilitado */
+.boton-deshabilitado {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  filter: grayscale(100%);
+}
+
+.boton-deshabilitado:hover {
+  background-color: #28a745 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.boton-deshabilitado img {
+  opacity: 0.6;
+}
+
+/* === Paginación === */
+.paginacion {
+  display: flex;
+  gap: .5rem;
+  justify-content: center;
+  font-size: 1.75rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.paginacion button,
+.paginacion span {
+  color: #000;
+  padding: .25rem .5rem;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.paginacion button:hover {
+  background: #f8f9fa !important;
+  color: #a61930;
+}
+
+.paginacion button.pagina-actual,
+.paginacion button.activo {
+  color: #a61930;
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 1.75rem;
+}
+
+.paginacion button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.puntos-paginacion {
+  background: transparent;
+  padding: 0 4px;
+}
+
+/* === Mensaje cuando no hay dispositivos === */
+.mensaje-vacio {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: #fff;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+.icono-vacio {
+  width: 80px;
+  height: 80px;
+  opacity: 0.3;
+  margin: 0 auto 1rem;
+  display: block;
+}
+
+.mensaje-vacio h3 {
+  color: #262b40;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.mensaje-vacio p {
+  color: #777;
+  font-size: 1rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* === Indicador de dispositivo activo === */
+.dispositivo-activo {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dispositivo-activo::before {
+  content: '✓';
+  font-weight: bold;
+}
+
+/* === Responsive === */
+/* Pantallas grandes y medianas (850px+ disponible) */
+@media (min-width: 1200px) {
+  .lista-usuarios {
+    grid-template-columns: repeat(auto-fit, minmax(850px, 1fr));
+  }
+}
+
+/* Pantallas medianas (600px - 1199px) */
+@media (max-width: 1199px) and (min-width: 900px) {
+  .lista-usuarios {
+    grid-template-columns: repeat(auto-fit, minmax(750px, 1fr));
+  }
+}
+
+/* Tablets (600px - 899px) */
+@media (max-width: 899px) and (min-width: 600px) {
+  .lista-usuarios {
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 1rem;
+  }
+  
+  .usuario-item {
+    padding: 1rem;
+  }
+}
+
+/* Móviles grandes y tablets pequeños */
+@media (max-width: 768px) {
+  .contenedor-usuarios {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+  
+  .lista-usuarios {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .encabezado-usuarios h1 {
+    font-size: 1.8rem;
+  }
+  
+  .leyenda-estados {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .estado-item {
+    justify-content: center;
+  }
+  
+  .usuario-item {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .usuario-info > div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .usuario-info strong {
+    min-width: auto;
+  }
+  
+  .usuario-acciones {
+    justify-content: center;
+  }
+  
+  .campo-buscar {
+    padding: 0.75rem;
+  }
+  
+  .campo-buscar input {
+    font-size: 1rem;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .encabezado-usuarios {
+    padding: 1rem;
+  }
+  
+  .encabezado-usuarios h1 {
+    font-size: 1.6rem;
+  }
+  
+  .encabezado-usuarios p {
+    font-size: 1rem;
+  }
+  
+  .usuario-item {
+    padding: 0.75rem;
+  }
+  
+  .campo-buscar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .contador-caracteres {
+    margin-left: 0;
+    text-align: center;
+  }
+  
+  .paginacion {
+    font-size: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .boton-habilitar img {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+/* Pantallas extra grandes (1600px+) */
+@media (min-width: 1600px) {
+  .contenedor-usuarios {
+    max-width: 1800px;
+    margin: 1rem auto;
+  }
+  
+  .lista-usuarios {
+    grid-template-columns: repeat(auto-fit, minmax(850px, 1fr));
+    gap: 1rem;
+  }
+}
+
+/* Pantallas ultra anchas (2000px+) - Permite 2 columnas de 850px */
+@media (min-width: 2000px) {
+  .lista-usuarios {
+    grid-template-columns: repeat(2, minmax(850px, 1fr));
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+}

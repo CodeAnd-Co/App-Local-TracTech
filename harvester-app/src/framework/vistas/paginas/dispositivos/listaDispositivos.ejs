@@ -1,0 +1,37 @@
+<%- include ('../../includes/encabezado.ejs')%>
+<link rel='stylesheet' href='<%= rutaBase %>src/framework/utils/css/paginas/dispositivos/gestionDispositivos.css'>
+
+    <div class='main-content'>
+        <!-- Barra de búsqueda -->
+        <div class='contenedor-buscar'>
+          <div class='campo-buscar'>
+            <img src='<%= rutaBase %>src/framework/utils/iconos/Buscar.svg' alt='Buscar' class='icono-buscar' />
+            <input type='text' placeholder='Buscar por ID de dispositivo o nombre de propietario...' maxlength='50' id='campoBusqueda' />
+            <div class='contador-caracteres'>
+                <span id='contadorBusqueda'>0</span>/50
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de dispositivos -->
+    <div class='lista-usuarios' id='listaDispositivos'>
+        <!-- Los dispositivos se cargarán dinámicamente aquí -->
+    </div>
+
+    <!-- Paginación -->
+    <div class='paginacion' id='paginacion'>
+        <!-- La paginación se cargará dinámicamente aquí -->
+    </div>
+
+    <!-- Mensaje cuando no hay dispositivos -->
+    <div class='mensaje-vacio' id='mensajeVacio' style='display: none;'>
+        <div id='mensajeVacioContenido' style='display: none;'>
+            <img src='<%= rutaBase %>src/framework/utils/iconos/BaseDatos.svg' alt='Sin datos' class='icono-vacio' />
+            <h3>No se encontraron dispositivos</h3>
+            <p>No hay dispositivos registrados en el sistema o no coinciden con los criterios de búsqueda.</p>
+        </div>
+    </div>
+</div>
+
+<script src='<%= rutaBase %>src/framework/utils/scripts/paginas/dispositivos/moduloGestionDispositivos.js'></script>
+<%- include ('../../includes/piePagina.ejs')%>
