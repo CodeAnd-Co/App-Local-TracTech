@@ -1,5 +1,5 @@
-// RF67 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF67 
-// RF69 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF69
+// RF24 Crear Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF24 
+// RF22 Guardar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF22
 const { LONGITUD_MAXIMA_FORMULA,
     LONGITUD_MAXIMA_NOMBRE_FORMULA } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 
@@ -65,13 +65,13 @@ async function inicializarCrearFormula() {
     if (nombreArchivo === null || nombreArchivo === undefined) {
 
         const selectorAnidado = document.getElementById('main-function');
-        const listaOpcionesEliminar = ['IF', 'IFERROR', 'VLOOKUP']
+        const listaOpcionesEliminar = ['IF', 'IFERROR']
         listaOpcionesEliminar.forEach(elemento => {
             const elemntoEliminar = selectorAnidado.querySelector(`option[value='${elemento}']`)
             selectorAnidado.removeChild(elemntoEliminar)
         });
 
-        mostrarAlerta('No hay un archivo cargado.', 'No se podran crear fórmulas (SI, SI.ERROR y BUSCAV).', 'warning');
+        mostrarAlerta('No hay un archivo cargado.', 'No se podran crear fórmulas (SI, SI.ERROR).', 'warning');
         return;
     }
 }       
@@ -160,7 +160,7 @@ async function procesarFormula() {
         btnGuardar.disabled = false;
         return;
     }
-    const formula = cuadroTextoGenerado.split(':')[1].trim();
+    const formula = cuadroTextoGenerado.split('°')[2].trim();
 
     try {
         const respuesta = await guardarFormula(nombreFormula, formula);
@@ -217,11 +217,8 @@ function definirEstructura(elementoElegido, contenedor) {
             agregarArgumento('Valor', 'iferror-value', contenedor, true);
             agregarArgumento('Valor si error', 'iferror-iferror', contenedor, true);
             break;
-        case 'VLOOKUP':
-            agregarArgumento('Valor buscado', 'vlookup-lookupvalue', contenedor, true);
-            agregarArgumento('Matriz tabla', 'vlookup-tablearray', contenedor);
-            agregarArgumento('Indicador de columnas', 'vlookup-colindexnum', contenedor);
-            agregarArgumento('Coincidencia (0=exacta, 1=aproximada)', 'vlookup-rangelookup', contenedor);
+        case 'FILTER':
+            agregarCriterio('Condición', 'if-condition', contenedor);
             break;
         case 'ARITHMETIC':
             agregarArgumento('Expresión', 'arithmetic-expression', contenedor);
@@ -314,76 +311,88 @@ function agregarCriterio(etiqueta, nombreClase, contenedor) {
  */
 // eslint-disable-next-line no-unused-vars
 function agregarFuncionAnidada(boton) {
-    // Deshabilitar el botón inmediatamente para evitar múltiples clics
-    boton.disabled = true;
-    boton.textContent = 'Función añadida';
-    
-    const argumentoContenido = boton.closest('.argumentoContenido');
-    const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
+    const elementoContadorAnidaciones = document.getElementById('contadorAnidaciones');
+    const limite = parseInt(elementoContadorAnidaciones.getAttribute('maxlength'), 10);
 
-    const contador = argumentoContenido.parentElement?.querySelector('.contador-caracteres');
-    contador.textContent = ``;
-    
-    // Deshabilitar el input de texto del argumento padre y agregar carácter invisible
-    const inputPadre = argumentoContenido.querySelector('input[type="text"]');
-    if (inputPadre) {
-        inputPadre.value = '\u200B'; // Zero-width space
-        inputPadre.disabled = true;
-        inputPadre.style.backgroundColor = '#f0f0f0';
-    }
-    
-    const filaAnidada = document.createElement('div');
-    filaAnidada.classList.add('fila-anidada');
-    
-    const seleccionarFuncion = document.createElement('select');
-    seleccionarFuncion.classList.add('selectorFuncionAnidada');
-    seleccionarFuncion.innerHTML = `
-        <option value=''>Seleccionar función anidada</option>
-        <option value='IF'>SI</option>
-        <option value='IFERROR'>SI.ERROR</option>
-        <option value='VLOOKUP'>BUSCARV</option>
-        <option value='ARITHMETIC'>Operación Aritmética</option>
-    `;
-    
-    filaAnidada.appendChild(seleccionarFuncion);
-    contenedorAnidado.appendChild(filaAnidada);
+    const iterador = tamanioAnidacion()
+    if(iterador < limite){
+        // Deshabilitar el botón inmediatamente para evitar múltiples clics
+        boton.disabled = true;
+        boton.textContent = 'Función añadida';
+        
+        const argumentoContenido = boton.closest('.argumentoContenido');
+        const contenedorAnidado = argumentoContenido.querySelector('.contenedor-funciones-anidadas');
 
-    let eliminarBotonAnidado = filaAnidada.querySelector('.botonEliminarAnidado');
-
-    if (!eliminarBotonAnidado) {
-        eliminarBotonAnidado = document.createElement('button');
-        eliminarBotonAnidado.textContent = 'Eliminar función';
-        eliminarBotonAnidado.classList.add('botonEliminarAnidado');
-        eliminarBotonAnidado.onclick = () => {
-            // Rehabilitar el input padre cuando se elimina la función anidada
-            if (inputPadre) {
-                inputPadre.value = '';
-                inputPadre.disabled = false;
-                inputPadre.style.backgroundColor = '';
-            }
-            // Rehabilitar el botón "Anidar Función" cuando se elimina la función anidada
-            boton.disabled = false;
-            boton.textContent = 'Anidar Función';
-            filaAnidada.remove();
-        };
-        filaAnidada.appendChild(eliminarBotonAnidado);
-    }
-    
-    seleccionarFuncion.onchange = (evento) => {
-        const valorSeleccionado = evento.target.value;
-        if (valorSeleccionado) {
-            const divAnidadoExistente = filaAnidada.querySelector('.funciones-anidadas');
-            if (divAnidadoExistente) {
-                divAnidadoExistente.remove();
-            }
-            
-            const divAnidado = document.createElement('div');
-            divAnidado.classList.add('funciones-anidadas');
-            filaAnidada.appendChild(divAnidado);
-            
-            definirEstructura(evento.target, divAnidado);
+        const contador = argumentoContenido.parentElement?.querySelector('.contador-caracteres');
+        contador.textContent = ``;
+        
+        // Deshabilitar el input de texto del argumento padre y agregar carácter invisible
+        const inputPadre = argumentoContenido.querySelector('input[type="text"]');
+        if (inputPadre) {
+            inputPadre.value = '\u200B'; // Zero-width space
+            inputPadre.disabled = true;
+            inputPadre.style.backgroundColor = '#f0f0f0';
         }
-    };
+        
+        const filaAnidada = document.createElement('div');
+        filaAnidada.classList.add('fila-anidada');
+        
+        const seleccionarFuncion = document.createElement('select');
+        seleccionarFuncion.classList.add('selectorFuncionAnidada');
+        seleccionarFuncion.innerHTML = `
+            <option value=''>Seleccionar función anidada</option>
+            <option value='IF'>SI</option>
+            <option value='IFERROR'>SI.ERROR</option>
+            <option value='FILTER'>FILTRO</option>
+            <option value='ARITHMETIC'>Operación Aritmética</option>
+        `;
+        
+        filaAnidada.appendChild(seleccionarFuncion);
+        contenedorAnidado.appendChild(filaAnidada);
+
+        let eliminarBotonAnidado = filaAnidada.querySelector('.botonEliminarAnidado');
+
+        if (!eliminarBotonAnidado) {
+            eliminarBotonAnidado = document.createElement('button');
+            eliminarBotonAnidado.textContent = 'Eliminar función';
+            eliminarBotonAnidado.classList.add('botonEliminarAnidado');
+            eliminarBotonAnidado.onclick = () => {
+                // Rehabilitar el input padre cuando se elimina la función anidada
+                if (inputPadre) {
+                    inputPadre.value = '';
+                    inputPadre.disabled = false;
+                    inputPadre.style.backgroundColor = '';
+                }
+                // Rehabilitar el botón "Anidar Función" cuando se elimina la función anidada
+                boton.disabled = false;
+                boton.textContent = 'Anidar Función';
+                filaAnidada.remove();
+                contadorAnidacion();
+            };
+            filaAnidada.appendChild(eliminarBotonAnidado);
+        }
+        
+        seleccionarFuncion.onchange = (evento) => {
+            const valorSeleccionado = evento.target.value;
+            if (valorSeleccionado) {
+                const divAnidadoExistente = filaAnidada.querySelector('.funciones-anidadas');
+                if (divAnidadoExistente) {
+                    divAnidadoExistente.remove();
+                }
+                
+                const divAnidado = document.createElement('div');
+                divAnidado.classList.add('funciones-anidadas');
+                filaAnidada.appendChild(divAnidado);
+                
+                definirEstructura(evento.target, divAnidado);
+            }
+        };
+
+        contadorAnidacion();
+        return
+    }
+    
+    mostrarAlerta('Error', `La fórmula alcanzó las ${iterador}/${limite} anidaciones, si quieres anidar otra formula porfavor borra alguna otra.`, 'error');
 }
 
 /**
@@ -526,7 +535,7 @@ function generarFormulaCompleja() {
     }
 
     const formula = construirFormulaDesdeContenedor(contenedor, seleccionFuncionPrincipal.value);
-    document.getElementById('resultado').innerText = `Fórmula generada (en inglés para HyperFormula):\n=${formula}`;
+    document.getElementById('resultado').innerText = `°Fórmula generada (en inglés para HyperFormula)°\n=${formula}`;
 }
 
 /**
@@ -564,11 +573,8 @@ function construirFormulaDesdeContenedor(contenedor, nombreFuncion) {
             argumentos.push(procesarArgumento(elementosArgumentos[0]));
             argumentos.push(procesarArgumento(elementosArgumentos[1]));
             break;
-        case 'VLOOKUP':
-            argumentos.push(procesarArgumento(elementosArgumentos[0]));
-            argumentos.push(obtenerValor(elementosArgumentos[1].querySelector('input')));
-            argumentos.push(obtenerValor(elementosArgumentos[2].querySelector('input')));
-            argumentos.push(obtenerValor(elementosArgumentos[3].querySelector('input')));
+        case 'FILTER':
+            argumentos.push(construirCondicion(elementosArgumentos[0], false));
             break;
         case 'ARITHMETIC':
             return obtenerValor(elementosArgumentos[0].querySelector('input'));
@@ -661,7 +667,7 @@ function traducirFuncion(nombre) {
         'CONTAR.SI': 'COUNTIF',
         'CONTAR.SI.CONJUNTO': 'COUNTIFS',
         'SI.ERROR': 'IFERROR',
-        'BUSCARV': 'VLOOKUP',
+        'FILTRO': 'FILTER',
         'ARITHMETIC': 'ARITHMETIC'
     };
     return map[nombre] || nombre;
@@ -737,3 +743,50 @@ function popularDropdown(elementoSeleccionado) {
         }
     });
 }
+
+/**
+ * Calcula cuántos elementos con la clase
+ * `.contenedor-funciones-anidadas` contienen al menos un hijo con la
+ * clase `.fila-anidada`.
+ *
+ * @function tamanioAnidacion
+ * @returns {number} Número de contenedores que tienen al menos una fila anidada.
+ */
+function tamanioAnidacion() {
+  let iterador = 0;
+  const anidaciones = document.querySelectorAll('.contenedor-funciones-anidadas');
+
+  anidaciones.forEach(anidado => {
+    const filas = anidado.querySelectorAll('.fila-anidada');
+    if (filas.length > 0) {
+      iterador += 1;
+    }
+  });
+
+  return iterador;
+}
+
+/**
+ * Actualiza el contador visual de anidaciones en el elemento con
+ * `id="contadorAnidaciones"`.
+ *
+ * - Llama a {@link tamanioAnidacion} para obtener el número actual de anidaciones.
+ * - Lee el límite máximo desde el atributo `maxlength` del mismo elemento.
+ * - Muestra la relación `actual / límite`.
+ * - Cambia el color del texto a rojo cuando quedan menos de 3 unidades
+ *   para llegar al límite; en caso contrario, usa gris.
+ *
+ * @function contadorAnidacion
+ * @returns {void}
+ */
+function contadorAnidacion() {
+  const iterador = tamanioAnidacion();
+
+  const elementoContadorAnidaciones = document.getElementById('contadorAnidaciones');
+  const limite = parseInt(elementoContadorAnidaciones.getAttribute('maxlength'), 10);
+
+  const caracteresRestantes = limite - iterador;
+  elementoContadorAnidaciones.textContent = `${iterador}/${limite} Anidaciones`;
+  elementoContadorAnidaciones.style.color = caracteresRestantes < 3 ? '#e74c3c' : '#7f8c8d';
+}
+

@@ -162,5 +162,8 @@ function indiceALetraColumna(indice) {
 }
 
 module.exports = {
-    aplicarFormula
+    aplicarFormula,
+    encontrarColumnaVacia,
+    traducirFormulaEstructurada,
+    indiceALetraColumna,
 };

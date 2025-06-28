@@ -51,3 +51,32 @@ h1 {
     margin: 0.5rem 0;
     color: #333;
 }
+
+/* Estilos para diferentes tipos de error */
+.error-conexion {
+    color: #e74c3c;
+}
+
+.error-servidor {
+    color: #f39c12;
+}
+
+.error-dispositivo {
+    color: #9b59b6;
+}
+
+
+/* Información del dispositivo */
+.info-dispositivo {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.info-dispositivo p {
+    margin: 0.25rem 0;
+}
