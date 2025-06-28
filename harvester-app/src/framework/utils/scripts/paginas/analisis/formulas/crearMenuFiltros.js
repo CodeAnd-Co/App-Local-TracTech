@@ -20,14 +20,13 @@ function crearMenuFiltros(contenedor, filtros, graficaId) {
   });
 
   // Agregar evento de cambio para actualizar la gráfica
-  seleccionValores.addEventListener('change', (evento) => {
+  seleccionValores.addEventListener('change', () => {
     // Si se deselecciona, resetear la gráfica a estado inicial
     const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
     if (graficaDiv) {
       const canvas = graficaDiv.querySelector('canvas');
       const contexto = canvas.getContext('2d');
       const graficaExistente = Chart.getChart(contexto);
-      console.log('Grafica existente:', graficaExistente);
 
       if (graficaExistente) {
         const tipo = graficaExistente.config.type;
