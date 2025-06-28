@@ -1,7 +1,7 @@
 {
   "name": "harvester",
   "productName": "Harvester",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Harvester es una aplicación de escritorio para la gestión de datos",
   "main": "src/main.js",
   "scripts": {
