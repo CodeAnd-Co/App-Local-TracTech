@@ -1,4 +1,3 @@
-const { mostrarAlerta } = require('../../../framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal');
 const { HyperFormula } = require('hyperformula');
 const { encontrarColumnaVacia } = require('./aplicarFormula.js')
 
@@ -20,92 +19,89 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
     }
 
   // Lógica para filtrar los datos según el filtro
-    try {
 
-        const hojas = datosExcel.hojas;
+    const hojas = datosExcel.hojas;
 
-        // Si no se especifica hoja, usar la primera disponible
-        let datos = [];
-        let tractorUsado = '';
-        
-        if (tractorSeleccionado && hojas[tractorSeleccionado]) {
-            datos = hojas[tractorSeleccionado];
-            tractorUsado = tractorSeleccionado;
-        } else {
-            // Tomar la primera hoja disponible
-            tractorUsado = Object.keys(hojas)[0];
-            datos = hojas[tractorUsado];
-        }
-        
-        // Verificar que datos sea un array
-        if (!Array.isArray(datos)) {
-            throw new Error('Formato de datos inválido: se esperaba un array');
-        }
-        
-        if (datos.length === 0) {
-            throw new Error('No hay datos disponibles en la hoja seleccionada');
-        }
-
-        // Obtener encabezados
-        const encabezados = datos[0];
-        
-        // Encontrar la primera columna vacía usando método seguro
-        const indiceColumnaVacio = encontrarColumnaVacia(datos);
-
-
-        
-        const hyperFormulaInstance = HyperFormula.buildFromArray(datos, opciones);
-        const sheetId = hyperFormulaInstance.getSheetId('Sheet1');
-
-        const columnaCondicion = nombreColumnaAIndice(filtro[0].Datos, encabezados);
-        if(columnaCondicion.error) {
-            return { error: true, columnaNoEncontrada: columnaCondicion.columnaNoEncontrada };
-        }
-
-        const filas = datos.length;
-
-        const condicionFiltro = extraerCondicionFiltro(filtro[0].Datos);
-
-        for(let columna = indiceColumnaVacio; columna < indiceColumnaVacio*2+1; columna++) {
-            hyperFormulaInstance.setCellContents({ row: 0, col: columna, sheet: sheetId }, encabezados[columna-indiceColumnaVacio]);
-            const columnaLetra = numeroAColumnaExcel(columna-indiceColumnaVacio+1);
-            hyperFormulaInstance.setCellContents({ row: 1, col: columna, sheet: 0 }, `=FILTER(${columnaLetra}2:${columnaLetra}${filas}, ${columnaCondicion}2: ${columnaCondicion}${filas}${condicionFiltro})`);
-        }
-
-        const resultadosFiltrados = [];
-        for(let fila = 0; fila < filas; fila++) {
-            const resultadoColumna = [];
-            for(let columna = indiceColumnaVacio; columna < indiceColumnaVacio*2+1; columna++) {
-                const valorCelda = hyperFormulaInstance.getCellValue({ row: fila, col: columna, sheet: sheetId });
-                if (valorCelda != null && valorCelda != undefined) {
-                    resultadoColumna.push(valorCelda);
-                }
-            }
-            if (resultadoColumna.length > 0) {
-                resultadosFiltrados.push(resultadoColumna);
-            }
-        }
-
-        resultados = {hojas: {
-            [tractorSeleccionado]: resultadosFiltrados
-            }
-        };
-
-        
-        return {
-            resultados,
-        };
-    } catch(error) {
-        throw error
-        // tractorSeleccionado: tractorSeleccionado || 'desconocida'
+    // Si no se especifica hoja, usar la primera disponible
+    let datos = [];
+    let tractorUsado = '';
+    
+    if (tractorSeleccionado && hojas[tractorSeleccionado]) {
+        datos = hojas[tractorSeleccionado];
+        tractorUsado = tractorSeleccionado;
+    } else {
+        // Tomar la primera hoja disponible
+        tractorUsado = Object.keys(hojas)[0];
+        datos = hojas[tractorUsado];
     }
+    
+    // Verificar que datos sea un array
+    if (!Array.isArray(datos)) {
+        throw new Error('Formato de datos inválido: se esperaba un array');
+    }
+    
+    if (datos.length === 0) {
+        throw new Error('No hay datos disponibles en la hoja seleccionada');
+    }
+
+    // Obtener encabezados
+    const encabezados = datos[0];
+    
+    // Encontrar la primera columna vacía usando método seguro
+    const indiceColumnaVacio = encontrarColumnaVacia(datos);
+
+
+    
+    const hyperFormulaInstance = HyperFormula.buildFromArray(datos, opciones);
+    const sheetId = hyperFormulaInstance.getSheetId('Sheet1');
+
+    const columnaCondicion = nombreColumnaAIndice(filtro[0].Datos, encabezados);
+    if(columnaCondicion.error) {
+        return { error: true, columnaNoEncontrada: columnaCondicion.columnaNoEncontrada };
+    }
+
+    const filas = datos.length;
+
+    const condicionFiltro = extraerCondicionFiltro(filtro[0].Datos);
+
+    for(let columna = indiceColumnaVacio; columna < indiceColumnaVacio*2+1; columna+=1) {
+        hyperFormulaInstance.setCellContents({ row: 0, col: columna, sheet: sheetId }, encabezados[columna-indiceColumnaVacio]);
+        const columnaLetra = numeroAColumnaExcel(columna-indiceColumnaVacio+1);
+        hyperFormulaInstance.setCellContents({ row: 1, col: columna, sheet: 0 }, `=FILTER(${columnaLetra}2:${columnaLetra}${filas}, ${columnaCondicion}2: ${columnaCondicion}${filas}${condicionFiltro})`);
+    }
+
+    const resultadosFiltrados = [];
+    for(let fila = 0; fila < filas; fila+=1) {
+        const resultadoColumna = [];
+        for(let columna = indiceColumnaVacio; columna < indiceColumnaVacio*2+1; columna+=1) {
+            const valorCelda = hyperFormulaInstance.getCellValue({ row: fila, col: columna, sheet: sheetId });
+            if (valorCelda != null && valorCelda != undefined) {
+                resultadoColumna.push(valorCelda);
+            }
+        }
+        if (resultadoColumna.length > 0) {
+            resultadosFiltrados.push(resultadoColumna);
+        }
+    }
+
+    const resultados = {
+        hojas: {
+            [tractorSeleccionado]: resultadosFiltrados
+        }
+    };
+
+    
+    return {
+        resultados,
+    };
+
 }
 
 
 function numeroAColumnaExcel(num) {
   let columna = '';
   while (num > 0) {
-    let residuo = (num - 1) % 26;
+    const residuo = (num - 1) % 26;
     columna = String.fromCharCode(65 + residuo) + columna;
     num = Math.floor((num - 1) / 26);
   }
@@ -131,7 +127,6 @@ function nombreColumnaAIndice(filtro, encabezados) {
     const nombreColumna = match[1];
     const columna = encabezados.indexOf(nombreColumna);
     if (columna === -1) {
-        console.log(`Columna no encontrada: ${nombreColumna}`);
         return { error: true, columnaNoEncontrada: [nombreColumna] };
     }
     return numeroAColumnaExcel(columna + 1); // +1 porque A=1, B=2, etc.

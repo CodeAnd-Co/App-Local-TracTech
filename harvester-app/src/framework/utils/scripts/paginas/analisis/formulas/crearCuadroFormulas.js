@@ -119,7 +119,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
         const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
         if (datosFiltrados.error) {
-          mostrarAlerta('Columna no encontrada: ' + datosFiltrados.columnaNoEncontrada, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
+          mostrarAlerta(`Columna no encontrada: ${datosFiltrados.columnaNoEncontrada}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
           return;
         }
         

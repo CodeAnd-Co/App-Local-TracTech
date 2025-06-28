@@ -37,14 +37,17 @@ function crearMenuParametros(contenedor, columnas, graficaId, datosOriginalesFor
       // Si se deselecciona, resetear la gráfica a estado inicial
       const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
       if (graficaDiv) {
+        
         const canvas = graficaDiv.querySelector('canvas');
         const contexto = canvas.getContext('2d');
         const graficaExistente = Chart.getChart(contexto);
 
         if (graficaExistente) {
+          const tipo = graficaExistente.config.type;
+          const titulo = graficaExistente.options.plugins.title.text;
           graficaExistente.destroy();
-          const nuevaGrafica = crearGrafica(contexto, 'line');
-          nuevaGrafica.options.plugins.title.text = '';
+          const nuevaGrafica = crearGrafica(contexto, tipo);
+          nuevaGrafica.options.plugins.title.text = titulo;
           nuevaGrafica.update();
         }
       }
