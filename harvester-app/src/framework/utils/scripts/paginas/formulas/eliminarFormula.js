@@ -1,12 +1,9 @@
 // RF71 Eliminar Fórmula - https://codeandco-wiki.netlify.app/docs/proyectos/tractores/documentacion/requisitos/RF71
 const { eliminarFormula } = require(`${rutaBase}src/backend/casosUso/formulas/eliminarFormula.js`);
-const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
-
- 
-
  
 async function manejarEliminarFormula(id) {
     if (!id) {
+       /*eslint-disable no-undef*/ 
         mostrarAlerta('Campo faltante', 'Por favor, completa el campo ID.', 'warning');
         return;
     }
