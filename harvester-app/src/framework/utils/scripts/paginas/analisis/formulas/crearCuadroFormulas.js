@@ -101,8 +101,6 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
   botonAplicarFormula.addEventListener('click', () => {
 
-
-
     const filtroAplicado = filtrosDisponibles.filter(filtro => {
       return contenedoresSeleccion[1].querySelector('.opcion-texto').value == filtro.Nombre;
     });
@@ -118,7 +116,12 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
           return;
         }
 
+
         const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+        if (datosFiltrados.error) {
+          mostrarAlerta('Columna no encontrada: ' + datosFiltrados.columnaNoEncontrada, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
+          return;
+        }
         
         if (!datosFiltrados) {
           mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
@@ -235,6 +238,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
         }
       }, 100);
     }
+    if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
   });
 
   // Configurar evento de búsqueda (filtrado local)

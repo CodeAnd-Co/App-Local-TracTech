@@ -58,6 +58,9 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
         const sheetId = hyperFormulaInstance.getSheetId('Sheet1');
 
         const columnaCondicion = nombreColumnaAIndice(filtro[0].Datos, encabezados);
+        if(columnaCondicion.error) {
+            return { error: true, columnaNoEncontrada: columnaCondicion.columnaNoEncontrada };
+        }
 
         const filas = datos.length;
 
@@ -92,11 +95,9 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
         return {
             resultados,
         };
-    } catch {
-        return {
-            error: error.message,
-            tractorSeleccionado: tractorSeleccionado || 'desconocida'
-        };
+    } catch(error) {
+        throw error
+        // tractorSeleccionado: tractorSeleccionado || 'desconocida'
     }
 }
 
@@ -130,7 +131,8 @@ function nombreColumnaAIndice(filtro, encabezados) {
     const nombreColumna = match[1];
     const columna = encabezados.indexOf(nombreColumna);
     if (columna === -1) {
-        return { error: true, columnasNoEncontradas: [nombreColumna] };
+        console.log(`Columna no encontrada: ${nombreColumna}`);
+        return { error: true, columnaNoEncontrada: [nombreColumna] };
     }
     return numeroAColumnaExcel(columna + 1); // +1 porque A=1, B=2, etc.
 }
