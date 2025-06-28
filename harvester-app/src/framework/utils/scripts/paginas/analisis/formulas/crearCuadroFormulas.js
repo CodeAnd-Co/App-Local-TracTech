@@ -113,6 +113,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
         const formulaSeleccionada = contenedorBusqueda.querySelector('.formula-seleccionada');
         if (!formulaSeleccionada) {
           mostrarAlerta('Error', 'Debes buscar y seleccionar una fórmula antes de aplicar.', 'error');
+          if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
           return;
         }
 
@@ -120,11 +121,13 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
         const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
         if (datosFiltrados.error) {
           mostrarAlerta(`Columna no encontrada: ${datosFiltrados.columnaNoEncontrada}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
+          if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
           return;
         }
         
         if (!datosFiltrados) {
           mostrarAlerta('Error', 'No hay datos de Excel cargados. Por favor, carga un archivo Excel primero.', 'error');
+          if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
           return;
         }
 
@@ -134,6 +137,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
         if (!inputRadio) {
           mostrarAlerta('Error', 'Error al obtener los datos de la fórmula seleccionada.', 'error');
+          if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
           return;
         }
 
@@ -144,6 +148,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
         // Verificar que los datos están completos
         if (!datosFormula || datosFormula.trim() === '') {
           mostrarAlerta('Error', 'Los datos de la fórmula están vacíos o incompletos.', 'error');
+          if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
           return;
         }
 
@@ -153,6 +158,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
         if (!graficaDiv) {
           mostrarAlerta('Error', 'No se encontró la gráfica asociada.', 'error');
+          if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
           return;
         }
 
@@ -237,8 +243,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
           if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
         }
       }, 100);
-    }
-    if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
+    } 
   });
 
   // Configurar evento de búsqueda (filtrado local)
