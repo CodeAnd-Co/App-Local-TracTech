@@ -1,5 +1,7 @@
 const Chart = require('chart.js/auto');
+const { filtrarDatos } = require(`${rutaBase}/src/backend/casosUso/formulas/filtrarDatos.js`);
 const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`);
+const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
 
 /**
  * Crea un menú desplegable para seleccionar columnas.
@@ -8,7 +10,7 @@ const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/pagina
  * @param {number} graficaId - ID de la gráfica asociada.
  * @returns {void}
  */
-function crearMenuFiltros(contenedor, filtros, graficaId) {
+function crearMenuFiltros(contenedor, filtros, graficaId, contenedorParametros, datosOriginalesFormulas, tractorSeleccionado) {
   const nuevoMenu = document.createElement('div');
   nuevoMenu.className = 'opcion';
   const seleccionValores = document.createElement('select');
@@ -22,21 +24,53 @@ function crearMenuFiltros(contenedor, filtros, graficaId) {
   // Agregar evento de cambio para actualizar la gráfica
   seleccionValores.addEventListener('change', () => {
     // Si se deselecciona, resetear la gráfica a estado inicial
-    const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
-    if (graficaDiv) {
-      const canvas = graficaDiv.querySelector('canvas');
-      const contexto = canvas.getContext('2d');
-      const graficaExistente = Chart.getChart(contexto);
+    const selectorParametro = contenedorParametros.querySelector('select');
+    console.log(selectorParametro.value);
 
-      if (graficaExistente) {
-        const tipo = graficaExistente.config.type;
-        const titulo = graficaExistente.options.plugins.title.text;
-        graficaExistente.destroy();
-        const nuevaGrafica = crearGrafica(contexto, tipo);
-        nuevaGrafica.options.plugins.title.text = titulo;
-        nuevaGrafica.update();
-      }
+    const filtroAplicado = filtros.filter(filtro => {
+      return seleccionValores.value == filtro.Nombre;
+    });
+
+    console.log('filtro aplicado: ', filtroAplicado);
+
+    console.log('selectorParametro antes: ', selectorParametro.value);
+
+    const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+    console.log('datosFiltrados: ', datosFiltrados);
+    if (datosFiltrados.error) {
+      mostrarAlerta(`Columna no encontrada: ${datosFiltrados.columnaNoEncontrada}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
+      if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
+      return;
     }
+
+    console.log('selectorParametro: ', selectorParametro.value);
+
+    if (selectorParametro && selectorParametro.value !== '') {
+
+      console.log('valido');
+      actualizarGraficaConColumna(graficaId, selectorParametro.value, datosOriginalesFormulas, tractorSeleccionado, datosFiltrados.resultados);
+
+    } else{
+
+      const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
+      if (graficaDiv) {
+        const canvas = graficaDiv.querySelector('canvas');
+        const contexto = canvas.getContext('2d');
+        const graficaExistente = Chart.getChart(contexto);
+  
+        if (graficaExistente) {
+          const tipo = graficaExistente.config.type;
+          const titulo = graficaExistente.options.plugins.title.text;
+          graficaExistente.destroy();
+          const nuevaGrafica = crearGrafica(contexto, tipo);
+          nuevaGrafica.options.plugins.title.text = titulo;
+          nuevaGrafica.update();
+        }
+      }
+
+    }
+
+
   });
 
   nuevoMenu.appendChild(seleccionValores);
@@ -46,3 +80,4 @@ function crearMenuFiltros(contenedor, filtros, graficaId) {
 module.exports = {
   crearMenuFiltros,
 }
+

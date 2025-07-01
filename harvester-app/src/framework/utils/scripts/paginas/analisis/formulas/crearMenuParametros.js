@@ -29,6 +29,11 @@ function crearMenuParametros(contenedor, columnas, graficaId, datosOriginalesFor
     });
 
     const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+    if (datosFiltrados.error) {
+      mostrarAlerta(`Columna no encontrada: ${datosFiltrados.columnaNoEncontrada}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
+      if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
+      return;
+    }
 
     const columnaSeleccionada = evento.target.value;
     if (columnaSeleccionada && columnaSeleccionada !== '') {

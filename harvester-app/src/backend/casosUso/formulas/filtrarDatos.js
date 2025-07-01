@@ -73,13 +73,15 @@ function filtrarDatos(filtro, datosExcel, tractorSeleccionado){
     const resultadosFiltrados = [];
     for(let fila = 0; fila < filas; fila+=1) {
         const resultadoColumna = [];
+        let filaTieneDato = false;
         for(let columna = indiceColumnaVacio; columna < indiceColumnaVacio*2+1; columna+=1) {
             const valorCelda = hyperFormulaInstance.getCellValue({ row: fila, col: columna, sheet: sheetId });
             if (valorCelda != null && valorCelda != undefined) {
-                resultadoColumna.push(valorCelda);
+                filaTieneDato = true;
             }
+            resultadoColumna.push(valorCelda);
         }
-        if (resultadoColumna.length > 0) {
+        if (filaTieneDato) {
             resultadosFiltrados.push(resultadoColumna);
         }
     }
