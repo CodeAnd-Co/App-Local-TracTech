@@ -25,29 +25,20 @@ function crearMenuFiltros(contenedor, filtros, graficaId, contenedorParametros, 
   seleccionValores.addEventListener('change', () => {
     // Si se deselecciona, resetear la gráfica a estado inicial
     const selectorParametro = contenedorParametros.querySelector('select');
-    console.log(selectorParametro.value);
 
     const filtroAplicado = filtros.filter(filtro => {
       return seleccionValores.value == filtro.Nombre;
     });
 
-    console.log('filtro aplicado: ', filtroAplicado);
-
-    console.log('selectorParametro antes: ', selectorParametro.value);
-
     const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
-    console.log('datosFiltrados: ', datosFiltrados);
+;
     if (datosFiltrados.error) {
       mostrarAlerta(`Columna no encontrada: ${datosFiltrados.columnaNoEncontrada}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
       if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
       return;
     }
 
-    console.log('selectorParametro: ', selectorParametro.value);
-
     if (selectorParametro && selectorParametro.value !== '') {
-
-      console.log('valido');
       actualizarGraficaConColumna(graficaId, selectorParametro.value, datosOriginalesFormulas, tractorSeleccionado, datosFiltrados.resultados);
 
     } else{
