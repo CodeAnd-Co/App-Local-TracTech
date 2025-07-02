@@ -2,6 +2,7 @@ const Chart = require('chart.js/auto');
 const { filtrarDatos } = require(`${rutaBase}/src/backend/casosUso/formulas/filtrarDatos.js`);
 const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`);
 const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 
 /**
  * Crea un menú desplegable para seleccionar columnas.
@@ -34,7 +35,6 @@ function crearMenuFiltros(contenedor, filtros, graficaId, contenedorParametros, 
 ;
     if (datosFiltrados.error) {
       mostrarAlerta(`Columna no encontrada: ${datosFiltrados.columnaNoEncontrada}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
-      if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
       return;
     }
 
