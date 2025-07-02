@@ -81,8 +81,8 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
   const contenedoresSeleccion = cuadroFormulas.querySelectorAll('.opciones-carta');
 
   //ToDo: Escalar en número de variables dependiendo de las variables en las fórmulas
- crearMenuParametros(contenedoresSeleccion[0], columnasActualizadas, graficaId, datosOriginalesFormulas, tractorSeleccionado, filtrosDisponibles, contenedoresSeleccion[1]);
- crearMenuFiltros(contenedoresSeleccion[1], filtrosDisponibles, graficaId);
+  crearMenuParametros(contenedoresSeleccion[0], columnasActualizadas, graficaId, datosOriginalesFormulas, tractorSeleccionado, filtrosDisponibles, contenedoresSeleccion[1]);
+  crearMenuFiltros(contenedoresSeleccion[1], filtrosDisponibles, graficaId, contenedoresSeleccion[0], datosOriginalesFormulas, tractorSeleccionado);
 
   // Configurar búsqueda de fórmulas
   const campoBusqueda = cuadroFormulas.querySelector('.search-section');
