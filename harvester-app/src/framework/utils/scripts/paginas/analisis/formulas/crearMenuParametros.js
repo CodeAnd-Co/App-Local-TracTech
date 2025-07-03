@@ -1,6 +1,7 @@
 const { actualizarGraficaConColumna } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/actualizarGraficaConColumna.js`);
 const { crearGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/crearGrafica.js`);
 const { filtrarDatos } = require(`${rutaBase}/src/backend/casosUso/formulas/filtrarDatos.js`);
+const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
 const Chart = require('chart.js/auto');
 
 /**
@@ -29,6 +30,10 @@ function crearMenuParametros(contenedor, columnas, graficaId, datosOriginalesFor
     });
 
     const datosFiltrados = filtrarDatos(filtroAplicado, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+    if (datosFiltrados.error) {
+      mostrarAlerta(`Columna no encontrada: ${datosFiltrados.columnaNoEncontrada}`, 'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 'error');
+      return;
+    }
 
     const columnaSeleccionada = evento.target.value;
     if (columnaSeleccionada && columnaSeleccionada !== '') {
