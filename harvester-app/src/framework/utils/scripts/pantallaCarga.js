@@ -1,5 +1,5 @@
-const { verificarToken } = require(`${rutaBase}/src/backend/servicios/verificarToken`); // Importar la función verificarToken
-const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`); // Importar la función verificarPermisos
+const { verificarToken } = require(`${rutaBase}/src/backend/servicios/verificarToken`);
+const { verificarPermisos } = require(`${rutaBase}/src/backend/servicios/verificarPermisos`);
 const { ipcRenderer } = require('electron');
 
 /**
@@ -7,29 +7,31 @@ const { ipcRenderer } = require('electron');
  * Verifica la validez del token almacenado y redirige según corresponda.
  */
 document.addEventListener('DOMContentLoaded', async () => {
-    // Detectar si viene de login
-    const desdeLogin = localStorage.getItem('cargando-desde-login') === 'true';
-
-    if (desdeLogin) {
-        // Solo mostrar loader y redirigir sin verificar token/permiso
-        setTimeout(async () => {
-            localStorage.removeItem('cargando-desde-login');
-            const permisos = JSON.parse(localStorage.getItem('permisos') || '[]');
-            const rutaInicio = `${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`;
-            try {
-                localStorage.setItem('seccion-activa', 'inicio');
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Inicio', Icono : 'Casa', permisos});
-                window.location.href = vista;
-            } catch (err) {
-                return ('Error al cargar vista:', err);
-            }
-        }, 2000);
-        return;
-    }
-
-    const token = obtenerToken(); // Llamamos a la función para obtener el token al cargar la página
-
     try {
+        const desdeLogin = localStorage.getItem('cargando-desde-login') === 'true';
+
+        if (desdeLogin) {
+            // Solo mostrar loader y redirigir sin verificar token/permiso
+            setTimeout(async () => {
+                localStorage.removeItem('cargando-desde-login');
+                const permisos = JSON.parse(localStorage.getItem('permisos') || '[]');
+                const rutaInicio = `${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`;
+                try {
+                    localStorage.setItem('seccion-activa', 'inicio');
+                    const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Inicio', Icono : 'Casa', permisos});
+                    window.location.href = vista;
+                } catch (err) {
+                    // Si ocurre un error al cargar inicio, redirigir a iniciarSesion
+                    const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
+                    const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
+                    window.location.href = vista;
+                }
+            }, 2000);
+            return;
+        }
+
+        const token = obtenerToken(); // Llamamos a la función para obtener el token al cargar la página
+
         // Verificar si el token es válido
         const tokenValido = await verificarToken(token);
 
@@ -47,27 +49,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Inicio', Icono : 'Casa', permisos});
                 window.location.href = vista;
             } catch (err) {
-                return ('Error al cargar vista:', err);
+                const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
+                const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
+                window.location.href = vista;
             }
 
         } else {
             const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
-            try {
-                const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
-                window.location.href = vista;
-            } catch (err) {
-                return ('Error al cargar vista:', err);
-            }
+            const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
+            window.location.href = vista;
         }
     } catch {
-        // En caso de error, mostrar la pantalla de carga y luego redirigir a inicio de sesión
+        // Si ocurre cualquier error, redirigir a iniciarSesion
         const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
         try {
             const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
             window.location.href = vista;
-        } catch (err) {
-            return ('Error al cargar vista:', err);
-        } 
+        } catch {}
     }
 });
 
