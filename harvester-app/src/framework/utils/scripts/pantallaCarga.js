@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.setItem('seccion-activa', 'inicio');
                 const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Inicio', Icono : 'Casa', permisos});
                 window.location.href = vista;
-            } catch (err) {
+            } catch {
                 const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
                 const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
                 window.location.href = vista;
