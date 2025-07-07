@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     localStorage.setItem('seccion-activa', 'inicio');
                     const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio, { Seccion : 'Inicio', Icono : 'Casa', permisos});
                     window.location.href = vista;
-                } catch (err) {
+                } catch {
                     // Si ocurre un error al cargar inicio, redirigir a iniciarSesion
                     const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
                     const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
@@ -62,10 +62,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch {
         // Si ocurre cualquier error, redirigir a iniciarSesion
         const rutaIniciarSesion = `${rutaBase}src/framework/vistas/paginas/iniciarSesion.ejs`;
-        try {
-            const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
-            window.location.href = vista;
-        } catch {}
+        const vista = await ipcRenderer.invoke('precargar-ejs', rutaIniciarSesion);
+        window.location.href = vista;
     }
 });
 
