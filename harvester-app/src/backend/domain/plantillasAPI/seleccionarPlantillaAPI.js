@@ -1,4 +1,4 @@
-const { URL_BASE } = require('../../../framework/utils/js/constantes');
+const { URL_BASE } = require(`${rutaBase}src/framework/utils/scripts/constantes.js`);
 
 async function seleccionarPlantillas(idPlantilla) {
     const respuesta = await fetch(`${URL_BASE}/plantillas/seleccionar`, {
