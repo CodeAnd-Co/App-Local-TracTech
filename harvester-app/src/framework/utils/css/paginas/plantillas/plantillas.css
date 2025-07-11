@@ -1,0 +1,27 @@
+.frame-plantillas{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: baseline;
+    width: 100%;
+    height: 100em;
+}
+
+.frame-plantillas-izquierda {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 100%;
+    height: 3em;
+    padding: 0.5em;
+}
+
+.frame-plantillas-derecha {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
+    height: 3em;
+    padding: 0.5em;
+}
+

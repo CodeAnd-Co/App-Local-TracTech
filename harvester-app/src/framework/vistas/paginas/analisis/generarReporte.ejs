@@ -2,7 +2,32 @@
 
 <head>
   <link rel="stylesheet" href="<%= rutaBase %>src/framework/utils/css/paginas/analisis/generarReporte.css">
+  <link rel="stylesheet" href="<%= rutaBase %>src/framework/utils/css/paginas/plantillas/plantillas.css">
 </head>
+  <div class="frame-plantillas">
+    <div class="frame-plantillas-izquierda">
+        <select name="plantilla" id="plantilla-seleccionada">
+          <option value="volvo">Volvo</option>
+          <option value="saab">Saab</option>
+          <option value="mercedes">Mercedes</option>
+          <option value="audi">Audi</option>
+        </select>
+        <button id="cargarPlantilla" class="boton-principal">
+          <span>Cargar Plantilla</span>
+        </button>
+        <button id="eliminarPlantilla" class="boton-secundario">
+          <span>Eliminar Plantilla</span>
+        </button>
+      </div>
+      <div class="frame-plantillas-derecha">
+        <input type="text" id="nombrePlantilla" placeholder="Nombre de la plantilla" class="input-nombre-plantilla">
+        <button id="guardarPlantilla" class="boton-principal">
+          <span>Guardar Plantilla</span>
+        </button>
+      </div>
+  </div> 
+
+
   <div class="frame-analisis">
 
     <!-- Sección de agregados y acciones -->
