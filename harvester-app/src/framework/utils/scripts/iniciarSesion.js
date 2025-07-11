@@ -90,14 +90,17 @@ async function manejarInicioSesion() {
       // Reiniciar verificación periódica después del login exitoso
       await ipcRenderer.invoke('reiniciar-verificacion-periodica');
 
-      const rutaInicio = `${rutaBase}src/framework/vistas/paginas/inicio/inicio.ejs`;
+      // Guardar bandera para saber que vienes de login
+      localStorage.setItem('cargando-desde-login', 'true');
+
+      // Redirigir a pantallaCarga.ejs en vez de inicio.ejs directamente
+      const rutaPantallaCarga = `${rutaBase}src/framework/vistas/paginas/pantallaCarga.ejs`;
       try {
-          const vista = await ipcRenderer.invoke('precargar-ejs', rutaInicio,{Seccion: 'Inicio', Icono: 'Casa', permisos: listaPermisos});
+          const vista = await ipcRenderer.invoke('precargar-ejs', rutaPantallaCarga, { rutaBase, permisos: listaPermisos });
           window.location.href = vista;
       } catch (err) {
           return ('Error al cargar vista:', err);
       }
-
     } else {
       mostrarAlerta('Verifica tus datos', respuesta.mensaje, 'warning');
     }
