@@ -4,7 +4,11 @@
     justify-content: flex-start;
     align-content: baseline;
     width: 100%;
-    height: 100em;
+    height: 100%;
+    border-radius: 0.33em;
+    background-color: #ededed;
+    margin-bottom: 1em;
+    padding: 0.5em;
 }
 
 .frame-plantillas-izquierda {
@@ -13,7 +17,7 @@
     justify-content: flex-start;
     width: 100%;
     height: 3em;
-    padding: 0.5em;
+    
 }
 
 .frame-plantillas-derecha {
@@ -22,6 +26,30 @@
     justify-content: flex-end;
     width: 100%;
     height: 3em;
-    padding: 0.5em;
+    /* padding: 0.5em; */
 }
 
+.boton-principal, .selector-plantilla, .input-nombre-plantilla {
+    border-radius: 0.33em;
+    border: none;
+    padding: 0.5em 1em;
+    margin: 0.5em;
+    background-color: #ffffff;
+}
+
+.boton-principal:hover {
+    background-color: #f9f9f9;
+}
+
+.boton-secundario {
+    border-radius: 0.33em;
+    border: none;
+    padding: 0.5em 1em;
+    margin: 0.5em;
+    background-color: #a61930;
+    color: #ffffff;
+}
+
+.boton-secundario:hover {
+    background-color: #7d1425;
+}
