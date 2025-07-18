@@ -1,5 +1,5 @@
 
-const { eliminarrPlantilla: eliminarPlantillaAPI} = require('../../domain/plantillasAPI/eliminarPlantilla.js');
+const { eliminarPlantilla: eliminarPlantillaAPI} = require('../../domain/plantillasAPI/eliminarPlantilla.js');
 
 /**
  * Crea una plantilla a través de la API y retorna la respuesta obtenida.
