@@ -9,6 +9,14 @@ function setup(){
         const respuesta = await crearPlantilla(nombrePlantilla.value, 'prueba de datos');
         if (respuesta.ok) {
             mostrarAlerta('Correcto', 'Plantilla guardada correctamente', 'success');
+            
+            // Limpiar el campo de entrada
+            nombrePlantilla.value = '';
+            
+            // Recargar la lista de plantillas si la función está disponible
+            if (typeof window.cargarPlantillas === 'function') {
+                await window.cargarPlantillas();
+            }
         } else {
             mostrarAlerta('Error', 'Error al guardar la plantilla: ' + respuesta.error, 'error');
         }
