@@ -12,8 +12,7 @@ const { crearPlantilla: crearPlantillaAPI} = require('../../domain/plantillasAPI
  */
 async function crearPlantilla(nombre, datos){
     try{
-        const nombreFormateado = nombre.replace(/\s+/g, '_');
-        const respuesta = await crearPlantillaAPI(nombreFormateado, datos, localStorage.getItem('token'));
+        const respuesta = await crearPlantillaAPI(nombre, datos, localStorage.getItem('token'));
         return respuesta;
     } catch(error){
         throw new Error('No se pudo crear la plantilla', error);
