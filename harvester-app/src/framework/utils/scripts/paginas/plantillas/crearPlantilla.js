@@ -6,6 +6,10 @@ function setup(){
     const botonGuardarPlantilla = document.getElementById('botonGuardarPlantilla');
 
     botonGuardarPlantilla.addEventListener('click', async () => {
+        if (nombrePlantilla.value.includes('_')) {
+            mostrarAlerta('Error', 'El nombre no puede contener guiones bajos', 'error');
+            return;
+        }
         const respuesta = await crearPlantilla(nombrePlantilla.value, 'prueba de datos');
         if (respuesta.ok) {
             mostrarAlerta('Correcto', 'Plantilla guardada correctamente', 'success');
