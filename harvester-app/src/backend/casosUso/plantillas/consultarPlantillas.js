@@ -14,7 +14,7 @@ async function consultarPlantillas(){
         const respuesta = await consultarPlantillasAPI(localStorage.getItem('token'));
         return respuesta;
     } catch(error){
-        throw new Error('No se pudo consultar las plantillas', error);
+        throw new Error('No se pudieron consultar las plantillas', error);
     }
 }
 module.exports = {

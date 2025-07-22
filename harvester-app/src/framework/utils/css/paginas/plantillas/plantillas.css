@@ -30,6 +30,8 @@
 }
 
 .boton-principal, .selector-plantilla, .input-nombre-plantilla {
+    font-family: "SegoeUi-Regular", sans-serif;
+    font-size: medium;
     border-radius: 0.33em;
     border: none;
     padding: 0.5em 1em;
@@ -42,6 +44,8 @@
 }
 
 .boton-secundario {
+    font-family: "SegoeUi-Regular", sans-serif;
+    font-size: medium;
     border-radius: 0.33em;
     border: none;
     padding: 0.5em 1em;
