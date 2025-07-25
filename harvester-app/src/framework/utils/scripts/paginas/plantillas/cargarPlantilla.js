@@ -2,6 +2,9 @@ const { consultarPlantilla } = require(`${rutaBase}src/backend/casosUso/plantill
 // const { consultarPlantillas } = require(`${rutaBase}src/framework/utils/scripts/paginas/plantillas/consultarPlantillas.js`);
 // const { configurarTexto } = require(`${rutaBase}src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
 // const { agregarGrafica } = require(`${rutaBase}src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
+const { actualizarTexto } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
+const { modificarTipoGrafica, modificarColor } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
+const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 
 // const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
 
@@ -31,9 +34,11 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
     try {
         const componentes = json;
         const contenedor = document.querySelector(`#${contenedorId}`);
+        const contenedorPrevisualizacion = document.querySelector(`#${idContenedorPrevisualizacion}`);
         
         // Limpiar el contenedor
         contenedor.innerHTML = '';
+        contenedorPrevisualizacion.innerHTML = '';
 
         // Iterar sobre cada componente
         for (const componente of componentes) {
@@ -43,6 +48,7 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                 configurarTexto(contenedorId, idContenedorPrevisualizacion);
                 
                 const tarjetaTexto = contenedor.querySelector(`.tarjeta-texto:last-child`);
+                const previsualizacionTexto = contenedorPrevisualizacion.querySelector(`.previsualizacion-texto.preview-titulo:last-child`);
                 
                 if (tarjetaTexto) {
                     // Configurar propiedades
@@ -50,14 +56,28 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
                     const iconoAlign = tarjetaTexto.querySelector('.icono-align');
                     
-                    if (tipoTexto) tipoTexto.value = componente.tipo;
+                    if (tipoTexto) { 
+                        tipoTexto.value = componente.tipo;
+                        previsualizacionTexto.classList.remove('preview-titulo', 'preview-subtitulo', 'preview-contenido');
+                        previsualizacionTexto.classList.add(`preview-${componente.tipo}`);
+                    };
+
                     if (areaEscritura) areaEscritura.value = componente.contenido;
                     
                     // Configurar alineamiento
                     if (iconoAlign) {
                         iconoAlign.classList.remove('align-left', 'align-center', 'align-right');
                         iconoAlign.classList.add(componente.alineamiento);
+                        const alineaciones = ['left', 'center', 'right'];
+                        previsualizacionTexto.alignIndex = (previsualizacionTexto.alignIndex + 1) % alineaciones.length;
+                        const alineado = alineaciones[previsualizacionTexto.alignIndex];
+                        previsualizacionTexto.style.textAlign = alineado;
+                        iconoAlign.className = `icono-align align-${alineado}`;
                     }
+                    
+                    // const vistaPrevia = tarjetaTexto.querySelector('.previsualizacion-texto.preview-titulo');
+                    console.log('vista previa:', previsualizacionTexto);
+                    actualizarTexto(previsualizacionTexto, areaEscritura);
                 }
 
                 // console.log('texto configurado')
@@ -88,19 +108,26 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                         color: tarjetaGrafica.querySelector('#color-entrada')
                     };
                     
+                    const previsualizacionGrafica = contenedorPrevisualizacion.querySelector(`.previsualizacion-grafica:last-child`);
+
+                    empaquetador = {value: componente.tipo} //estos empaquetamientos sirven para que al usar las funciones piense que le estas pasando un componente de html, ya que dentro de la función solo usa el componente para sacarle el valor.
+                    empaquetador2 = {value: componente.color}
+
                     if (elementos.titulo) elementos.titulo.value = componente.nombre;
-                    if (elementos.tipo) elementos.tipo.value = componente.tipo;
+
+                    if (elementos.tipo){
+                        elementos.tipo.value = componente.tipo;
+                        modificarTipoGrafica(previsualizacionGrafica, empaquetador, componente.nombre);
+                    }
+
+                    if (elementos.color) {
+                        elementos.color.value = componente.color;
+                        modificarColor(empaquetador2, previsualizacionGrafica, 0)
+                    }
                     if (elementos.tractor) elementos.tractor.value = componente.tractor;
-                    if (elementos.color) elementos.color.value = componente.color;
+                    tractorSeleccionado = componente.tractor;
                 }
 
-                // Configurar propiedades
-                // tarjetaGrafica.querySelector('.titulo-grafica').value = componente.nombre;
-                // tarjetaGrafica.querySelector('.tipo-grafica').value = componente.tipo;
-                // tarjetaGrafica.querySelector('.tractor-grafica').value = componente.tractor;
-                // tarjetaGrafica.querySelector('#color-entrada').value = componente.color;
-                
-                // Si tienes más propiedades específicas de la gráfica, configúralas aquí
             }
         }
     } catch (error) {

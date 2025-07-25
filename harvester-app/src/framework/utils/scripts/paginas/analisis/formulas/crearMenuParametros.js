@@ -25,6 +25,11 @@ function crearMenuParametros(contenedor, columnas, graficaId, datosOriginalesFor
   // Agregar evento de cambio para actualizar la gráfica
   seleccionValores.addEventListener('change', (evento) => {
 
+    const graficaDiv = document.querySelector(`#\\3${graficaId}.tarjeta-grafica`);
+    if (graficaDiv) {
+      graficaDiv.dataset.parametroActual = seleccionValores.value;
+    }
+
     const filtroAplicado = filtrosDisponibles.filter(filtro => {
       return contenedorFiltros.querySelector('.opcion-texto').value == filtro.Nombre;
     });

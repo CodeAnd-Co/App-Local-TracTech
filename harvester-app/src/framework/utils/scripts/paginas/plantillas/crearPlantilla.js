@@ -27,6 +27,7 @@ function obtenerJsonPlantillaDesdeDOM(){
     const componentes = [];
 
     const contenedorComponentes = document.getElementById('contenedorElementos')
+
     console.log('contenedor componentes:', contenedorComponentes);
     Array.from(contenedorComponentes.children).forEach(componente => {
         console.log(componente);
@@ -46,9 +47,9 @@ function obtenerJsonPlantillaDesdeDOM(){
                 tipo : componente.querySelector('.tipo-grafica').value,
                 tractor : componente.querySelector('.tractor-grafica').value,
                 color: componente.querySelector('#color-entrada').value,
-                parametro : '',
-                filtro : 'Filtro encendido',
-                formula : 'Exceso de Gasolina'
+                parametro : componente.dataset.parametroActual,
+                filtro : componente.dataset.filtroActual,
+                formula : componente.dataset.formulaActual,
             })
             
         }

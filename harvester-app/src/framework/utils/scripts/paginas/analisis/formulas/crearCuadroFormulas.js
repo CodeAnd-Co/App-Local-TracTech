@@ -143,18 +143,25 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
         // Obtener los datos directamente de las propiedades del elemento
         const nombreFormula = inputRadio.formulaNombre;
-        const datosFormula = inputRadio.formulaDatos;
 
+        
+        const datosFormula = inputRadio.formulaDatos;
+        
         // Verificar que los datos están completos
         if (!datosFormula || datosFormula.trim() === '') {
           mostrarAlerta('Error', 'Los datos de la fórmula están vacíos o incompletos.', 'error');
           if (textoAplicar) textoAplicar.textContent = 'Aplicar Fórmula';
           return;
         }
-
+        
         // Obtener la gráfica asociada
         const graficaId = cuadroFormulas.dataset.graficaId;
         const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
+        
+        const graficaDiv2 = document.querySelector(`#\\3${graficaId}.tarjeta-grafica`);
+        if (graficaDiv2) {
+          graficaDiv2.dataset.formulaActual = nombreFormula;
+        }
 
         if (!graficaDiv) {
           mostrarAlerta('Error', 'No se encontró la gráfica asociada.', 'error');
