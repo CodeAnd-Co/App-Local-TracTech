@@ -146,6 +146,8 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
 
         
         const datosFormula = inputRadio.formulaDatos;
+
+        console.log('Datos de la fórmula:', datosFormula, 'Nombre de la fórmula:', nombreFormula);
         
         // Verificar que los datos están completos
         if (!datosFormula || datosFormula.trim() === '') {
@@ -157,7 +159,7 @@ async function crearCuadroFormulas(graficaId, formulasDisponibles, datosOriginal
         // Obtener la gráfica asociada
         const graficaId = cuadroFormulas.dataset.graficaId;
         const graficaDiv = document.getElementById(`previsualizacion-grafica-${graficaId}`);
-        
+
         const graficaDiv2 = document.querySelector(`#\\3${graficaId}.tarjeta-grafica`);
         if (graficaDiv2) {
           graficaDiv2.dataset.formulaActual = nombreFormula;

@@ -5,6 +5,9 @@ const { consultarPlantilla } = require(`${rutaBase}src/backend/casosUso/plantill
 const { actualizarTexto } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
 const { modificarTipoGrafica, modificarColor } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
+const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
+const { filtrarDatos } = require(`${rutaBase}/src/backend/casosUso/formulas/filtrarDatos.js`);
+const Chart = require(`${rutaBase}/node_modules/chart.js/auto`);
 
 // const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
 
@@ -92,7 +95,7 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                 // iconoAlign.classList.remove('align-left', 'align-center', 'align-right');
                 // iconoAlign.classList.add(componente.alineamiento);
                 
-            } else if (componente.componente == "grafica") {~
+            } else if (componente.componente == "grafica") {
                 console.log('es una grafica!')
                 // Crear tarjeta de gráfica
                 configurarGrafica(contenedorId, idContenedorPrevisualizacion);
@@ -125,11 +128,49 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                         modificarColor(empaquetador2, previsualizacionGrafica, 0)
                     }
                     if (elementos.tractor) elementos.tractor.value = componente.tractor;
-                    tractorSeleccionado = componente.tractor;
+                    const tractorSeleccionado = componente.tractor;
+
+                    if(componente.parametro && !componente.formula) {
+
+                    }
+                    if (componente.formula){
+                        if(componente.filtro){
+                            const datosFiltrados = filtrarDatos(componente.filtro, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+                            for(const formula of JSON.parse(localStorage.formulasDisponibles)){
+                                if (formula.Nombre == componente.formula)
+                                {
+                                    const resultadoFormula = aplicarFormula(formula.Nombre, formula.Datos, tractorSeleccionado, datosFiltrados.resultados);
+                                    const canvas = previsualizacionGrafica.querySelector('canvas');
+                        
+                                    const contexto = canvas.getContext('2d');
+                                    const graficaExistente = Chart.getChart(contexto);
+                        
+                                    if (graficaExistente && resultadoFormula.resultados) {
+                                        const resultados = resultadoFormula.resultados;
+                                        const tipoGrafica = graficaExistente.config.type;
+                            
+                                        // Usar el procesamiento universal
+                                        const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, formula.Nombre);
+                            
+                                        // Actualizar la gráfica
+                                        graficaExistente.options.plugins.title.text = nombreFormula;
+                                        graficaExistente.data.labels = datosRebuild.labels;
+                                        graficaExistente.data.datasets[0].data = datosRebuild.valores;
+                            
+                                        // CORRECCIÓN: Actualizar también la etiqueta del dataset
+                                        graficaExistente.data.datasets[0].label = nombreFormula;
+                            
+                                        graficaExistente.update();
+                                    }
+                            }
+                        }
+                        
+                    }
                 }
 
             }
         }
+    }
     } catch (error) {
         console.error('Error al cargar la plantilla:', error);
         mostrarAlerta('Error', 'No se pudo cargar la plantilla correctamente', 'error');
