@@ -290,5 +290,6 @@ function configurarObservadorLimite(contenedor) {
 
 module.exports = {
   agregarTexto,
-  actualizarTexto
+  actualizarTexto,
+  actualizarCaracteres
 };

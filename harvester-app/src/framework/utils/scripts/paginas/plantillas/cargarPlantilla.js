@@ -2,8 +2,8 @@ const { consultarPlantilla } = require(`${rutaBase}src/backend/casosUso/plantill
 // const { consultarPlantillas } = require(`${rutaBase}src/framework/utils/scripts/paginas/plantillas/consultarPlantillas.js`);
 // const { configurarTexto } = require(`${rutaBase}src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
 // const { agregarGrafica } = require(`${rutaBase}src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
-const { actualizarTexto } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
-const { modificarTipoGrafica, modificarColor } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
+const { actualizarTexto, actualizarCaracteres } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
+const { modificarTipoGrafica, modificarColor, modificarTitulo } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
 const { filtrarDatos } = require(`${rutaBase}/src/backend/casosUso/formulas/filtrarDatos.js`);
@@ -81,6 +81,11 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     // const vistaPrevia = tarjetaTexto.querySelector('.previsualizacion-texto.preview-titulo');
                     console.log('vista previa:', previsualizacionTexto);
                     actualizarTexto(previsualizacionTexto, areaEscritura);
+                    
+                    // Actualizar el contador de caracteres después de cargar el contenido
+                    if (areaEscritura) {
+                        actualizarCaracteres(tarjetaTexto, areaEscritura);
+                    }
                 }
 
                 // console.log('texto configurado')
@@ -127,8 +132,11 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                         elementos.color.value = componente.color;
                         modificarColor(empaquetador2, previsualizacionGrafica, 0)
                     }
-                    if (elementos.tractor) elementos.tractor.value = componente.tractor;
-                    const tractorSeleccionado = componente.tractor;
+                    
+                    // Actualizar el contador de caracteres del título de la gráfica
+                    if (elementos.titulo) {
+                        modificarTitulo(previsualizacionGrafica, elementos.titulo, tarjetaGrafica);
+                    }
 
                     if(componente.parametro && !componente.formula) {
 

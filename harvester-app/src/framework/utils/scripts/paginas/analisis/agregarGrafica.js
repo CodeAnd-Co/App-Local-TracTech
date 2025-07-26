@@ -404,4 +404,5 @@ module.exports = {
   agregarGrafica,
   modificarTipoGrafica,
   modificarColor,
+  modificarTitulo
 };
