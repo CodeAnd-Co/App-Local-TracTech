@@ -5,8 +5,11 @@ const { crearPlantilla } = require(`${rutaBase}src/backend/casosUso/plantillas/c
 function crearPlantillaScript(){
     const nombrePlantilla = document.getElementById('nombrePlantilla');
     const botonGuardarPlantilla = document.getElementById('botonGuardarPlantilla');
-
     botonGuardarPlantilla.addEventListener('click', async () => {
+        if (nombrePlantilla.value.trim().length > 50) {
+            mostrarAlerta('Error', 'El nombre de la plantilla no debe exceder 50 caracteres', 'error');
+            return;
+        }
         const contenidoPlantilla = obtenerJsonPlantillaDesdeDOM();
         const respuesta = await crearPlantilla(nombrePlantilla.value, contenidoPlantilla);
         if (respuesta.ok) {
@@ -20,7 +23,7 @@ function crearPlantillaScript(){
 }
 
 crearPlantillaScript();
-
+verificarCaracteresTitulo();
 
 
 function obtenerJsonPlantillaDesdeDOM(){
@@ -56,4 +59,14 @@ function obtenerJsonPlantillaDesdeDOM(){
     });
 
     return JSON.stringify(componentes);
+}
+
+function verificarCaracteresTitulo(){
+    const nombrePlantilla = document.getElementById('nombrePlantilla');
+    nombrePlantilla.addEventListener('input', () => {
+        if (nombrePlantilla.value.length >= 50) {
+            mostrarAlerta('Advertencia', 'Has alcanzado el límite máximo de 50 caracteres', 'warning');
+            nombrePlantilla.value = nombrePlantilla.value.substring(0, 50);
+        }
+    });
 }
