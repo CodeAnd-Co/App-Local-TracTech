@@ -35,6 +35,9 @@ body,
   overflow-x: auto;
 }
 
+.ventana-principal{
+  width: 100%;
+}
 .seccion-elemento-reporte {
   display: grid;
   grid-template-rows: auto, 1fr auto;
