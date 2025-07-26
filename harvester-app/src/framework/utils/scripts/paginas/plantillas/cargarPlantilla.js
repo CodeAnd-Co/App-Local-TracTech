@@ -2,7 +2,7 @@ const { consultarPlantilla } = require(`${rutaBase}src/backend/casosUso/plantill
 // const { consultarPlantillas } = require(`${rutaBase}src/framework/utils/scripts/paginas/plantillas/consultarPlantillas.js`);
 // const { configurarTexto } = require(`${rutaBase}src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
 // const { agregarGrafica } = require(`${rutaBase}src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
-const { actualizarTexto, actualizarCaracteres } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
+const { actualizarTexto, actualizarCaracteres, validarBotonAlinear } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
 const { modificarTipoGrafica, modificarColor, modificarTitulo } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/agregarGrafica.js`);
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
@@ -16,26 +16,65 @@ function cargarPlantillaScript(){
     const botonCargarPlantilla = document.getElementById('botonCargarPlantilla');
 
     botonCargarPlantilla.addEventListener('click', async () => {
-        const respuesta = await consultarPlantilla(nombrePlantilla.value);
-        console.log('plantilla cargada:', respuesta);
-        const contenido = JSON.parse(respuesta.datos.contenido);
-        console.log('contenido:', contenido);
-        const idContenedor = 'contenedorElementos';
-        const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
-        await cargarPlantillaDesdeJSON(contenido, idContenedor, idContenedorPrevisualizacion);
-
-        if (respuesta.ok) {
-            mostrarAlerta('Correcto', 'Plantilla cargada correctamente', 'success');
-        } else {
-            mostrarAlerta('Error', 'Error al cargar la plantilla: ' + respuesta.error, 'error');
+        try {
+            const respuesta = await consultarPlantilla(nombrePlantilla.value);
+            console.log('plantilla cargada:', respuesta);
+            
+            if (!respuesta.ok) {
+                mostrarAlerta('Error', 'Error al cargar la plantilla: ' + respuesta.error, 'error');
+                return;
+            }
+            
+            const contenido = JSON.parse(respuesta.datos.contenido);
+            console.log('contenido:', contenido);
+            const idContenedor = 'contenedorElementos';
+            const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
+            
+            // Cargar la plantilla y verificar si fue exitosa
+            const cargaExitosa = await cargarPlantillaDesdeJSON(contenido, idContenedor, idContenedorPrevisualizacion);
+            
+            // Solo mostrar alerta de éxito si la carga fue exitosa
+            if (cargaExitosa) {
+                mostrarAlerta('Correcto', 'Plantilla cargada correctamente', 'success');
+            }
+            
+        } catch (error) {
+            console.error('Error en cargarPlantillaScript:', error);
+            mostrarAlerta('Error', 'Error inesperado al cargar la plantilla', 'error');
         }
     });
 }
 
-
 async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisualizacion) {
     try {
         const componentes = json;
+        
+        // Obtener datos de Excel desde localStorage
+        const datosExcel = JSON.parse(localStorage.getItem('datosFiltradosExcel') || '{}');
+        
+        // Verificar que existan datos de Excel cargados
+        if (!datosExcel.hojas || Object.keys(datosExcel.hojas).length === 0) {
+            mostrarAlerta('Error', 'No hay datos de Excel cargados. Carga un archivo Excel primero.', 'warning');
+            return false; // Retornar false para indicar que la carga falló
+        }
+
+        // Verificar columnas requeridas antes de cargar la plantilla
+        const verificacionResultado = verificarColumnasRequeridas(componentes, datosExcel);
+        if (!verificacionResultado.valido) {
+            // Formatear el mensaje igual que en aplicarFormula.js
+            const columnasFaltantesTexto = verificacionResultado.columnasFaltantes
+                .map(item => item.split(': ')[1]) // Extraer solo el nombre de la columna
+                .filter((valor, indice, array) => array.indexOf(valor) === indice) // Eliminar duplicados
+                .join(', ');
+            
+            mostrarAlerta(
+                `Columnas no encontradas: ${columnasFaltantesTexto}`, 
+                'Asegúrate de haber seleccionado todas las columnas necesarias para aplicar las fórmulas de esta plantilla.', 
+                'error'
+            );
+            return false; // Retornar false para indicar que la carga falló
+        }
+
         const contenedor = document.querySelector(`#${contenedorId}`);
         const contenedorPrevisualizacion = document.querySelector(`#${idContenedorPrevisualizacion}`);
         
@@ -58,6 +97,7 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     const tipoTexto = tarjetaTexto.querySelector('.tipo-texto');
                     const areaEscritura = tarjetaTexto.querySelector('.area-escritura');
                     const iconoAlign = tarjetaTexto.querySelector('.icono-align');
+                    const botonAlinear = tarjetaTexto.querySelector('.alinear');
                     
                     if (tipoTexto) { 
                         tipoTexto.value = componente.tipo;
@@ -85,6 +125,11 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     // Actualizar el contador de caracteres después de cargar el contenido
                     if (areaEscritura) {
                         actualizarCaracteres(tarjetaTexto, areaEscritura);
+                    }
+                    
+                    // Validar el botón alinear después de cargar el contenido
+                    if (areaEscritura && botonAlinear) {
+                        validarBotonAlinear(areaEscritura, botonAlinear);
                     }
                 }
 
@@ -141,48 +186,142 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     if(componente.parametro && !componente.formula) {
 
                     }
-                    if (componente.formula){
-                        if(componente.filtro){
-                            const datosFiltrados = filtrarDatos(componente.filtro, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
-                            for(const formula of JSON.parse(localStorage.formulasDisponibles)){
-                                if (formula.Nombre == componente.formula)
-                                {
-                                    const resultadoFormula = aplicarFormula(formula.Nombre, formula.Datos, tractorSeleccionado, datosFiltrados.resultados);
-                                    const canvas = previsualizacionGrafica.querySelector('canvas');
+                //     if (componente.formula){
+                //         if(componente.filtro){
+                //             const datosFiltrados = filtrarDatos(componente.filtro, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+                //             for(const formula of JSON.parse(localStorage.formulasDisponibles)){
+                //                 if (formula.Nombre == componente.formula)
+                //                 {
+                //                     const resultadoFormula = aplicarFormula(formula.Nombre, formula.Datos, tractorSeleccionado, datosFiltrados.resultados);
+                //                     const canvas = previsualizacionGrafica.querySelector('canvas');
+        
+                //                     const contexto = canvas.getContext('2d');
+                //                     const graficaExistente = Chart.getChart(contexto);
+        
+                //                     if (graficaExistente && resultadoFormula.resultados) {
+                //                         const resultados = resultadoFormula.resultados;
+                //                         const tipoGrafica = graficaExistente.config.type;
+            
+                //                         // Usar el procesamiento universal
+                //                         const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, formula.Nombre);
+            
+                //                         // Actualizar la gráfica
+                //                         graficaExistente.options.plugins.title.text = nombreFormula;
+                //                         graficaExistente.data.labels = datosRebuild.labels;
+                //                         graficaExistente.data.datasets[0].data = datosRebuild.valores;
+            
+                //                         // CORRECCIÓN: Actualizar también la etiqueta del dataset
+                //                         graficaExistente.data.datasets[0].label = nombreFormula;
+            
+                //                         graficaExistente.update();
+                //                     }
+                //             }
+                //         }
                         
-                                    const contexto = canvas.getContext('2d');
-                                    const graficaExistente = Chart.getChart(contexto);
-                        
-                                    if (graficaExistente && resultadoFormula.resultados) {
-                                        const resultados = resultadoFormula.resultados;
-                                        const tipoGrafica = graficaExistente.config.type;
-                            
-                                        // Usar el procesamiento universal
-                                        const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, formula.Nombre);
-                            
-                                        // Actualizar la gráfica
-                                        graficaExistente.options.plugins.title.text = nombreFormula;
-                                        graficaExistente.data.labels = datosRebuild.labels;
-                                        graficaExistente.data.datasets[0].data = datosRebuild.valores;
-                            
-                                        // CORRECCIÓN: Actualizar también la etiqueta del dataset
-                                        graficaExistente.data.datasets[0].label = nombreFormula;
-                            
-                                        graficaExistente.update();
-                                    }
-                            }
-                        }
-                        
-                    }
-                }
+                //     }
+                // }
 
+                }
             }
         }
-    }
+
+        return true; // Retornar true para indicar que la carga fue exitosa
+        
     } catch (error) {
         console.error('Error al cargar la plantilla:', error);
         mostrarAlerta('Error', 'No se pudo cargar la plantilla correctamente', 'error');
+        return false; // Retornar false para indicar que la carga falló
     }
+}
+
+/**
+ * Verifica que todas las columnas requeridas por las fórmulas de la plantilla estén disponibles
+ * @param {Array} componentes - Componentes de la plantilla
+ * @param {Object} datosExcel - Datos de Excel disponibles
+ * @returns {Object} Resultado de la verificación
+ */
+function verificarColumnasRequeridas(componentes, datosExcel) {
+    const columnasFaltantes = [];
+    const formulasDisponibles = JSON.parse(localStorage.getItem('formulasDisponibles') || '[]');
+    
+    // Obtener encabezados disponibles de todas las hojas
+    const encabezadosDisponibles = new Set();
+    
+    // Verificar que datosExcel tenga la estructura correcta
+    if (datosExcel && datosExcel.hojas) {
+        Object.values(datosExcel.hojas).forEach(hoja => {
+            if (Array.isArray(hoja) && hoja.length > 0) {
+                // La primera fila contiene los encabezados
+                if (Array.isArray(hoja[0])) {
+                    hoja[0].forEach(encabezado => {
+                        if (encabezado && typeof encabezado === 'string') {
+                            encabezadosDisponibles.add(encabezado.trim());
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    console.log('Encabezados disponibles:', Array.from(encabezadosDisponibles));
+
+    for (const componente of componentes) {
+        if (componente.componente === "grafica" && componente.formula) {
+            // Buscar la fórmula en las fórmulas disponibles
+            const formula = formulasDisponibles.find(f => f.Nombre === componente.formula);
+            if (formula) {
+                console.log(`Verificando fórmula: ${componente.formula}`);
+                console.log(`Datos de la fórmula: ${formula.Datos}`);
+                
+                // Extraer columnas requeridas de la fórmula estructurada
+                const columnasRequeridas = extraerColumnasDeFormula(formula.Datos);
+                console.log(`Columnas requeridas: ${columnasRequeridas.join(', ')}`);
+                
+                // Verificar que todas las columnas requeridas estén disponibles
+                for (const columna of columnasRequeridas) {
+                    if (!encabezadosDisponibles.has(columna)) {
+                        columnasFaltantes.push(`${componente.formula}: ${columna}`);
+                        console.log(`Columna faltante: ${columna}`);
+                    }
+                }
+            } else {
+                console.warn(`Fórmula no encontrada: ${componente.formula}`);
+                columnasFaltantes.push(`Fórmula no encontrada: ${componente.formula}`);
+            }
+        }
+    }
+
+    return {
+        valido: columnasFaltantes.length === 0,
+        columnasFaltantes
+    };
+}
+
+/**
+ * Extrae las columnas requeridas de una fórmula estructurada
+ * @param {string} formulaEstructurada - Fórmula en formato estructurado
+ * @returns {Array} Array de nombres de columnas requeridas
+ */
+function extraerColumnasDeFormula(formulaEstructurada) {
+    const columnas = [];
+    
+    if (!formulaEstructurada || typeof formulaEstructurada !== 'string') {
+        console.warn('Fórmula estructurada inválida:', formulaEstructurada);
+        return columnas;
+    }
+    
+    // Usar la misma expresión regular que en aplicarFormula.js
+    const regex = /\[@([^\]]+)\]/g;
+    let match;
+    
+    while ((match = regex.exec(formulaEstructurada)) !== null) {
+        const nombreColumna = match[1].trim(); // Limpiar espacios
+        if (!columnas.includes(nombreColumna)) {
+            columnas.push(nombreColumna);
+        }
+    }
+    
+    return columnas;
 }
 
 cargarPlantillaScript();
