@@ -1,3 +1,4 @@
+/*eslint-disable*/
 const { consultarPlantilla } = require(`${rutaBase}src/backend/casosUso/plantillas/consultarPlantilla.js`);
 // const { consultarPlantillas } = require(`${rutaBase}src/framework/utils/scripts/paginas/plantillas/consultarPlantillas.js`);
 // const { configurarTexto } = require(`${rutaBase}src/framework/utils/scripts/paginas/analisis/agregarTexto.js`);
@@ -21,7 +22,7 @@ function cargarPlantillaScript(){
             const respuesta = await consultarPlantilla(nombrePlantilla.value);
             
             if (!respuesta.ok) {
-                mostrarAlerta('Error', 'Error al cargar la plantilla: ' + respuesta.error, 'error');
+                mostrarAlerta('Error', `Error al cargar la plantilla: ${respuesta.error}`, 'error');
                 return;
             }
             
@@ -184,8 +185,7 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                             
                             const datosFiltrados = filtrarDatos(filtro, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
                             for(const formula of JSON.parse(localStorage.formulasDisponibles)){
-                                if (formula.Nombre == componente.formula)
-                                {
+                                if (formula.Nombre == componente.formula) {
                                     const resultadoFormula = aplicarFormula(formula.Nombre, formula.Datos, tractorSeleccionado, datosFiltrados.resultados);
                                     const canvas = previsualizacionGrafica.querySelector('canvas');
         

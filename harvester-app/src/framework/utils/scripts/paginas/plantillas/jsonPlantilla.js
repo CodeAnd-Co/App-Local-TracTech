@@ -1,7 +1,7 @@
 
 
 {
-    componentes : [
+    [
         {
             componente : "texto",
             tipo : "titulo",

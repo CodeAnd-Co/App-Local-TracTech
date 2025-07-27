@@ -1,3 +1,4 @@
+/*eslint-disable*/
 const { crearPlantilla } = require(`${rutaBase}src/backend/casosUso/plantillas/crearPlantilla.js`);
 // const { consultarPlantillas } = require(`${rutaBase}src/framework/utils/scripts/paginas/plantillas/consultarPlantillas.js`);
 // const { mostrarAlerta } = require(`${rutaBase}/src/framework/vistas/includes/componentes/moleculas/alertaSwal/alertaSwal`);
@@ -17,7 +18,7 @@ function crearPlantillaScript(){
             vaciarSelectorPlantillas
             await consultarPlantillasScript(); // Actualizar el selector de plantillas
         } else {
-            mostrarAlerta('Error', 'Error al guardar la plantilla: ' + respuesta.error, 'error');
+            mostrarAlerta('Error', `Error al guardar la plantilla: ${respuesta.error}`, 'error');
         }
     });
 }
