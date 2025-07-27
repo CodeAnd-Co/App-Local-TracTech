@@ -7,6 +7,7 @@ const { modificarTipoGrafica, modificarColor, modificarTitulo } = require(`${rut
 const { ElementoNuevo, Contenedores } = require(`${rutaBase}/src/backend/data/analisisModelos/elementoReporte.js`);
 const { aplicarFormula } = require(`${rutaBase}/src/backend/casosUso/formulas/aplicarFormula.js`);
 const { filtrarDatos } = require(`${rutaBase}/src/backend/casosUso/formulas/filtrarDatos.js`);
+const { procesarDatosUniversal } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/graficas/procesarDatosUniversal.js`);
 const Chart = require(`${rutaBase}/node_modules/chart.js/auto`);
 
 // const { configurarTexto, configurarGrafica } = require(`${rutaBase}/src/framework/utils/scripts/paginas/analisis/botonesAgregar.js`);
@@ -18,7 +19,6 @@ function cargarPlantillaScript(){
     botonCargarPlantilla.addEventListener('click', async () => {
         try {
             const respuesta = await consultarPlantilla(nombrePlantilla.value);
-            console.log('plantilla cargada:', respuesta);
             
             if (!respuesta.ok) {
                 mostrarAlerta('Error', 'Error al cargar la plantilla: ' + respuesta.error, 'error');
@@ -26,7 +26,6 @@ function cargarPlantillaScript(){
             }
             
             const contenido = JSON.parse(respuesta.datos.contenido);
-            console.log('contenido:', contenido);
             const idContenedor = 'contenedorElementos';
             const idContenedorPrevisualizacion = 'contenedor-elementos-previsualizacion';
             
@@ -85,7 +84,6 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
         // Iterar sobre cada componente
         for (const componente of componentes) {
             if (componente.componente == "texto") {
-                console.log('es un texto!')
                 // Crear tarjeta de texto
                 configurarTexto(contenedorId, idContenedorPrevisualizacion);
                 
@@ -119,7 +117,6 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     }
                     
                     // const vistaPrevia = tarjetaTexto.querySelector('.previsualizacion-texto.preview-titulo');
-                    console.log('vista previa:', previsualizacionTexto);
                     actualizarTexto(previsualizacionTexto, areaEscritura);
                     
                     // Actualizar el contador de caracteres después de cargar el contenido
@@ -133,20 +130,8 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     }
                 }
 
-                // console.log('texto configurado')
-                // tarjeta = contenedor.querySelector('.tarjeta-texto#1').querySelector('tipo-texto')
-                // console.log('tarjeta:', tarjeta);
-                // Configurar propiedades
-                // console.log('tipo: ', tarjetaTexto.querySelector('.tipo-texto')) //.value = componente.tipo;
-                // console.log(tarjetaTexto.querySelector('.area-escritura')) //.value = componente.contenido;
-                
-                // Configurar alineamiento
-                // const iconoAlign = tarjetaTexto.querySelector('.icono-align');
-                // iconoAlign.classList.remove('align-left', 'align-center', 'align-right');
-                // iconoAlign.classList.add(componente.alineamiento);
                 
             } else if (componente.componente == "grafica") {
-                console.log('es una grafica!')
                 // Crear tarjeta de gráfica
                 configurarGrafica(contenedorId, idContenedorPrevisualizacion);
                 
@@ -183,43 +168,52 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                         modificarTitulo(previsualizacionGrafica, elementos.titulo, tarjetaGrafica);
                     }
 
+                    const tractorSeleccionado = componente.tractor;
+
+                    tarjetaGrafica.dataset.filtroActual = componente.filtro || '';
+                    tarjetaGrafica.dataset.parametroActual = componente.parametro || '';
+                    tarjetaGrafica.dataset.formulaActual = componente.formula || '';
+                    
+
                     if(componente.parametro && !componente.formula) {
 
                     }
-                //     if (componente.formula){
-                //         if(componente.filtro){
-                //             const datosFiltrados = filtrarDatos(componente.filtro, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
-                //             for(const formula of JSON.parse(localStorage.formulasDisponibles)){
-                //                 if (formula.Nombre == componente.formula)
-                //                 {
-                //                     const resultadoFormula = aplicarFormula(formula.Nombre, formula.Datos, tractorSeleccionado, datosFiltrados.resultados);
-                //                     const canvas = previsualizacionGrafica.querySelector('canvas');
+                    if (componente.formula){
+                        if(componente.filtro){
+                            const filtro = [JSON.parse(localStorage.getItem('formulasDisponibles')).filter(formula => formula.Nombre === componente.filtro)[0]];
+                            
+                            const datosFiltrados = filtrarDatos(filtro, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+                            for(const formula of JSON.parse(localStorage.formulasDisponibles)){
+                                if (formula.Nombre == componente.formula)
+                                {
+                                    const resultadoFormula = aplicarFormula(formula.Nombre, formula.Datos, tractorSeleccionado, datosFiltrados.resultados);
+                                    const canvas = previsualizacionGrafica.querySelector('canvas');
         
-                //                     const contexto = canvas.getContext('2d');
-                //                     const graficaExistente = Chart.getChart(contexto);
+                                    const contexto = canvas.getContext('2d');
+                                    const graficaExistente = Chart.getChart(contexto);
         
-                //                     if (graficaExistente && resultadoFormula.resultados) {
-                //                         const resultados = resultadoFormula.resultados;
-                //                         const tipoGrafica = graficaExistente.config.type;
+                                    if (graficaExistente && resultadoFormula.resultados) {
+                                        const resultados = resultadoFormula.resultados;
+                                        const tipoGrafica = graficaExistente.config.type;
             
-                //                         // Usar el procesamiento universal
-                //                         const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, formula.Nombre);
+                                        // Usar el procesamiento universal
+                                        const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, formula.Nombre);
             
-                //                         // Actualizar la gráfica
-                //                         graficaExistente.options.plugins.title.text = nombreFormula;
-                //                         graficaExistente.data.labels = datosRebuild.labels;
-                //                         graficaExistente.data.datasets[0].data = datosRebuild.valores;
+                                        // Actualizar la gráfica
+                                        graficaExistente.options.plugins.title.text = formula.Nombre;
+                                        graficaExistente.data.labels = datosRebuild.labels;
+                                        graficaExistente.data.datasets[0].data = datosRebuild.valores;
             
-                //                         // CORRECCIÓN: Actualizar también la etiqueta del dataset
-                //                         graficaExistente.data.datasets[0].label = nombreFormula;
+                                        // CORRECCIÓN: Actualizar también la etiqueta del dataset
+                                        graficaExistente.data.datasets[0].label = formula.Nombre;
             
-                //                         graficaExistente.update();
-                //                     }
-                //             }
-                //         }
+                                        graficaExistente.update();
+                                    }
+                            }
+                        }
                         
-                //     }
-                // }
+                    }
+                }
 
                 }
             }
@@ -263,25 +257,20 @@ function verificarColumnasRequeridas(componentes, datosExcel) {
         });
     }
 
-    console.log('Encabezados disponibles:', Array.from(encabezadosDisponibles));
 
     for (const componente of componentes) {
         if (componente.componente === "grafica" && componente.formula) {
             // Buscar la fórmula en las fórmulas disponibles
             const formula = formulasDisponibles.find(f => f.Nombre === componente.formula);
             if (formula) {
-                console.log(`Verificando fórmula: ${componente.formula}`);
-                console.log(`Datos de la fórmula: ${formula.Datos}`);
                 
                 // Extraer columnas requeridas de la fórmula estructurada
                 const columnasRequeridas = extraerColumnasDeFormula(formula.Datos);
-                console.log(`Columnas requeridas: ${columnasRequeridas.join(', ')}`);
                 
                 // Verificar que todas las columnas requeridas estén disponibles
                 for (const columna of columnasRequeridas) {
                     if (!encabezadosDisponibles.has(columna)) {
                         columnasFaltantes.push(`${componente.formula}: ${columna}`);
-                        console.log(`Columna faltante: ${columna}`);
                     }
                 }
             } else {

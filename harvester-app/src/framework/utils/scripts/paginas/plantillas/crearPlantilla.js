@@ -31,9 +31,8 @@ function obtenerJsonPlantillaDesdeDOM(){
 
     const contenedorComponentes = document.getElementById('contenedorElementos')
 
-    console.log('contenedor componentes:', contenedorComponentes);
     Array.from(contenedorComponentes.children).forEach(componente => {
-        console.log(componente);
+
         if(componente.classList.contains('tarjeta-texto')){
             componentes.push({
                 componente: "texto",
