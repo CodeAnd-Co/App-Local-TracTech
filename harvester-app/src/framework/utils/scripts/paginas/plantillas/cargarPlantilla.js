@@ -80,6 +80,16 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                 return false;
             }
 
+            // Verificar si hay columnas no encontradas (de filtros)
+            if (verificarFormulaOColumna.includes('Columna no encontrada')) {
+                mostrarAlerta(
+                    `Columna no encontrada: ${columnasFaltantesTexto}`, 
+                    'Asegúrate de seleccionar todas las columnas necesarias para aplicar este filtro.', 
+                    'error'
+                );
+                return false;
+            }
+
             mostrarAlerta(
                 `Columnas no encontradas: ${columnasFaltantesTexto}`, 
                 'Asegúrate de haber seleccionado todas las columnas necesarias para aplicar las fórmulas de esta plantilla.', 
@@ -242,7 +252,7 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
 }
 
 /**
- * Verifica que todas las columnas requeridas por las fórmulas de la plantilla estén disponibles
+ * Verifica que todas las columnas requeridas por las fórmulas y filtros de la plantilla estén disponibles
  * @param {Array} componentes - Componentes de la plantilla
  * @param {Object} datosExcel - Datos de Excel disponibles
  * @returns {Object} Resultado de la verificación
@@ -270,24 +280,38 @@ function verificarColumnasRequeridas(componentes, datosExcel) {
         });
     }
 
-
     for (const componente of componentes) {
-        if (componente.componente === "grafica" && componente.formula) {
-            // Buscar la fórmula en las fórmulas disponibles
-            const formula = formulasDisponibles.find(f => f.Nombre === componente.formula);
-            if (formula) {
-                
-                // Extraer columnas requeridas de la fórmula estructurada
-                const columnasRequeridas = extraerColumnasDeFormula(formula.Datos);
-                
-                // Verificar que todas las columnas requeridas estén disponibles
-                for (const columna of columnasRequeridas) {
-                    if (!encabezadosDisponibles.has(columna)) {
-                        columnasFaltantes.push(`${componente.formula}: ${columna}`);
+        if (componente.componente === "grafica") {
+            // Verificar fórmula
+            if (componente.formula) {
+                const formula = formulasDisponibles.find(f => f.Nombre === componente.formula);
+                if (formula) {
+                    const columnasRequeridas = extraerColumnasDeFormula(formula.Datos);
+                    
+                    for (const columna of columnasRequeridas) {
+                        if (!encabezadosDisponibles.has(columna)) {
+                            columnasFaltantes.push(`${componente.formula}: ${columna}`);
+                        }
                     }
+                } else {
+                    columnasFaltantes.push(`Fórmula no encontrada: ${componente.formula}`);
                 }
-            } else {
-                columnasFaltantes.push(`Fórmula no encontrada: ${componente.formula}`);
+            }
+
+            // Verificar filtro
+            if (componente.filtro) {
+                const filtro = formulasDisponibles.find(f => f.Nombre === componente.filtro);
+                if (filtro) {
+                    const columnasRequeridas = extraerColumnasDeFormula(filtro.Datos);
+                    
+                    for (const columna of columnasRequeridas) {
+                        if (!encabezadosDisponibles.has(columna)) {
+                            columnasFaltantes.push(`Columna no encontrada: ${columna}`);
+                        }
+                    }
+                } else {
+                    columnasFaltantes.push(`Filtro no encontrado: ${componente.filtro}`);
+                }
             }
         }
     }
