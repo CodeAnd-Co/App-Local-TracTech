@@ -66,7 +66,20 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                 .map(item => item.split(': ')[1]) // Extraer solo el nombre de la columna
                 .filter((valor, indice, array) => array.indexOf(valor) === indice) // Eliminar duplicados
                 .join(', ');
+            const verificarFormulaOColumna = verificacionResultado.columnasFaltantes
+                .map(item =>item.split(': ')[0])
+                .filter((valor, indice, array) => array.indexOf(valor) === indice) // Eliminar duplicados
+                .join(', ');
             
+            if (verificarFormulaOColumna.includes('Fórmula no encontrada')) {
+                mostrarAlerta(
+                    `Fórmulas no encontradas: ${columnasFaltantesTexto}`, 
+                    'Asegúrate de que existan las fórmulas de esta plantilla.', 
+                    'error'
+                );
+                return false;
+            }
+
             mostrarAlerta(
                 `Columnas no encontradas: ${columnasFaltantesTexto}`, 
                 'Asegúrate de haber seleccionado todas las columnas necesarias para aplicar las fórmulas de esta plantilla.', 
@@ -274,7 +287,6 @@ function verificarColumnasRequeridas(componentes, datosExcel) {
                     }
                 }
             } else {
-                console.warn(`Fórmula no encontrada: ${componente.formula}`);
                 columnasFaltantes.push(`Fórmula no encontrada: ${componente.formula}`);
             }
         }
