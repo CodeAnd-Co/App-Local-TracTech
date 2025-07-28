@@ -133,8 +133,15 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     if (iconoAlign) {
                         iconoAlign.classList.remove('align-left', 'align-center', 'align-right');
                         iconoAlign.classList.add(componente.alineamiento);
+                        
+                        // Mapear el alineamiento del JSON al índice correcto
                         const alineaciones = ['left', 'center', 'right'];
-                        previsualizacionTexto.alignIndex = (previsualizacionTexto.alignIndex + 1) % alineaciones.length;
+                        const alineamientoActual = componente.alineamiento.replace('align-', ''); // Quitar el prefijo "align-"
+                        const indiceAlineamiento = alineaciones.indexOf(alineamientoActual);
+                        
+                        // Si se encuentra el alineamiento, usarlo; si no, usar left por defecto
+                        previsualizacionTexto.alignIndex = indiceAlineamiento !== -1 ? indiceAlineamiento : 0;
+                        
                         const alineado = alineaciones[previsualizacionTexto.alignIndex];
                         previsualizacionTexto.style.textAlign = alineado;
                         iconoAlign.className = `icono-align align-${alineado}`;
