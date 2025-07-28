@@ -2,7 +2,28 @@
 
 <head>
   <link rel="stylesheet" href="<%= rutaBase %>src/framework/utils/css/paginas/analisis/generarReporte.css">
+  <link rel="stylesheet" href="<%= rutaBase %>src/framework/utils/css/paginas/plantillas/plantillas.css">
 </head>
+  <div class="frame-plantillas">
+    <div class="frame-plantillas-izquierda">
+        <select class="selector-plantilla" name="plantilla" id="selectorPlantilla">
+        </select>
+        <button id="botonCargarPlantilla" class="boton-principal">
+          <span>Cargar Plantilla</span>
+        </button>
+        <button id="botonEliminarPlantilla" class="boton-secundario">
+          <span>Eliminar Plantilla</span>
+        </button>
+      </div>
+      <div class="frame-plantillas-derecha">
+        <input type="text" id="nombrePlantilla" placeholder="Nombre de la plantilla" class="input-nombre-plantilla">
+        <button id="botonGuardarPlantilla" class="boton-principal">
+          <span>Guardar Plantilla</span>
+        </button>
+      </div>
+  </div> 
+
+
   <div class="frame-analisis">
 
     <!-- Sección de agregados y acciones -->
@@ -24,5 +45,9 @@
   </div>
   
   <script src='<%= rutaBase %>src/framework/utils/scripts/paginas/analisis/moduloAnalisis.js'></script>
+  <script src='<%= rutaBase %>src/framework/utils/scripts/paginas/plantillas/consultarPlantillas.js'></script>
+  <script src='<%= rutaBase %>src/framework/utils/scripts/paginas/plantillas/crearPlantilla.js'></script>
+  <script src='<%= rutaBase %>src/framework/utils/scripts/paginas/plantillas/eliminarPlantilla.js'></script>
+  <script src='<%= rutaBase %>src/framework/utils/scripts/paginas/plantillas/cargarPlantilla.js'></script>
 
 <%- include ('../../includes/piePagina.ejs')%>

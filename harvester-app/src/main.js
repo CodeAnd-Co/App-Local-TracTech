@@ -28,6 +28,7 @@ const createWindow = async () => {
       nodeIntegration: true,
       contextIsolation: false,
       //devTools: false,
+
     },
   });
 
