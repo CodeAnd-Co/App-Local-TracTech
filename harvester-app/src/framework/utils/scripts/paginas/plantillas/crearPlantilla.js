@@ -15,6 +15,10 @@ function crearPlantillaScript(){
             mostrarAlerta('Error', 'El nombre de la plantilla no puede contener guiones bajos', 'error');
             return;
         }
+        if (/[?¿!¡@#$%^&*()+=\[\]{};':"\\|,.<>\/?~`]/.test(nombrePlantilla.value)) {
+            mostrarAlerta('Error', 'El nombre de la plantilla no puede contener signos especiales', 'error');
+            return;
+        }
         if (nombrePlantilla.value.trim().length > 50) {
             mostrarAlerta('Error', 'El nombre de la plantilla no debe exceder 50 caracteres', 'error');
             return;
@@ -47,7 +51,7 @@ function obtenerJsonPlantillaDesdeDOM(){
                 componente: "texto",
                 tipo: componente.querySelector('.tipo-texto').value,
                 contenido: componente.querySelector('.area-escritura').value,
-                alineamiento: componente.querySelector('.icono-align').classList[1]
+                alineamiento: componente.querySelector('.icono-align').className.split(' ').find(cls => cls.startsWith('align-'))
             });
 
         } else if(componente.classList.contains('tarjeta-grafica')){
