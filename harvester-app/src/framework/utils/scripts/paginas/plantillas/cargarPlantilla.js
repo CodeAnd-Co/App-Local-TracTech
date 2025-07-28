@@ -22,7 +22,7 @@ function cargarPlantillaScript(){
             const respuesta = await consultarPlantilla(nombrePlantilla.value);
             
             if (!respuesta.ok) {
-                mostrarAlerta('Error', `Error al cargar la plantilla: ${respuesta.error}`, 'error');
+                mostrarAlerta('Error', `Error al cargar la plantilla`, 'error');
                 return;
             }
             
