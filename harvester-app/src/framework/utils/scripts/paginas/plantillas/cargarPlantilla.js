@@ -207,54 +207,62 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     
 
                     if(componente.parametro && !componente.formula) {
-
+                        // Aquí puedes agregar lógica para manejar parámetros sin fórmula si es necesario
                     }
+                    
                     if (componente.formula){
+                        let datosParaFormula;
+    
+                        // Determinar qué datos usar
                         if(componente.filtro){
                             const filtro = [JSON.parse(localStorage.getItem('formulasDisponibles')).filter(formula => formula.Nombre === componente.filtro)[0]];
-                            
                             const datosFiltrados = filtrarDatos(filtro, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
-                            for(const formula of JSON.parse(localStorage.formulasDisponibles)){
-                                if (formula.Nombre == componente.formula) {
-                                    const resultadoFormula = aplicarFormula(formula.Nombre, formula.Datos, tractorSeleccionado, datosFiltrados.resultados);
-                                    const canvas = previsualizacionGrafica.querySelector('canvas');
-        
-                                    const contexto = canvas.getContext('2d');
-                                    const graficaExistente = Chart.getChart(contexto);
-        
-                                    if (graficaExistente && resultadoFormula.resultados) {
-                                        const resultados = resultadoFormula.resultados;
-                                        const tipoGrafica = graficaExistente.config.type;
-            
-                                        // Usar el procesamiento universal
-                                        const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, formula.Nombre);
-            
-                                        // Actualizar la gráfica
-                                        graficaExistente.options.plugins.title.text = formula.Nombre;
-                                        graficaExistente.data.labels = datosRebuild.labels;
-                                        graficaExistente.data.datasets[0].data = datosRebuild.valores;
-            
-                                        // CORRECCIÓN: Actualizar también la etiqueta del dataset
-                                        graficaExistente.data.datasets[0].label = formula.Nombre;
-            
-                                        graficaExistente.update();
-                                    }
-                            }
+                            datosParaFormula = datosFiltrados.resultados;
+                        } else {
+                            // Si no hay filtro, usar los datos originales de Excel
+                            datosParaFormula = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
                         }
                         
-                    }
-                }
+                        // Aplicar la fórmula con los datos correspondientes
+                        for(const formula of JSON.parse(localStorage.getItem('formulasDisponibles'))){
+                            if (formula.Nombre == componente.formula) {
+                                const resultadoFormula = aplicarFormula(formula.Nombre, formula.Datos, tractorSeleccionado, datosParaFormula);
+                                const canvas = previsualizacionGrafica.querySelector('canvas');
 
-                }
+                                const contexto = canvas.getContext('2d');
+                                const graficaExistente = Chart.getChart(contexto);
+
+                                if (graficaExistente && resultadoFormula.resultados) {
+                                    const resultados = resultadoFormula.resultados;
+                                    const tipoGrafica = graficaExistente.config.type;
+
+                                    // Usar el procesamiento universal
+                                    const datosRebuild = procesarDatosUniversal(resultados, tipoGrafica, formula.Nombre);
+
+                                    // Actualizar la gráfica
+                                    graficaExistente.options.plugins.title.text = formula.Nombre;
+                                    graficaExistente.data.labels = datosRebuild.labels;
+                                    graficaExistente.data.datasets[0].data = datosRebuild.valores;
+
+                                    // Actualizar también la etiqueta del dataset
+                                    graficaExistente.data.datasets[0].label = formula.Nombre;
+
+                                    graficaExistente.update();
+                                }
+                                break; 
+                            }
+                        }
+                    }
+                } 
             }
         }
 
-        return true; // Retornar true para indicar que la carga fue exitosa
+        return true; 
         
     } catch (error) {
         console.error('Error al cargar la plantilla:', error);
         mostrarAlerta('Error', 'No se pudo cargar la plantilla correctamente', 'error');
-        return false; // Retornar false para indicar que la carga falló
+        return false;
     }
 }
 
