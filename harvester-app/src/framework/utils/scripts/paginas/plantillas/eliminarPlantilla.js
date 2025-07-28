@@ -13,7 +13,7 @@ function eliminarPlantillaScript(){
             vaciarSelectorPlantillas(); 
             await consultarPlantillasScript(); // Actualizar el selector de plantillas
         } else {
-            mostrarAlerta('Error', `Error al eliminar la plantilla: ${respuesta.error}`, 'error');
+            mostrarAlerta('Error', `Error al eliminar la plantilla`, 'error');
         }
     });
 }

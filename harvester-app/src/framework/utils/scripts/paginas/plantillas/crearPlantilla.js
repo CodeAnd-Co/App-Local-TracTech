@@ -7,6 +7,14 @@ function crearPlantillaScript(){
     const nombrePlantilla = document.getElementById('nombrePlantilla');
     const botonGuardarPlantilla = document.getElementById('botonGuardarPlantilla');
     botonGuardarPlantilla.addEventListener('click', async () => {
+        if (nombrePlantilla.value.trim() === '') {
+            mostrarAlerta('Error', 'El nombre de la plantilla no puede estar vacío', 'error');
+            return;
+        }
+        if (nombrePlantilla.value.includes('_')) {
+            mostrarAlerta('Error', 'El nombre de la plantilla no puede contener guiones bajos', 'error');
+            return;
+        }
         if (nombrePlantilla.value.trim().length > 50) {
             mostrarAlerta('Error', 'El nombre de la plantilla no debe exceder 50 caracteres', 'error');
             return;
