@@ -207,7 +207,21 @@ async function cargarPlantillaDesdeJSON(json, contenedorId, idContenedorPrevisua
                     
 
                     if(componente.parametro && !componente.formula) {
-                        // Aquí puedes agregar lógica para manejar parámetros sin fórmula si es necesario
+                        // Manejar parámetros sin fórmula
+                        let datosParaParametro;
+                        
+                        // Determinar qué datos usar para el parámetro
+                        if(componente.filtro) {
+                            const filtro = [JSON.parse(localStorage.getItem('formulasDisponibles')).filter(formula => formula.Nombre === componente.filtro)[0]];
+                            const datosFiltrados = filtrarDatos(filtro, JSON.parse(localStorage.getItem('datosFiltradosExcel')), tractorSeleccionado);
+                            datosParaParametro = datosFiltrados.resultados;
+                        } else {
+                            // Si no hay filtro, usar los datos originales de Excel
+                            datosParaParametro = JSON.parse(localStorage.getItem('datosFiltradosExcel'));
+                        }
+                        
+                        // Aplicar el parámetro directamente a la gráfica
+                        aplicarParametroDirecto(componente.parametro, datosParaParametro, previsualizacionGrafica, tractorSeleccionado, componente.nombre);
                     }
                     
                     if (componente.formula){
@@ -362,6 +376,123 @@ function extraerColumnasDeFormula(formulaEstructurada) {
     }
     
     return columnas;
+}
+
+/**
+ * Aplica un parámetro directo a la gráfica sin usar fórmulas
+ * @param {string} nombreParametro - Nombre del parámetro/columna a mostrar
+ * @param {Object} datos - Datos de Excel (filtrados o completos)
+ * @param {HTMLElement} previsualizacionGrafica - Elemento de la gráfica
+ * @param {string} tractorSeleccionado - Tractor seleccionado para filtrar
+ * @param {string} titulo - Título de la gráfica
+ */
+function aplicarParametroDirecto(nombreParametro, datos, previsualizacionGrafica, tractorSeleccionado, titulo) {
+    try {
+        const canvas = previsualizacionGrafica.querySelector('canvas');
+        const contexto = canvas.getContext('2d');
+        const graficaExistente = Chart.getChart(contexto);
+
+        if (!graficaExistente) {
+            console.error('No se encontró gráfica existente');
+            return;
+        }
+
+        // Procesar datos según la estructura de datos disponible
+        let resultadosProcesados = [];
+        
+        if (datos && datos.hojas) {
+            // Datos vienen del formato de Excel completo
+            Object.values(datos.hojas).forEach(hoja => {
+                if (Array.isArray(hoja) && hoja.length > 0) {
+                    const encabezados = hoja[0];
+                    const indiceParametro = encabezados.indexOf(nombreParametro);
+                    const indiceTractor = encabezados.indexOf('Tractor'); // Asumiendo que la columna se llama 'Tractor'
+                    
+                    if (indiceParametro !== -1) {
+                        for (let i = 1; i < hoja.length; i++) {
+                            const fila = hoja[i];
+                            
+                            // Filtrar por tractor si está especificado
+                            if (tractorSeleccionado && indiceTractor !== -1) {
+                                if (fila[indiceTractor] !== tractorSeleccionado) {
+                                    continue;
+                                }
+                            }
+                            
+                            const valor = fila[indiceParametro];
+                            if (valor !== undefined && valor !== null && valor !== '') {
+                                resultadosProcesados.push({
+                                    etiqueta: `Fila ${i}`,
+                                    valor: parseFloat(valor) || 0,
+                                    datos_originales: fila
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+        } else if (Array.isArray(datos)) {
+            // Datos vienen en formato de array directo (ya filtrados)
+            datos.forEach((item, index) => {
+                if (item && typeof item === 'object' && item[nombreParametro] !== undefined) {
+                    resultadosProcesados.push({
+                        etiqueta: item.nombre || item.id || `Item ${index + 1}`,
+                        valor: parseFloat(item[nombreParametro]) || 0,
+                        datos_originales: item
+                    });
+                }
+            });
+        }
+
+        if (resultadosProcesados.length === 0) {
+            console.warn(`No se encontraron datos para el parámetro: ${nombreParametro}`);
+            return;
+        }
+
+        // Preparar datos para la gráfica
+        const tipoGrafica = graficaExistente.config.type;
+        const etiquetas = resultadosProcesados.map(item => item.etiqueta);
+        const valores = resultadosProcesados.map(item => item.valor);
+
+        // Procesar según el tipo de gráfica
+        let datosFinales = {
+            labels: etiquetas,
+            valores: valores
+        };
+
+        // Si es gráfica de pastel/dona, tomar solo los primeros elementos para evitar sobrecarga visual
+        if (tipoGrafica === 'pie' || tipoGrafica === 'doughnut') {
+            // Agrupar por valor y sumar si hay duplicados
+            const agrupados = {};
+            resultadosProcesados.forEach(item => {
+                const clave = item.valor.toString();
+                if (agrupados[clave]) {
+                    agrupados[clave].cantidad += 1;
+                } else {
+                    agrupados[clave] = {
+                        valor: item.valor,
+                        cantidad: 1
+                    };
+                }
+            });
+
+            datosFinales.labels = Object.keys(agrupados).map(key => `${agrupados[key].valor} (${agrupados[key].cantidad})`);
+            datosFinales.valores = Object.values(agrupados).map(item => item.cantidad);
+        }
+
+        // Actualizar la gráfica
+        graficaExistente.options.plugins.title.text = titulo || nombreParametro;
+        graficaExistente.data.labels = datosFinales.labels;
+        graficaExistente.data.datasets[0].data = datosFinales.valores;
+        graficaExistente.data.datasets[0].label = nombreParametro;
+
+        graficaExistente.update();
+
+        console.log(`Parámetro ${nombreParametro} aplicado correctamente con ${resultadosProcesados.length} datos`);
+
+    } catch (error) {
+        console.error('Error al aplicar parámetro directo:', error);
+    }
 }
 
 cargarPlantillaScript();
