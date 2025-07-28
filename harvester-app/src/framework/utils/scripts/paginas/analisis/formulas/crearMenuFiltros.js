@@ -25,6 +25,14 @@ function crearMenuFiltros(contenedor, filtros, graficaId, contenedorParametros, 
   // Agregar evento de cambio para actualizar la gráfica
   seleccionValores.addEventListener('change', () => {
     // Si se deselecciona, resetear la gráfica a estado inicial
+    // const element = document.querySelector('.tarjeta-grafica#\\31');
+    const graficaDiv = document.querySelector(`#\\3${graficaId}.tarjeta-grafica`);
+    if (graficaDiv) {
+      graficaDiv.dataset.filtroActual = seleccionValores.value;
+    }
+
+
+
     const selectorParametro = contenedorParametros.querySelector('select');
 
     const filtroAplicado = filtros.filter(filtro => {

@@ -143,8 +143,10 @@ function agregarGrafica(contenedorId, previsualizacionId, tarjetaRef = null, pos
   }
 
   // Actualizar la llamada en el event listener del botón de fórmulas
-  tarjetaGrafica.querySelector('.boton-formulas').addEventListener('click', async () =>
-    await crearCuadroFormulas(nuevaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado));
+  tarjetaGrafica.querySelector('.boton-formulas').addEventListener('click', async () => {
+    tractorSeleccionado = selectorTractor.value;
+    await crearCuadroFormulas(nuevaId, formulasDisponibles, datosOriginalesFormulas, tractorSeleccionado);
+  });
 
   const graficaDiv = document.createElement('div');
   graficaDiv.className = 'previsualizacion-grafica';
@@ -400,4 +402,7 @@ function hexARGB(colorHex) {
 
 module.exports = {
   agregarGrafica,
+  modificarTipoGrafica,
+  modificarColor,
+  modificarTitulo
 };
